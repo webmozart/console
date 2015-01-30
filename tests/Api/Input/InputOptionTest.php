@@ -68,6 +68,38 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
         new InputOption(1234);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailIfLongNameContainsSpaces()
+    {
+        new InputOption('foo bar');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailIfLongNameStartsWithSingleHyphen()
+    {
+        new InputOption('-option');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailIfLongNameStartsWithThreeHyphens()
+    {
+        new InputOption('---option');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailIfLongNameDoesNotStartWithLetter()
+    {
+        new InputOption('1option');
+    }
+
     public function testShortName()
     {
         $option = new InputOption('option', 'o');

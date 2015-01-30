@@ -206,7 +206,7 @@ class InputOption
     }
 
     /**
-     * Returns true if the option can take multiple values.
+     * Returns whether the option accepts multiple values.
      *
      * @return bool Returns `true` if the flag {@link MULTI_VALUED} was
      *              passed to the constructor.
@@ -262,7 +262,7 @@ class InputOption
     /**
      * Returns the description text.
      *
-     * @return string The description text
+     * @return string The description text.
      */
     public function getDescription()
     {
@@ -331,6 +331,8 @@ class InputOption
     {
         Assert::string($longName, 'The long option name must be a string. Got: %s');
         Assert::notEmpty($longName, 'The long option name must not be empty.');
+        Assert::startsWithLetter($longName, 'The long option name must start with a letter.');
+        Assert::regex($longName, '~^[a-zA-Z0-9\-]+$~', 'The long option name must contain letters, digits and hyphens only.');
     }
 
     private function assertShortNameValid($shortName, $flags)
