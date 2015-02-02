@@ -29,7 +29,7 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($argument->isOptional());
         $this->assertFalse($argument->isMultiValued());
         $this->assertNull($argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     /**
@@ -89,7 +89,7 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($argument->isOptional());
         $this->assertFalse($argument->isMultiValued());
         $this->assertNull($argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     /**
@@ -97,7 +97,7 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfRequiredArgumentAndDefaultValue()
     {
-        new InputArgument('argument', InputArgument::REQUIRED, '', 'Default');
+        new InputArgument('argument', InputArgument::REQUIRED, null, 'Default');
     }
 
     public function testOptionalArgument()
@@ -109,19 +109,19 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($argument->isOptional());
         $this->assertFalse($argument->isMultiValued());
         $this->assertNull($argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     public function testOptionalArgumentWithDefaultValue()
     {
-        $argument = new InputArgument('argument', InputArgument::OPTIONAL, '', 'Default');
+        $argument = new InputArgument('argument', InputArgument::OPTIONAL, null, 'Default');
 
         $this->assertSame('argument', $argument->getName());
         $this->assertFalse($argument->isRequired());
         $this->assertTrue($argument->isOptional());
         $this->assertFalse($argument->isMultiValued());
         $this->assertSame('Default', $argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     /**
@@ -141,7 +141,7 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($argument->isOptional());
         $this->assertTrue($argument->isMultiValued());
         $this->assertSame(array(), $argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     public function testRequiredMultiValuedArgument()
@@ -153,7 +153,7 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($argument->isOptional());
         $this->assertTrue($argument->isMultiValued());
         $this->assertSame(array(), $argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     public function testOptionalMultiValuedArgument()
@@ -165,19 +165,19 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($argument->isOptional());
         $this->assertTrue($argument->isMultiValued());
         $this->assertSame(array(), $argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     public function testMultiValuedArgumentWithDefaultValue()
     {
-        $argument = new InputArgument('argument', InputArgument::MULTI_VALUED, '', array('one', 'two'));
+        $argument = new InputArgument('argument', InputArgument::MULTI_VALUED, null, array('one', 'two'));
 
         $this->assertSame('argument', $argument->getName());
         $this->assertFalse($argument->isRequired());
         $this->assertTrue($argument->isOptional());
         $this->assertTrue($argument->isMultiValued());
         $this->assertSame(array('one', 'two'), $argument->getDefaultValue());
-        $this->assertSame('', $argument->getDescription());
+        $this->assertNull($argument->getDescription());
     }
 
     /**
@@ -185,7 +185,7 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfMultiValuedAndDefaultValueNoArray()
     {
-        new InputArgument('argument', InputArgument::MULTI_VALUED, '', 'foobar');
+        new InputArgument('argument', InputArgument::MULTI_VALUED, null, 'foobar');
     }
 
     /**
@@ -206,9 +206,9 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testFailIfDescriptionNull()
+    public function testFailIfDescriptionEmpty()
     {
-        new InputArgument('argument', 0, null);
+        new InputArgument('argument', 0, '');
     }
 
     /**
@@ -246,8 +246,8 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
             array(new InputArgument('argument', InputArgument::REQUIRED), new InputArgument('argument', InputArgument::REQUIRED)),
             array(new InputArgument('argument', InputArgument::OPTIONAL), new InputArgument('argument', InputArgument::OPTIONAL)),
             array(new InputArgument('argument', InputArgument::MULTI_VALUED), new InputArgument('argument', InputArgument::MULTI_VALUED)),
-            array(new InputArgument('argument', InputArgument::OPTIONAL, '', 'foo'), new InputArgument('argument', InputArgument::OPTIONAL, '', 'foo')),
-            array(new InputArgument('argument', InputArgument::MULTI_VALUED, '', null), new InputArgument('argument', InputArgument::MULTI_VALUED, '', array())),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, null, 'foo'), new InputArgument('argument', InputArgument::OPTIONAL, null, 'foo')),
+            array(new InputArgument('argument', InputArgument::MULTI_VALUED, null, null), new InputArgument('argument', InputArgument::MULTI_VALUED, null, array())),
         );
     }
 
@@ -258,10 +258,10 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
             array(new InputArgument('argument', InputArgument::REQUIRED), new InputArgument('argument', InputArgument::OPTIONAL)),
             array(new InputArgument('argument', InputArgument::REQUIRED), new InputArgument('argument', InputArgument::MULTI_VALUED)),
             array(new InputArgument('argument', InputArgument::OPTIONAL), new InputArgument('argument', InputArgument::MULTI_VALUED)),
-            array(new InputArgument('argument', InputArgument::OPTIONAL, '', null), new InputArgument('argument', InputArgument::OPTIONAL, '', 'null')),
-            array(new InputArgument('argument', InputArgument::OPTIONAL, '', 1), new InputArgument('argument', InputArgument::OPTIONAL, '', '1')),
-            array(new InputArgument('argument', InputArgument::OPTIONAL, '', 'foo'), new InputArgument('argument', InputArgument::OPTIONAL, '', 'bar')),
-            array(new InputArgument('argument', InputArgument::MULTI_VALUED, '', array('foo')), new InputArgument('argument', InputArgument::MULTI_VALUED, '', array('bar'))),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, null, null), new InputArgument('argument', InputArgument::OPTIONAL, null, 'null')),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, null, 1), new InputArgument('argument', InputArgument::OPTIONAL, null, '1')),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, null, 'foo'), new InputArgument('argument', InputArgument::OPTIONAL, null, 'bar')),
+            array(new InputArgument('argument', InputArgument::MULTI_VALUED, null, array('foo')), new InputArgument('argument', InputArgument::MULTI_VALUED, null, array('bar'))),
         );
     }
 }

@@ -137,12 +137,13 @@ class InputOption
      *
      * @throws InvalidDefaultValueException If the default value is invalid.
      */
-    public function __construct($longName, $shortName = null, $flags = 0, $description = '', $defaultValue = null, $valueName = '...')
+    public function __construct($longName, $shortName = null, $flags = 0, $description = null, $defaultValue = null, $valueName = '...')
     {
         $longName = $this->removeDoubleDashPrefix($longName);
         $shortName = $this->removeDashPrefix($shortName);
 
-        Assert::string($description, 'The option description must be a string. Got: %s');
+        Assert::nullOrString($description, 'The option description must be a string or null. Got: %s');
+        Assert::nullOrNotEmpty($description, 'The option description must not be empty.');
         Assert::string($valueName, 'The option value name must be a string. Got: %s');
         Assert::notEmpty($valueName, 'The option value name must not be empty.');
 

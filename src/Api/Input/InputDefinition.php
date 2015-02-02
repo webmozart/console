@@ -32,8 +32,12 @@ use Webmozart\Console\Assert\Assert;
  * ));
  * ```
  *
- * The input definition is immutable after its construction. If you want to
- * create an input definition stepwisely, you should use the
+ * The input definition is immutable after its construction. This is necessary
+ * to maintain consistency when one input definition inherits from another. For
+ * example, adding a required argument to the base definition of an input
+ * definition that already contains optional arguments would be an illegal
+ * operation that cannot be prevented if the definitions are mutable. If you
+ * want to create an input definition stepwisely, you should use the
  * {@link InputDefinitionBuilder} class.
  *
  * If multiple input definitions share a common set of options and arguments,

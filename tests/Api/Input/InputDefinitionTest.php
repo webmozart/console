@@ -601,7 +601,7 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
     public function testGetDefaultArgumentValues()
     {
         $definition = new InputDefinition(array(
-            new InputArgument('argument1', 0, '', 'Default'),
+            new InputArgument('argument1', 0, null, 'Default'),
             new InputArgument('argument2'),
         ));
 
@@ -619,7 +619,7 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
     public function testGetDefaultArgumentValuesWithBaseDefinition()
     {
         $baseDefinition = new InputDefinition(array(
-            new InputArgument('argument1', 0, '', 'Default'),
+            new InputArgument('argument1', 0, null, 'Default'),
         ));
         $definition = new InputDefinition(array(
             new InputArgument('argument2'),
@@ -892,7 +892,7 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
     public function testGetDefaultOptionValues()
     {
         $definition = new InputDefinition(array(
-            new InputOption('option1', null, InputOption::VALUE_OPTIONAL, '', 'Default'),
+            new InputOption('option1', null, InputOption::VALUE_OPTIONAL, null, 'Default'),
             new InputOption('option2', null),
         ));
 
@@ -910,7 +910,7 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
     public function testGetDefaultOptionValuesWithBaseDefinition()
     {
         $baseDefinition = new InputDefinition(array(
-            new InputOption('option1', null, InputOption::VALUE_OPTIONAL, '', 'Default'),
+            new InputOption('option1', null, InputOption::VALUE_OPTIONAL, null, 'Default'),
         ));
         $definition = new InputDefinition(array(
             new InputOption('option2', null),

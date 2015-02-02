@@ -33,7 +33,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($option->isValueOptional());
         $this->assertFalse($option->isMultiValued());
         $this->assertNull($option->getDefaultValue());
-        $this->assertSame('', $option->getDescription());
+        $this->assertNull($option->getDescription());
         $this->assertSame('...', $option->getValueName());
     }
 
@@ -162,7 +162,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfNoValueAndDefaultValue()
     {
-        new InputOption('option', null, InputOption::VALUE_NONE, '', 'Default');
+        new InputOption('option', null, InputOption::VALUE_NONE, null, 'Default');
     }
 
     public function testOptionalValue()
@@ -178,7 +178,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
 
     public function testOptionalValueWithDefaultValue()
     {
-        $option = new InputOption('option', null, InputOption::VALUE_OPTIONAL, '', 'Default');
+        $option = new InputOption('option', null, InputOption::VALUE_OPTIONAL, null, 'Default');
 
         $this->assertTrue($option->acceptsValue());
         $this->assertFalse($option->isValueRequired());
@@ -208,7 +208,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
 
     public function testRequiredValueWithDefaultValue()
     {
-        $option = new InputOption('option', null, InputOption::VALUE_REQUIRED, '', 'Default');
+        $option = new InputOption('option', null, InputOption::VALUE_REQUIRED, null, 'Default');
 
         $this->assertTrue($option->acceptsValue());
         $this->assertTrue($option->isValueRequired());
@@ -238,7 +238,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
 
     public function testMultiValuedWithDefaultValue()
     {
-        $option = new InputOption('option', null, InputOption::MULTI_VALUED, '', array('one', 'two'));
+        $option = new InputOption('option', null, InputOption::MULTI_VALUED, null, array('one', 'two'));
 
         $this->assertTrue($option->acceptsValue());
         $this->assertTrue($option->isValueRequired());
@@ -268,7 +268,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfMultiValuedAndDefaultValueNoArray()
     {
-        new InputOption('option', null, InputOption::MULTI_VALUED, '', 'foo');
+        new InputOption('option', null, InputOption::MULTI_VALUED, null, 'foo');
     }
 
     /**
@@ -297,14 +297,14 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testFailIfDescriptionNull()
+    public function testFailIfDescriptionEmpty()
     {
-        new InputOption('option', null, 0, null);
+        new InputOption('option', null, 0, '');
     }
 
     public function testSetValueName()
     {
-        $option = new InputOption('option', null, 0, '', null, 'value-name');
+        $option = new InputOption('option', null, 0, null, null, 'value-name');
 
         $this->assertSame('value-name', $option->getValueName());
     }
@@ -314,7 +314,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfValueNameNoString()
     {
-        new InputOption('option', null, 0, '', null, 1234);
+        new InputOption('option', null, 0, null, null, 1234);
     }
 
     /**
@@ -322,7 +322,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfValueNameNull()
     {
-        new InputOption('option', null, 0, '', null, null);
+        new InputOption('option', null, 0, null, null, null);
     }
 
     /**
@@ -330,7 +330,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfValueNameEmpty()
     {
-        new InputOption('option', null, 0, '', null, '');
+        new InputOption('option', null, 0, null, null, '');
     }
 
     public function testPreferLongName()
@@ -388,7 +388,7 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
         return array(
             array(new InputOption('option'), new InputOption('option')),
             array(new InputOption('option'), new InputOption('option', null, 0, 'Description')),
-            array(new InputOption('option'), new InputOption('option', null, 0, '', null, 'value-name')),
+            array(new InputOption('option'), new InputOption('option', null, 0, null, null, 'value-name')),
             array(new InputOption('option', 'o'), new InputOption('option', 'o')),
             array(new InputOption('option', 'o', InputOption::VALUE_NONE), new InputOption('option', 'o', InputOption::VALUE_NONE)),
             array(new InputOption('option', 'o', InputOption::VALUE_REQUIRED), new InputOption('option', 'o', InputOption::VALUE_REQUIRED)),
@@ -400,8 +400,8 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
             array(new InputOption('option', 'o', InputOption::VALUE_REQUIRED | InputOption::PREFER_SHORT_NAME), new InputOption('option', 'o', InputOption::VALUE_REQUIRED | InputOption::PREFER_SHORT_NAME)),
             array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL | InputOption::PREFER_SHORT_NAME), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL | InputOption::PREFER_SHORT_NAME)),
             array(new InputOption('option', 'o', InputOption::MULTI_VALUED | InputOption::PREFER_SHORT_NAME), new InputOption('option', 'o', InputOption::MULTI_VALUED | InputOption::PREFER_SHORT_NAME)),
-            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', 'foo'), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', 'foo')),
-            array(new InputOption('option', 'o', InputOption::MULTI_VALUED, '', null), new InputOption('option', 'o', InputOption::MULTI_VALUED, '', array())),
+            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, 'foo'), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, 'foo')),
+            array(new InputOption('option', 'o', InputOption::MULTI_VALUED, null, null), new InputOption('option', 'o', InputOption::MULTI_VALUED, null, array())),
         );
     }
 
@@ -421,10 +421,10 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
             array(new InputOption('option', 'o', InputOption::PREFER_SHORT_NAME | InputOption::VALUE_NONE), new InputOption('option', 'o', InputOption::PREFER_SHORT_NAME | InputOption::VALUE_REQUIRED)),
             array(new InputOption('option', 'o', InputOption::PREFER_SHORT_NAME | InputOption::VALUE_NONE), new InputOption('option', 'o', InputOption::PREFER_SHORT_NAME | InputOption::VALUE_OPTIONAL)),
             array(new InputOption('option', 'o', InputOption::PREFER_SHORT_NAME | InputOption::VALUE_NONE), new InputOption('option', 'o', InputOption::PREFER_SHORT_NAME | InputOption::MULTI_VALUED)),
-            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', null), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', 'null')),
-            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', 1), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', '1')),
-            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', 'foo'), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, '', 'bar')),
-            array(new InputOption('option', 'o', InputOption::MULTI_VALUED, '', array('foo')), new InputOption('option', 'o', InputOption::MULTI_VALUED, '', array('bar'))),
+            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, null), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, 'null')),
+            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, 1), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, '1')),
+            array(new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, 'foo'), new InputOption('option', 'o', InputOption::VALUE_OPTIONAL, null, 'bar')),
+            array(new InputOption('option', 'o', InputOption::MULTI_VALUED, null, array('foo')), new InputOption('option', 'o', InputOption::MULTI_VALUED, null, array('bar'))),
         );
     }
 }

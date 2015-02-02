@@ -104,13 +104,14 @@ class InputArgument
      * @param mixed  $defaultValue The default value of the argument (must be
      *                             null for the flag {@link self::REQUIRED}).
      */
-    public function __construct($name, $flags = 0, $description = '', $defaultValue = null)
+    public function __construct($name, $flags = 0, $description = null, $defaultValue = null)
     {
         Assert::string($name, 'The argument name must be a string. Got: %s');
         Assert::notEmpty($name, 'The argument name must not be empty.');
         Assert::startsWithLetter($name, 'The argument name must start with a letter.');
         Assert::regex($name, '~^[a-zA-Z0-9\-]+$~', 'The argument name must contain letters, digits and hyphens only.');
-        Assert::string($description, 'The argument description must be a string. Got: %s');
+        Assert::nullOrString($description, 'The argument description must be a string or null. Got: %s');
+        Assert::nullOrNotEmpty($description, 'The argument description must not be empty.');
 
         $this->assertFlagsValid($flags);
 
