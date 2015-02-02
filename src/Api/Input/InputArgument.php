@@ -15,7 +15,44 @@ use InvalidArgumentException;
 use Webmozart\Console\Assert\Assert;
 
 /**
- * An input argument.
+ * An command line argument.
+ *
+ * Command line arguments are passed after the command and its options. In the
+ * example below, "/" is the argument to the "ls" command.
+ *
+ * ```
+ * $ ls /
+ * ```
+ *
+ * Arguments can be either optional or required. By default, all arguments are
+ * optional, but you can explicitly make an argument optional or required by
+ * passing one of the flags {@link OPTIONAL} and {@link REQUIRED} to the
+ * constructor:
+ *
+ * ```php
+ * $argument = new InputArgument('directory', InputArgument::REQUIRED);
+ * ```
+ *
+ * Arguments can also be multi-valued. Multi-valued arguments can be passed any
+ * number of times:
+ *
+ * ```
+ * $ ls / /home /usr/share
+ * ```
+ *
+ * To create a multi-valued argument, pass the flag {@link MULTI_VALUED} to the
+ * constructor:
+ *
+ * ```php
+ * $argument = new InputArgument('directory', InputArgument::MULTI_VALUED);
+ * ```
+ *
+ * You can combine the {@link MULTI_VALUED} flag with either {@link OPTIONAL}
+ * or {@link REQUIRED} using the bitwise operator "|":
+ *
+ * ```php
+ * $argument = new InputArgument('directory', InputArgument::REQUIRED | InputArgument::MULTI_VALUED);
+ * ```
  *
  * @since  1.0
  * @author Fabien Potencier <fabien@symfony.com>
@@ -183,6 +220,22 @@ class InputArgument
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Returns whether the argument equals another argument.
+     *
+     * The description is ignored when comparing the arguments.
+     *
+     * @param InputArgument $other The argument to compare.
+     *
+     * @return bool Returns `true` if the arguments are equal.
+     */
+    public function equals(InputArgument $other)
+    {
+        return $other->name === $this->name
+            && $other->flags === $this->flags
+            && $other->defaultValue === $this->defaultValue;
     }
 
     private function assertFlagsValid($flags)

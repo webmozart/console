@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of the Symfony package.
+ * This file is part of the webmozart/console package.
  *
- * (c) Fabien Potencier <fabien@symfony.com>
+ * (c) Bernhard Schussek <bschussek@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -217,5 +217,51 @@ class InputArgumentTest extends PHPUnit_Framework_TestCase
     public function testFailIfDescriptionNoString()
     {
         new InputArgument('argument', 0, 1234);
+    }
+
+    /**
+     * @dataProvider getEqualTests
+     */
+    public function testEquals(InputArgument $a, InputArgument $b)
+    {
+        $this->assertTrue($a->equals($b));
+        $this->assertTrue($b->equals($a));
+    }
+
+    /**
+     * @dataProvider getNotEqualTests
+     */
+    public function testNotEquals(InputArgument $a, InputArgument $b)
+    {
+        $this->assertFalse($a->equals($b));
+        $this->assertFalse($b->equals($a));
+    }
+
+    public function getEqualTests()
+    {
+        return array(
+            array(new InputArgument('argument'), new InputArgument('argument')),
+            array(new InputArgument('argument'), new InputArgument('argument', 0, 'Description')),
+            array(new InputArgument('argument'), new InputArgument('argument')),
+            array(new InputArgument('argument', InputArgument::REQUIRED), new InputArgument('argument', InputArgument::REQUIRED)),
+            array(new InputArgument('argument', InputArgument::OPTIONAL), new InputArgument('argument', InputArgument::OPTIONAL)),
+            array(new InputArgument('argument', InputArgument::MULTI_VALUED), new InputArgument('argument', InputArgument::MULTI_VALUED)),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, '', 'foo'), new InputArgument('argument', InputArgument::OPTIONAL, '', 'foo')),
+            array(new InputArgument('argument', InputArgument::MULTI_VALUED, '', null), new InputArgument('argument', InputArgument::MULTI_VALUED, '', array())),
+        );
+    }
+
+    public function getNotEqualTests()
+    {
+        return array(
+            array(new InputArgument('argument'), new InputArgument('argumen')),
+            array(new InputArgument('argument', InputArgument::REQUIRED), new InputArgument('argument', InputArgument::OPTIONAL)),
+            array(new InputArgument('argument', InputArgument::REQUIRED), new InputArgument('argument', InputArgument::MULTI_VALUED)),
+            array(new InputArgument('argument', InputArgument::OPTIONAL), new InputArgument('argument', InputArgument::MULTI_VALUED)),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, '', null), new InputArgument('argument', InputArgument::OPTIONAL, '', 'null')),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, '', 1), new InputArgument('argument', InputArgument::OPTIONAL, '', '1')),
+            array(new InputArgument('argument', InputArgument::OPTIONAL, '', 'foo'), new InputArgument('argument', InputArgument::OPTIONAL, '', 'bar')),
+            array(new InputArgument('argument', InputArgument::MULTI_VALUED, '', array('foo')), new InputArgument('argument', InputArgument::MULTI_VALUED, '', array('bar'))),
+        );
     }
 }

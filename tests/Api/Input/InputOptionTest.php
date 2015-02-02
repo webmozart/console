@@ -71,6 +71,14 @@ class InputOptionTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
+    public function testFailIfLongNameContainsOneCharacterOnly()
+    {
+        new InputOption('f');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testFailIfLongNameContainsSpaces()
     {
         new InputOption('foo bar');

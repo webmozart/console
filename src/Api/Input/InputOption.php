@@ -15,7 +15,45 @@ use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Webmozart\Console\Assert\Assert;
 
 /**
- * An input option.
+ * A command line option.
+ *
+ * Command line options are passed after the command name. Each option has a
+ * long name that is prefixed by two dashes ("--") and optionally a short name
+ * that is prefixed by one dash only ("-"). The long name must have at least
+ * two characters, the short name contains one single letter only.
+ *
+ * In the example below, "--all" and "-a" are the long and short names of the
+ * same option:
+ *
+ * ```
+ * $ ls -a
+ * $ ls --all
+ * ```
+ *
+ * The long and short names are passed to the constructor of this class. The
+ * leading dashes can be omitted:
+ *
+ * ```php
+ * $option = new InputOption('all', 'a');
+ * ```
+ *
+ * If an option accepts a value, you must pass one of the flags
+ * {@link VALUE_REQUIRED}, {@link VALUE_OPTIONAL} or {@link MULTI_VALUED} to
+ * the constructor:
+ *
+ * ```php
+ * $option = new InputOption('format', null, InputOption::VALUE_REQUIRED);
+ * ```
+ *
+ *  * The flag {@link VALUE_REQUIRED} indicates that a value must always be
+ *    passed.
+ *  * The flag {@link VALUE_OPTIONAL} indicates that a value may optionally be
+ *    passed. If no value is passed, the default value passed to the constructor
+ *    is returned, which defaults to `null`.
+ *  * The flag {@link MULTI_VALUED} indicates that the option can be passed
+ *    multiple times with different values. The passed values are returned to
+ *    the application as array. The value of a multi-valued option is always
+ *    required.
  *
  * @since  1.0
  * @author Fabien Potencier <fabien@symfony.com>
@@ -331,6 +369,7 @@ class InputOption
     {
         Assert::string($longName, 'The long option name must be a string. Got: %s');
         Assert::notEmpty($longName, 'The long option name must not be empty.');
+        Assert::greaterThan(strlen($longName), 1, sprintf('The long option name must contain more than one character. Got: "%s"', $longName));
         Assert::startsWithLetter($longName, 'The long option name must start with a letter.');
         Assert::regex($longName, '~^[a-zA-Z0-9\-]+$~', 'The long option name must contain letters, digits and hyphens only.');
     }
@@ -341,7 +380,7 @@ class InputOption
         Assert::nullOrNotEmpty($shortName, 'The short option name must not be empty.');
 
         if (null !== $shortName) {
-            Assert::true(1 === strlen($shortName), sprintf('The short option name must be exactly one letter. Got: %s', $shortName));
+            Assert::true(1 === strlen($shortName), sprintf('The short option name must be exactly one letter. Got: "%s"', $shortName));
         }
 
         if (null === $shortName && ($flags & self::PREFER_SHORT_NAME)) {

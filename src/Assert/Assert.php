@@ -38,8 +38,9 @@ use Traversable;
  * @method static void nullOrFileExists($value, $message = null)
  * @method static void nullOrFile($value, $message = null)
  * @method static void nullOrDirectory($value, $message = null)
- * @method static void nullOrPath($value, $message = null)
- * @method static void nullOrGlob($value, $message = null)
+ * @method static void nullOrArgumentName($value, $message = null)
+ * @method static void nullOrLongOptionName($value, $message = null)
+ * @method static void nullOrShortOptionName($value, $message = null)
  * @method static void allString($values, $message = null)
  * @method static void allInteger($values, $message = null)
  * @method static void allFloat($values, $message = null)
@@ -60,8 +61,9 @@ use Traversable;
  * @method static void allFileExists($values, $message = null)
  * @method static void allFile($values, $message = null)
  * @method static void allDirectory($values, $message = null)
- * @method static void allPath($values, $message = null)
- * @method static void allGlob($values, $message = null)
+ * @method static void allArgumentName($values, $message = null)
+ * @method static void allLongOptionName($values, $message = null)
+ * @method static void allShortOptionName($values, $message = null)
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -369,18 +371,22 @@ class Assert
         }
     }
 
-    public static function path($path)
+    public static function argumentName($value)
     {
-        self::string($path, 'The path must be a string. Got: %s');
-        self::notEmpty($path, 'The path must not be empty.');
-        self::startsWith($path, '/', 'The path %2$s is not absolute.');
+        self::string($value, 'The argument name must be a string. Got: %s');
+        self::notEmpty($value, 'The argument name must not be empty.');
     }
 
-    public static function glob($glob)
+    public static function longOptionName($value)
     {
-        self::string($glob, 'The glob must be a string. Got: %s');
-        self::notEmpty($glob, 'The glob must not be empty.');
-        self::startsWith($glob, '/', 'The glob %2$s is not absolute.');
+        self::string($value, 'The long option name must be a string. Got: %s');
+        self::notEmpty($value, 'The long option name must not be empty.');
+    }
+
+    public static function shortOptionName($value)
+    {
+        self::string($value, 'The short option name must be a string. Got: %s');
+        self::notEmpty($value, 'The short option name must not be empty.');
     }
 
     public static function toString($value)
