@@ -120,6 +120,16 @@ class Assert
         }
     }
 
+    public static function isCallable($value, $message = '')
+    {
+        if (!is_callable($value)) {
+            throw new InvalidArgumentException(sprintf(
+                $message ?: 'Expected a callable. Got: %s',
+                is_object($value) ? get_class($value) : gettype($value)
+            ));
+        }
+    }
+
     public static function isArray($value, $message = '')
     {
         if (!is_array($value)) {

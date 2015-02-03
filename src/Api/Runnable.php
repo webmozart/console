@@ -1,0 +1,35 @@
+<?php
+
+/*
+ * This file is part of the webmozart/console package.
+ *
+ * (c) Bernhard Schussek <bschussek@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Webmozart\Console\Api;
+
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+/**
+ * Runs a console input.
+ *
+ * @since  1.0
+ * @author Bernhard Schussek <bschussek@gmail.com>
+ */
+interface Runnable
+{
+    /**
+     * Runs a console input.
+     *
+     * @param InputInterface  $input       The console input.
+     * @param OutputInterface $output      The standard output.
+     * @param OutputInterface $errorOutput The error output.
+     *
+     * @return int Returns 0 on success and a positive integer on error.
+     */
+    public function run(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput);
+}
