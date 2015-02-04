@@ -321,24 +321,6 @@ class InputOption
         return $this->valueName;
     }
 
-    /**
-     * Returns whether the option equals another option.
-     *
-     * The description and the value name are ignored when comparing the
-     * options.
-     *
-     * @param InputOption $other The option to compare.
-     *
-     * @return bool Returns `true` if the options are equal.
-     */
-    public function equals(InputOption $other)
-    {
-        return $other->longName === $this->longName
-            && $other->shortName === $this->shortName
-            && $other->flags === $this->flags
-            && $other->defaultValue === $this->defaultValue;
-    }
-
     private function assertFlagsValid($flags)
     {
         Assert::integer($flags, 'The option flags must be an integer. Got: %s');

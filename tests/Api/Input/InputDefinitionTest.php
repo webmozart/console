@@ -78,18 +78,6 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($argument, $definition->getArgument('argument'));
     }
 
-    public function testGetArgumentPrefersOverriddenArgument()
-    {
-        $baseDefinition = new InputDefinition(array(
-            $argument1 = new InputArgument('argument'),
-        ));
-        $definition = new InputDefinition(array(
-            $argument2 = new InputArgument('argument'),
-        ), $baseDefinition);
-
-        $this->assertSame($argument2, $definition->getArgument('argument'));
-    }
-
     /**
      * @expectedException \OutOfBoundsException
      * @expectedExceptionMessage foobar
@@ -133,20 +121,6 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
         $definition = new InputDefinition(array(), $baseDefinition);
 
         $this->assertSame($argument, $definition->getArgument(0));
-    }
-
-    public function testGetArgumentByPositionPrefersOverriddenArgument()
-    {
-        $baseDefinition = new InputDefinition(array(
-            $argument1 = new InputArgument('argument1'),
-            $argument2 = new InputArgument('argument2'),
-        ));
-        $definition = new InputDefinition(array(
-            $argument3 = new InputArgument('argument1'),
-        ), $baseDefinition);
-
-        $this->assertSame($argument3, $definition->getArgument(0));
-        $this->assertSame($argument2, $definition->getArgument(1));
     }
 
     /**
@@ -239,20 +213,6 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(
             'argument2' => $argument2,
         ), $definition->getArguments(false));
-    }
-
-    public function testGetArgumentsPrefersOverriddenArguments()
-    {
-        $baseDefinition = new InputDefinition(array(
-            $argument1 = new InputArgument('argument'),
-        ));
-        $definition = new InputDefinition(array(
-            $argument2 = new InputArgument('argument'),
-        ), $baseDefinition);
-
-        $this->assertSame(array(
-            'argument' => $argument2,
-        ), $definition->getArguments());
     }
 
     /**
@@ -527,18 +487,6 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertSame(1, $definition->getNumberOfArguments(false));
     }
 
-    public function testGetNumberOfArgumentsCountsDuplicateArgumentsOnlyOnce()
-    {
-        $baseDefinition = new InputDefinition(array(
-            new InputArgument('argument'),
-        ));
-        $definition = new InputDefinition(array(
-            new InputArgument('argument'),
-        ), $baseDefinition);
-
-        $this->assertSame(1, $definition->getNumberOfArguments());
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -575,18 +523,6 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(2, $definition->getNumberOfRequiredArguments());
         $this->assertSame(1, $definition->getNumberOfRequiredArguments(false));
-    }
-
-    public function testGetNumberOfRequiredArgumentsCountsDuplicateArgumentsOnlyOnce()
-    {
-        $baseDefinition = new InputDefinition(array(
-            new InputArgument('argument', InputArgument::REQUIRED),
-        ));
-        $definition = new InputDefinition(array(
-            new InputArgument('argument', InputArgument::REQUIRED),
-        ), $baseDefinition);
-
-        $this->assertSame(1, $definition->getNumberOfRequiredArguments());
     }
 
     /**
@@ -721,18 +657,6 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
         $definition = new InputDefinition(array(), $baseDefinition);
 
         $this->assertSame($option, $definition->getOption('o'));
-    }
-
-    public function testGetOptionPrefersOverriddenOption()
-    {
-        $baseDefinition = new InputDefinition(array(
-            $option1 = new InputOption('option'),
-        ));
-        $definition = new InputDefinition(array(
-            $option2 = new InputOption('option', null, 0, 'Refined description'),
-        ), $baseDefinition);
-
-        $this->assertSame($option2, $definition->getOption('option'));
     }
 
     /**

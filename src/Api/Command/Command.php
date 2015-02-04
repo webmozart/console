@@ -617,7 +617,7 @@ class Command implements Runnable
             throw new LogicException('The command cannot be modified once it is frozen.');
         }
 
-        $this->definitionBuilder->addArgument(new InputArgument($name, $flags, $description, $default));
+        $this->definitionBuilder->appendArgument(new InputArgument($name, $flags, $description, $default));
 
         return $this;
     }
@@ -648,7 +648,7 @@ class Command implements Runnable
             throw new LogicException('The command cannot be modified once it is frozen.');
         }
 
-        $this->definitionBuilder->addOption(new InputOption($longName, $shortName, $flags, $description, $default));
+        $this->definitionBuilder->appendOption(new InputOption($longName, $shortName, $flags, $description, $default));
 
         return $this;
     }

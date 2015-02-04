@@ -223,22 +223,6 @@ class InputArgument
         return $this->description;
     }
 
-    /**
-     * Returns whether the argument equals another argument.
-     *
-     * The description is ignored when comparing the arguments.
-     *
-     * @param InputArgument $other The argument to compare.
-     *
-     * @return bool Returns `true` if the arguments are equal.
-     */
-    public function equals(InputArgument $other)
-    {
-        return $other->name === $this->name
-            && $other->flags === $this->flags
-            && $other->defaultValue === $this->defaultValue;
-    }
-
     private function assertFlagsValid($flags)
     {
         Assert::integer($flags, 'The argument flags must be an integer. Got: %s');

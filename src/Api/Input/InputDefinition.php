@@ -541,9 +541,9 @@ class InputDefinition
 
         foreach ($elements as $element) {
             if ($element instanceof InputOption) {
-                $builder->addOption($element);
+                $builder->appendOption($element);
             } elseif ($element instanceof InputArgument) {
-                $builder->addArgument($element);
+                $builder->appendArgument($element);
             } else {
                 throw new InvalidArgumentException(sprintf(
                     'Expected instances of InputOption or InputArgument. Got: %s',

@@ -120,7 +120,7 @@ class InputDefinitionBuilder
      *
      * @throws LogicException If an incorrect argument is given.
      *
-     * @see addArgument()
+     * @see appendArgument()
      */
     public function setArguments(array $arguments)
     {
@@ -128,29 +128,29 @@ class InputDefinitionBuilder
         $this->hasOptionalArg = false;
         $this->hasMultiValuedArg = false;
 
-        $this->addArguments($arguments);
+        $this->appendArguments($arguments);
     }
 
     /**
-     * Adds arguments to the builder.
+     * Adds arguments at the end of the argument list.
      *
      * The existing arguments stored in the builder are preserved.
      *
-     * @param InputArgument[] $arguments The arguments to add to the builder.
+     * @param InputArgument[] $arguments The arguments to append.
      *
      * @throws LogicException If an incorrect argument is given.
      *
-     * @see addArgument()
+     * @see appendArgument()
      */
-    public function addArguments(array $arguments)
+    public function appendArguments(array $arguments)
     {
         foreach ($arguments as $argument) {
-            $this->addArgument($argument);
+            $this->appendArgument($argument);
         }
     }
 
     /**
-     * Adds an argument to the builder.
+     * Adds an argument at the end of the argument list.
      *
      * The existing arguments stored in the builder are preserved.
      *
@@ -160,21 +160,15 @@ class InputDefinitionBuilder
      * Adding required arguments after optional arguments is not supported.
      * Also in this case an exception is thrown.
      *
-     * You can only add arguments with the names of existing arguments if the
-     * flags and the default value of the argument stays the same. This is
-     * useful if you want to adjust the description of an argument that has been
-     * added before. If you add an argument with an existing name and different
-     * flags or a different default value, an exception is thrown.
-     *
-     * @param InputArgument $argument The argument to add to the builder.
+     * @param InputArgument $argument The argument to append.
      *
      * @throws LogicException If an incorrect argument is given.
      */
-    public function addArgument(InputArgument $argument)
+    public function appendArgument(InputArgument $argument)
     {
         $name = $argument->getName();
 
-        if ($this->hasArgument($name) && !$argument->equals($this->getArgument($name))) {
+        if ($this->hasArgument($name)) {
             throw new LogicException(sprintf('An argument with the name "%s" exists already.', $name));
         }
 
@@ -195,6 +189,66 @@ class InputDefinitionBuilder
         }
 
         $this->arguments[$name] = $argument;
+    }
+
+    /**
+     * Adds arguments at the beginning of the argument list.
+     *
+     * The existing arguments stored in the builder are preserved.
+     *
+     * @param InputArgument[] $arguments The arguments to prepend.
+     *
+     * @throws LogicException If an incorrect argument is given.
+     *
+     * @see prependArgument()
+     */
+    public function prependArguments(array $arguments)
+    {
+        for ($i = count($arguments) - 1; $i >= 0; --$i) {
+            $this->prependArgument($arguments[$i]);
+        }
+    }
+
+    /**
+     * Adds an argument at the beginning of the argument list.
+     *
+     * The existing arguments stored in the builder are preserved.
+     *
+     * You cannot insert multi-valued arguments before other arguments. If you
+     * do so, this method throws an exception.
+     *
+     * Inserting optional arguments before required arguments is not supported.
+     * Also in this case an exception is thrown.
+     *
+     * @param InputArgument $argument The argument to prepend.
+     *
+     * @throws LogicException If an incorrect argument is given.
+     */
+    public function prependArgument(InputArgument $argument)
+    {
+        $name = $argument->getName();
+
+        if ($this->hasArgument($name)) {
+            throw new LogicException(sprintf('An argument with the name "%s" exists already.', $name));
+        }
+
+        if ($argument->isMultiValued() && $this->hasArguments(false)) {
+            throw new LogicException('Cannot insert multi-valued arguments before other arguments.');
+        }
+
+        if ($argument->isOptional() && $this->hasRequiredArgument(false)) {
+            throw new LogicException('Cannot insert optional arguments before required ones.');
+        }
+
+        if ($argument->isMultiValued()) {
+            $this->hasMultiValuedArg = true;
+        }
+
+        if ($argument->isOptional()) {
+            $this->hasOptionalArg = true;
+        }
+
+        $this->arguments = array_merge(array($name => $argument), $this->arguments);
     }
 
     /**
@@ -393,63 +447,111 @@ class InputDefinitionBuilder
      *
      * @throws LogicException If an incorrect option is given.
      *
-     * @see addOption()
+     * @see appendOption()
      */
     public function setOptions(array $options)
     {
         $this->options = array();
         $this->optionsByShortName = array();
 
-        $this->addOptions($options);
+        $this->appendOptions($options);
     }
 
     /**
-     * Adds options to the builder.
+     * Adds options at the end of the options list.
      *
      * The existing options stored in the builder are preserved.
      *
-     * @param InputOption[] $options The options to add to the builder.
+     * @param InputOption[] $options The options to append.
      *
      * @throws LogicException If an incorrect option is given.
      *
-     * @see addOption()
+     * @see appendOption()
      */
-    public function addOptions(array $options)
+    public function appendOptions(array $options)
     {
         foreach ($options as $option) {
-            $this->addOption($option);
+            $this->appendOption($option);
         }
     }
 
     /**
-     * Adds an option to the builder.
+     * Adds an option at the end of the options list.
      *
      * The existing options stored in the builder are preserved.
      *
-     * You can only add options with the names of existing options if the
-     * flags and the default value of the option stays the same. This is
-     * useful if you want to adjust the description of an option that has been
-     * added before. If you add an option with an existing name and different
-     * flags or a different default value, an exception is thrown.
-     *
-     * @param InputOption $option The option to add to the builder.
+     * @param InputOption $option The option to append.
      *
      * @throws LogicException If an incorrect option is given.
+     *
+     * @see appendOptions()
      */
-    public function addOption(InputOption $option)
+    public function appendOption(InputOption $option)
     {
         $longName = $option->getLongName();
         $shortName = $option->getShortName();
 
-        if (isset($this->options[$longName]) && !$option->equals($this->options[$longName])) {
+        if (isset($this->options[$longName])) {
             throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
         }
 
-        if (isset($this->optionsByShortName[$shortName]) && !$option->equals($this->optionsByShortName[$shortName])) {
+        if (isset($this->optionsByShortName[$shortName])) {
             throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
         }
 
         $this->options[$longName] = $option;
+
+        if ($option->getShortName()) {
+            $this->optionsByShortName[$option->getShortName()] = $option;
+        }
+    }
+
+    /**
+     * Adds options at the beginning of the options list.
+     *
+     * The options are inserted in the same order as they are passed to this
+     * method.
+     *
+     * The existing options stored in the builder are preserved.
+     *
+     * @param InputOption[] $options The options to prepend.
+     *
+     * @throws LogicException If an incorrect option is given.
+     *
+     * @see prependOption()
+     */
+    public function prependOptions(array $options)
+    {
+        for ($i = count($options) - 1; $i >= 0; --$i) {
+            $this->prependOption($options[$i]);
+        }
+    }
+
+    /**
+     * Adds an option at the beginning of the options list.
+     *
+     * The existing options stored in the builder are preserved.
+     *
+     * @param InputOption $option The option to prepend.
+     *
+     * @throws LogicException If an incorrect option is given.
+     *
+     * @see prependOptions()
+     */
+    public function prependOption(InputOption $option)
+    {
+        $longName = $option->getLongName();
+        $shortName = $option->getShortName();
+
+        if (isset($this->options[$longName])) {
+            throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
+        }
+
+        if (isset($this->optionsByShortName[$shortName])) {
+            throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
+        }
+
+        $this->options = array_merge(array($longName => $option), $this->options);
 
         if ($option->getShortName()) {
             $this->optionsByShortName[$option->getShortName()] = $option;
