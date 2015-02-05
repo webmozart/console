@@ -32,10 +32,14 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     private $commands = array();
 
     /**
+     * @var string[]
+     */
+    private $aliases = array();
+
+    /**
      * Creates a new command collection.
      *
-     * @param Command[] $commands The commands to initially fill the collection
-     *                            with.
+     * @param Command[] $commands The commands to initially add to the collection.
      */
     public function __construct(array $commands = array())
     {
@@ -45,42 +49,32 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Adds a command to the collection.
      *
-     * The command must be frozen, otherwise an exception is thrown.
-     *
      * If a command exists with the same name in the collection, that command
      * is overwritten.
      *
-     * @param Command $command The frozen command to add.
-     *
-     * @throws LogicException If the command is not frozen.
+     * @param Command $command The command to add.
      *
      * @see merge(), replace()
      */
     public function add(Command $command)
     {
-        if (!$command->isFrozen()) {
-            throw new LogicException(sprintf(
-                'The command "%s" must be frozen before adding it to the collection.',
-                $command->getName()
-            ));
-        }
-
         $this->commands[$command->getName()] = $command;
 
+        foreach ($command->getAliases() as $alias) {
+            $this->aliases[$alias] = $command->getName();
+        }
+
         ksort($this->commands);
+        ksort($this->aliases);
     }
 
     /**
      * Adds multiple commands to the collection.
      *
-     * The commands must be frozen, otherwise an exception is thrown.
-     *
      * Existing commands are preserved. Commands with the same names as the
      * passed commands are overwritten.
      *
-     * @param Command[] $commands The frozen commands to add.
-     *
-     * @throws LogicException If a command is not frozen.
+     * @param Command[] $commands The commands to add.
      *
      * @see add(), replace()
      */
@@ -94,13 +88,9 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets the commands in the collection.
      *
-     * The commands must be frozen, otherwise an exception is thrown.
-     *
      * Existing commands are replaced.
      *
-     * @param Command[] $commands The frozen commands to set.
-     *
-     * @throws LogicException If a command is not frozen.
+     * @param Command[] $commands The commands to set.
      *
      * @see add(), merge()
      */
@@ -117,25 +107,29 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return Command The command.
      *
-     * @throws OutOfBoundsException If no command with that name is in the
+     * @throws OutOfBoundsException If no command with that name exists in the
      *                              collection.
      */
     public function get($name)
     {
-        if (!isset($this->commands[$name])) {
-            throw new OutOfBoundsException(sprintf(
-                'The command "%s" does not exist.',
-                $name
-            ));
+        if (isset($this->commands[$name])) {
+            return $this->commands[$name];
         }
 
-        return $this->commands[$name];
+        if (isset($this->aliases[$name])) {
+            return $this->commands[$this->aliases[$name]];
+        }
+
+        throw new OutOfBoundsException(sprintf(
+            'The command "%s" does not exist.',
+            $name
+        ));
     }
 
     /**
      * Removes the command with the given name from the collection.
      *
-     * If no such command can be found, this method does nothing.
+     * If no such command can be found, the method does nothing.
      *
      * @param string $name The name of the command.
      */
@@ -158,7 +152,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Removes all commands frmo the collection.
+     * Removes all commands from the collection.
      */
     public function clear()
     {
@@ -171,11 +165,46 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * The commands in the collection are returned indexed by their names. The
      * result is sorted alphabetically by the command names.
      *
-     * @return Command[] The commands sorted by their names in ascending order.
+     * @return Command[] The commands indexed and sorted by their names in
+     *                   ascending order.
      */
     public function toArray()
     {
         return $this->commands;
+    }
+
+    /**
+     * Returns the names of all commands in the collection.
+     *
+     * The names are sorted alphabetically in ascending order. If you set
+     * `$includeAliases` to `true`, the alias names are included in the result.
+     *
+     * @param bool $includeAliases Whether to include alias names in the result.
+     *
+     * @return string[] The sorted command names.
+     */
+    public function getNames($includeAliases = false)
+    {
+        $names = array_keys($this->commands);
+
+        if ($includeAliases) {
+            $names = array_merge($names, array_keys($this->aliases));
+            sort($names);
+        }
+
+        return $names;
+    }
+
+    /**
+     * Returns the aliases of all commands in the collection.
+     *
+     * The aliases are sorted alphabetically in ascending order.
+     *
+     * @return string[] The sorted command aliases.
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
     }
 
     /**

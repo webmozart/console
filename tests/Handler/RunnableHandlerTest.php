@@ -15,6 +15,7 @@ use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Command\CommandConfig;
 use Webmozart\Console\Handler\RunnableHandler;
 use Webmozart\Console\Tests\Handler\Fixtures\TestRunnable;
 
@@ -29,12 +30,13 @@ class RunnableHandlerTest extends PHPUnit_Framework_TestCase
         $input = new StringInput('ls /');
         $output = new BufferedOutput();
         $errorOutput = new BufferedOutput();
+        $command = new Command(new CommandConfig('command'));
 
         $handler = new RunnableHandler(new TestRunnable());
 
-        $handler->initialize(new Command(), $output, $errorOutput);
-        $handler->handle($input);
+        $handler->initialize($command, $output, $errorOutput);
 
+        $this->assertSame(123, $handler->handle($input));
         $this->assertSame("ls '/'", $output->fetch());
         $this->assertSame("ls '/'", $errorOutput->fetch());
     }

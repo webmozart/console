@@ -11,10 +11,10 @@
 
 namespace Webmozart\Console\CommandHandler;
 
-use Webmozart\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Command\Command;
 
 /**
  * @since  1.0

@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Command\CommandConfig;
 use Webmozart\Console\Handler\CallableHandler;
 
 /**
@@ -30,17 +31,20 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
         $input = new StringInput('ls /');
         $output = new BufferedOutput();
         $errorOutput = new BufferedOutput();
+        $command = new Command(new CommandConfig('command'));
 
         $handler = new CallableHandler(
             function (InputInterface $input, OutputInterface $output, OutputInterface $errorOutput) {
                 $output->write((string) $input);
                 $errorOutput->write((string) $input);
+
+                return 123;
             }
         );
 
-        $handler->initialize(new Command(), $output, $errorOutput);
-        $handler->handle($input);
+        $handler->initialize($command, $output, $errorOutput);
 
+        $this->assertSame(123, $handler->handle($input));
         $this->assertSame("ls '/'", $output->fetch());
         $this->assertSame("ls '/'", $errorOutput->fetch());
     }

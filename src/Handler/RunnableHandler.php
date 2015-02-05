@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Runnable;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * Delegates command handling to a {@link Runnable} object.
@@ -65,6 +64,6 @@ class RunnableHandler implements CommandHandler
      */
     public function handle(InputInterface $input)
     {
-        $this->runnable->run($input, $this->output, $this->errorOutput);
+        return $this->runnable->run($input, $this->output, $this->errorOutput);
     }
 }

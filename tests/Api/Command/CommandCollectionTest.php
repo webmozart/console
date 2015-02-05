@@ -14,7 +14,7 @@ namespace Webmozart\Console\Tests\Api\Command;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\FrozenCommand;
+use Webmozart\Console\Api\Command\CommandConfig;
 
 /**
  * @since  1.0
@@ -35,8 +35,8 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
     public function testCreateWithCommands()
     {
         $collection = new CommandCollection(array(
-            $ls = new FrozenCommand('ls'),
-            $cd = new FrozenCommand('cd'),
+            $ls = new Command(new CommandConfig('ls')),
+            $cd = new Command(new CommandConfig('cd')),
         ));
 
         // return sorted result
@@ -45,29 +45,19 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
 
     public function testAdd()
     {
-        $this->collection->add($ls = new FrozenCommand('ls'));
-        $this->collection->add($cd = new FrozenCommand('cd'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
+        $this->collection->add($cd = new Command(new CommandConfig('cd')));
 
         // return sorted result
         $this->assertSame(array('cd' => $cd, 'ls' => $ls), $this->collection->toArray());
     }
 
-    /**
-     * @expectedException \LogicException
-     */
-    public function testAddFailsIfNotFrozen()
-    {
-        // the name of an unfrozen command can be changed, which breaks the
-        // collection
-        $this->collection->add(new Command('ls'));
-    }
-
     public function testMerge()
     {
-        $this->collection->add($ls = new FrozenCommand('ls'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
         $this->collection->merge(array(
-            $cd = new FrozenCommand('cd'),
-            $cat = new FrozenCommand('cat'),
+            $cd = new Command(new CommandConfig('cd')),
+            $cat = new Command(new CommandConfig('cat')),
         ));
 
         // return sorted result
@@ -76,10 +66,10 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
 
     public function testReplace()
     {
-        $this->collection->add($ls = new FrozenCommand('ls'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
         $this->collection->replace(array(
-            $cd = new FrozenCommand('cd'),
-            $cat = new FrozenCommand('cat'),
+            $cd = new Command(new CommandConfig('cd')),
+            $cat = new Command(new CommandConfig('cat')),
         ));
 
         // return sorted result
@@ -88,11 +78,21 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
 
     public function testGet()
     {
-        $this->collection->add($ls = new FrozenCommand('ls'));
-        $this->collection->add($cd = new FrozenCommand('cd'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
+        $this->collection->add($cd = new Command(new CommandConfig('cd')));
 
         $this->assertSame($ls, $this->collection->get('ls'));
         $this->assertSame($cd, $this->collection->get('cd'));
+    }
+
+    public function testGetByAlias()
+    {
+        $ls = new Command(CommandConfig::create('ls')->addAlias('ls-alias'));
+
+        $this->collection->add($ls);
+
+        $this->assertSame($ls, $this->collection->get('ls'));
+        $this->assertSame($ls, $this->collection->get('ls-alias'));
     }
 
     /**
@@ -107,13 +107,13 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
     public function testContains()
     {
         $this->assertFalse($this->collection->contains('ls'));
-        $this->collection->add($ls = new FrozenCommand('ls'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
         $this->assertTrue($this->collection->contains('ls'));
     }
 
     public function testRemove()
     {
-        $this->collection->add($ls = new FrozenCommand('ls'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
         $this->assertTrue($this->collection->contains('ls'));
         $this->collection->remove('ls');
         $this->assertFalse($this->collection->contains('ls'));
@@ -126,8 +126,8 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
 
     public function testClear()
     {
-        $this->collection->add(new FrozenCommand('ls'));
-        $this->collection->add(new FrozenCommand('cd'));
+        $this->collection->add(new Command(new CommandConfig('ls')));
+        $this->collection->add(new Command(new CommandConfig('cd')));
 
         $this->assertTrue($this->collection->contains('ls'));
         $this->assertTrue($this->collection->contains('cd'));
@@ -138,12 +138,45 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->collection->contains('cd'));
     }
 
+    public function testGetNames()
+    {
+        $ls = new Command(CommandConfig::create('ls')->addAlias('ls-alias'));
+        $cd = new Command(CommandConfig::create('cd')->addAlias('cd-alias'));
+
+        $this->collection->add($ls);
+        $this->collection->add($cd);
+
+        $this->assertSame(array('cd', 'ls'), $this->collection->getNames());
+    }
+
+    public function testGetNamesWithAliases()
+    {
+        $ls = new Command(CommandConfig::create('ls')->addAlias('ls-alias'));
+        $cd = new Command(CommandConfig::create('cd')->addAlias('cd-alias'));
+
+        $this->collection->add($ls);
+        $this->collection->add($cd);
+
+        $this->assertSame(array('cd', 'cd-alias', 'ls', 'ls-alias'), $this->collection->getNames(true));
+    }
+
+    public function testGetAliases()
+    {
+        $ls = new Command(CommandConfig::create('ls')->addAlias('ls-alias'));
+        $cd = new Command(CommandConfig::create('cd')->addAlias('cd-alias'));
+
+        $this->collection->add($ls);
+        $this->collection->add($cd);
+
+        $this->assertSame(array('cd-alias' => 'cd', 'ls-alias' => 'ls'), $this->collection->getAliases());
+    }
+
     public function testCount()
     {
         $this->assertCount(0, $this->collection);
-        $this->collection->add(new FrozenCommand('ls'));
+        $this->collection->add(new Command(new CommandConfig('ls')));
         $this->assertCount(1, $this->collection);
-        $this->collection->add(new FrozenCommand('cd'));
+        $this->collection->add(new Command(new CommandConfig('cd')));
         $this->assertCount(2, $this->collection);
         $this->collection->remove('ls');
         $this->assertCount(1, $this->collection);
@@ -155,7 +188,7 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
     {
         $this->assertFalse(isset($this->collection['ls']));
 
-        $this->collection[] = $ls = new FrozenCommand('ls');
+        $this->collection[] = $ls = new Command(new CommandConfig('ls'));
 
         $this->assertTrue(isset($this->collection['ls']));
         $this->assertSame($ls, $this->collection['ls']);
@@ -172,13 +205,13 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testArrayAccessFailsIfSetWithKey()
     {
-        $this->collection['foobar'] = new FrozenCommand('ls');
+        $this->collection['foobar'] = new Command(new CommandConfig('ls'));
     }
 
     public function testIterator()
     {
-        $this->collection->add($ls = new FrozenCommand('ls'));
-        $this->collection->add($cd = new FrozenCommand('cd'));
+        $this->collection->add($ls = new Command(new CommandConfig('ls')));
+        $this->collection->add($cd = new Command(new CommandConfig('cd')));
 
         $result = iterator_to_array($this->collection);
 

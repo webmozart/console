@@ -75,6 +75,6 @@ class CallableHandler implements CommandHandler
      */
     public function handle(InputInterface $input)
     {
-        call_user_func($this->callable, $input, $this->output, $this->errorOutput);
+        return call_user_func($this->callable, $input, $this->output, $this->errorOutput);
     }
 }
