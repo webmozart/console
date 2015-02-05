@@ -26,6 +26,13 @@ class OptionCommandConfig extends SubCommandConfig
      */
     private $shortName;
 
+    /**
+     * Creates a new configuration.
+     *
+     * @param string        $name         The long option name of the command.
+     * @param string        $shortName    The short option name of the command.
+     * @param CommandConfig $parentConfig The parent configuration.
+     */
     public function __construct($name = null, $shortName = null, CommandConfig $parentConfig = null)
     {
         parent::__construct($name, $parentConfig);
@@ -33,11 +40,33 @@ class OptionCommandConfig extends SubCommandConfig
         $this->setShortName($shortName);
     }
 
+    /**
+     * Returns the short option name of the command.
+     *
+     * @return string The short option name.
+     */
     public function getShortName()
     {
         return $this->shortName;
     }
 
+    /**
+     * Sets the short option name of the command.
+     *
+     * The short name must consist of a single letter. The short name is
+     * preceded by a single dash "-" when calling the command:
+     *
+     * ```
+     * $ server -d localhost
+     * ```
+     *
+     * In the example above, "d" is the short name of the "server --delete"
+     * command.
+     *
+     * @param string $shortName The short option name.
+     *
+     * @return static The current instance.
+     */
     public function setShortName($shortName)
     {
         if (null !== $shortName) {
@@ -47,5 +76,7 @@ class OptionCommandConfig extends SubCommandConfig
         }
 
         $this->shortName = $shortName;
+
+        return $this;
     }
 }

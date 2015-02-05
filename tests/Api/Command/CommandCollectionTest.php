@@ -15,6 +15,7 @@ use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\CommandConfig;
+use Webmozart\Console\Api\Command\OptionCommandConfig;
 
 /**
  * @since  1.0
@@ -95,6 +96,16 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($ls, $this->collection->get('ls-alias'));
     }
 
+    public function testGetByShortName()
+    {
+        $ls = new Command(new OptionCommandConfig('ls', 'l'));
+
+        $this->collection->add($ls);
+
+        $this->assertSame($ls, $this->collection->get('ls'));
+        $this->assertSame($ls, $this->collection->get('l'));
+    }
+
     /**
      * @expectedException \OutOfBoundsException
      * @expectedExceptionMessage foobar
@@ -122,6 +133,17 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->collection->contains('ls'));
         $this->assertTrue($this->collection->contains('ls-alias'));
+    }
+
+    public function testContainsShortNames()
+    {
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('l'));
+
+        $this->collection->add($ls = new Command(new OptionCommandConfig('ls', 'l')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('l'));
     }
 
     public function testRemove()
@@ -179,20 +201,46 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->collection->contains('ls-alias'));
     }
 
+    public function testRemoveShortNames()
+    {
+        $this->collection->add(new Command(new OptionCommandConfig('ls', 'l')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('l'));
+
+        $this->collection->remove('ls');
+
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('l'));
+    }
+
+    public function testRemoveByShortName()
+    {
+        $this->collection->add(new Command(new OptionCommandConfig('ls', 'l')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('l'));
+
+        $this->collection->remove('l');
+
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('l'));
+    }
+
     public function testClear()
     {
-        $this->collection->add(new Command(CommandConfig::create('ls')->addAlias('ls-alias')));
+        $this->collection->add(new Command(new OptionCommandConfig('ls', 'l')));
         $this->collection->add(new Command(CommandConfig::create('cd')->addAlias('cd-alias')));
 
         $this->assertTrue($this->collection->contains('ls'));
-        $this->assertTrue($this->collection->contains('ls-alias'));
+        $this->assertTrue($this->collection->contains('l'));
         $this->assertTrue($this->collection->contains('cd'));
         $this->assertTrue($this->collection->contains('cd-alias'));
 
         $this->collection->clear();
 
         $this->assertFalse($this->collection->contains('ls'));
-        $this->assertFalse($this->collection->contains('ls-alias'));
+        $this->assertFalse($this->collection->contains('l'));
         $this->assertFalse($this->collection->contains('cd'));
         $this->assertFalse($this->collection->contains('cd-alias'));
     }

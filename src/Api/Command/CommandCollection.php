@@ -34,7 +34,12 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     /**
      * @var string[]
      */
-    private $aliasesToNames = array();
+    private $shortNameIndex = array();
+
+    /**
+     * @var string[]
+     */
+    private $aliasIndex = array();
 
     /**
      * Creates a new command collection.
@@ -58,14 +63,20 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      */
     public function add(Command $command)
     {
-        $this->commands[$command->getName()] = $command;
+        $name = $command->getName();
+
+        $this->commands[$name] = $command;
+
+        if ($shortName = $command->getShortName()) {
+            $this->shortNameIndex[$shortName] = $name;
+        }
 
         foreach ($command->getAliases() as $alias) {
-            $this->aliasesToNames[$alias] = $command->getName();
+            $this->aliasIndex[$alias] = $name;
         }
 
         ksort($this->commands);
-        ksort($this->aliasesToNames);
+        ksort($this->aliasIndex);
     }
 
     /**
@@ -116,8 +127,12 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
             return $this->commands[$name];
         }
 
-        if (isset($this->aliasesToNames[$name])) {
-            return $this->commands[$this->aliasesToNames[$name]];
+        if (isset($this->shortNameIndex[$name])) {
+            return $this->commands[$this->shortNameIndex[$name]];
+        }
+
+        if (isset($this->aliasIndex[$name])) {
+            return $this->commands[$this->aliasIndex[$name]];
         }
 
         throw new OutOfBoundsException(sprintf(
@@ -135,17 +150,29 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      */
     public function remove($name)
     {
-        if (isset($this->aliasesToNames[$name])) {
-            $this->remove($this->aliasesToNames[$name]);
+        if (isset($this->aliasIndex[$name])) {
+            $this->remove($this->aliasIndex[$name]);
+
+            return;
+        }
+
+        if (isset($this->shortNameIndex[$name])) {
+            $this->remove($this->shortNameIndex[$name]);
 
             return;
         }
 
         unset($this->commands[$name]);
 
-        foreach ($this->aliasesToNames as $alias => $targetName) {
+        foreach ($this->shortNameIndex as $shortName => $targetName) {
             if ($name === $targetName) {
-                unset($this->aliasesToNames[$alias]);
+                unset($this->shortNameIndex[$shortName]);
+            }
+        }
+
+        foreach ($this->aliasIndex as $alias => $targetName) {
+            if ($name === $targetName) {
+                unset($this->aliasIndex[$alias]);
             }
         }
     }
@@ -160,7 +187,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      */
     public function contains($name)
     {
-        return isset($this->commands[$name]) || isset($this->aliasesToNames[$name]);
+        return isset($this->commands[$name]) || isset($this->shortNameIndex[$name]) || isset($this->aliasIndex[$name]);
     }
 
     /**
@@ -169,7 +196,8 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     public function clear()
     {
         $this->commands = array();
-        $this->aliasesToNames = array();
+        $this->shortNameIndex = array();
+        $this->aliasIndex = array();
     }
 
     /**
@@ -201,7 +229,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
         $names = array_keys($this->commands);
 
         if ($includeAliases) {
-            $names = array_merge($names, array_keys($this->aliasesToNames));
+            $names = array_merge($names, array_keys($this->aliasIndex));
             sort($names);
         }
 
@@ -217,7 +245,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getAliases()
     {
-        return $this->aliasesToNames;
+        return $this->aliasIndex;
     }
 
     /**

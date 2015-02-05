@@ -35,7 +35,7 @@ class SubCommandConfig extends CommandConfig
     private $parentConfig;
 
     /**
-     * Creates the command.
+     * Creates a new configuration.
      *
      * @param string        $name         The name of the command.
      * @param CommandConfig $parentConfig The command configuration that
