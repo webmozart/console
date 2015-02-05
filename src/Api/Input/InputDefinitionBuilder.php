@@ -21,36 +21,36 @@ use Webmozart\Console\Assert\Assert;
  * Use the methods in this class to dynamically build {@link InputDefinition}
  * instances. When you are done configuring the builder, call
  * {@link buildDefinition()} to build an immutable {@link InputDefinition}
- * instance:
+ * instance. A convenient way for constructing builder instances is the method
+ * {@link InputDefinition::build()}:
  *
  * ```php
- * $builder = new InputDefinitionBuilder();
- * $builder->addArgument(new InputArgument('input'));
- * $builder->addArgument(new InputArgument('output'));
- * $builder->addOption(new InputOption('format', 'f', InputOption::VALUE_REQUIRED));
- *
- * $definition = $builder->buildDefinition();
+ * $definition = InputDefinition::build()
+ *     ->addCommandName(new CommandName('server'))
+ *     ->addCommandOption(new CommandOption('add', 'a'))
+ *     ->addArgument(new InputArgument('host'))
+ *     ->addOption(new InputOption('port', 'p'))
+ *     ->getDefinition();
  * ```
  *
  * You can optionally pass a base input definition. The arguments of the base
  * definition are prepended to the arguments of the built definition. The
- * options of the base definition are appended to the built options:
+ * options of the base definition are added to the built options:
  *
  * ```php
- * $baseDefinition = new InputDefinition(array(
- *     new InputOption('verbose', 'v'),
- * ));
+ * $baseDefinition = InputDefinition::build()
+ *     ->addOption(new InputOption('verbose', 'v'))
+ *     ->getDefinition();
  *
- * $builder = new InputDefinitionBuilder($baseDefinition);
- * $builder->addArgument(new InputArgument('input'));
- * $builder->addArgument(new InputArgument('output'));
- * $builder->addOption(new InputOption('format', 'f', InputOption::VALUE_REQUIRED));
- *
- * $definition = $builder->buildDefinition();
+ * $definition = InputDefinition::build($baseDefinition)
+ *     // ...
+ *     ->getDefinition();
  * ```
  *
+ * Read {@link InputDefinition} for a more detailed description of input
+ * definitions.
+ *
  * @since  1.0
- * @author Fabien Potencier <fabien@symfony.com>
  * @author Bernhard Schussek <bschussek@gmail.com>
  * @see    InputDefinition
  */
@@ -60,6 +60,21 @@ class InputDefinitionBuilder
      * @var InputDefinition
      */
     private $baseDefinition;
+
+    /**
+     * @var CommandName[]
+     */
+    private $commandNames = array();
+
+    /**
+     * @var InputOption[]
+     */
+    private $commandOptions = array();
+
+    /**
+     * @var InputOption[]
+     */
+    private $commandOptionsByShortName = array();
 
     /**
      * @var InputArgument[]
@@ -111,6 +126,289 @@ class InputDefinitionBuilder
     }
 
     /**
+     * Sets the command names of the built definition.
+     *
+     * @param CommandName[] $commandNames The command names.
+     *
+     * @return static The current instance.
+     */
+    public function setCommandNames(array $commandNames)
+    {
+        $this->commandNames = array();
+
+        $this->addCommandNames($commandNames);
+
+        return $this;
+    }
+
+    /**
+     * Adds command names to the built definition.
+     *
+     * @param CommandName[] $commandNames The command names to add.
+     *
+     * @return static The current instance.
+     */
+    public function addCommandNames(array $commandNames)
+    {
+        foreach ($commandNames as $commandName) {
+            $this->addCommandName($commandName);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a command name to the built definition.
+     *
+     * @param CommandName $commandName The command name to add.
+     *
+     * @return static The current instance.
+     */
+    public function addCommandName(CommandName $commandName)
+    {
+        $this->commandNames[] = $commandName;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the builder contains any command names.
+     *
+     * @param bool $includeBase Whether to consider command names of the base
+     *                          definition.
+     *
+     * @return bool Returns `true` if the builder contains any command names and
+     *              `false` otherwise.
+     */
+    public function hasCommandNames($includeBase = true)
+    {
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
+
+        if (count($this->commandNames) > 0) {
+            return true;
+        }
+
+        if ($includeBase && $this->baseDefinition) {
+            return $this->baseDefinition->hasCommandNames();
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns all command names added to the builder.
+     *
+     * @param bool $includeBase Whether to include command names of the base
+     *                          definition in the result.
+     *
+     * @return CommandName[] The command names.
+     */
+    public function getCommandNames($includeBase = true)
+    {
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
+
+        $commandNames = $this->commandNames;
+
+        if ($includeBase && $this->baseDefinition) {
+            $commandNames = array_merge($this->baseDefinition->getCommandNames(), $commandNames);
+        }
+
+        return $commandNames;
+    }
+
+    /**
+     * Sets the command options of the built definition.
+     *
+     * Any existing command options are removed when this method is called.
+     *
+     * @param CommandOption[] $commandOptions The command options of the built
+     *                                        input definition.
+     *
+     * @return static The current instance.
+     *
+     * @throws LogicException If an incorrect command option is given.
+     *
+     * @see addCommandOption()
+     */
+    public function setCommandOptions(array $commandOptions)
+    {
+        $this->commandOptions = array();
+        $this->commandOptionsByShortName = array();
+
+        $this->addCommandOptions($commandOptions);
+
+        return $this;
+    }
+
+    /**
+     * Adds command options to the builder.
+     *
+     * The existing command options stored in the builder are preserved.
+     *
+     * @param CommandOption[] $commandOptions The command options to add.
+     *
+     * @return static The current instance.
+     *
+     * @throws LogicException If an incorrect command option is given.
+     *
+     * @see addCommandOption()
+     */
+    public function addCommandOptions(array $commandOptions)
+    {
+        foreach ($commandOptions as $commandOption) {
+            $this->addCommandOption($commandOption);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Adds a command option to the builder.
+     *
+     * The existing command options stored in the builder are preserved.
+     *
+     * @param CommandOption $commandOption The command option to add.
+     *
+     * @return static The current instance.
+     *
+     * @throws LogicException If an incorrect command option is given.
+     *
+     * @see addCommandOptions()
+     */
+    public function addCommandOption(CommandOption $commandOption)
+    {
+        $longName = $commandOption->getLongName();
+        $shortName = $commandOption->getShortName();
+
+        if (isset($this->commandOptions[$longName]) || isset($this->options[$longName])) {
+            throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
+        }
+
+        if (isset($this->commandOptionsByShortName[$shortName]) || isset($this->optionsByShortName[$shortName])) {
+            throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
+        }
+
+        $this->commandOptions[$longName] = $commandOption;
+
+        if ($shortName) {
+            $this->commandOptionsByShortName[$shortName] = $commandOption;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the builder contains a specific command option.
+     *
+     * You can either pass the long or the short name of the command option.
+     *
+     * @param string $name        The long or short option name.
+     * @param bool   $includeBase Whether to include command options in the base
+     *                            input definition in the search.
+     *
+     * @return bool Returns `true` if the command option with the given name
+     *              could be found and `false` otherwise.
+     */
+    public function hasCommandOption($name, $includeBase = true)
+    {
+        Assert::string($name, 'The option name must be a string or an integer. Got: %s');
+        Assert::notEmpty($name, 'The option name must not be empty.');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
+
+        if (isset($this->commandOptions[$name]) || isset($this->commandOptionsByShortName[$name])) {
+            return true;
+        }
+
+        if ($includeBase && $this->baseDefinition) {
+            return $this->baseDefinition->hasCommandOption($name);
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether the builder contains any command options.
+     *
+     * @param bool $includeBase Whether to include command  options in the base
+     *                          input definition in the search.
+     *
+     * @return bool Returns `true` if the builder contains command options and
+     *              `false` otherwise.
+     */
+    public function hasCommandOptions($includeBase = true)
+    {
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
+
+        if (count($this->commandOptions) > 0) {
+            return true;
+        }
+
+        if ($includeBase && $this->baseDefinition) {
+            return $this->baseDefinition->hasCommandOptions();
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a command option by its long or short name.
+     *
+     * @param string $name        The long or short option name.
+     * @param bool   $includeBase Whether to include command options in the base
+     *                            input definition in the search.
+     *
+     * @return CommandOption The command option.
+     *
+     * @throws OutOfBoundsException If the command  option with the given name
+     *                              does not not exist.
+     */
+    public function getCommandOption($name, $includeBase = true)
+    {
+        Assert::string($name, 'The option name must be a string. Got: %s');
+        Assert::notEmpty($name, 'The option name must not be empty.');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
+
+        if (isset($this->commandOptions[$name])) {
+            return $this->commandOptions[$name];
+        }
+
+        if (isset($this->commandOptionsByShortName[$name])) {
+            return $this->commandOptionsByShortName[$name];
+        }
+
+        if ($includeBase && $this->baseDefinition) {
+            return $this->baseDefinition->getCommandOption($name);
+        }
+
+        throw new OutOfBoundsException(sprintf(
+            'The command option "%s" does not exist.',
+            $name
+        ));
+    }
+
+    /**
+     * Returns all command options added to the builder.
+     *
+     * @param bool $includeBase Whether to include command options of the base
+     *                          input definition in the result.
+     *
+     * @return CommandOption[] The command options.
+     */
+    public function getCommandOptions($includeBase = true)
+    {
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
+
+        $commandOptions = $this->commandOptions;
+
+        if ($includeBase && $this->baseDefinition) {
+            // prepend base command options
+            $commandOptions = array_replace($this->baseDefinition->getCommandOptions(), $commandOptions);
+        }
+
+        return $commandOptions;
+    }
+
+    /**
      * Sets the arguments of the built definition.
      *
      * Any existing arguments are removed when this method is called.
@@ -118,9 +416,11 @@ class InputDefinitionBuilder
      * @param InputArgument[] $arguments The arguments of the built input
      *                                   definition.
      *
+     * @return static The current instance.
+     *
      * @throws LogicException If an incorrect argument is given.
      *
-     * @see appendArgument()
+     * @see addArgument()
      */
     public function setArguments(array $arguments)
     {
@@ -128,7 +428,9 @@ class InputDefinitionBuilder
         $this->hasOptionalArg = false;
         $this->hasMultiValuedArg = false;
 
-        $this->appendArguments($arguments);
+        $this->addArguments($arguments);
+
+        return $this;
     }
 
     /**
@@ -136,17 +438,21 @@ class InputDefinitionBuilder
      *
      * The existing arguments stored in the builder are preserved.
      *
-     * @param InputArgument[] $arguments The arguments to append.
+     * @param InputArgument[] $arguments The arguments to add.
+     *
+     * @return static The current instance.
      *
      * @throws LogicException If an incorrect argument is given.
      *
-     * @see appendArgument()
+     * @see addArgument()
      */
-    public function appendArguments(array $arguments)
+    public function addArguments(array $arguments)
     {
         foreach ($arguments as $argument) {
-            $this->appendArgument($argument);
+            $this->addArgument($argument);
         }
+
+        return $this;
     }
 
     /**
@@ -160,11 +466,13 @@ class InputDefinitionBuilder
      * Adding required arguments after optional arguments is not supported.
      * Also in this case an exception is thrown.
      *
-     * @param InputArgument $argument The argument to append.
+     * @param InputArgument $argument The argument to add.
+     *
+     * @return static The current instance.
      *
      * @throws LogicException If an incorrect argument is given.
      */
-    public function appendArgument(InputArgument $argument)
+    public function addArgument(InputArgument $argument)
     {
         $name = $argument->getName();
 
@@ -189,66 +497,8 @@ class InputDefinitionBuilder
         }
 
         $this->arguments[$name] = $argument;
-    }
 
-    /**
-     * Adds arguments at the beginning of the argument list.
-     *
-     * The existing arguments stored in the builder are preserved.
-     *
-     * @param InputArgument[] $arguments The arguments to prepend.
-     *
-     * @throws LogicException If an incorrect argument is given.
-     *
-     * @see prependArgument()
-     */
-    public function prependArguments(array $arguments)
-    {
-        for ($i = count($arguments) - 1; $i >= 0; --$i) {
-            $this->prependArgument($arguments[$i]);
-        }
-    }
-
-    /**
-     * Adds an argument at the beginning of the argument list.
-     *
-     * The existing arguments stored in the builder are preserved.
-     *
-     * You cannot insert multi-valued arguments before other arguments. If you
-     * do so, this method throws an exception.
-     *
-     * Inserting optional arguments before required arguments is not supported.
-     * Also in this case an exception is thrown.
-     *
-     * @param InputArgument $argument The argument to prepend.
-     *
-     * @throws LogicException If an incorrect argument is given.
-     */
-    public function prependArgument(InputArgument $argument)
-    {
-        $name = $argument->getName();
-
-        if ($this->hasArgument($name)) {
-            throw new LogicException(sprintf('An argument with the name "%s" exists already.', $name));
-        }
-
-        if ($argument->isMultiValued() && $this->hasArguments(false)) {
-            throw new LogicException('Cannot insert multi-valued arguments before other arguments.');
-        }
-
-        if ($argument->isOptional() && $this->hasRequiredArgument(false)) {
-            throw new LogicException('Cannot insert optional arguments before required ones.');
-        }
-
-        if ($argument->isMultiValued()) {
-            $this->hasMultiValuedArg = true;
-        }
-
-        if ($argument->isOptional()) {
-            $this->hasOptionalArg = true;
-        }
-
-        $this->arguments = array_merge(array($name => $argument), $this->arguments);
+        return $this;
     }
 
     /**
@@ -272,7 +522,7 @@ class InputDefinitionBuilder
             Assert::notEmpty($name, 'The argument name must not be empty.');
         }
 
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         $arguments = is_int($name)
             ? array_values($this->getArguments($includeBase))
@@ -292,7 +542,7 @@ class InputDefinitionBuilder
      */
     public function hasMultiValuedArgument($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if ($this->hasMultiValuedArg) {
             return true;
@@ -316,7 +566,7 @@ class InputDefinitionBuilder
      */
     public function hasOptionalArgument($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if ($this->hasOptionalArg) {
             return true;
@@ -340,7 +590,7 @@ class InputDefinitionBuilder
      */
     public function hasRequiredArgument($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if (!$this->hasOptionalArg && count($this->arguments) > 0) {
             return true;
@@ -364,7 +614,7 @@ class InputDefinitionBuilder
      */
     public function hasArguments($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if (count($this->arguments) > 0) {
             return true;
@@ -400,7 +650,7 @@ class InputDefinitionBuilder
             Assert::notEmpty($name, 'The argument name must not be empty.');
         }
 
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         $arguments = is_int($name)
             ? array_values($this->getArguments($includeBase))
@@ -426,7 +676,7 @@ class InputDefinitionBuilder
      */
     public function getArguments($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         $arguments = $this->arguments;
 
@@ -445,16 +695,20 @@ class InputDefinitionBuilder
      *
      * @param InputOption[] $options The options of the built input definition.
      *
+     * @return static The current instance.
+     *
      * @throws LogicException If an incorrect option is given.
      *
-     * @see appendOption()
+     * @see addOption()
      */
     public function setOptions(array $options)
     {
         $this->options = array();
         $this->optionsByShortName = array();
 
-        $this->appendOptions($options);
+        $this->addOptions($options);
+
+        return $this;
     }
 
     /**
@@ -462,17 +716,21 @@ class InputDefinitionBuilder
      *
      * The existing options stored in the builder are preserved.
      *
-     * @param InputOption[] $options The options to append.
+     * @param InputOption[] $options The options to add.
+     *
+     * @return static The current instance.
      *
      * @throws LogicException If an incorrect option is given.
      *
-     * @see appendOption()
+     * @see addOption()
      */
-    public function appendOptions(array $options)
+    public function addOptions(array $options)
     {
         foreach ($options as $option) {
-            $this->appendOption($option);
+            $this->addOption($option);
         }
+
+        return $this;
     }
 
     /**
@@ -480,82 +738,34 @@ class InputDefinitionBuilder
      *
      * The existing options stored in the builder are preserved.
      *
-     * @param InputOption $option The option to append.
+     * @param InputOption $option The option to add.
+     *
+     * @return static The current instance.
      *
      * @throws LogicException If an incorrect option is given.
      *
-     * @see appendOptions()
+     * @see addOptions()
      */
-    public function appendOption(InputOption $option)
+    public function addOption(InputOption $option)
     {
         $longName = $option->getLongName();
         $shortName = $option->getShortName();
 
-        if (isset($this->options[$longName])) {
+        if (isset($this->options[$longName]) || isset($this->commandOptions[$longName])) {
             throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
         }
 
-        if (isset($this->optionsByShortName[$shortName])) {
+        if (isset($this->optionsByShortName[$shortName]) || isset($this->commandOptionsByShortName[$shortName])) {
             throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
         }
 
         $this->options[$longName] = $option;
 
-        if ($option->getShortName()) {
-            $this->optionsByShortName[$option->getShortName()] = $option;
-        }
-    }
-
-    /**
-     * Adds options at the beginning of the options list.
-     *
-     * The options are inserted in the same order as they are passed to this
-     * method.
-     *
-     * The existing options stored in the builder are preserved.
-     *
-     * @param InputOption[] $options The options to prepend.
-     *
-     * @throws LogicException If an incorrect option is given.
-     *
-     * @see prependOption()
-     */
-    public function prependOptions(array $options)
-    {
-        for ($i = count($options) - 1; $i >= 0; --$i) {
-            $this->prependOption($options[$i]);
-        }
-    }
-
-    /**
-     * Adds an option at the beginning of the options list.
-     *
-     * The existing options stored in the builder are preserved.
-     *
-     * @param InputOption $option The option to prepend.
-     *
-     * @throws LogicException If an incorrect option is given.
-     *
-     * @see prependOptions()
-     */
-    public function prependOption(InputOption $option)
-    {
-        $longName = $option->getLongName();
-        $shortName = $option->getShortName();
-
-        if (isset($this->options[$longName])) {
-            throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
+        if ($shortName) {
+            $this->optionsByShortName[$shortName] = $option;
         }
 
-        if (isset($this->optionsByShortName[$shortName])) {
-            throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
-        }
-
-        $this->options = array_merge(array($longName => $option), $this->options);
-
-        if ($option->getShortName()) {
-            $this->optionsByShortName[$option->getShortName()] = $option;
-        }
+        return $this;
     }
 
     /**
@@ -574,7 +784,7 @@ class InputDefinitionBuilder
     {
         Assert::string($name, 'The option name must be a string or an integer. Got: %s');
         Assert::notEmpty($name, 'The option name must not be empty.');
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if (isset($this->options[$name]) || isset($this->optionsByShortName[$name])) {
             return true;
@@ -598,7 +808,7 @@ class InputDefinitionBuilder
      */
     public function hasOptions($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if (count($this->options) > 0) {
             return true;
@@ -627,7 +837,7 @@ class InputDefinitionBuilder
     {
         Assert::string($name, 'The option name must be a string. Got: %s');
         Assert::notEmpty($name, 'The option name must not be empty.');
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         if (isset($this->options[$name])) {
             return $this->options[$name];
@@ -657,7 +867,7 @@ class InputDefinitionBuilder
      */
     public function getOptions($includeBase = true)
     {
-        Assert::boolean($includeBase, 'The parameter $includeBase should be a boolean. Got: %s');
+        Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
         $options = $this->options;
 
@@ -675,11 +885,8 @@ class InputDefinitionBuilder
      *
      * @return InputDefinition The built input definition.
      */
-    public function buildDefinition()
+    public function getDefinition()
     {
-        return new InputDefinition(array_merge(
-            $this->arguments,
-            $this->options
-        ), $this->baseDefinition);
+        return new InputDefinition($this, $this->baseDefinition);
     }
 }

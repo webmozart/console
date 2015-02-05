@@ -220,7 +220,7 @@ class Command implements Runnable
             throw new LogicException('The name must be set before freezing a command.');
         }
 
-        $this->inputDefinition = $this->definitionBuilder->buildDefinition();
+        $this->inputDefinition = $this->definitionBuilder->getDefinition();
         $this->definitionBuilder = null;
     }
 
@@ -617,7 +617,7 @@ class Command implements Runnable
             throw new LogicException('The command cannot be modified once it is frozen.');
         }
 
-        $this->definitionBuilder->appendArgument(new InputArgument($name, $flags, $description, $default));
+        $this->definitionBuilder->addArgument(new InputArgument($name, $flags, $description, $default));
 
         return $this;
     }
@@ -648,7 +648,7 @@ class Command implements Runnable
             throw new LogicException('The command cannot be modified once it is frozen.');
         }
 
-        $this->definitionBuilder->appendOption(new InputOption($longName, $shortName, $flags, $description, $default));
+        $this->definitionBuilder->addOption(new InputOption($longName, $shortName, $flags, $description, $default));
 
         return $this;
     }

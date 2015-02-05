@@ -15,13 +15,13 @@ use InvalidArgumentException;
 use Webmozart\Console\Assert\Assert;
 
 /**
- * An command line argument.
+ * An input argument.
  *
- * Command line arguments are passed after the command and its options. In the
- * example below, "/" is the argument to the "ls" command.
+ * Input arguments are passed after the command name and its options. In the
+ * example below, "localhost" is the argument to the "server -d" command.
  *
  * ```
- * $ ls /
+ * $ console server -d localhost
  * ```
  *
  * Arguments can be either optional or required. By default, all arguments are
@@ -30,32 +30,31 @@ use Webmozart\Console\Assert\Assert;
  * constructor:
  *
  * ```php
- * $argument = new InputArgument('directory', InputArgument::REQUIRED);
+ * $argument = new InputArgument('server', InputArgument::REQUIRED);
  * ```
  *
  * Arguments can also be multi-valued. Multi-valued arguments can be passed any
  * number of times:
  *
  * ```
- * $ ls / /home /usr/share
+ * $ console server -d localhost google.com
  * ```
  *
  * To create a multi-valued argument, pass the flag {@link MULTI_VALUED} to the
  * constructor:
  *
  * ```php
- * $argument = new InputArgument('directory', InputArgument::MULTI_VALUED);
+ * $argument = new InputArgument('server', InputArgument::MULTI_VALUED);
  * ```
  *
  * You can combine the {@link MULTI_VALUED} flag with either {@link OPTIONAL}
  * or {@link REQUIRED} using the bitwise operator "|":
  *
  * ```php
- * $argument = new InputArgument('directory', InputArgument::REQUIRED | InputArgument::MULTI_VALUED);
+ * $argument = new InputArgument('server', InputArgument::REQUIRED | InputArgument::MULTI_VALUED);
  * ```
  *
  * @since  1.0
- * @author Fabien Potencier <fabien@symfony.com>
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class InputArgument

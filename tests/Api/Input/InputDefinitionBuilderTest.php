@@ -12,6 +12,8 @@
 namespace Webmozart\Console\Tests\Api\Input;
 
 use PHPUnit_Framework_TestCase;
+use Webmozart\Console\Api\Input\CommandName;
+use Webmozart\Console\Api\Input\CommandOption;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Input\InputDefinitionBuilder;
@@ -45,24 +47,398 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder = new InputDefinitionBuilder($this->baseDefinition);
     }
 
-    public function testAppendOptionalArgument()
+    public function testAddCommandName()
     {
-        $this->builder->appendArgument($argument = new InputArgument('argument'));
+        $this->builder->addCommandName($server = new CommandName('server'));
+        $this->builder->addCommandName($add = new CommandName('add'));
+
+        $this->assertSame(array($server, $add), $this->builder->getCommandNames());
+    }
+
+    public function testAddCommandNames()
+    {
+        $this->builder->addCommandName($cluster = new CommandName('cluster'));
+        $this->builder->addCommandNames(array(
+            $server = new CommandName('server'),
+            $add = new CommandName('add'),
+        ));
+
+        $this->assertSame(array($cluster, $server, $add), $this->builder->getCommandNames());
+    }
+
+    public function testSetCommandNames()
+    {
+        $this->builder->addCommandName($cluster = new CommandName('cluster'));
+        $this->builder->setCommandNames(array(
+            $server = new CommandName('server'),
+            $add = new CommandName('add'),
+        ));
+
+        $this->assertSame(array($server, $add), $this->builder->getCommandNames());
+    }
+
+    public function testHasCommandNames()
+    {
+        $this->assertFalse($this->builder->hasCommandNames());
+        $this->assertFalse($this->builder->hasCommandNames(false));
+
+        $this->builder->addCommandName(new CommandName('add'));
+
+        $this->assertTrue($this->builder->hasCommandNames());
+        $this->assertTrue($this->builder->hasCommandNames(false));
+    }
+
+    public function testHasCommandNamesWithBaseDefinition()
+    {
+        $this->baseBuilder->addCommandName(new CommandName('server'));
+
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->assertTrue($this->builder->hasCommandNames());
+        $this->assertFalse($this->builder->hasCommandNames(false));
+
+        $this->builder->addCommandName(new CommandName('add'));
+
+        $this->assertTrue($this->builder->hasCommandNames());
+        $this->assertTrue($this->builder->hasCommandNames(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandNamesFailsIfIncludeBaseNoBoolean()
+    {
+        $this->builder->hasCommandNames(1234);
+    }
+
+    public function testGetCommandNames()
+    {
+        $this->builder->addCommandName($server = new CommandName('server'));
+        $this->builder->addCommandName($add = new CommandName('add'));
+
+        $this->assertSame(array($server, $add), $this->builder->getCommandNames());
+        $this->assertSame(array($server, $add), $this->builder->getCommandNames(false));
+    }
+
+    public function testGetCommandNamesWithBaseDefinition()
+    {
+        $this->baseBuilder->addCommandName($server = new CommandName('server'));
+
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+        $this->builder->addCommandName($add = new CommandName('add'));
+
+        $this->assertSame(array($server, $add), $this->builder->getCommandNames());
+        $this->assertSame(array($add), $this->builder->getCommandNames(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandNamesFailsIfIncludeBaseNoBoolean()
+    {
+        $this->builder->getCommandNames(1234);
+    }
+
+    public function testAddCommandOption()
+    {
+        $this->builder->addCommandOption($option = new CommandOption('option'));
+
+        $this->assertSame(array('option' => $option), $this->builder->getCommandOptions());
+    }
+
+    public function testAddCommandOptionPreservesExistingOptions()
+    {
+        $this->builder->addCommandOption($option1 = new CommandOption('option1'));
+        $this->builder->addCommandOption($option2 = new CommandOption('option2'));
+
+        $this->assertSame(array('option1' => $option1, 'option2' => $option2), $this->builder->getCommandOptions());
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfAddingCommandOptionWithSameLongNameAsOtherCommandOption()
+    {
+        $this->builder->addCommandOption(new CommandOption('option', 'a'));
+        $this->builder->addCommandOption(new CommandOption('option', 'b'));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfAddingCommandOptionWithSameLongNameAsOtherOption()
+    {
+        $this->builder->addOption(new InputOption('option', 'a'));
+        $this->builder->addCommandOption(new CommandOption('option', 'b'));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfAddingCommandOptionWithSameShortNameAsOtherCommandOption()
+    {
+        $this->builder->addCommandOption(new CommandOption('option1', 'o'));
+        $this->builder->addCommandOption(new CommandOption('option2', 'o'));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfAddingCommandOptionWithSameShortNameAsOtherOption()
+    {
+        $this->builder->addOption(new InputOption('option1', 'o'));
+        $this->builder->addCommandOption(new CommandOption('option2', 'o'));
+    }
+
+    public function testAddCommandOptions()
+    {
+        $this->builder->addCommandOption($option1 = new CommandOption('option1'));
+        $this->builder->addCommandOptions(array(
+            $option2 = new CommandOption('option2'),
+            $option3 = new CommandOption('option3'),
+        ));
+
+        $this->assertSame(array('option1' => $option1, 'option2' => $option2, 'option3' => $option3), $this->builder->getCommandOptions());
+    }
+
+    public function testSetCommandOptions()
+    {
+        $this->builder->addCommandOption($option1 = new CommandOption('option1'));
+        $this->builder->setCommandOptions(array(
+            $option2 = new CommandOption('option2'),
+            $option3 = new CommandOption('option3'),
+        ));
+
+        $this->assertSame(array('option2' => $option2, 'option3' => $option3), $this->builder->getCommandOptions());
+    }
+
+    public function testGetCommandOptions()
+    {
+        $this->builder->addCommandOption($option1 = new CommandOption('option1'));
+        $this->builder->addCommandOption($option2 = new CommandOption('option2'));
+
+        $this->assertSame(array('option1' => $option1, 'option2' => $option2), $this->builder->getCommandOptions());
+    }
+
+    public function testGetCommandOptionsWithBaseDefinition()
+    {
+        $this->baseBuilder->addCommandOption($option1 = new CommandOption('option1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->builder->addCommandOption($option2 = new CommandOption('option2'));
+        $this->builder->addCommandOption($option3 = new CommandOption('option3'));
+
+        $this->assertSame(array(
+            'option1' => $option1,
+            'option2' => $option2,
+            'option3' => $option3,
+        ), $this->builder->getCommandOptions());
+
+        $this->assertSame(array(
+            'option2' => $option2,
+            'option3' => $option3,
+        ), $this->builder->getCommandOptions(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionsFailsIfIncludeBaseNoBoolean()
+    {
+        $this->builder->getCommandOptions(1234);
+    }
+
+    public function testGetCommandOption()
+    {
+        $this->builder->addCommandOption($option = new CommandOption('option'));
+
+        $this->assertSame($option, $this->builder->getCommandOption('option'));
+    }
+
+    public function testGetCommandOptionFromBaseDefinition()
+    {
+        $this->baseBuilder->addCommandOption($option = new CommandOption('option'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->assertSame($option, $this->builder->getCommandOption('option'));
+    }
+
+    public function testGetCommandOptionByShortName()
+    {
+        $this->builder->addCommandOption($option = new CommandOption('option', 'o'));
+
+        $this->assertSame($option, $this->builder->getCommandOption('o'));
+    }
+
+    public function testGetCommandOptionByShortNameFromBaseDefinition()
+    {
+        $this->baseBuilder->addCommandOption($option = new CommandOption('option', 'o'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->assertSame($option, $this->builder->getCommandOption('o'));
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage foobar
+     */
+    public function testGetCommandOptionFailsIfUnknownName()
+    {
+        $this->builder->getCommandOption('foobar');
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage foobar
+     */
+    public function testGetCommandOptionFailsIfInBaseDefinitionButIncludeBaseDisabled()
+    {
+        $this->baseBuilder->addCommandOption(new CommandOption('foobar'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->builder->getCommandOption('foobar', false);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfNull()
+    {
+        $this->builder->getCommandOption(null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfEmpty()
+    {
+        $this->builder->getCommandOption('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfNoString()
+    {
+        $this->builder->getCommandOption(1234);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfIncludeBaseNoBoolean()
+    {
+        $this->builder->getCommandOption('argument', 1234);
+    }
+
+    public function testHasCommandOption()
+    {
+        $this->assertFalse($this->builder->hasCommandOption('option'));
+        $this->assertFalse($this->builder->hasCommandOption('option', false));
+
+        $this->builder->addCommandOption(new CommandOption('option'));
+
+        $this->assertTrue($this->builder->hasCommandOption('option'));
+        $this->assertTrue($this->builder->hasCommandOption('option', false));
+    }
+
+    public function testHasCommandOptionWithBaseDefinition()
+    {
+        $this->baseBuilder->addCommandOption(new CommandOption('option1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->builder->addCommandOption(new CommandOption('option2'));
+
+        $this->assertTrue($this->builder->hasCommandOption('option1'));
+        $this->assertFalse($this->builder->hasCommandOption('option1', false));
+
+        $this->assertTrue($this->builder->hasCommandOption('option2'));
+        $this->assertTrue($this->builder->hasCommandOption('option2', false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfNull()
+    {
+        $this->builder->hasCommandOption(null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfEmpty()
+    {
+        $this->builder->hasCommandOption('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfNoString()
+    {
+        $this->builder->hasCommandOption(true);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfIncludeBaseNoBoolean()
+    {
+        $this->builder->hasCommandOption('option', 1234);
+    }
+
+    public function testHasCommandOptions()
+    {
+        $this->assertFalse($this->builder->hasCommandOptions());
+        $this->assertFalse($this->builder->hasCommandOptions(false));
+
+        $this->builder->addCommandOption(new CommandOption('option'));
+
+        $this->assertTrue($this->builder->hasCommandOptions());
+        $this->assertTrue($this->builder->hasCommandOptions(false));
+    }
+
+    public function testHasCommandOptionsWithBaseDefinition()
+    {
+        $this->baseBuilder->addCommandOption(new CommandOption('option'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+
+        $this->assertTrue($this->builder->hasCommandOptions());
+        $this->assertFalse($this->builder->hasCommandOptions(false));
+
+        $this->builder->addCommandOption(new CommandOption('option2'));
+
+        $this->assertTrue($this->builder->hasCommandOptions());
+        $this->assertTrue($this->builder->hasCommandOptions(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionsFailsIfIncludeBaseNoBoolean()
+    {
+        $this->builder->hasCommandOptions(1234);
+    }
+
+    public function testAddOptionalArgument()
+    {
+        $this->builder->addArgument($argument = new InputArgument('argument'));
 
         $this->assertSame(array('argument' => $argument), $this->builder->getArguments());
     }
 
-    public function testAppendRequiredArgument()
+    public function testAddRequiredArgument()
     {
-        $this->builder->appendArgument($argument = new InputArgument('argument', InputArgument::REQUIRED));
+        $this->builder->addArgument($argument = new InputArgument('argument', InputArgument::REQUIRED));
 
         $this->assertSame(array('argument' => $argument), $this->builder->getArguments());
     }
 
-    public function testAppendArgumentPreservesExistingArguments()
+    public function testAddArgumentPreservesExistingArguments()
     {
-        $this->builder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->appendArgument($argument2 = new InputArgument('argument2'));
+        $this->builder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->builder->addArgument($argument2 = new InputArgument('argument2'));
 
         $this->assertSame(array('argument1' => $argument1, 'argument2' => $argument2), $this->builder->getArguments());
     }
@@ -70,87 +446,87 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingRequiredArgumentAfterOptionalArgument()
+    public function testFailIfAddingRequiredArgumentAfterOptionalArgument()
     {
-        $this->builder->appendArgument(new InputArgument('argument1', InputArgument::OPTIONAL));
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::REQUIRED));
+        $this->builder->addArgument(new InputArgument('argument1', InputArgument::OPTIONAL));
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::REQUIRED));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingRequiredArgumentAfterOptionalArgumentInBaseDefinition()
+    public function testFailIfAddingRequiredArgumentAfterOptionalArgumentInBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument1', InputArgument::OPTIONAL));
+        $this->baseBuilder->addArgument(new InputArgument('argument1', InputArgument::OPTIONAL));
 
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::REQUIRED));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::REQUIRED));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingRequiredArgumentAfterMultiValuedArgument()
+    public function testFailIfAddingRequiredArgumentAfterMultiValuedArgument()
     {
-        $this->builder->appendArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::REQUIRED));
+        $this->builder->addArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::REQUIRED));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingRequiredArgumentAfterMultiValuedArgumentInBaseDefinition()
+    public function testFailIfAddingRequiredArgumentAfterMultiValuedArgumentInBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
+        $this->baseBuilder->addArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
 
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::REQUIRED));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::REQUIRED));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingOptionalArgumentAfterMultiValuedArgument()
+    public function testFailIfAddingOptionalArgumentAfterMultiValuedArgument()
     {
-        $this->builder->appendArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
+        $this->builder->addArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingOptionalArgumentAfterMultiValuedArgumentInBaseDefinition()
+    public function testFailIfAddingOptionalArgumentAfterMultiValuedArgumentInBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
+        $this->baseBuilder->addArgument(new InputArgument('argument1', InputArgument::MULTI_VALUED));
 
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingArgumentWithExistingName()
+    public function testFailIfAddingArgumentWithExistingName()
     {
-        $this->builder->appendArgument(new InputArgument('argument', InputArgument::OPTIONAL));
-        $this->builder->appendArgument(new InputArgument('argument', InputArgument::REQUIRED));
+        $this->builder->addArgument(new InputArgument('argument', InputArgument::OPTIONAL));
+        $this->builder->addArgument(new InputArgument('argument', InputArgument::REQUIRED));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingArgumentWithExistingNameInBaseDefinition()
+    public function testFailIfAddingArgumentWithExistingNameInBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument', InputArgument::OPTIONAL));
+        $this->baseBuilder->addArgument(new InputArgument('argument', InputArgument::OPTIONAL));
 
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->appendArgument(new InputArgument('argument', InputArgument::REQUIRED));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
+        $this->builder->addArgument(new InputArgument('argument', InputArgument::REQUIRED));
     }
 
-    public function testAppendArguments()
+    public function testAddArguments()
     {
-        $this->builder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->appendArguments(array(
+        $this->builder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->builder->addArguments(array(
             $argument2 = new InputArgument('argument2'),
             $argument3 = new InputArgument('argument3'),
         ));
@@ -158,130 +534,9 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array('argument1' => $argument1, 'argument2' => $argument2, 'argument3' => $argument3), $this->builder->getArguments());
     }
 
-    public function testPrependOptionalArgument()
-    {
-        $this->builder->prependArgument($argument = new InputArgument('argument'));
-
-        $this->assertSame(array('argument' => $argument), $this->builder->getArguments());
-    }
-
-    public function testPrependRequiredArgument()
-    {
-        $this->builder->prependArgument($argument = new InputArgument('argument', InputArgument::REQUIRED));
-
-        $this->assertSame(array('argument' => $argument), $this->builder->getArguments());
-    }
-
-    public function testPrependArgumentPreservesExistingArguments()
-    {
-        $this->builder->prependArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->prependArgument($argument2 = new InputArgument('argument2'));
-
-        $this->assertSame(array('argument2' => $argument2, 'argument1' => $argument1), $this->builder->getArguments());
-    }
-
-    public function testPrependArgumentInsertsAfterBaseArguments()
-    {
-        $this->baseBuilder->prependArgument($argument1 = new InputArgument('argument1'));
-
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->prependArgument($argument2 = new InputArgument('argument2'));
-        $this->builder->prependArgument($argument3 = new InputArgument('argument3'));
-
-        $this->assertSame(array('argument1' => $argument1, 'argument3' => $argument3, 'argument2' => $argument2), $this->builder->getArguments());
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingOptionalArgumentBeforeRequiredArgument()
-    {
-        $this->builder->prependArgument(new InputArgument('argument1', InputArgument::REQUIRED));
-        $this->builder->prependArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
-    }
-
-    public function testPrependOptionalArgumentAfterRequiredArgumentInBaseDefinition()
-    {
-        $this->baseBuilder->prependArgument($argument1 = new InputArgument('argument1', InputArgument::REQUIRED));
-
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->prependArgument($argument2 = new InputArgument('argument2', InputArgument::OPTIONAL));
-
-        $this->assertSame(array('argument1' => $argument1, 'argument2' => $argument2), $this->builder->getArguments());
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingMultiValuedArgumentBeforeRequiredArgument()
-    {
-        $this->builder->prependArgument(new InputArgument('argument1', InputArgument::REQUIRED));
-        $this->builder->prependArgument(new InputArgument('argument2', InputArgument::MULTI_VALUED));
-    }
-
-    public function testPrependMultiValuedArgumentAfterRequiredArgumentInBaseDefinition()
-    {
-        $this->baseBuilder->prependArgument($argument1 = new InputArgument('argument1', InputArgument::REQUIRED));
-
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->prependArgument($argument2 = new InputArgument('argument2', InputArgument::MULTI_VALUED));
-
-        $this->assertSame(array('argument1' => $argument1, 'argument2' => $argument2), $this->builder->getArguments());
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingMultiValuedArgumentBeforeOptionalArgument()
-    {
-        $this->builder->prependArgument(new InputArgument('argument1', InputArgument::OPTIONAL));
-        $this->builder->prependArgument(new InputArgument('argument2', InputArgument::MULTI_VALUED));
-    }
-
-    public function testPrependMultiValuedArgumentAfterOptionalArgumentInBaseDefinition()
-    {
-        $this->baseBuilder->prependArgument($argument1 = new InputArgument('argument1', InputArgument::OPTIONAL));
-
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->prependArgument($argument2 = new InputArgument('argument2', InputArgument::MULTI_VALUED));
-
-        $this->assertSame(array('argument1' => $argument1, 'argument2' => $argument2), $this->builder->getArguments());
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingArgumentWithExistingName()
-    {
-        $this->builder->prependArgument(new InputArgument('argument'));
-        $this->builder->prependArgument(new InputArgument('argument'));
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingArgumentWithExistingNameInBaseDefinition()
-    {
-        $this->baseBuilder->prependArgument(new InputArgument('argument'));
-
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
-        $this->builder->prependArgument(new InputArgument('argument'));
-    }
-
-    public function testPrependArguments()
-    {
-        $this->builder->prependArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->prependArguments(array(
-            $argument2 = new InputArgument('argument2'),
-            $argument3 = new InputArgument('argument3'),
-        ));
-
-        $this->assertSame(array('argument2' => $argument2, 'argument3' => $argument3, 'argument1' => $argument1), $this->builder->getArguments());
-    }
-
     public function testSetArguments()
     {
-        $this->builder->appendArgument($argument1 = new InputArgument('argument1'));
+        $this->builder->addArgument($argument1 = new InputArgument('argument1'));
         $this->builder->setArguments(array(
             $argument2 = new InputArgument('argument2'),
             $argument3 = new InputArgument('argument3'),
@@ -292,8 +547,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgument()
     {
-        $this->builder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->appendArgument($argument2 = new InputArgument('argument2'));
+        $this->builder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->builder->addArgument($argument2 = new InputArgument('argument2'));
 
         $this->assertSame($argument1, $this->builder->getArgument('argument1'));
         $this->assertSame($argument2, $this->builder->getArgument('argument2'));
@@ -301,8 +556,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgumentFromBaseDefinition()
     {
-        $this->baseBuilder->appendArgument($argument = new InputArgument('argument'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument($argument = new InputArgument('argument'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertSame($argument, $this->builder->getArgument('argument'));
     }
@@ -318,8 +573,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgumentByPosition()
     {
-        $this->builder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->appendArgument($argument2 = new InputArgument('argument2'));
+        $this->builder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->builder->addArgument($argument2 = new InputArgument('argument2'));
 
         $this->assertSame($argument1, $this->builder->getArgument(0));
         $this->assertSame($argument2, $this->builder->getArgument(1));
@@ -327,8 +582,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgumentByPositionFromBaseDefinition()
     {
-        $this->baseBuilder->appendArgument($argument = new InputArgument('argument'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument($argument = new InputArgument('argument'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertSame($argument, $this->builder->getArgument(0));
     }
@@ -348,8 +603,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
      */
     public function testGetArgumentFailsIfInBaseDefinitionButIncludeBaseDisabled()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('foobar'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('foobar'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->builder->getArgument('foobar', false);
     }
@@ -388,8 +643,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetArguments()
     {
-        $this->builder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->builder->appendArgument($argument2 = new InputArgument('argument2'));
+        $this->builder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->builder->addArgument($argument2 = new InputArgument('argument2'));
 
         $this->assertSame(array(
             'argument1' => $argument1,
@@ -399,10 +654,10 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgumentsWithBaseArguments()
     {
-        $this->baseBuilder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
-        $this->builder->appendArgument($argument2 = new InputArgument('argument2'));
+        $this->builder->addArgument($argument2 = new InputArgument('argument2'));
 
         $this->assertSame(array(
             'argument1' => $argument1,
@@ -427,7 +682,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasArgument('argument'));
         $this->assertFalse($this->builder->hasArgument('argument', false));
 
-        $this->builder->appendArgument(new InputArgument('argument'));
+        $this->builder->addArgument(new InputArgument('argument'));
 
         $this->assertTrue($this->builder->hasArgument('argument'));
         $this->assertTrue($this->builder->hasArgument('argument', false));
@@ -435,10 +690,10 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasArgumentWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument1'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('argument1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
-        $this->builder->appendArgument(new InputArgument('argument2'));
+        $this->builder->addArgument(new InputArgument('argument2'));
 
         $this->assertTrue($this->builder->hasArgument('argument1'));
         $this->assertFalse($this->builder->hasArgument('argument1', false));
@@ -452,7 +707,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasArgument(0));
         $this->assertFalse($this->builder->hasArgument(0, false));
 
-        $this->builder->appendArgument(new InputArgument('argument'));
+        $this->builder->addArgument(new InputArgument('argument'));
 
         $this->assertTrue($this->builder->hasArgument(0));
         $this->assertTrue($this->builder->hasArgument(0, false));
@@ -460,10 +715,10 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasArgumentAtPositionWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument1'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('argument1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
-        $this->builder->appendArgument(new InputArgument('argument2'));
+        $this->builder->addArgument(new InputArgument('argument2'));
 
         $this->assertTrue($this->builder->hasArgument(0));
         $this->assertTrue($this->builder->hasArgument(1));
@@ -509,7 +764,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasArguments());
         $this->assertFalse($this->builder->hasArguments(false));
 
-        $this->builder->appendArgument(new InputArgument('argument'));
+        $this->builder->addArgument(new InputArgument('argument'));
 
         $this->assertTrue($this->builder->hasArguments());
         $this->assertTrue($this->builder->hasArguments(false));
@@ -517,13 +772,13 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasArgumentsWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument1'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('argument1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertTrue($this->builder->hasArguments());
         $this->assertFalse($this->builder->hasArguments(false));
 
-        $this->builder->appendArgument(new InputArgument('argument2'));
+        $this->builder->addArgument(new InputArgument('argument2'));
 
         $this->assertTrue($this->builder->hasArguments());
         $this->assertTrue($this->builder->hasArguments(false));
@@ -542,12 +797,12 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasMultiValuedArgument());
         $this->assertFalse($this->builder->hasMultiValuedArgument(false));
 
-        $this->builder->appendArgument(new InputArgument('argument1'));
+        $this->builder->addArgument(new InputArgument('argument1'));
 
         $this->assertFalse($this->builder->hasMultiValuedArgument());
         $this->assertFalse($this->builder->hasMultiValuedArgument(false));
 
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::MULTI_VALUED));
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::MULTI_VALUED));
 
         $this->assertTrue($this->builder->hasMultiValuedArgument());
         $this->assertTrue($this->builder->hasMultiValuedArgument(false));
@@ -555,8 +810,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasMultiValuedArgumentWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument', InputArgument::MULTI_VALUED));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('argument', InputArgument::MULTI_VALUED));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertTrue($this->builder->hasMultiValuedArgument());
         $this->assertFalse($this->builder->hasMultiValuedArgument(false));
@@ -575,12 +830,12 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasOptionalArgument());
         $this->assertFalse($this->builder->hasOptionalArgument(false));
 
-        $this->builder->appendArgument(new InputArgument('argument1', InputArgument::REQUIRED));
+        $this->builder->addArgument(new InputArgument('argument1', InputArgument::REQUIRED));
 
         $this->assertFalse($this->builder->hasOptionalArgument());
         $this->assertFalse($this->builder->hasOptionalArgument(false));
 
-        $this->builder->appendArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
+        $this->builder->addArgument(new InputArgument('argument2', InputArgument::OPTIONAL));
 
         $this->assertTrue($this->builder->hasOptionalArgument());
         $this->assertTrue($this->builder->hasOptionalArgument(false));
@@ -588,8 +843,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasOptionalArgumentWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument', InputArgument::OPTIONAL));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('argument', InputArgument::OPTIONAL));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertTrue($this->builder->hasOptionalArgument());
         $this->assertFalse($this->builder->hasOptionalArgument(false));
@@ -608,7 +863,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasRequiredArgument());
         $this->assertFalse($this->builder->hasRequiredArgument(false));
 
-        $this->builder->appendArgument(new InputArgument('argument', InputArgument::REQUIRED));
+        $this->builder->addArgument(new InputArgument('argument', InputArgument::REQUIRED));
 
         $this->assertTrue($this->builder->hasRequiredArgument());
         $this->assertTrue($this->builder->hasRequiredArgument(false));
@@ -616,8 +871,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasRequiredArgumentWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument(new InputArgument('argument', InputArgument::REQUIRED));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addArgument(new InputArgument('argument', InputArgument::REQUIRED));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertTrue($this->builder->hasRequiredArgument());
         $this->assertFalse($this->builder->hasRequiredArgument(false));
@@ -631,17 +886,17 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder->hasRequiredArgument(1234);
     }
 
-    public function testAppendOption()
+    public function testAddOption()
     {
-        $this->builder->appendOption($option = new InputOption('option'));
+        $this->builder->addOption($option = new InputOption('option'));
 
         $this->assertSame(array('option' => $option), $this->builder->getOptions());
     }
 
-    public function testAppendOptionPreservesExistingOptions()
+    public function testAddOptionPreservesExistingOptions()
     {
-        $this->builder->appendOption($option1 = new InputOption('option1'));
-        $this->builder->appendOption($option2 = new InputOption('option2'));
+        $this->builder->addOption($option1 = new InputOption('option1'));
+        $this->builder->addOption($option2 = new InputOption('option2'));
 
         $this->assertSame(array('option1' => $option1, 'option2' => $option2), $this->builder->getOptions());
     }
@@ -649,25 +904,43 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingOptionWithExistingLongName()
+    public function testFailIfAddingOptionWithSameLongNameAsOtherOption()
     {
-        $this->builder->appendOption(new InputOption('option', 'a'));
-        $this->builder->appendOption(new InputOption('option', 'b'));
+        $this->builder->addOption(new InputOption('option', 'a'));
+        $this->builder->addOption(new InputOption('option', 'b'));
     }
 
     /**
      * @expectedException \LogicException
      */
-    public function testFailIfAppendingOptionWithExistingShortName()
+    public function testFailIfAddingOptionWithSameLongNameAsOtherCommandOption()
     {
-        $this->builder->appendOption(new InputOption('option1', 'o'));
-        $this->builder->appendOption(new InputOption('option2', 'o'));
+        $this->builder->addCommandOption(new CommandOption('option', 'a'));
+        $this->builder->addOption(new InputOption('option', 'b'));
     }
 
-    public function testAppendOptions()
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfAddingOptionWithSameShortNameAsOtherOption()
     {
-        $this->builder->appendOption($option1 = new InputOption('option1'));
-        $this->builder->appendOptions(array(
+        $this->builder->addOption(new InputOption('option1', 'o'));
+        $this->builder->addOption(new InputOption('option2', 'o'));
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfAddingOptionWithSameShortNameAsOtherCommandOption()
+    {
+        $this->builder->addCommandOption(new CommandOption('option1', 'o'));
+        $this->builder->addOption(new InputOption('option2', 'o'));
+    }
+
+    public function testAddOptions()
+    {
+        $this->builder->addOption($option1 = new InputOption('option1'));
+        $this->builder->addOptions(array(
             $option2 = new InputOption('option2'),
             $option3 = new InputOption('option3'),
         ));
@@ -675,53 +948,9 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array('option1' => $option1, 'option2' => $option2, 'option3' => $option3), $this->builder->getOptions());
     }
 
-    public function testPrependOption()
-    {
-        $this->builder->prependOption($option = new InputOption('option'));
-
-        $this->assertSame(array('option' => $option), $this->builder->getOptions());
-    }
-
-    public function testPrependOptionPreservesExistingOptions()
-    {
-        $this->builder->prependOption($option1 = new InputOption('option1'));
-        $this->builder->prependOption($option2 = new InputOption('option2'));
-
-        $this->assertSame(array('option2' => $option2, 'option1' => $option1), $this->builder->getOptions());
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingOptionWithExistingLongName()
-    {
-        $this->builder->prependOption(new InputOption('option', 'a'));
-        $this->builder->prependOption(new InputOption('option', 'b'));
-    }
-
-    /**
-     * @expectedException \LogicException
-     */
-    public function testFailIfPrependingOptionWithExistingShortName()
-    {
-        $this->builder->prependOption(new InputOption('option1', 'o'));
-        $this->builder->prependOption(new InputOption('option2', 'o'));
-    }
-
-    public function testPrependOptions()
-    {
-        $this->builder->prependOption($option1 = new InputOption('option1'));
-        $this->builder->prependOptions(array(
-            $option2 = new InputOption('option2'),
-            $option3 = new InputOption('option3'),
-        ));
-
-        $this->assertSame(array('option2' => $option2, 'option3' => $option3, 'option1' => $option1), $this->builder->getOptions());
-    }
-
     public function testSetOptions()
     {
-        $this->builder->appendOption($option1 = new InputOption('option1'));
+        $this->builder->addOption($option1 = new InputOption('option1'));
         $this->builder->setOptions(array(
             $option2 = new InputOption('option2'),
             $option3 = new InputOption('option3'),
@@ -732,19 +961,19 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetOptions()
     {
-        $this->builder->appendOption($option1 = new InputOption('option1'));
-        $this->builder->appendOption($option2 = new InputOption('option2'));
+        $this->builder->addOption($option1 = new InputOption('option1'));
+        $this->builder->addOption($option2 = new InputOption('option2'));
 
         $this->assertSame(array('option1' => $option1, 'option2' => $option2), $this->builder->getOptions());
     }
 
     public function testGetOptionsWithBaseDefinition()
     {
-        $this->baseBuilder->appendOption($option1 = new InputOption('option1'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addOption($option1 = new InputOption('option1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
-        $this->builder->appendOption($option2 = new InputOption('option2'));
-        $this->builder->appendOption($option3 = new InputOption('option3'));
+        $this->builder->addOption($option2 = new InputOption('option2'));
+        $this->builder->addOption($option3 = new InputOption('option3'));
 
         $this->assertSame(array(
             'option2' => $option2,
@@ -768,30 +997,30 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testGetOption()
     {
-        $this->builder->appendOption($option = new InputOption('option'));
+        $this->builder->addOption($option = new InputOption('option'));
 
         $this->assertSame($option, $this->builder->getOption('option'));
     }
 
     public function testGetOptionFromBaseDefinition()
     {
-        $this->baseBuilder->appendOption($option = new InputOption('option'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addOption($option = new InputOption('option'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertSame($option, $this->builder->getOption('option'));
     }
 
     public function testGetOptionByShortName()
     {
-        $this->builder->appendOption($option = new InputOption('option', 'o'));
+        $this->builder->addOption($option = new InputOption('option', 'o'));
 
         $this->assertSame($option, $this->builder->getOption('o'));
     }
 
     public function testGetOptionByShortNameFromBaseDefinition()
     {
-        $this->baseBuilder->appendOption($option = new InputOption('option', 'o'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addOption($option = new InputOption('option', 'o'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertSame($option, $this->builder->getOption('o'));
     }
@@ -811,8 +1040,8 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
      */
     public function testGetOptionFailsIfInBaseDefinitionButIncludeBaseDisabled()
     {
-        $this->baseBuilder->appendOption(new InputOption('foobar'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addOption(new InputOption('foobar'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->builder->getOption('foobar', false);
     }
@@ -854,7 +1083,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasOption('option'));
         $this->assertFalse($this->builder->hasOption('option', false));
 
-        $this->builder->appendOption(new InputOption('option'));
+        $this->builder->addOption(new InputOption('option'));
 
         $this->assertTrue($this->builder->hasOption('option'));
         $this->assertTrue($this->builder->hasOption('option', false));
@@ -862,10 +1091,10 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasOptionWithBaseDefinition()
     {
-        $this->baseBuilder->appendOption(new InputOption('option1'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addOption(new InputOption('option1'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
-        $this->builder->appendOption(new InputOption('option2'));
+        $this->builder->addOption(new InputOption('option2'));
 
         $this->assertTrue($this->builder->hasOption('option1'));
         $this->assertFalse($this->builder->hasOption('option1', false));
@@ -911,7 +1140,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->builder->hasOptions());
         $this->assertFalse($this->builder->hasOptions(false));
 
-        $this->builder->appendOption(new InputOption('option'));
+        $this->builder->addOption(new InputOption('option'));
 
         $this->assertTrue($this->builder->hasOptions());
         $this->assertTrue($this->builder->hasOptions(false));
@@ -919,13 +1148,13 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testHasOptionsWithBaseDefinition()
     {
-        $this->baseBuilder->appendOption(new InputOption('option'));
-        $this->builder = new InputDefinitionBuilder($this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addOption(new InputOption('option'));
+        $this->builder = new InputDefinitionBuilder($this->baseBuilder->getDefinition());
 
         $this->assertTrue($this->builder->hasOptions());
         $this->assertFalse($this->builder->hasOptions(false));
 
-        $this->builder->appendOption(new InputOption('option2'));
+        $this->builder->addOption(new InputOption('option2'));
 
         $this->assertTrue($this->builder->hasOptions());
         $this->assertTrue($this->builder->hasOptions(false));
@@ -939,32 +1168,39 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder->hasOptions(1234);
     }
 
-    public function testBuildDefinition()
+    public function testGetDefinition()
     {
-        $this->builder->appendArgument($argument = new InputArgument('argument'));
-        $this->builder->appendOption($option = new InputOption('option'));
+        $this->builder->addCommandName($server = new CommandName('server'));
+        $this->builder->addArgument($argument = new InputArgument('argument'));
+        $this->builder->addOption($option = new InputOption('option'));
 
-        $definition = $this->builder->buildDefinition();
+        $definition = $this->builder->getDefinition();
 
         $this->assertSame($this->baseDefinition, $definition->getBaseDefinition());
+        $this->assertSame(array($server), $definition->getCommandNames());
         $this->assertSame(array('argument' => $argument), $definition->getArguments());
         $this->assertSame(array('option' => $option), $definition->getOptions());
     }
 
-    public function testBuildDefinitionWithBaseDefinition()
+    public function testGetDefinitionWithBaseDefinition()
     {
-        $this->baseBuilder->appendArgument($argument1 = new InputArgument('argument1'));
-        $this->baseBuilder->appendOption($option1 = new InputOption('option1'));
-        $this->builder = new InputDefinitionBuilder($baseDefinition = $this->baseBuilder->buildDefinition());
+        $this->baseBuilder->addCommandName($server = new CommandName('server'));
+        $this->baseBuilder->addArgument($argument1 = new InputArgument('argument1'));
+        $this->baseBuilder->addOption($option1 = new InputOption('option1'));
+        $this->builder = new InputDefinitionBuilder($baseDefinition = $this->baseBuilder->getDefinition());
 
-        $this->builder->appendArgument($argument2 = new InputArgument('argument2'));
-        $this->builder->appendArgument($argument3 = new InputArgument('argument3'));
-        $this->builder->appendOption($option2 = new InputOption('option2'));
-        $this->builder->appendOption($option3 = new InputOption('option3'));
+        $this->builder->addCommandName($add = new CommandName('add'));
+        $this->builder->addArgument($argument2 = new InputArgument('argument2'));
+        $this->builder->addArgument($argument3 = new InputArgument('argument3'));
+        $this->builder->addOption($option2 = new InputOption('option2'));
+        $this->builder->addOption($option3 = new InputOption('option3'));
 
-        $definition = $this->builder->buildDefinition();
+        $definition = $this->builder->getDefinition();
 
         $this->assertSame($baseDefinition, $definition->getBaseDefinition());
+
+        // base command names are returned first
+        $this->assertSame(array($server, $add), $definition->getCommandNames());
 
         // base arguments are returned first
         $this->assertSame(array(
@@ -983,7 +1219,7 @@ class InputDefinitionBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testBuildEmptyDefinition()
     {
-        $definition = $this->builder->buildDefinition();
+        $definition = $this->builder->getDefinition();
 
         $this->assertSame($this->baseDefinition, $definition->getBaseDefinition());
         $this->assertCount(0, $definition->getArguments());

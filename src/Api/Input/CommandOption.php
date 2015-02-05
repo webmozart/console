@@ -11,20 +11,25 @@
 
 namespace Webmozart\Console\Api\Input;
 
-use Webmozart\Console\Api\Command\CommandConfig;
-
 /**
+ * A command option in the input definition.
+ *
+ * The command names and command options of the input definition determine which
+ * command is executed.
+ *
+ * In the example below, the input contains the command name "server" and the
+ * command option "delete":
+ *
+ * ```
+ * $ console server --delete localhost
+ * $ console server -d localhost
+ * ```
+ *
+ * The last part "localhost" is the argument to the "server --delete" command.
+ *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CommandOption extends InputOption
+class CommandOption extends AbstractOption
 {
-    public function __construct(CommandConfig $commandDefinition)
-    {
-        parent::__construct(
-            $commandDefinition->getName(),
-            $commandDefinition->getShortName(),
-            self::VALUE_NONE
-        );
-    }
 }

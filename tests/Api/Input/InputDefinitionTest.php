@@ -13,6 +13,8 @@ namespace Webmozart\Console\Tests\Api\Input;
 
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Webmozart\Console\Api\Input\CommandName;
+use Webmozart\Console\Api\Input\CommandOption;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Input\InputOption;
@@ -47,14 +49,109 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
     public function testCreateWithElements()
     {
         $definition = new InputDefinition(array(
-            $argument = new InputArgument('argument'),
-            $option = new InputOption('option'),
+            $server = new CommandName('server'),
+            $add = new CommandOption('add', 'a'),
+            $host = new InputArgument('host'),
+            $port = new InputOption('port', 'p'),
         ));
 
-        $this->assertSame(array('argument' => $argument), $definition->getArguments());
-        $this->assertSame(array('option' => $option), $definition->getOptions());
+        $this->assertSame(array($server), $definition->getCommandNames());
+        $this->assertSame(array('add' => $add), $definition->getCommandOptions());
+        $this->assertSame(array('host' => $host), $definition->getArguments());
+        $this->assertSame(array('port' => $port), $definition->getOptions());
         $this->assertSame(1, $definition->getNumberOfArguments());
         $this->assertSame(0, $definition->getNumberOfRequiredArguments());
+    }
+
+    public function testBuild()
+    {
+        $definition = InputDefinition::build()
+            ->addCommandName($server = new CommandName('server'))
+            ->addCommandOption($add = new CommandOption('add', 'a'))
+            ->addArgument($host = new InputArgument('host'))
+            ->addOption($port = new InputOption('port', 'p'))
+            ->getDefinition();
+
+        $this->assertSame(array($server), $definition->getCommandNames());
+        $this->assertSame(array('add' => $add), $definition->getCommandOptions());
+        $this->assertSame(array('host' => $host), $definition->getArguments());
+        $this->assertSame(array('port' => $port), $definition->getOptions());
+        $this->assertSame(1, $definition->getNumberOfArguments());
+        $this->assertSame(0, $definition->getNumberOfRequiredArguments());
+    }
+
+    public function testGetCommandNames()
+    {
+        $definition = new InputDefinition(array(
+            $server = new CommandName('server'),
+            $add = new CommandName('add'),
+        ));
+
+        $this->assertSame(array($server, $add), $definition->getCommandNames());
+        $this->assertSame(array($server, $add), $definition->getCommandNames(false));
+    }
+
+    public function testGetCommandNamesWithBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $cluster = new CommandName('cluster'),
+        ));
+
+        $definition = new InputDefinition(array(
+            $server = new CommandName('server'),
+            $add = new CommandName('add'),
+        ), $baseDefinition);
+
+        $this->assertSame(array($cluster, $server, $add), $definition->getCommandNames());
+        $this->assertSame(array($server, $add), $definition->getCommandNames(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandNamesFailsIfIncludeBaseNoBoolean()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandNames(1234);
+    }
+
+    public function testHasCommandNames()
+    {
+        $definition = new InputDefinition(array(
+            new CommandName('add'),
+        ));
+
+        $this->assertTrue($definition->hasCommandNames());
+        $this->assertTrue($definition->hasCommandNames(false));
+    }
+
+    public function testHasCommandNamesWithBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            new CommandName('add'),
+        ));
+
+        $definition = new InputDefinition(array(), $baseDefinition);
+
+        $this->assertTrue($definition->hasCommandNames());
+        $this->assertFalse($definition->hasCommandNames(false));
+    }
+
+    public function testHasNoCommandNames()
+    {
+        $definition = new InputDefinition();
+
+        $this->assertFalse($definition->hasCommandNames());
+        $this->assertFalse($definition->hasCommandNames(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandNamesFailsIfIncludeBaseNoBoolean()
+    {
+        $definition = new InputDefinition();
+        $definition->hasCommandNames(1234);
     }
 
     public function testGetArgument()
@@ -578,6 +675,239 @@ class InputDefinitionTest extends PHPUnit_Framework_TestCase
     {
         $definition = new InputDefinition();
         $definition->getDefaultArgumentValues(1234);
+    }
+
+    public function testGetCommandOptions()
+    {
+        $definition = new InputDefinition(array(
+            $option1 = new CommandOption('option1'),
+            $option2 = new CommandOption('option2'),
+        ));
+
+        $this->assertSame(array('option1' => $option1, 'option2' => $option2), $definition->getCommandOptions());
+    }
+
+    public function testGetCommandOptionsWithBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $option1 = new CommandOption('option1'),
+        ));
+        $definition = new InputDefinition(array(
+            $option2 = new CommandOption('option2'),
+            $option3 = new CommandOption('option3'),
+        ), $baseDefinition);
+
+        $this->assertSame(array(
+            'option1' => $option1,
+            'option2' => $option2,
+            'option3' => $option3,
+        ), $definition->getCommandOptions());
+
+        $this->assertSame(array(
+            'option2' => $option2,
+            'option3' => $option3,
+        ), $definition->getCommandOptions(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionsFailsIfIncludeBaseNoBoolean()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandOptions(1234);
+    }
+
+    public function testGetCommandOption()
+    {
+        $definition = new InputDefinition(array(
+            $option = new CommandOption('option'),
+        ));
+
+        $this->assertSame($option, $definition->getCommandOption('option'));
+    }
+
+    public function testGetCommandOptionFromBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $option = new CommandOption('option'),
+        ));
+        $definition = new InputDefinition(array(), $baseDefinition);
+
+        $this->assertSame($option, $definition->getCommandOption('option'));
+    }
+
+    public function testGetCommandOptionByShortName()
+    {
+        $definition = new InputDefinition(array(
+            $option = new CommandOption('option', 'o'),
+        ));
+
+        $this->assertSame($option, $definition->getCommandOption('o'));
+    }
+
+    public function testGetCommandOptionByShortNameFromBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $option = new CommandOption('option', 'o'),
+        ));
+        $definition = new InputDefinition(array(), $baseDefinition);
+
+        $this->assertSame($option, $definition->getCommandOption('o'));
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage foobar
+     */
+    public function testGetCommandOptionFailsIfUnknownName()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandOption('foobar');
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage foobar
+     */
+    public function testGetCommandOptionFailsIfInBaseDefinitionButIncludeBaseDisabled()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $option = new CommandOption('foobar'),
+        ));
+        $definition = new InputDefinition(array(), $baseDefinition);
+
+        $definition->getCommandOption('foobar', false);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfNull()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandOption(null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfEmpty()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandOption('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfNoString()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandOption(1234);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetCommandOptionFailsIfIncludeBaseNoBoolean()
+    {
+        $definition = new InputDefinition();
+        $definition->getCommandOption('argument', 1234);
+    }
+
+    public function testHasCommandOption()
+    {
+        $definition = new InputDefinition();
+        $this->assertFalse($definition->hasCommandOption('option'));
+        $this->assertFalse($definition->hasCommandOption('option', false));
+
+        $definition = new InputDefinition(array(new CommandOption('option')));
+        $this->assertTrue($definition->hasCommandOption('option'));
+        $this->assertTrue($definition->hasCommandOption('option', false));
+    }
+
+    public function testHasCommandOptionWithBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $option1 = new CommandOption('option1'),
+        ));
+        $definition = new InputDefinition(array(
+            $option2 = new CommandOption('option2'),
+        ), $baseDefinition);
+
+        $this->assertTrue($definition->hasCommandOption('option1'));
+        $this->assertFalse($definition->hasCommandOption('option1', false));
+
+        $this->assertTrue($definition->hasCommandOption('option2'));
+        $this->assertTrue($definition->hasCommandOption('option2', false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfNull()
+    {
+        $definition = new InputDefinition();
+        $definition->hasCommandOption(null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfEmpty()
+    {
+        $definition = new InputDefinition();
+        $definition->hasCommandOption('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfNoString()
+    {
+        $definition = new InputDefinition();
+        $definition->hasCommandOption(true);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionFailsIfIncludeBaseNoBoolean()
+    {
+        $definition = new InputDefinition();
+        $definition->hasCommandOption('option', 1234);
+    }
+
+    public function testHasCommandOptions()
+    {
+        $definition = new InputDefinition();
+        $this->assertFalse($definition->hasCommandOptions());
+        $this->assertFalse($definition->hasCommandOptions(false));
+
+        $definition = new InputDefinition(array(new CommandOption('option')));
+        $this->assertTrue($definition->hasCommandOptions());
+        $this->assertTrue($definition->hasCommandOptions(false));
+    }
+
+    public function testHasCommandOptionsWithBaseDefinition()
+    {
+        $baseDefinition = new InputDefinition(array(
+            $option = new CommandOption('option'),
+        ));
+        $definition = new InputDefinition(array(), $baseDefinition);
+
+        $this->assertTrue($definition->hasCommandOptions());
+        $this->assertFalse($definition->hasCommandOptions(false));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testHasCommandOptionsFailsIfIncludeBaseNoBoolean()
+    {
+        $definition = new InputDefinition();
+        $definition->hasCommandOptions(1234);
     }
 
     public function testGetOptions()
