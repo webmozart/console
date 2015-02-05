@@ -87,7 +87,7 @@ class SubCommandConfig extends CommandConfig
      * ;
      * ```
      *
-     * @return CommandConfig The parent command configuration.
+     * @return CommandConfig|SubCommandConfig|OptionCommandConfig The parent command configuration.
      */
     public function end()
     {
