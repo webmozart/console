@@ -34,7 +34,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     /**
      * @var string[]
      */
-    private $aliases = array();
+    private $aliasesToNames = array();
 
     /**
      * Creates a new command collection.
@@ -61,11 +61,11 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
         $this->commands[$command->getName()] = $command;
 
         foreach ($command->getAliases() as $alias) {
-            $this->aliases[$alias] = $command->getName();
+            $this->aliasesToNames[$alias] = $command->getName();
         }
 
         ksort($this->commands);
-        ksort($this->aliases);
+        ksort($this->aliasesToNames);
     }
 
     /**
@@ -116,8 +116,8 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
             return $this->commands[$name];
         }
 
-        if (isset($this->aliases[$name])) {
-            return $this->commands[$this->aliases[$name]];
+        if (isset($this->aliasesToNames[$name])) {
+            return $this->commands[$this->aliasesToNames[$name]];
         }
 
         throw new OutOfBoundsException(sprintf(
@@ -135,7 +135,19 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      */
     public function remove($name)
     {
+        if (isset($this->aliasesToNames[$name])) {
+            $this->remove($this->aliasesToNames[$name]);
+
+            return;
+        }
+
         unset($this->commands[$name]);
+
+        foreach ($this->aliasesToNames as $alias => $targetName) {
+            if ($name === $targetName) {
+                unset($this->aliasesToNames[$alias]);
+            }
+        }
     }
 
     /**
@@ -148,7 +160,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      */
     public function contains($name)
     {
-        return isset($this->commands[$name]);
+        return isset($this->commands[$name]) || isset($this->aliasesToNames[$name]);
     }
 
     /**
@@ -157,6 +169,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     public function clear()
     {
         $this->commands = array();
+        $this->aliasesToNames = array();
     }
 
     /**
@@ -188,7 +201,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
         $names = array_keys($this->commands);
 
         if ($includeAliases) {
-            $names = array_merge($names, array_keys($this->aliases));
+            $names = array_merge($names, array_keys($this->aliasesToNames));
             sort($names);
         }
 
@@ -200,11 +213,11 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      *
      * The aliases are sorted alphabetically in ascending order.
      *
-     * @return string[] The sorted command aliases.
+     * @return string[] The command names indexed and sorted by their aliases.
      */
     public function getAliases()
     {
-        return $this->aliases;
+        return $this->aliasesToNames;
     }
 
     /**

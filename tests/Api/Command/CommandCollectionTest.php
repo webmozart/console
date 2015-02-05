@@ -107,13 +107,26 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
     public function testContains()
     {
         $this->assertFalse($this->collection->contains('ls'));
+
         $this->collection->add($ls = new Command(new CommandConfig('ls')));
+
         $this->assertTrue($this->collection->contains('ls'));
+    }
+
+    public function testContainsAliases()
+    {
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('ls-alias'));
+
+        $this->collection->add($ls = new Command(CommandConfig::create('ls')->addAlias('ls-alias')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('ls-alias'));
     }
 
     public function testRemove()
     {
-        $this->collection->add($ls = new Command(new CommandConfig('ls')));
+        $this->collection->add(new Command(new CommandConfig('ls')));
         $this->assertTrue($this->collection->contains('ls'));
         $this->collection->remove('ls');
         $this->assertFalse($this->collection->contains('ls'));
@@ -124,18 +137,64 @@ class CommandCollectionTest extends PHPUnit_Framework_TestCase
         $this->collection->remove('foobar');
     }
 
-    public function testClear()
+    public function testRemoveAliases()
     {
-        $this->collection->add(new Command(new CommandConfig('ls')));
-        $this->collection->add(new Command(new CommandConfig('cd')));
+        $this->collection->add(new Command(CommandConfig::create('ls')->addAlias('ls-alias')));
 
         $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('ls-alias'));
+
+        $this->collection->remove('ls');
+
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('ls-alias'));
+    }
+
+    public function testRemoveByAlias()
+    {
+        $this->collection->add(new Command(CommandConfig::create('ls')->addAlias('ls-alias')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('ls-alias'));
+
+        $this->collection->remove('ls-alias');
+
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('ls-alias'));
+    }
+
+    public function testRemoveIgnoresOverwrittenAliases()
+    {
+        $this->collection->add(new Command(CommandConfig::create('ls')->addAlias('ls-alias')));
+        $this->collection->add(new Command(CommandConfig::create('ls2')->addAlias('ls-alias')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('ls2'));
+        $this->assertTrue($this->collection->contains('ls-alias'));
+
+        $this->collection->remove('ls');
+
+        $this->assertFalse($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('ls2'));
+        $this->assertTrue($this->collection->contains('ls-alias'));
+    }
+
+    public function testClear()
+    {
+        $this->collection->add(new Command(CommandConfig::create('ls')->addAlias('ls-alias')));
+        $this->collection->add(new Command(CommandConfig::create('cd')->addAlias('cd-alias')));
+
+        $this->assertTrue($this->collection->contains('ls'));
+        $this->assertTrue($this->collection->contains('ls-alias'));
         $this->assertTrue($this->collection->contains('cd'));
+        $this->assertTrue($this->collection->contains('cd-alias'));
 
         $this->collection->clear();
 
         $this->assertFalse($this->collection->contains('ls'));
+        $this->assertFalse($this->collection->contains('ls-alias'));
         $this->assertFalse($this->collection->contains('cd'));
+        $this->assertFalse($this->collection->contains('cd-alias'));
     }
 
     public function testGetNames()
