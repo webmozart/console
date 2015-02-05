@@ -51,6 +51,27 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getInvalidNames
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetNameFailsIfInvalid($name)
+    {
+        $this->config->setName($name);
+    }
+
+    public function getInvalidNames()
+    {
+        return array(
+            array('a'),
+            array('A'),
+            array('1'),
+            array(1234),
+            array(true),
+            array(''),
+        );
+    }
+
+    /**
      * @dataProvider getValidShortNames
      */
     public function testSetShortName($name)

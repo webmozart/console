@@ -209,8 +209,7 @@ class CommandConfig
         if (null !== $name) {
             Assert::string($name, 'The command name must be a string or null. Got: %s');
             Assert::notEmpty($name, 'The command name must not be empty.');
-            Assert::regex($name, '~^[a-zA-Z0-9\-]+$~', 'The command name should contain letters, digits, hyphens and underscores only. Got: %s');
-            Assert::greaterThan(strlen($name), 1, sprintf('The command name should contain at least two characters. Got: "%s"', $name));
+            Assert::regex($name, '~^[a-zA-Z0-9\-]+$~', 'The command name should contain letters, digits and hyphens only. Got: %s');
         }
 
         $this->name = $name;
@@ -249,6 +248,7 @@ class CommandConfig
     {
         Assert::string($alias, 'The command alias must be a string. Got: %s');
         Assert::notEmpty($alias, 'The command alias must not be empty.');
+        Assert::regex($alias, '~^[a-zA-Z0-9\-]+$~', 'The command alias should contain letters, digits and hyphens only. Got: %s');
 
         $this->aliases[] = $alias;
 

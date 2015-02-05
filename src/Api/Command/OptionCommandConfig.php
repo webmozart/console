@@ -40,6 +40,17 @@ class OptionCommandConfig extends SubCommandConfig
         $this->setShortName($shortName);
     }
 
+    public function setName($name)
+    {
+        if (null !== $name) {
+            Assert::string($name, 'The command name must be a string or null. Got: %s');
+            Assert::notEmpty($name, 'The command name must not be empty.');
+            Assert::greaterThan(strlen($name), 1, sprintf('The command name should contain at least two characters. Got: "%s"', $name));
+        }
+
+        parent::setName($name);
+    }
+
     /**
      * Returns the short option name of the command.
      *

@@ -102,6 +102,7 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
             array('command'),
             array('command-name'),
             array('CommandName'),
+            array('c'),
             array('cd'),
             array('command1'),
             array(null),
@@ -123,7 +124,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
             array(1234),
             array(true),
             array(''),
-            array('c'),
             array('command_name'),
             array('command&'),
             array('command:name'),
@@ -236,7 +236,22 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->config->isEnabled());
     }
 
-    public function testAddAlias()
+    /**
+     * @dataProvider getValidNames
+     */
+    public function testAddAlias($alias)
+    {
+        // valid name, but invalid alias
+        if (null === $alias) {
+            $this->setExpectedException('InvalidArgumentException');
+        }
+
+        $this->config->addAlias($alias);
+
+        $this->assertSame(array($alias), $this->config->getAliases());
+    }
+
+    public function testAddAliasPreservesExistingAliases()
     {
         $this->config->addAlias('alias1');
         $this->config->addAlias('alias2');
@@ -266,6 +281,15 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
     public function testAddAliasFailsIfNoString()
     {
         $this->config->addAlias(1234);
+    }
+
+    /**
+     * @dataProvider getInvalidNames
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddAliasFailsIfInvalidName($name)
+    {
+        $this->config->addAlias($name);
     }
 
     public function testAddAliases()
