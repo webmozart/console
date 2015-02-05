@@ -113,6 +113,25 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($command->hasSubCommands());
     }
 
+    public function testGetDefaultSubCommand()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig(new SubCommandConfig('sub'));
+        $config->defaultToSubCommand('sub');
+        $command = new Command($config);
+
+        $this->assertSame($command->getSubCommand('sub'), $command->getDefaultSubCommand());
+    }
+
+    public function testGetNoDefaultSubCommand()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig(new SubCommandConfig('sub'));
+        $command = new Command($config);
+
+        $this->assertNull($command->getDefaultSubCommand());
+    }
+
     public function testGetOptionCommand()
     {
         $config = new CommandConfig('command');
@@ -158,5 +177,24 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $command = new Command(new CommandConfig('command'));
 
         $this->assertFalse($command->hasOptionCommands());
+    }
+
+    public function testGetDefaultOptionCommand()
+    {
+        $config = new CommandConfig('command');
+        $config->addOptionCommandConfig(new OptionCommandConfig('option'));
+        $config->defaultToOptionCommand('option');
+        $command = new Command($config);
+
+        $this->assertSame($command->getOptionCommand('option'), $command->getDefaultOptionCommand());
+    }
+
+    public function testGetNoDefaultOptionCommand()
+    {
+        $config = new CommandConfig('command');
+        $config->addOptionCommandConfig(new OptionCommandConfig('option'));
+        $command = new Command($config);
+
+        $this->assertNull($command->getDefaultOptionCommand());
     }
 }

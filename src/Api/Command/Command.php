@@ -241,6 +241,22 @@ class Command
     }
 
     /**
+     * Returns the sub-command that should be executed if no explicit
+     * sub-command is passed.
+     *
+     * @return Command|null The sub-command or `null` if this command should
+     *                      be executed when no sub-command is passed.
+     */
+    public function getDefaultSubCommand()
+    {
+        if ($commandName = $this->config->getDefaultSubCommand()) {
+            return $this->subCommands[$commandName];
+        }
+
+        return null;
+    }
+
+    /**
      * Returns all option commands of the command.
      *
      * @return CommandCollection The option commands.
@@ -294,5 +310,21 @@ class Command
     public function hasOptionCommands()
     {
         return count($this->optionCommands) > 0;
+    }
+
+    /**
+     * Returns the option command that should be executed if no explicit option
+     * command is passed.
+     *
+     * @return Command|null The option command or `null` if this command should
+     *                      be executed when no option command is passed.
+     */
+    public function getDefaultOptionCommand()
+    {
+        if ($commandName = $this->config->getDefaultOptionCommand()) {
+            return $this->optionCommands[$commandName];
+        }
+
+        return null;
     }
 }
