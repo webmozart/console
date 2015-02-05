@@ -11,6 +11,8 @@
 
 namespace Webmozart\Console\Api\Command;
 
+use LogicException;
+use OutOfBoundsException;
 use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinitionBuilder;
@@ -160,6 +162,10 @@ class CommandConfig
      * @var OptionCommandConfig[]
      */
     private $optionCommandConfigs = array();
+
+    private $defaultSubCommand;
+
+    private $defaultOptionCommand;
 
     /**
      * Creates a new configuration.
@@ -759,6 +765,84 @@ class CommandConfig
         $this->optionCommandConfigs[$name] = $config;
 
         return $config;
+    }
+
+    /**
+     * Returns the name of the sub-command that is executed if no explicit
+     * sub-command name is passed.
+     *
+     * @return string|null Returns the name of the sub-command or `null` if the
+     *                     current command should be executed when no
+     *                     sub-command is passed.
+     */
+    public function getDefaultSubCommand()
+    {
+        return $this->defaultSubCommand;
+    }
+
+    /**
+     * Configures the command to run a sub-command if no explicit sub-command
+     * is passed.
+     *
+     * @param string $commandName The name of the sub-command.
+     *
+     * @return static The current instance.
+     *
+     * @throws OutOfBoundsException If no sub-command exists with the given name.
+     */
+    public function defaultToSubCommand($commandName)
+    {
+        if (!isset($this->subCommandConfigs[$commandName])) {
+            throw new OutOfBoundsException(sprintf(
+                'The sub-command "%s" does not exist.',
+                $commandName
+            ));
+        }
+
+        $this->defaultSubCommand = $commandName;
+        $this->defaultOptionCommand = null;
+
+        return $this;
+    }
+
+    /**
+     * Returns the name of the option command that is executed if no explicit
+     * option command is passed.
+     *
+     * @return string|null Returns the name of the option command or `null` if
+     *                     the current command should be executed when no
+     *                     option command is passed.
+     */
+    public function getDefaultOptionCommand()
+    {
+        return $this->defaultOptionCommand;
+    }
+
+    /**
+     * Configures the command to run an option command if no explicit option
+     * command is passed.
+     *
+     * @param string $commandName The name of the option command.
+     *
+     * @return static The current instance.
+     *
+     * @throws OutOfBoundsException If no option command exists with the given
+     *                              name.
+     */
+    public function defaultToOptionCommand($commandName)
+    {
+        if (!isset($this->optionCommandConfigs[$commandName])) {
+            throw new OutOfBoundsException(sprintf(
+                'The option command "%s%s" does not exist.',
+                strlen($commandName) > 1 ? '--' : '-',
+                $commandName
+            ));
+        }
+
+        $this->defaultOptionCommand = $commandName;
+        $this->defaultSubCommand = null;
+
+        return $this;
     }
 
     /**

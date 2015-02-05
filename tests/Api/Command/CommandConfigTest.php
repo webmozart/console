@@ -516,4 +516,72 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
         $this->assertSame('foo', $handler->handle(new StringInput('test')));
     }
+
+    public function testDefaultToSubCommand()
+    {
+        $this->assertNull($this->config->getDefaultSubCommand());
+
+        $this->config
+            ->addSubCommandConfig(new SubCommandConfig('sub'))
+            ->defaultToSubCommand('sub')
+        ;
+
+        $this->assertSame('sub', $this->config->getDefaultSubCommand());
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage sub
+     */
+    public function testDefaultToSubCommandFailsIfNotFound()
+    {
+        $this->config->defaultToSubCommand('sub');
+    }
+
+    public function testDefaultToOptionCommand()
+    {
+        $this->assertNull($this->config->getDefaultOptionCommand());
+
+        $this->config
+            ->addOptionCommandConfig(new OptionCommandConfig('option'))
+            ->defaultToOptionCommand('option')
+        ;
+
+        $this->assertSame('option', $this->config->getDefaultOptionCommand());
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage option
+     */
+    public function testDefaultToOptionCommandFailsIfNotFound()
+    {
+        $this->config->defaultToOptionCommand('option');
+    }
+
+    public function testDefaultToSubCommandResetsDefaultOptionCommand()
+    {
+        $this->config
+            ->addSubCommandConfig(new SubCommandConfig('sub'))
+            ->addOptionCommandConfig(new OptionCommandConfig('option'))
+            ->defaultToOptionCommand('option')
+            ->defaultToSubCommand('sub')
+        ;
+
+        $this->assertSame('sub', $this->config->getDefaultSubCommand());
+        $this->assertNull($this->config->getDefaultOptionCommand());
+    }
+
+    public function testDefaultToOptionCommandResetsDefaultSubCommand()
+    {
+        $this->config
+            ->addSubCommandConfig(new SubCommandConfig('sub'))
+            ->addOptionCommandConfig(new OptionCommandConfig('option'))
+            ->defaultToSubCommand('sub')
+            ->defaultToOptionCommand('option')
+        ;
+
+        $this->assertNull($this->config->getDefaultSubCommand());
+        $this->assertSame('option', $this->config->getDefaultOptionCommand());
+    }
 }
