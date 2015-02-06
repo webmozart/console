@@ -43,15 +43,15 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $config = ApplicationConfig::create()
+        $this->config
             ->addArgument('argument')
             ->addOption('option', 'o')
             ->beginCommand('command')->end()
         ;
 
-        $application = new ConsoleApplication($config);
+        $application = new ConsoleApplication($this->config);
 
-        $this->assertSame($config, $application->getConfig());
+        $this->assertSame($this->config, $application->getConfig());
 
         $this->assertEquals(new InputDefinition(array(
             new InputArgument('argument'),
@@ -59,7 +59,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         )), $application->getBaseInputDefinition());
 
         $this->assertEquals(new Command(
-            $config->getCommandConfig('command'),
+            $this->config->getCommandConfig('command'),
             $application->getBaseInputDefinition(),
             $application
         ), $application->getCommand('command'));
