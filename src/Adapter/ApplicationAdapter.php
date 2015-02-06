@@ -69,7 +69,9 @@ class ApplicationAdapter extends Application
         $commandResolver = $this->application->getConfig()->getCommandResolver();
         $command = $commandResolver->resolveCommand($input, $this->application->getCommands());
 
-        $this->currentCommand = $this->get($command->getName());
+        // Don't use $this->get() as get() does not work for sub-commands
+        $this->currentCommand = new CommandAdapter($command);
+        $this->currentCommand->setApplication($this);
 
         try {
             $result = parent::doRun($input, $output);
