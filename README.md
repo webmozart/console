@@ -1,4 +1,4 @@
-Webmoazrt Console
+Webmozart Console
 =================
 
 [![Build Status](https://travis-ci.org/webmozart/console.svg?branch=master)](https://travis-ci.org/webmozart/console)
