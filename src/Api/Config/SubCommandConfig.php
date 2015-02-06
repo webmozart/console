@@ -9,11 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api\Command;
+namespace Webmozart\Console\Api\Config;
 
+use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Runnable;
 use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Handler\NullHandler;
 use Webmozart\Console\Handler\RunnableHandler;
 
 /**
@@ -68,6 +70,10 @@ class SubCommandConfig extends CommandConfig
     public function setParentConfig(CommandConfig $parentConfig)
     {
         $this->parentConfig = $parentConfig;
+
+        if ($parentConfig->getApplicationConfig()) {
+            $this->setApplicationConfig($parentConfig->getApplicationConfig());
+        }
     }
 
     /**
@@ -108,15 +114,13 @@ class SubCommandConfig extends CommandConfig
      */
     public function getHandler(Command $command)
     {
-        if ($this->getCallback()) {
-            return new CallableHandler($this->getCallback());
+        $handler = parent::getHandler($command);
+
+        if ($handler instanceof NullHandler) {
+            // Delegate to the parent config
+            return $this->parentConfig->getHandler($command);
         }
 
-        if ($this instanceof Runnable) {
-            return new RunnableHandler($this);
-        }
-
-        // Delegate to the parent config
-        return $this->parentConfig->getHandler($command);
+        return $handler;
     }
 }

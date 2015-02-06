@@ -14,9 +14,9 @@ namespace Webmozart\Console\Tests\Api\Command;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\CommandConfig;
-use Webmozart\Console\Api\Command\OptionCommandConfig;
-use Webmozart\Console\Api\Command\SubCommandConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
+use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Input\InputOption;
 
@@ -28,6 +28,8 @@ class CommandTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateCommand()
     {
+        $application = $this->getMock('Webmozart\Console\Api\Application\Application');
+
         $config = new CommandConfig('command');
         $config->addArgument('argument');
         $config->addOption('option', 'o');
@@ -38,10 +40,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
             new InputOption('verbose', 'v'),
         ));
 
-        $command = new Command($config, $baseDefinition);
+        $command = new Command($config, $baseDefinition, $application);
         $inputDefinition = $command->getInputDefinition();
 
         $this->assertSame($config, $command->getConfig());
+        $this->assertSame($application, $command->getApplication());
         $this->assertSame($baseDefinition, $inputDefinition->getBaseDefinition());
         $this->assertCount(1, $inputDefinition->getArguments());
         $this->assertTrue($inputDefinition->hasArgument('argument'));
@@ -50,11 +53,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($inputDefinition->hasOption('verbose'));
 
         $this->assertEquals(new CommandCollection(array(
-            'add' => new Command($addConfig, $inputDefinition),
+            'add' => new Command($addConfig, $inputDefinition, $application),
         )), $command->getSubCommands());
 
         $this->assertEquals(new CommandCollection(array(
-            'delete' => new Command($deleteConfig, $inputDefinition),
+            'delete' => new Command($deleteConfig, $inputDefinition, $application),
         )), $command->getOptionCommands());
     }
 
@@ -117,7 +120,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig(new SubCommandConfig('sub'));
-        $config->defaultToSubCommand('sub');
+        $config->setDefaultSubCommand('sub');
         $command = new Command($config);
 
         $this->assertSame($command->getSubCommand('sub'), $command->getDefaultSubCommand());
@@ -183,7 +186,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
     {
         $config = new CommandConfig('command');
         $config->addOptionCommandConfig(new OptionCommandConfig('option'));
-        $config->defaultToOptionCommand('option');
+        $config->setDefaultOptionCommand('option');
         $command = new Command($config);
 
         $this->assertSame($command->getOptionCommand('option'), $command->getDefaultOptionCommand());

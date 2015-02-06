@@ -14,8 +14,8 @@ namespace Webmozart\Console\Tests\Api\Command;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\CommandConfig;
-use Webmozart\Console\Api\Command\OptionCommandConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
 
 /**
  * @since  1.0

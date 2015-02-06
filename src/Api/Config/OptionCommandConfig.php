@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api\Command;
+namespace Webmozart\Console\Api\Config;
 
 use Webmozart\Console\Assert\Assert;
 
@@ -29,17 +29,28 @@ class OptionCommandConfig extends SubCommandConfig
     /**
      * Creates a new configuration.
      *
-     * @param string        $name         The long option name of the command.
-     * @param string        $shortName    The short option name of the command.
-     * @param CommandConfig $parentConfig The parent configuration.
+     * @param string            $name              The long option name of the command.
+     * @param string            $shortName         The short option name of the command.
+     * @param CommandConfig     $parentConfig      The parent configuration.
+     * @param ApplicationConfig $applicationConfig The application configuration.
      */
-    public function __construct($name = null, $shortName = null, CommandConfig $parentConfig = null)
+    public function __construct($name = null, $shortName = null, CommandConfig $parentConfig = null, ApplicationConfig $applicationConfig = null)
     {
-        parent::__construct($name, $parentConfig);
+        parent::__construct($name, $parentConfig, $applicationConfig);
 
         $this->setShortName($shortName);
     }
 
+    /**
+     * Sets the name of the command.
+     *
+     * Contrary to the base implementation, the name of an option command must
+     * contain at least two characters.
+     *
+     * @param string $name The name of the command.
+     *
+     * @return static The current instance.
+     */
     public function setName($name)
     {
         if (null !== $name) {

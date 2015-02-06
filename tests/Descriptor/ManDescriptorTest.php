@@ -60,7 +60,7 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
             ->with('man')
             ->will($this->returnValue('man-binary'));
 
-        $command = sprintf("man-binary -l '%s'", __DIR__.'/Fixtures/man/package.1');
+        $command = sprintf("man-binary -l '%s'", __DIR__.'/Fixtures/man/command1.1');
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
@@ -68,7 +68,7 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(123));
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'manPath' => __DIR__.'/Fixtures/man/package.1',
+            'manPath' => __DIR__.'/Fixtures/man/command1.1',
         ));
 
         $this->assertSame(123, $status);
@@ -81,7 +81,7 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
         $this->executableFinder->expects($this->never())
             ->method('find');
 
-        $command = sprintf("my-man -l '%s'", __DIR__.'/Fixtures/man/package.1');
+        $command = sprintf("my-man -l '%s'", __DIR__.'/Fixtures/man/command1.1');
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
@@ -89,7 +89,7 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(123));
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'manPath' => __DIR__.'/Fixtures/man/package.1',
+            'manPath' => __DIR__.'/Fixtures/man/command1.1',
             'manBinary' => 'my-man',
         ));
 
@@ -146,7 +146,7 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $this->descriptor->describe($output, new \stdClass(), array(
-            'manPath' => __DIR__.'/Fixtures/man/package.1',
+            'manPath' => __DIR__.'/Fixtures/man/command1.1',
         ));
     }
 
@@ -164,7 +164,7 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $this->descriptor->describe($output, new \stdClass(), array(
-            'manPath' => __DIR__.'/Fixtures/man/package.1',
+            'manPath' => __DIR__.'/Fixtures/man/command1.1',
             'manBinary' => false,
         ));
     }

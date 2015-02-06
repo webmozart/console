@@ -11,12 +11,10 @@
 
 namespace Webmozart\Console\Descriptor;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Descriptor\JsonDescriptor;
-use Symfony\Component\Console\Descriptor\XmlDescriptor;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -112,14 +110,14 @@ class DefaultDescriptor extends DelegatingDescriptor
 
         // Check if any of the options is set
         foreach (array('man', 'ascii-doc', 'xml', 'json', 'text') as $format) {
-            if ($input->getOption($format)) {
+            if ($input->hasParameterOption('--'.$format)) {
                 return $format;
             }
         }
 
         // No format option is set, "-h" is not set
         // If a command is given or if "--help" is set, display the manual
-        if ($input->getArgument('command') || $input->getOption('help')) {
+        if ($input->hasParameterOption('--help')) {
             // Return "man" if the binary is available and the man page exists
             // The process launcher must be supported on the system
             if ($options['manBinary'] && file_exists($options['manPath']) && $this->processLauncher->isSupported()) {

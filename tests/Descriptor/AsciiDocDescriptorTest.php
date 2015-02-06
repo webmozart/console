@@ -60,7 +60,7 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             ->with('less')
             ->will($this->returnValue('less-binary'));
 
-        $command = sprintf("less-binary '%s'", __DIR__.'/Fixtures/ascii-doc/package.txt');
+        $command = sprintf("less-binary '%s'", __DIR__.'/Fixtures/ascii-doc/command1.txt');
 
         $this->processLauncher->expects($this->once())
             ->method('isSupported')
@@ -72,7 +72,7 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(123));
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/package.txt',
+            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
         ));
 
         $this->assertSame(123, $status);
@@ -94,10 +94,10 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/package.txt',
+            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
         ));
 
-        $this->assertSame("Contents of package.txt\n", $output->fetch());
+        $this->assertSame("Contents of command1.txt\n", $output->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -118,10 +118,10 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/package.txt',
+            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
         ));
 
-        $this->assertSame("Contents of package.txt\n", $output->fetch());
+        $this->assertSame("Contents of command1.txt\n", $output->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -132,7 +132,7 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
         $this->executableFinder->expects($this->never())
             ->method('find');
 
-        $command = sprintf("my-less '%s'", __DIR__.'/Fixtures/ascii-doc/package.txt');
+        $command = sprintf("my-less '%s'", __DIR__.'/Fixtures/ascii-doc/command1.txt');
 
         $this->processLauncher->expects($this->once())
             ->method('isSupported')
@@ -144,7 +144,7 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(123));
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/package.txt',
+            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
             'lessBinary' => 'my-less',
         ));
 
@@ -165,11 +165,11 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $status = $this->descriptor->describe($output, new \stdClass(), array(
-            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/package.txt',
+            'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
             'lessBinary' => false,
         ));
 
-        $this->assertSame("Contents of package.txt\n", $output->fetch());
+        $this->assertSame("Contents of command1.txt\n", $output->fetch());
         $this->assertSame(0, $status);
     }
 

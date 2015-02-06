@@ -23,22 +23,12 @@ use Webmozart\Console\Assert\Assert;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CallableHandler implements CommandHandler
+class CallableHandler extends AbstractHandler
 {
     /**
      * @var callable
      */
     private $callable;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
-     * @var OutputInterface
-     */
-    private $errorOutput;
 
     /**
      * Creates the command handler.
@@ -59,15 +49,6 @@ class CallableHandler implements CommandHandler
         Assert::isCallable($callable);
 
         $this->callable = $callable;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(Command $command, OutputInterface $output, OutputInterface $errorOutput)
-    {
-        $this->output = $output;
-        $this->errorOutput = $errorOutput;
     }
 
     /**

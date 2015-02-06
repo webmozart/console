@@ -13,6 +13,9 @@ namespace Webmozart\Console\Api\Command;
 
 use LogicException;
 use OutOfBoundsException;
+use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Input\CommandName;
 use Webmozart\Console\Api\Input\CommandOption;
 use Webmozart\Console\Api\Input\InputDefinition;
@@ -71,6 +74,11 @@ class Command
     private $inputDefinition;
 
     /**
+     * @var Application
+     */
+    private $application;
+
+    /**
      * @var Command[]
      */
     private $subCommands;
@@ -90,10 +98,11 @@ class Command
      * @param InputDefinition $baseInputDefinition The input definition to
      *                                             inherit options and arguments
      *                                             from.
+     * @param Application     $application         The console application.
      *
      * @throws LogicException If the name of the command configuration is not set.
      */
-    public function __construct(CommandConfig $config, InputDefinition $baseInputDefinition = null)
+    public function __construct(CommandConfig $config, InputDefinition $baseInputDefinition = null, Application $application = null)
     {
         if (!$config->getName()) {
             throw new LogicException('The name of the command config must be set.');
@@ -114,11 +123,11 @@ class Command
         $inputDefinition = $definitionBuilder->getDefinition();
 
         foreach ($config->getSubCommandConfigs() as $subConfig) {
-            $argumentCommands[$subConfig->getName()] = new Command($subConfig, $inputDefinition);
+            $argumentCommands[$subConfig->getName()] = new Command($subConfig, $inputDefinition, $application);
         }
 
         foreach ($config->getOptionCommandConfigs() as $subConfig) {
-            $optionCommands[$subConfig->getName()] = new Command($subConfig, $inputDefinition);
+            $optionCommands[$subConfig->getName()] = new Command($subConfig, $inputDefinition, $application);
         }
 
         $this->name = $config->getName();
@@ -126,6 +135,7 @@ class Command
         $this->aliases = $config->getAliases();
         $this->config = $config;
         $this->inputDefinition = $inputDefinition;
+        $this->application = $application;
         $this->subCommands = $argumentCommands;
         $this->optionCommands = $optionCommands;
     }
@@ -182,6 +192,16 @@ class Command
     public function getInputDefinition()
     {
         return $this->inputDefinition;
+    }
+
+    /**
+     * Returns the console application.
+     *
+     * @return Application The console application.
+     */
+    public function getApplication()
+    {
+        return $this->application;
     }
 
     /**

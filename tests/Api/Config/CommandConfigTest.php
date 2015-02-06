@@ -9,20 +9,23 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\Api\Command;
+namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Command\CommandConfig;
-use Webmozart\Console\Api\Command\OptionCommandConfig;
-use Webmozart\Console\Api\Command\SubCommandConfig;
+use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
+use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputOption;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Tests\Api\Command\Fixtures\TestRunnableConfig;
+use Webmozart\Console\Handler\RunnableHandler;
+use Webmozart\Console\Tests\Api\Config\Fixtures\TestRunnableConfig;
+use Webmozart\Console\Tests\Handler\Fixtures\TestRunnable;
 
 /**
  * @since  1.0
@@ -31,13 +34,19 @@ use Webmozart\Console\Tests\Api\Command\Fixtures\TestRunnableConfig;
 class CommandConfigTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * @var ApplicationConfig
+     */
+    private $applicationConfig;
+
+    /**
      * @var CommandConfig
      */
     private $config;
 
     protected function setUp()
     {
-        $this->config = new CommandConfig('command');
+        $this->applicationConfig = new ApplicationConfig();
+        $this->config = new CommandConfig('command', $this->applicationConfig);
     }
 
     public function testCreate()
@@ -48,7 +57,7 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getDescription());
         $this->assertNull($config->getHelp());
         $this->assertNull($config->getProcessTitle());
-        $this->assertNull($config->getCallback());
+        $this->assertNull($config->getApplicationConfig());
         $this->assertSame(array(), $config->getAliases());
         $this->assertSame(array(), $config->getArguments());
         $this->assertSame(array(), $config->getOptions());
@@ -56,11 +65,12 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(), $config->getOptionCommandConfigs());
     }
 
-    public function testCreateWithName()
+    public function testCreateWithArguments()
     {
-        $config = new CommandConfig('command');
+        $config = new CommandConfig('command', $this->applicationConfig);
 
         $this->assertSame('command', $config->getName());
+        $this->assertSame($this->applicationConfig, $config->getApplicationConfig());
     }
 
     public function testStaticCreate()
@@ -71,7 +81,7 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getDescription());
         $this->assertNull($config->getHelp());
         $this->assertNull($config->getProcessTitle());
-        $this->assertNull($config->getCallback());
+        $this->assertNull($config->getApplicationConfig());
         $this->assertSame(array(), $config->getAliases());
         $this->assertSame(array(), $config->getArguments());
         $this->assertSame(array(), $config->getOptions());
@@ -81,9 +91,10 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
 
     public function testStaticCreateWithName()
     {
-        $config = CommandConfig::create('command');
+        $config = CommandConfig::create('command', $this->applicationConfig);
 
         $this->assertSame('command', $config->getName());
+        $this->assertSame($this->applicationConfig, $config->getApplicationConfig());
     }
 
     /**
@@ -386,36 +397,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->config->setProcessTitle(1234);
     }
 
-    public function testSetCallback()
-    {
-        $this->config->setCallback($callback = function () {});
-
-        $this->assertSame($callback, $this->config->getCallback());
-    }
-
-    public function testSetCallbackNull()
-    {
-        $this->config->setCallback(null);
-
-        $this->assertNull($this->config->getCallback());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetCallbackFailsIfEmpty()
-    {
-        $this->config->setCallback('');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetCallbackFailsIfNotCallable()
-    {
-        $this->config->setCallback(new stdClass());
-    }
-
     public function testAddArgument()
     {
         $this->config->addArgument('argument1', InputArgument::REQUIRED, 'Description 1');
@@ -447,6 +428,9 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
             'add' => $config1,
             'remove' => $config2,
         ), $this->config->getSubCommandConfigs());
+
+        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
+        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
     }
 
     public function testBeginSubCommand()
@@ -457,8 +441,8 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         ;
 
         $this->assertEquals(array(
-            'add' => new SubCommandConfig('add', $this->config),
-            'remove' => new SubCommandConfig('remove', $this->config),
+            'add' => new SubCommandConfig('add', $this->config, $this->applicationConfig),
+            'remove' => new SubCommandConfig('remove', $this->config, $this->applicationConfig),
         ), $this->config->getSubCommandConfigs());
     }
 
@@ -471,6 +455,9 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
             'add' => $config1,
             'delete' => $config2,
         ), $this->config->getOptionCommandConfigs());
+
+        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
+        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
     }
 
     public function testBeginOptionCommand()
@@ -481,8 +468,8 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         ;
 
         $this->assertEquals(array(
-            'add' => new OptionCommandConfig('add', 'a', $this->config),
-            'delete' => new OptionCommandConfig('delete', 'd', $this->config),
+            'add' => new OptionCommandConfig('add', 'a', $this->config, $this->applicationConfig),
+            'delete' => new OptionCommandConfig('delete', 'd', $this->config, $this->applicationConfig),
         ), $this->config->getOptionCommandConfigs());
     }
 
@@ -493,7 +480,7 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(new NullHandler(), $this->config->getHandler($command));
     }
 
-    public function testGetHandlerWithRunnable()
+    public function testGetHandlerWithRunnableConfig()
     {
         $config = new TestRunnableConfig('command');
         $command = new Command($config);
@@ -505,9 +492,44 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame('foo', $handler->handle(new StringInput('test')));
     }
 
+    public function testSetHandler()
+    {
+        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+
+        $this->config->setHandler($handler);
+        $command = new Command($this->config);
+
+        $this->assertSame($handler, $this->config->getHandler($command));
+    }
+
+    public function testSetHandlerToFactoryCallback()
+    {
+        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+
+        $factory = function (Command $command) use (&$passedCommand, $handler) {
+            $passedCommand = $command;
+
+            return $handler;
+        };
+
+        $this->config->setHandler($factory);
+        $command = new Command($this->config);
+
+        $this->assertSame($handler, $this->config->getHandler($command));
+        $this->assertSame($command, $passedCommand);
+    }
+
+    public function testSetHandlerToRunnable()
+    {
+        $this->config->setHandler($runnable = new TestRunnable(function () { return 'foo'; }));
+        $command = new Command($this->config);
+
+        $this->assertEquals(new RunnableHandler($runnable), $this->config->getHandler($command));
+    }
+
     public function testGetHandlerWithCallback()
     {
-        $this->config->setCallback($callback = function () { return 'foo'; });
+        $this->config->setCallback(function () { return 'foo'; });
         $command = new Command($this->config);
 
         $handler = $this->config->getHandler($command);
@@ -517,13 +539,13 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame('foo', $handler->handle(new StringInput('test')));
     }
 
-    public function testDefaultToSubCommand()
+    public function testSetDefaultSubCommand()
     {
         $this->assertNull($this->config->getDefaultSubCommand());
 
         $this->config
             ->addSubCommandConfig(new SubCommandConfig('sub'))
-            ->defaultToSubCommand('sub')
+            ->setDefaultSubCommand('sub')
         ;
 
         $this->assertSame('sub', $this->config->getDefaultSubCommand());
@@ -533,18 +555,18 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
      * @expectedException \OutOfBoundsException
      * @expectedExceptionMessage sub
      */
-    public function testDefaultToSubCommandFailsIfNotFound()
+    public function testSetDefaultSubCommandFailsIfNotFound()
     {
-        $this->config->defaultToSubCommand('sub');
+        $this->config->setDefaultSubCommand('sub');
     }
 
-    public function testDefaultToOptionCommand()
+    public function testSetDefaultOptionCommand()
     {
         $this->assertNull($this->config->getDefaultOptionCommand());
 
         $this->config
             ->addOptionCommandConfig(new OptionCommandConfig('option'))
-            ->defaultToOptionCommand('option')
+            ->setDefaultOptionCommand('option')
         ;
 
         $this->assertSame('option', $this->config->getDefaultOptionCommand());
@@ -554,31 +576,31 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
      * @expectedException \OutOfBoundsException
      * @expectedExceptionMessage option
      */
-    public function testDefaultToOptionCommandFailsIfNotFound()
+    public function testSetDefaultOptionCommandFailsIfNotFound()
     {
-        $this->config->defaultToOptionCommand('option');
+        $this->config->setDefaultOptionCommand('option');
     }
 
-    public function testDefaultToSubCommandResetsDefaultOptionCommand()
+    public function testSetDefaultSubCommandResetsDefaultOptionCommand()
     {
         $this->config
             ->addSubCommandConfig(new SubCommandConfig('sub'))
             ->addOptionCommandConfig(new OptionCommandConfig('option'))
-            ->defaultToOptionCommand('option')
-            ->defaultToSubCommand('sub')
+            ->setDefaultOptionCommand('option')
+            ->setDefaultSubCommand('sub')
         ;
 
         $this->assertSame('sub', $this->config->getDefaultSubCommand());
         $this->assertNull($this->config->getDefaultOptionCommand());
     }
 
-    public function testDefaultToOptionCommandResetsDefaultSubCommand()
+    public function testSetDefaultOptionCommandResetsDefaultSubCommand()
     {
         $this->config
             ->addSubCommandConfig(new SubCommandConfig('sub'))
             ->addOptionCommandConfig(new OptionCommandConfig('option'))
-            ->defaultToSubCommand('sub')
-            ->defaultToOptionCommand('option')
+            ->setDefaultSubCommand('sub')
+            ->setDefaultOptionCommand('option')
         ;
 
         $this->assertNull($this->config->getDefaultSubCommand());

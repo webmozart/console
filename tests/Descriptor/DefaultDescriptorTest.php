@@ -13,19 +13,21 @@ namespace Webmozart\Console\Tests\Descriptor;
 
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Input\InputArgument;
+use Webmozart\Console\Api\Input\InputDefinition;
+use Webmozart\Console\Api\Input\InputOption;
+use Webmozart\Console\Adapter\InputDefinitionAdapter;
+use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Descriptor\DefaultDescriptor;
 use Webmozart\Console\Process\ProcessLauncher;
 use Webmozart\Console\Style\NeptunStyle;
-use Webmozart\Console\Tests\Fixtures\TestApplication;
-use Webmozart\Console\Tests\Fixtures\TestPackageAddCommand;
-use Webmozart\Console\Tests\Fixtures\TestPackageCommand;
-use Webmozart\Console\Tests\Fixtures\TestSynopsisCommand;
+use Webmozart\Console\Api\TerminalDimensions;
 
 /**
  * @since  1.0
@@ -66,12 +68,12 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
         $this->processLauncher = $this->getMockBuilder('Webmozart\Console\Process\ProcessLauncher')
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->descriptor = new DefaultDescriptor($this->executableFinder, $this->processLauncher);
         $this->output = new BufferedOutput();
+
         NeptunStyle::addStyles($this->output->getFormatter());
+
         $this->inputDefinition = new InputDefinition(array(
-            new InputArgument('command'),
             new InputOption('all'),
             new InputOption('man'),
             new InputOption('ascii-doc'),
@@ -135,7 +137,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
             'input' => $this->getStringInput($inputString),
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -155,67 +157,6 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $status);
     }
 
-    /**
-     * @dataProvider getInputForTextHelp
-     */
-    public function testDescribeApplicationAsTextWithCompositeCommands($inputString)
-    {
-        $options = array(
-            'input' => $this->getStringInput($inputString.' --all'),
-            'printCompositeCommands' => true,
-        );
-
-        $object = $this->createApplication();
-
-        $this->executableFinder->expects($this->once())
-            ->method('find')
-            ->with('man')
-            ->will($this->returnValue('man-binary'));
-
-        $this->processLauncher->expects($this->any())
-            ->method('isSupported')
-            ->will($this->returnValue(true));
-
-        $this->processLauncher->expects($this->never())
-            ->method('launchProcess');
-
-        $status = $this->descriptor->describe($this->output, $object, $options);
-
-        $expected = <<<EOF
-Test Application version 1.0.0
-
-USAGE
-  test-bin [--help] [--quiet] [--verbose] [--version] [--ansi] [--no-ansi]
-           [--no-interaction] <command> [<sub-command>] [<arg1>] ... [<argN>]
-
-ARGUMENTS
-  <command>              The command to execute
-  <sub-command>          The sub-command to execute
-  <arg>                  The arguments of the command
-
-OPTIONS
-  --help (-h)            Description
-  --quiet (-q)           Description
-  --verbose              Description
-  --version (-V)         Description
-  --ansi                 Description
-  --no-ansi              Description
-  --no-interaction (-n)  Description
-
-AVAILABLE COMMANDS
-  help                   Display the manual of a command
-  pack                   Description of "pack"
-  package                Description of "package"
-  package add            Description of "package add"
-  package addon          Description of "package addon"
-
-
-EOF;
-
-        $this->assertSame($expected, $this->output->fetch());
-        $this->assertSame(0, $status);
-    }
-
     public function testDescribeApplicationByDefault()
     {
         $this->testDescribeApplicationAsText('');
@@ -230,7 +171,7 @@ EOF;
             'input' => $this->getStringInput($inputString),
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -261,7 +202,7 @@ EOF;
             'input' => $this->getStringInput($inputString),
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -293,7 +234,7 @@ EOF;
             'defaultPage' => 'application',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -327,7 +268,7 @@ EOF;
             'defaultPage' => 'application',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -364,7 +305,7 @@ EOF;
             'defaultPage' => 'application',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -398,7 +339,7 @@ EOF;
             'defaultPage' => 'application',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -432,7 +373,7 @@ EOF;
             'defaultPage' => 'application',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -469,7 +410,7 @@ EOF;
             'defaultPage' => 'man-not-found',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -506,7 +447,7 @@ EOF;
             'defaultPage' => 'application',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -540,7 +481,7 @@ EOF;
             'defaultPage' => 'not-found',
         );
 
-        $object = $this->createApplication();
+        $object = $this->getApplication();
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -569,7 +510,7 @@ EOF;
             'input' => $this->getStringInput($inputString),
         );
 
-        $object = $this->createCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -587,23 +528,21 @@ EOF;
 
         $expected = <<<EOF
 USAGE
-  test-bin package add [--option] [--value\xC2\xA0<...>] [<arg>]
+  test-bin command1 [--option] [--value\xC2\xA0<...>] [<arg>]
 
-  aliases: package add-alias
+  aliases: command1-alias
 
 ARGUMENTS
-  <arg>                  The "arg" argument
+  <arg>                  Description of the "arg" argument
 
 OPTIONS
-  --option (-o)          The "option" option
-  --value (-v)           The "value" option
-  --help (-h)            Description
-  --quiet (-q)           Description
-  --verbose              Description
-  --version (-V)         Description
-  --ansi                 Description
-  --no-ansi              Description
-  --no-interaction (-n)  Description
+  --option (-o)          Description of the "option" option
+  --value (-v)           Description of the "value" option
+
+GLOBAL OPTIONS
+  --help (-h)            Description of the "help" option
+  --ansi                 Description of the "ansi" option
+  --no-interaction (-n)  Description of the "no-interaction" option
 
 
 EOF;
@@ -613,14 +552,13 @@ EOF;
         $this->assertSame(0, $status);
     }
 
-    public function testDescribeCommandWithMultipleSynopsises()
+    public function testDescribeCommandWithSubCommands()
     {
         $options = array(
             'input' => $this->getStringInput('-h'),
         );
 
-        $object = new TestSynopsisCommand();
-        $object->setApplication($this->createApplication());
+        $object = $this->getApplication()->getCommand('command2');
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -638,20 +576,101 @@ EOF;
 
         $expected = <<<EOF
 USAGE
-      test-bin synopsis <arg>
-  or: test-bin synopsis [--foo] [--bar]
+      test-bin command2
+  or: test-bin command2 add <arg>
+  or: test-bin command2 list [<arg>]
+  or: test-bin command2 -d <arg>
 
-ARGUMENTS
-  <arg>                  The "arg" argument
+GLOBAL OPTIONS
+  --help (-h)            Description of the "help" option
+  --ansi                 Description of the "ansi" option
+  --no-interaction (-n)  Description of the "no-interaction" option
 
-OPTIONS
-  --help (-h)            Description
-  --quiet (-q)           Description
-  --verbose              Description
-  --version (-V)         Description
-  --ansi                 Description
-  --no-ansi              Description
-  --no-interaction (-n)  Description
+
+EOF;
+
+
+        $this->assertSame($expected, $this->output->fetch());
+        $this->assertSame(0, $status);
+    }
+
+    public function testDescribeCommandWithDefaultSubCommand()
+    {
+        $options = array(
+            'input' => $this->getStringInput('-h'),
+        );
+
+        $config = $this->getApplicationConfig();
+        $config->getCommandConfig('command2')->setDefaultSubCommand('list');
+        $object = $this->getApplication($config)->getCommand('command2');
+
+        $this->executableFinder->expects($this->once())
+            ->method('find')
+            ->with('man')
+            ->will($this->returnValue('man-binary'));
+
+        $this->processLauncher->expects($this->any())
+            ->method('isSupported')
+            ->will($this->returnValue(true));
+
+        $this->processLauncher->expects($this->never())
+            ->method('launchProcess');
+
+        $status = $this->descriptor->describe($this->output, $object, $options);
+
+        $expected = <<<EOF
+USAGE
+      test-bin command2 [list] [<arg>]
+  or: test-bin command2 add <arg>
+  or: test-bin command2 -d <arg>
+
+GLOBAL OPTIONS
+  --help (-h)            Description of the "help" option
+  --ansi                 Description of the "ansi" option
+  --no-interaction (-n)  Description of the "no-interaction" option
+
+
+EOF;
+
+
+        $this->assertSame($expected, $this->output->fetch());
+        $this->assertSame(0, $status);
+    }
+
+    public function testDescribeCommandWithDefaultOptionCommand()
+    {
+        $options = array(
+            'input' => $this->getStringInput('-h'),
+        );
+
+        $config = $this->getApplicationConfig();
+        $config->getCommandConfig('command2')->setDefaultOptionCommand('delete');
+        $object = $this->getApplication($config)->getCommand('command2');
+
+        $this->executableFinder->expects($this->once())
+            ->method('find')
+            ->with('man')
+            ->will($this->returnValue('man-binary'));
+
+        $this->processLauncher->expects($this->any())
+            ->method('isSupported')
+            ->will($this->returnValue(true));
+
+        $this->processLauncher->expects($this->never())
+            ->method('launchProcess');
+
+        $status = $this->descriptor->describe($this->output, $object, $options);
+
+        $expected = <<<EOF
+USAGE
+      test-bin command2 [-d] <arg>
+  or: test-bin command2 add <arg>
+  or: test-bin command2 list [<arg>]
+
+GLOBAL OPTIONS
+  --help (-h)            Description of the "help" option
+  --ansi                 Description of the "ansi" option
+  --no-interaction (-n)  Description of the "no-interaction" option
 
 
 EOF;
@@ -670,7 +689,7 @@ EOF;
             'input' => $this->getStringInput($inputString),
         );
 
-        $object = new TestPackageAddCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -689,7 +708,7 @@ EOF;
         $output = $this->output->fetch();
 
         $this->assertStringStartsWith('<?xml version="1.0" encoding="UTF-8"?>', $output);
-        $this->assertContains('<command id="package add" name="package add">', $output);
+        $this->assertContains('<command id="command1" name="command1">', $output);
         $this->assertSame(0, $status);
     }
 
@@ -702,7 +721,7 @@ EOF;
             'input' => $this->getStringInput($inputString),
         );
 
-        $object = new TestPackageAddCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -719,7 +738,7 @@ EOF;
         $status = $this->descriptor->describe($this->output, $object, $options);
         $output = $this->output->fetch();
 
-        $this->assertStringStartsWith('{"name":"package add",', $output);
+        $this->assertStringStartsWith('{"name":"command1",', $output);
         $this->assertSame(0, $status);
     }
 
@@ -733,7 +752,7 @@ EOF;
             'manDir' => __DIR__.'/Fixtures/man',
         );
 
-        $object = new TestPackageAddCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -744,7 +763,7 @@ EOF;
             ->method('isSupported')
             ->will($this->returnValue(true));
 
-        $command = sprintf("man-binary -l '%s'", __DIR__.'/Fixtures/man/package-add.1');
+        $command = sprintf("man-binary -l '%s'", __DIR__.'/Fixtures/man/command1.1');
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
@@ -767,7 +786,7 @@ EOF;
             'commandPrefix' => 'prefix-',
         );
 
-        $object = new TestPackageCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -778,7 +797,7 @@ EOF;
             ->method('isSupported')
             ->will($this->returnValue(true));
 
-        $command = sprintf("man-binary -l '%s'", __DIR__.'/Fixtures/man/prefix-package.1');
+        $command = sprintf("man-binary -l '%s'", __DIR__.'/Fixtures/man/prefix-command1.1');
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
@@ -800,7 +819,7 @@ EOF;
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
         );
 
-        $object = new TestPackageAddCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -816,7 +835,7 @@ EOF;
             ->method('isSupported')
             ->will($this->returnValue(true));
 
-        $command = sprintf("less-binary '%s'", __DIR__.'/Fixtures/ascii-doc/package-add.txt');
+        $command = sprintf("less-binary '%s'", __DIR__.'/Fixtures/ascii-doc/command1.txt');
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
@@ -839,7 +858,7 @@ EOF;
             'commandPrefix' => 'prefix-',
         );
 
-        $object = new TestPackageCommand();
+        $object = $this->getApplication()->getCommand('command1');
 
         $this->executableFinder->expects($this->at(0))
             ->method('find')
@@ -855,7 +874,7 @@ EOF;
             ->method('isSupported')
             ->will($this->returnValue(true));
 
-        $command = sprintf("less-binary '%s'", __DIR__.'/Fixtures/ascii-doc/prefix-package.txt');
+        $command = sprintf("less-binary '%s'", __DIR__.'/Fixtures/ascii-doc/prefix-command1.txt');
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
@@ -873,27 +892,20 @@ EOF;
 Test Application version 1.0.0
 
 USAGE
-  test-bin [--help] [--quiet] [--verbose] [--version] [--ansi] [--no-ansi]
-           [--no-interaction] <command> [<sub-command>] [<arg1>] ... [<argN>]
+  test-bin [--help] [--ansi] [--no-interaction] <command> [<arg1>] ... [<argN>]
 
 ARGUMENTS
   <command>              The command to execute
-  <sub-command>          The sub-command to execute
   <arg>                  The arguments of the command
 
 OPTIONS
-  --help (-h)            Description
-  --quiet (-q)           Description
-  --verbose              Description
-  --version (-V)         Description
-  --ansi                 Description
-  --no-ansi              Description
-  --no-interaction (-n)  Description
+  --help (-h)            Description of the "help" option
+  --ansi                 Description of the "ansi" option
+  --no-interaction (-n)  Description of the "no-interaction" option
 
 AVAILABLE COMMANDS
-  help                   Display the manual of a command
-  pack                   Description of "pack"
-  package                Description of "package"
+  command1               Description of command1
+  command2               Description of command2
 
 
 EOF;
@@ -901,26 +913,53 @@ EOF;
         $this->assertSame($expected, $string);
     }
 
-    private function createApplication()
+    private function getApplicationConfig()
     {
-        return new TestApplication(array(80, null));
+        return ApplicationConfig::create()
+            ->setName('Test Application')
+            ->setVersion('1.0.0')
+            ->setExecutableName('test-bin')
+            ->setTerminalDimensions(new TerminalDimensions(80, null))
+
+            ->addOption('help', 'h', InputOption::VALUE_NONE, 'Description of the "help" option')
+            ->addOption('ansi', null, InputOption::VALUE_NONE, 'Description of the "ansi" option')
+            ->addOption('no-interaction', 'n', InputOption::VALUE_NONE, 'Description of the "no-interaction" option')
+
+            ->beginCommand('command1')
+                ->addAlias('command1-alias')
+                ->setDescription('Description of command1')
+                ->addArgument('arg', InputArgument::OPTIONAL, 'Description of the "arg" argument')
+                ->addOption('option', 'o', InputOption::VALUE_NONE, 'Description of the "option" option')
+                ->addOption('value', 'v', InputOption::VALUE_REQUIRED, 'Description of the "value" option')
+            ->end()
+
+            ->beginCommand('command2')
+                ->setDescription('Description of command2')
+
+                ->beginSubCommand('list')
+                    ->addArgument('arg', InputArgument::OPTIONAL)
+                ->end()
+
+                ->beginSubCommand('add')
+                    ->addArgument('arg', InputArgument::REQUIRED)
+                ->end()
+
+                ->beginOptionCommand('delete', 'd')
+                    ->addArgument('arg', InputArgument::REQUIRED)
+                ->end()
+            ->end()
+        ;
     }
 
-    /**
-     * @return TestPackageAddCommand
-     */
-    protected function createCommand()
+    public function getApplication(ApplicationConfig $config = null)
     {
-        $object = new TestPackageAddCommand();
-        $object->setApplication($this->createApplication());
-
-        return $object;
+        return new ConsoleApplication($config ?: $this->getApplicationConfig());
     }
 
     private function getStringInput($inputString)
     {
         $input = new StringInput($inputString);
-        $input->bind($this->inputDefinition);
+        $input->bind(new InputDefinitionAdapter($this->inputDefinition));
 
         return $input;
     }

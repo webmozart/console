@@ -11,40 +11,40 @@
 
 namespace Webmozart\Console\Handler;
 
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
-use Webmozart\Console\Api\Runnable;
 
 /**
- * Delegates command handling to a {@link Runnable} object.
+ * Base implementation for command handlers.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class RunnableHandler extends AbstractHandler
+abstract class AbstractHandler implements CommandHandler
 {
     /**
-     * @var Runnable
+     * @var Command
      */
-    private $runnable;
+    protected $command;
 
     /**
-     * Creates the command handler.
-     *
-     * @param Runnable $runnable The object to run when handling a command.
+     * @var OutputInterface
      */
-    public function __construct(Runnable $runnable)
-    {
-        $this->runnable = $runnable;
-    }
+    protected $output;
+
+    /**
+     * @var OutputInterface
+     */
+    protected $errorOutput;
 
     /**
      * {@inheritdoc}
      */
-    public function handle(InputInterface $input)
+    public function initialize(Command $command, OutputInterface $output, OutputInterface $errorOutput)
     {
-        return $this->runnable->run($input, $this->output, $this->errorOutput);
+        $this->command = $command;
+        $this->output = $output;
+        $this->errorOutput = $errorOutput;
     }
 }

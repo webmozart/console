@@ -201,6 +201,17 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Returns whether the collection is empty.
+     *
+     * @return bool Returns `true` if the collection is empty and `false`
+     *              otherwise.
+     */
+    public function isEmpty()
+    {
+        return !$this->commands;
+    }
+
+    /**
      * Returns the contents of the collection as array.
      *
      * The commands in the collection are returned indexed by their names. The

@@ -21,11 +21,15 @@ use Webmozart\Console\Api\Runnable;
  */
 class TestRunnable implements Runnable
 {
+    private $callback;
+
+    public function __construct($callback)
+    {
+        $this->callback = $callback;
+    }
+
     public function run(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput)
     {
-        $output->write((string) $input);
-        $errorOutput->write((string) $input);
-
-        return 123;
+        return call_user_func($this->callback, $input, $output, $errorOutput);
     }
 }

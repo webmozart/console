@@ -9,11 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\Api\Command;
+namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Api\Command\CommandConfig;
-use Webmozart\Console\Api\Command\OptionCommandConfig;
+use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
 
 /**
  * @since  1.0
@@ -36,16 +37,19 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
         $config = new OptionCommandConfig();
 
         $this->assertNull($config->getParentConfig());
+        $this->assertNull($config->getApplicationConfig());
         $this->assertNull($config->getName());
         $this->assertNull($config->getShortName());
     }
 
-    public function testCreateWithName()
+    public function testCreateWithArguments()
     {
-        $parentConfig = new CommandConfig();
+        $applicationConfig = new ApplicationConfig();
+        $parentConfig = new CommandConfig('command', $applicationConfig);
         $config = new OptionCommandConfig('delete', 'd', $parentConfig);
 
         $this->assertSame($parentConfig, $config->getParentConfig());
+        $this->assertSame($applicationConfig, $config->getApplicationConfig());
         $this->assertSame('delete', $config->getName());
         $this->assertSame('d', $config->getShortName());
     }

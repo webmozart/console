@@ -15,7 +15,7 @@ use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\CommandConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Resolver\CommandNotDefinedException;
 use Webmozart\Console\Resolver\DefaultResolver;
 
@@ -60,12 +60,12 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
                     ->beginSubCommand('save')
                         ->beginOptionCommand('do', 'D')->end()
                     ->end()
-                    ->defaultToSubCommand('save')
+                    ->setDefaultSubCommand('save')
             ),
             new Command(
                 CommandConfig::create('server')
                     ->beginOptionCommand('list')->end()
-                    ->defaultToOptionCommand('list')
+                    ->setDefaultOptionCommand('list')
             ),
         ));
 

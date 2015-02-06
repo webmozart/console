@@ -11,7 +11,8 @@
     "require": {
         "php": ">=5.3.9",
         "symfony/console": "~2.5",
-        "symfony/process": "~2.5"
+        "symfony/process": "~2.5",
+        "symfony/event-dispatcher": "~2.5"
     },
     "require-dev": {
         "symfony/filesystem": "~2.3"

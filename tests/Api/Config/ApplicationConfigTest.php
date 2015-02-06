@@ -9,14 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\Api\Command\Fixtures;
-
-use Webmozart\Console\Api\Command\SubCommandConfig;
+namespace Webmozart\Console\Tests\Api\Config;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class TestNestedConfig extends SubCommandConfig
+class ApplicationConfigTest
 {
+
 }

@@ -20,8 +20,6 @@ use RuntimeException;
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
- *
- * @internal This class is internal and should not be used by user code.
  */
 class ProcessLauncher
 {
