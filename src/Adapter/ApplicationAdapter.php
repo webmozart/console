@@ -44,6 +44,7 @@ class ApplicationAdapter extends Application
         $this->application = $application;
 
         $config = $application->getConfig();
+        $terminalDimensions = $config->getTerminalDimensions();
 
         parent::__construct($config->getName(), $config->getVersion());
 
@@ -53,6 +54,11 @@ class ApplicationAdapter extends Application
 
         $this->setAutoExit($config->isTerminatedAfterRun());
         $this->setCatchExceptions($config->isExceptionCaught());
+        $this->setTerminalDimensions($terminalDimensions->getWidth(), $terminalDimensions->getHeight());
+
+        foreach ($application->getCommands() as $command) {
+            $this->add(new CommandAdapter($command));
+        }
     }
 
     /**
@@ -63,8 +69,7 @@ class ApplicationAdapter extends Application
         $commandResolver = $this->application->getConfig()->getCommandResolver();
         $command = $commandResolver->resolveCommand($input, $this->application->getCommands());
 
-        $this->currentCommand = new CommandAdapter($command);
-        $this->currentCommand->setApplication($this);
+        $this->currentCommand = $this->get($command->getName());
 
         try {
             $result = parent::doRun($input, $output);

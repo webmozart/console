@@ -51,7 +51,7 @@ class TerminalDimensions
      * @param int $width  The terminal width.
      * @param int $height The terminal height.
      */
-    public function __create($width, $height)
+    public function __construct($width, $height)
     {
         $this->width = (int) $width;
         $this->height = (int) $height;
