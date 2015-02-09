@@ -248,14 +248,14 @@ class CommandAdapter extends Command
         return is_numeric($statusCode) ? (int) $statusCode : 0;
     }
 
-    private function bindAndValidateInput(InputInterface $input, InputDefinitionAdapter $inputDefinition)
+    private function bindAndValidateInput(InputInterface $input, InputDefinitionAdapter $definitionAdapter)
     {
         // Bind the input to the input definition of the command
-        $input->bind($inputDefinition);
+        $input->bind($definitionAdapter);
 
         // Set the command names in case they are missing from the input
         // This happens if a default command is executed
-        $this->ensureCommandNamesSet($input, $inputDefinition);
+        $this->ensureCommandNamesSet($input, $definitionAdapter);
 
         // Set more arguments/options interactively
         if ($input->isInteractive()) {
@@ -266,9 +266,9 @@ class CommandAdapter extends Command
         $input->validate();
     }
 
-    private function ensureCommandNamesSet(InputInterface $input, InputDefinitionAdapter $inputDefinition)
+    private function ensureCommandNamesSet(InputInterface $input, InputDefinitionAdapter $definitionAdapter)
     {
-        foreach ($inputDefinition->getCommandNames() as $argName => $commandName) {
+        foreach ($definitionAdapter->getCommandNamesByArgumentName() as $argName => $commandName) {
             $input->setArgument($argName, $commandName);
         }
     }

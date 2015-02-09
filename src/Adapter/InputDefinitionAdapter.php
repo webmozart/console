@@ -64,7 +64,7 @@ class InputDefinitionAdapter extends InputDefinition
      *
      * @return string[] The command names.
      */
-    public function getCommandNames()
+    public function getCommandNamesByArgumentName()
     {
         return $this->commandNames;
     }
