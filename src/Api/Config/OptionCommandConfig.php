@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Api\Config;
 
+use LogicException;
 use Webmozart\Console\Assert\Assert;
 
 /**
@@ -25,6 +26,11 @@ class OptionCommandConfig extends SubCommandConfig
      * @var string
      */
     private $shortName;
+
+    /**
+     * @var bool
+     */
+    private $longNamePreferred;
 
     /**
      * Creates a new configuration.
@@ -60,6 +66,30 @@ class OptionCommandConfig extends SubCommandConfig
         }
 
         parent::setName($name);
+
+        return $this;
+    }
+
+    /**
+     * Alias of {@link getName()}.
+     *
+     * @return string The command name.
+     */
+    public function getLongName()
+    {
+        return $this->getName();
+    }
+
+    /**
+     * Alias of {@link setName()}.
+     *
+     * @param string $name The command name.
+     *
+     * @return static The current instance.
+     */
+    public function setLongName($name)
+    {
+        return $this->setName($name);
     }
 
     /**
@@ -97,8 +127,88 @@ class OptionCommandConfig extends SubCommandConfig
             Assert::regex($shortName, '~^[a-zA-Z]$~', 'The short command name must contain a single letter. Got: %s');
         }
 
+        // Reset short name preference when unsetting the short name
+        if (null === $shortName && false === $this->longNamePreferred) {
+            $this->longNamePreferred = null;
+        }
+
         $this->shortName = $shortName;
 
         return $this;
+    }
+
+    /**
+     * Marks the long name to be preferred over the short name.
+     *
+     * This information is mainly used in the help where the preferred name is
+     * listed before alternative names.
+     *
+     * @return static The current instance.
+     *
+     * @see isLongNamePreferred(), setPreferShortName()
+     */
+    public function setPreferLongName()
+    {
+        $this->longNamePreferred = true;
+
+        return $this;
+    }
+
+    /**
+     * Marks the short name to be preferred over the long name.
+     *
+     * This information is mainly used in the help where the preferred name is
+     * listed before alternative names.
+     *
+     * @return static The current instance.
+     *
+     * @see isShortNamePreferred(), setPreferLongName()
+     */
+    public function setPreferShortName()
+    {
+        if (null === $this->shortName) {
+            throw new LogicException('No short name is set.');
+        }
+
+        $this->longNamePreferred = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the long name should be preferred over the short name.
+     *
+     * If no preference was set, the short name is preferred by default if one
+     * is set. If no short name is set, the long name is preferred by default.
+     *
+     * @return bool Returns `true` if the long name should be preferred over the
+     *              short name.
+     *
+     * @see setPreferLongName(), isShortNamePreferred()
+     */
+    public function isLongNamePreferred()
+    {
+        if (null === $this->longNamePreferred) {
+            // If no preference is set, prefer the short name (if one is set)
+            return null === $this->shortName;
+        }
+
+        return $this->longNamePreferred;
+    }
+
+    /**
+     * Returns whether the short name should be preferred over the long name.
+     *
+     * If no preference was set, the short name is preferred by default if one
+     * is set. If no short name is set, the long name is preferred by default.
+     *
+     * @return bool Returns `true` if the short name should be preferred over
+     *              the long name.
+     *
+     * @see setPreferShortName(), isLongNamePreferred()
+     */
+    public function isShortNamePreferred()
+    {
+        return !$this->isLongNamePreferred();
     }
 }

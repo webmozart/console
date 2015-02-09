@@ -39,6 +39,7 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getParentConfig());
         $this->assertNull($config->getApplicationConfig());
         $this->assertNull($config->getName());
+        $this->assertNull($config->getLongName());
         $this->assertNull($config->getShortName());
     }
 
@@ -51,6 +52,7 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($parentConfig, $config->getParentConfig());
         $this->assertSame($applicationConfig, $config->getApplicationConfig());
         $this->assertSame('delete', $config->getName());
+        $this->assertSame('delete', $config->getLongName());
         $this->assertSame('d', $config->getShortName());
     }
 
@@ -73,6 +75,14 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
             array(true),
             array(''),
         );
+    }
+
+    public function testSetLongName()
+    {
+        $this->config->setLongName('delete');
+
+        $this->assertSame('delete', $this->config->getLongName());
+        $this->assertSame('delete', $this->config->getName());
     }
 
     /**
@@ -125,5 +135,54 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->config->setShortName('d');
 
         $this->assertSame('d', $this->config->getShortName());
+    }
+
+    public function testShortNamePreferredByDefaultIfShortName()
+    {
+        $this->config->setShortName('d');
+
+        $this->assertFalse($this->config->isLongNamePreferred());
+        $this->assertTrue($this->config->isShortNamePreferred());
+    }
+
+    public function testLongNamePreferredByDefaultIfNoShortName()
+    {
+        $this->assertTrue($this->config->isLongNamePreferred());
+        $this->assertFalse($this->config->isShortNamePreferred());
+    }
+
+    public function testSetPreferLongName()
+    {
+        $this->config->setPreferLongName();
+
+        $this->assertTrue($this->config->isLongNamePreferred());
+        $this->assertFalse($this->config->isShortNamePreferred());
+    }
+
+    public function testSetPreferShortName()
+    {
+        $this->config->setShortName('d');
+        $this->config->setPreferShortName();
+
+        $this->assertFalse($this->config->isLongNamePreferred());
+        $this->assertTrue($this->config->isShortNamePreferred());
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testSetPreferShortNameFailsIfNoShortName()
+    {
+        $this->config->setPreferShortName();
+    }
+
+    public function testSetShortNameToNullSetsLongNameToBePreferred()
+    {
+        $this->config->setShortName('d');
+        $this->config->setPreferShortName();
+        $this->config->setShortName(null);
+
+        $this->assertTrue($this->config->isLongNamePreferred());
+        $this->assertFalse($this->config->isShortNamePreferred());
     }
 }
