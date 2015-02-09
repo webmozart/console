@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Adapter;
 
+use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Util\ProcessTitle;
 
 /**
  * Adapts the command API of this package to Symfony's {@link Command} API.
@@ -237,11 +239,17 @@ class CommandAdapter extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        $commandConfig = $this->adaptedCommand->getConfig();
         $errorOutput = $output instanceof ConsoleOutput ? $output->getErrorOutput() : $output;
 
-        $inputDefinition = $this->getDefinition();
+        $this->bindAndValidateInput($input, $this->getDefinition());
 
+        $statusCode = $this->handleCommand($input, $output, $errorOutput);
+
+        return is_numeric($statusCode) ? (int) $statusCode : 0;
+    }
+
+    private function bindAndValidateInput(InputInterface $input, InputDefinitionAdapter $inputDefinition)
+    {
         // Bind the input to the input definition of the command
         $input->bind($inputDefinition);
 
@@ -249,26 +257,13 @@ class CommandAdapter extends Command
         // This happens if a default command is executed
         $this->ensureCommandNamesSet($input, $inputDefinition);
 
-        // Adjust the title of the process
-        if (null !== $commandConfig->getProcessTitle()) {
-            $this->setTitleOfCurrentProcess($commandConfig->getProcessTitle(), $errorOutput);
-        }
-
         // Set more arguments/options interactively
         if ($input->isInteractive()) {
-            $commandConfig->interact($input);
+            $this->adaptedCommand->getConfig()->interact($input);
         }
 
         // Now validate the input
         $input->validate();
-
-        // Delegate to the command handler
-        $commandHandler = $commandConfig->getHandler($this->adaptedCommand);
-        $commandHandler->initialize($this->adaptedCommand, $output, $errorOutput);
-
-        $statusCode = $commandHandler->handle($input);
-
-        return is_numeric($statusCode) ? (int) $statusCode : 0;
     }
 
     private function ensureCommandNamesSet(InputInterface $input, InputDefinitionAdapter $inputDefinition)
@@ -278,13 +273,36 @@ class CommandAdapter extends Command
         }
     }
 
-    private function setTitleOfCurrentProcess($processTitle, OutputInterface $errorOutput)
+    private function handleCommand(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput)
     {
-        if (function_exists('cli_set_process_title')) {
-            cli_set_process_title($processTitle);
-        } elseif (function_exists('setproctitle')) {
-            setproctitle($processTitle);
-        } elseif (OutputInterface::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
+        $processTitle = $this->adaptedCommand->getConfig()->getProcessTitle();
+        $commandHandler = $this->adaptedCommand->getConfig()->getHandler($this->adaptedCommand);
+        $commandHandler->initialize($this->adaptedCommand, $output, $errorOutput);
+
+        $this->warnIfProcessTitleNotSupported($processTitle, $errorOutput);
+
+        if ($processTitle && ProcessTitle::isSupported()) {
+            ProcessTitle::setProcessTitle($processTitle);
+
+            try {
+                $statusCode = $commandHandler->handle($input);
+            } catch (Exception $e) {
+                ProcessTitle::resetProcessTitle();
+
+                throw $e;
+            }
+
+            ProcessTitle::resetProcessTitle();
+        } else {
+            $statusCode = $commandHandler->handle($input);
+        }
+
+        return $statusCode;
+    }
+
+    private function warnIfProcessTitleNotSupported($processTitle, OutputInterface $errorOutput)
+    {
+        if ($processTitle && !ProcessTitle::isSupported() && OutputInterface::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
             $errorOutput->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
         }
     }
