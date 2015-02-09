@@ -64,7 +64,9 @@ class ConsoleApplication implements Application
         ));
 
         foreach ($config->getCommandConfigs() as $commandConfig) {
-            $this->commands->add(new Command($commandConfig, $this->baseDefinition, $this));
+            if ($commandConfig->isEnabled()) {
+                $this->commands->add(new Command($commandConfig, $this->baseDefinition, $this));
+            }
         }
 
         $this->applicationAdapter = new ApplicationAdapter($this);

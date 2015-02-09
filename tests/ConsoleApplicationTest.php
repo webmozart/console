@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinition;
@@ -63,6 +64,28 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             $application->getBaseInputDefinition(),
             $application
         ), $application->getCommand('command'));
+    }
+
+    public function testCreateIgnoresDisabledCommands()
+    {
+        $this->config
+            ->addArgument('argument')
+            ->addOption('option', 'o')
+            ->beginCommand('enabled')->enable()->end()
+            ->beginCommand('disabled')->disable()->end()
+        ;
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertSame($this->config, $application->getConfig());
+
+        $enabledCommand = new Command(
+            $this->config->getCommandConfig('enabled'),
+            $application->getBaseInputDefinition(),
+            $application
+        );
+
+        $this->assertEquals(new CommandCollection(array($enabledCommand)), $application->getCommands());
     }
 
     public function testRunCommand()
