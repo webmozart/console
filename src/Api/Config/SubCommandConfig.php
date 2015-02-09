@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Api\Config;
 
+use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Runnable;
@@ -98,6 +99,33 @@ class SubCommandConfig extends CommandConfig
     public function end()
     {
         return $this->parentConfig;
+    }
+
+    /**
+     * Returns the helper set used by the command.
+     *
+     * @param bool $fallback Whether to return the parent helper set if none is
+     *                       set.
+     *
+     * @return HelperSet The helper set.
+     *
+     * @see setHelperSet()
+     */
+    public function getHelperSet($fallback = true)
+    {
+        $actualHelperSet = parent::getHelperSet(false);
+
+        if (!$fallback) {
+            return $actualHelperSet;
+        }
+
+        if (null === $actualHelperSet && $fallback && $this->parentConfig) {
+            return $this->parentConfig->getHelperSet();
+        }
+
+        // The application config is only set if the parent config is set, so
+        // we don't need to call parent::getHelperSet() here
+        return $actualHelperSet;
     }
 
     /**

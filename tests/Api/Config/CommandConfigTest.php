@@ -13,6 +13,7 @@ namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Api\Command\Command;
@@ -395,6 +396,35 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
     public function testSetProcessTitleFailsIfNotString()
     {
         $this->config->setProcessTitle(1234);
+    }
+
+    public function testGetHelperSet()
+    {
+        $helperSet1 = new HelperSet();
+        $helperSet2 = new HelperSet();
+
+        $this->applicationConfig->setHelperSet($helperSet1);
+        $this->config->setHelperSet($helperSet2);
+
+        $this->assertSame($helperSet2, $this->config->getHelperSet());
+    }
+
+    public function testGetHelperSetReturnsApplicationHelperSetIfNotSet()
+    {
+        $helperSet = new HelperSet();
+
+        $this->applicationConfig->setHelperSet($helperSet);
+
+        $this->assertSame($helperSet, $this->config->getHelperSet());
+    }
+
+    public function testGetHelperSetReturnsNullIfNotSetAndNoFallback()
+    {
+        $helperSet = new HelperSet();
+
+        $this->applicationConfig->setHelperSet($helperSet);
+
+        $this->assertNull($this->config->getHelperSet(false));
     }
 
     public function testAddArgument()

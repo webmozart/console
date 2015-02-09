@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Api\Config;
 
 use OutOfBoundsException;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
@@ -151,6 +152,11 @@ class CommandConfig
     private $processTitle;
 
     /**
+     * @var HelperSet
+     */
+    private $helperSet;
+
+    /**
      * @var InputDefinitionBuilder
      */
     private $definitionBuilder;
@@ -259,6 +265,24 @@ class CommandConfig
         $this->applicationConfig = $applicationConfig;
     }
 
+    /**
+     * Ends the block when dynamically configuring a command configuration.
+     *
+     * This method is usually used together with
+     * {@link ApplicationConfig::beginCommand()}:
+     *
+     * ```php
+     * $config
+     *     ->beginCommand('command')
+     *         // ...
+     *     ->end()
+     *
+     *     // ...
+     * ;
+     * ```
+     *
+     * @return ApplicationConfig The application configuration.
+     */
     public function end()
     {
         return $this->applicationConfig;
@@ -522,6 +546,41 @@ class CommandConfig
         Assert::nullOrNotEmpty($processTitle, 'The command process title must not be empty.');
 
         $this->processTitle = $processTitle;
+
+        return $this;
+    }
+
+    /**
+     * Returns the helper set used by the command.
+     *
+     * @param bool $fallback Whether to return the application helper set if
+     *                       none is set.
+     *
+     * @return HelperSet The helper set.
+     *
+     * @see setHelperSet()
+     */
+    public function getHelperSet($fallback = true)
+    {
+        if (null === $this->helperSet && $fallback && $this->applicationConfig) {
+            return $this->applicationConfig->getHelperSet();
+        }
+
+        return $this->helperSet;
+    }
+
+    /**
+     * Sets the helper set used by the command.
+     *
+     * @param HelperSet $helperSet The helper set.
+     *
+     * @return static The current instance.
+     *
+     * @see getHelperSet()
+     */
+    public function setHelperSet(HelperSet $helperSet)
+    {
+        $this->helperSet = $helperSet;
 
         return $this;
     }

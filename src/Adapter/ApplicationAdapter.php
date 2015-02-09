@@ -48,8 +48,8 @@ class ApplicationAdapter extends Application
 
         parent::__construct($config->getName(), $config->getVersion());
 
-        if ($config->getDispatcher()) {
-            $this->setDispatcher($config->getDispatcher());
+        if ($dispatcher = $config->getDispatcher()) {
+            $this->setDispatcher($dispatcher);
         }
 
         $this->setAutoExit($config->isTerminatedAfterRun());

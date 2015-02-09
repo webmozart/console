@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Api\Command\Command;
@@ -132,5 +133,56 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $command = new Command($config);
 
         $this->assertEquals(new RunnableHandler($runnable), $config->getHandler($command));
+    }
+
+    public function testGetHelperSet()
+    {
+        $helperSet1 = new HelperSet();
+        $helperSet2 = new HelperSet();
+
+        $parentConfig = new CommandConfig();
+        $config = new SubCommandConfig('command', $parentConfig);
+
+        $parentConfig->setHelperSet($helperSet1);
+        $config->setHelperSet($helperSet2);
+
+        $this->assertSame($helperSet2, $config->getHelperSet());
+    }
+
+    public function testGetHelperSetReturnsParentHelperSetIfNotSet()
+    {
+        $helperSet = new HelperSet();
+
+        $parentConfig = new CommandConfig();
+        $config = new SubCommandConfig('command', $parentConfig);
+
+        $parentConfig->setHelperSet($helperSet);
+
+        $this->assertSame($helperSet, $config->getHelperSet());
+    }
+
+    public function testGetHelperSetReturnsApplicationHelperSetIfNotSet()
+    {
+        $helperSet = new HelperSet();
+
+        $applicationConfig = new ApplicationConfig();
+        $parentConfig = new CommandConfig(null, $applicationConfig);
+        $config = new SubCommandConfig('command', $parentConfig);
+
+        $applicationConfig->setHelperSet($helperSet);
+
+        $this->assertSame($helperSet, $config->getHelperSet());
+    }
+
+    public function testGetHelperSetReturnsNullIfNotSetAndNoFallback()
+    {
+        $helperSet = new HelperSet();
+
+        $parentConfig = new CommandConfig();
+        $config = new SubCommandConfig('command', $parentConfig);
+
+        $parentConfig->setHelperSet($helperSet);
+
+        $this->assertNull($config->getHelperSet(false));
     }
 }
