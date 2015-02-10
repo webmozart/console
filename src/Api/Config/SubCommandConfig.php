@@ -14,10 +14,7 @@ namespace Webmozart\Console\Api\Config;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
-use Webmozart\Console\Api\Runnable;
-use Webmozart\Console\Handler\CallableHandler;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Handler\RunnableHandler;
 
 /**
  * The configuration of an console sub-command.

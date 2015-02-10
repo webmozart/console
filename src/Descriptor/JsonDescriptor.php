@@ -11,26 +11,30 @@
 
 namespace Webmozart\Console\Descriptor;
 
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Output\Output;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class JsonDescriptor extends \Symfony\Component\Console\Descriptor\JsonDescriptor
+class JsonDescriptor implements Descriptor
 {
-    public function describe(OutputInterface $output, $object, array $options = array())
+    public function describe(Output $output, $object, array $options = array())
     {
+        $descriptor = new \Symfony\Component\Console\Descriptor\JsonDescriptor();
+
         if ($object instanceof Application) {
             $object = new ApplicationAdapter($object);
         } elseif ($object instanceof Command) {
             $object = new CommandAdapter($object);
         }
 
-        parent::describe($output, $object, $options);
+        $descriptor->describe($output, $object, $options);
+
+        return 0;
     }
 }

@@ -17,8 +17,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinitionBuilder;
 use Webmozart\Console\Api\Input\InputOption;
+use Webmozart\Console\Api\Output\Dimensions;
 use Webmozart\Console\Api\Resolver\CommandResolver;
-use Webmozart\Console\Api\TerminalDimensions;
+use Webmozart\Console\Api\Style\StyleSet;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -50,9 +51,14 @@ class ApplicationConfig
     private $commandConfigs = array();
 
     /**
-     * @var TerminalDimensions
+     * @var Dimensions
      */
-    private $terminalDimensions;
+    private $outputDimensions;
+
+    /**
+     * @var StyleSet
+     */
+    private $styleSet;
 
     /**
      * @var EventDispatcherInterface
@@ -99,7 +105,7 @@ class ApplicationConfig
     {
         $this->name = $name;
         $this->version = $version;
-        $this->terminalDimensions = TerminalDimensions::forCurrentWindow();
+        $this->outputDimensions = Dimensions::forCurrentWindow();
         $this->commandResolver = new DefaultResolver('help');
         $this->definitionBuilder = new InputDefinitionBuilder();
         $this->helperSet = new HelperSet();
@@ -301,29 +307,57 @@ class ApplicationConfig
     }
 
     /**
-     * Returns the dimensions of the terminal window.
+     * Returns the dimensions of the output window.
      *
-     * @return TerminalDimensions The terminal dimensions.
+     * @return Dimensions The output dimensions.
      *
-     * @see setTerminalDimensions()
+     * @see setOutputDimensions()
      */
-    public function getTerminalDimensions()
+    public function getOutputDimensions()
     {
-        return $this->terminalDimensions;
+        return $this->outputDimensions;
     }
 
     /**
-     * Sets the dimensions of the terminal window.
+     * Sets the dimensions of the output window.
      *
-     * @param TerminalDimensions $terminalDimensions The terminal dimensions.
+     * @param Dimensions $dimensions The output dimensions.
      *
      * @return static The current instance.
      *
-     * @see getTerminalDimensions()
+     * @see getOutputDimensions()
      */
-    public function setTerminalDimensions(TerminalDimensions $terminalDimensions)
+    public function setOutputDimensions(Dimensions $dimensions)
     {
-        $this->terminalDimensions = $terminalDimensions;
+        $this->outputDimensions = $dimensions;
+
+        return $this;
+    }
+
+    /**
+     * Returns the used style set.
+     *
+     * @return StyleSet The style set.
+     *
+     * @see setStyleSet()
+     */
+    public function getStyleSet()
+    {
+        return $this->styleSet;
+    }
+
+    /**
+     * Sets the used style set.
+     *
+     * @param StyleSet $styleSet The style set to use.
+     *
+     * @return static The current instance.
+     *
+     * @see getStyleSet()
+     */
+    public function setStyleSet(StyleSet $styleSet)
+    {
+        $this->styleSet = $styleSet;
 
         return $this;
     }

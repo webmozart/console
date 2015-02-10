@@ -11,10 +11,7 @@
 
 namespace Webmozart\Console\Handler;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Assert\Assert;
 
 /**
@@ -35,9 +32,9 @@ class CallableHandler extends AbstractHandler
      *
      * The passed callable receives three arguments:
      *
-     *  * {@link InputInterface} `$input`: The console input.
-     *  * {@link OutputInterface} `$output`: The standard output.
-     *  * {@link OutputInterface} `$errorOutput`: The error output.
+     *  * {@link Input} `$input`: The console input.
+     *  * {@link Output} `$output`: The standard output.
+     *  * {@link Output} `$errorOutput`: The error output.
      *
      * The callable should return 0 on success and a positive integer on error.
      *
@@ -54,7 +51,7 @@ class CallableHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(InputInterface $input)
+    public function handle(Input $input)
     {
         return call_user_func($this->callable, $input, $this->output, $this->errorOutput);
     }

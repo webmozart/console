@@ -13,9 +13,8 @@ namespace Webmozart\Console\Descriptor;
 
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Component\Console\Descriptor\DescriptorInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -31,7 +30,7 @@ use Webmozart\Console\Process\ProcessLauncher;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class AsciiDocDescriptor implements DescriptorInterface
+class AsciiDocDescriptor implements Descriptor
 {
     /**
      * @var ExecutableFinder
@@ -66,16 +65,16 @@ class AsciiDocDescriptor implements DescriptorInterface
      *  * "lessBinary": The path to the "less" binary. If not passed, the path
      *    is searched for on the system.
      *
-     * @param OutputInterface $output  The console output.
-     * @param object          $object  The object to describe.
-     * @param array           $options Additional options.
+     * @param Output $output  The console output.
+     * @param object $object  The object to describe.
+     * @param array  $options Additional options.
      *
      * @return int The exit code.
      *
      * @throws InvalidArgumentException If the "asciiDocPath" option is missing.
      * @throws RuntimeException If the AsciiDoc file is not found.
      */
-    public function describe(OutputInterface $output, $object, array $options = array())
+    public function describe(Output $output, $object, array $options = array())
     {
         if (!isset($options['asciiDocPath'])) {
             throw new InvalidArgumentException('The option "asciiDocPath" is required.');

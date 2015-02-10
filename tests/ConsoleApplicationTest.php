@@ -12,16 +12,18 @@
 namespace Webmozart\Console\Tests;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Input\InputOption;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\ConsoleApplication;
 
 /**
@@ -90,9 +92,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testRunCommand()
     {
-        $callback = function (InputInterface $input, OutputInterface $output, OutputInterface $errorOutput) {
-            $output->writeln('stdout: '.(string) $input);
-            $errorOutput->writeln('stderr: '.(string) $input);
+        $callback = function (Input $input, Output $output, Output $errorOutput) {
+            $output->writeln('stdout: '.$input->toString());
+            $errorOutput->writeln('stderr: '.$input->toString());
 
             return 123;
         };
@@ -103,19 +105,19 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             ->end()
         ;
 
-        $input = new StringInput('list');
-        $output = new BufferedOutput();
+        $input = new InputInterfaceAdapter(new StringInput('list'));
+        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
         $runner = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: list\nstderr: list\n", $output->fetch());
+        $this->assertSame("stdout: list\nstderr: list\n", $buffer->fetch());
     }
 
     public function testRunDefaultCommand()
     {
-        $callback = function (InputInterface $input, OutputInterface $output, OutputInterface $errorOutput) {
-            $output->writeln('stdout: '.(string) $input);
-            $errorOutput->writeln('stderr: '.(string) $input);
+        $callback = function (Input $input, Output $output, Output $errorOutput) {
+            $output->writeln('stdout: '.$input->toString());
+            $errorOutput->writeln('stderr: '.$input->toString());
 
             return 123;
         };
@@ -127,19 +129,19 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             ->setDefaultCommand('list')
         ;
 
-        $input = new StringInput('');
-        $output = new BufferedOutput();
+        $input = new InputInterfaceAdapter(new StringInput(''));
+        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
         $runner = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: \nstderr: \n", $output->fetch());
+        $this->assertSame("stdout: \nstderr: \n", $buffer->fetch());
     }
 
     public function testRunDefaultSubCommand()
     {
-        $callback = function (InputInterface $input, OutputInterface $output, OutputInterface $errorOutput) {
-            $output->writeln('stdout: '.(string) $input);
-            $errorOutput->writeln('stderr: '.(string) $input);
+        $callback = function (Input $input, Output $output, Output $errorOutput) {
+            $output->writeln('stdout: '.$input->toString());
+            $errorOutput->writeln('stderr: '.$input->toString());
 
             return 123;
         };
@@ -153,19 +155,19 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             ->end()
         ;
 
-        $input = new StringInput('server');
-        $output = new BufferedOutput();
+        $input = new InputInterfaceAdapter(new StringInput('server'));
+        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
         $runner = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: server\nstderr: server\n", $output->fetch());
+        $this->assertSame("stdout: server\nstderr: server\n", $buffer->fetch());
     }
 
     public function testRunDefaultOptionCommand()
     {
-        $callback = function (InputInterface $input, OutputInterface $output, OutputInterface $errorOutput) {
-            $output->writeln('stdout: '.(string) $input);
-            $errorOutput->writeln('stderr: '.(string) $input);
+        $callback = function (Input $input, Output $output, Output $errorOutput) {
+            $output->writeln('stdout: '.$input->toString());
+            $errorOutput->writeln('stderr: '.$input->toString());
 
             return 123;
         };
@@ -179,11 +181,11 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             ->end()
         ;
 
-        $input = new StringInput('server');
-        $output = new BufferedOutput();
+        $input = new InputInterfaceAdapter(new StringInput('server'));
+        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
         $runner = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: server\nstderr: server\n", $output->fetch());
+        $this->assertSame("stdout: server\nstderr: server\n", $buffer->fetch());
     }
 }

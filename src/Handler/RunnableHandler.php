@@ -11,10 +11,7 @@
 
 namespace Webmozart\Console\Handler;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Runnable;
 
 /**
@@ -43,7 +40,7 @@ class RunnableHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(InputInterface $input)
+    public function handle(Input $input)
     {
         return $this->runnable->run($input, $this->output, $this->errorOutput);
     }

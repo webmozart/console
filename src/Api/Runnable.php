@@ -11,8 +11,8 @@
 
 namespace Webmozart\Console\Api;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 
 /**
  * Runs a console input.
@@ -25,11 +25,11 @@ interface Runnable
     /**
      * Runs a console input.
      *
-     * @param InputInterface  $input       The console input.
-     * @param OutputInterface $output      The standard output.
-     * @param OutputInterface $errorOutput The error output.
+     * @param Input  $input       The console input.
+     * @param Output $output      The standard output.
+     * @param Output $errorOutput The error output.
      *
      * @return int Returns 0 on success and a positive integer on error.
      */
-    public function run(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput);
+    public function run(Input $input, Output $output, Output $errorOutput);
 }

@@ -9,11 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\Helper;
+namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Helper\WrappedGrid;
+use Webmozart\Console\Rendering\Element\WrappedGrid;
 
 /**
  * @since  1.0

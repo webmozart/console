@@ -12,17 +12,19 @@
 namespace Webmozart\Console\Descriptor;
 
 use InvalidArgumentException;
-use Symfony\Component\Console\Descriptor\DescriptorInterface;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Input\InputDefinitionBuilder;
 use Webmozart\Console\Api\Input\InputOption;
-use Webmozart\Console\Api\TerminalDimensions;
+use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Rendering\Element\EmptyLine;
+use Webmozart\Console\Rendering\Element\LabeledParagraph;
+use Webmozart\Console\Rendering\Element\Paragraph;
+use Webmozart\Console\Rendering\Layout\BlockLayout;
 
 /**
  * Describes an object as text on the console output.
@@ -30,57 +32,40 @@ use Webmozart\Console\Api\TerminalDimensions;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class TextDescriptor implements DescriptorInterface
+class TextDescriptor implements Descriptor
 {
     /**
-     * @var OutputInterface
+     * @var \Webmozart\Console\Rendering\Layout\BlockLayout
      */
-    private $output;
-
-    /**
-     * @var OutputFormatterInterface
-     */
-    private $filterFormatter;
-
-    /**
-     * @var TerminalDimensions
-     */
-    private $terminalDimensions;
-
-    public function __construct(TerminalDimensions $terminalDimensions = null)
-    {
-        $this->terminalDimensions = $terminalDimensions ?: TerminalDimensions::forCurrentWindow();
-    }
+    private $layout;
 
     /**
      * Describes an object as text on the console output.
      *
-     * @param OutputInterface                 $output  The output.
+     * @param Output              $output  The output.
      * @param Command|Application $object  The object to describe.
-     * @param array                           $options Additional options.
+     * @param array               $options Additional options.
+     *
+     * @return int The exit code.
      */
-    public function describe(OutputInterface $output, $object, array $options = array())
+    public function describe(Output $output, $object, array $options = array())
     {
-        $this->output = $output;
-        $this->filterFormatter = clone $output->getFormatter();
-        $this->filterFormatter->setDecorated(false);
+        $this->layout = new BlockLayout();
 
         if ($object instanceof Command) {
             $this->describeCommand($object, $options);
-
-            return;
-        }
-
-        if ($object instanceof Application) {
+        } elseif ($object instanceof Application) {
             $this->describeApplication($object, $options);
-
-            return;
+        } else {
+            throw new InvalidArgumentException(sprintf(
+                'Object of type "%s" is not describable.',
+                is_object($object) ? get_class($object) : gettype($object)
+            ));
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'Object of type "%s" is not describable.',
-            is_object($object) ? get_class($object) : gettype($object)
-        ));
+        $this->layout->render($output);
+
+        return 0;
     }
 
     /**
@@ -100,35 +85,20 @@ class TextDescriptor implements DescriptorInterface
         $inputArgs = $inputDefinition->getArguments();
         $inputOpts = $inputDefinition->getOptions();
 
-        $options['nameWidth'] = max(
-            $this->getMaxCommandWidth($commands),
-            $this->getMaxOptionWidth($inputOpts),
-            $this->getMaxArgumentWidth($inputArgs)
-        );
-
+        $this->printApplicationName($application, $options);
         $this->printApplicationUsage($application, $inputDefinition, $options);
-
-        $this->write("\n");
 
         if ($inputArgs) {
             $this->printInputArguments($inputArgs, $options);
         }
 
-        if ($inputArgs && ($inputOpts || !$commands->isEmpty())) {
-            $this->write("\n");
-        }
-
         if ($inputOpts) {
-            $this->printInputOptions($inputOpts, $options);
+            $this->printGlobalInputOptions($inputOpts, $options);
         }
 
-        if ($inputOpts && $commands) {
-            $this->write("\n");
+        if (!$commands->isEmpty()) {
+            $this->printCommands($commands, $options);
         }
-
-        $this->printCommands($commands, $options);
-
-        $this->write("\n");
     }
 
     /**
@@ -139,61 +109,36 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function describeCommand(Command $command, array $options = array())
     {
-        $aliases = $command->getAliases();
         $help = $command->getConfig()->getHelp();
         $inputDefinition = $command->getInputDefinition();
         $baseDefinition = $inputDefinition->getBaseDefinition();
         $inputArgs = $inputDefinition->getArguments();
         $inputOpts = $inputDefinition->getOptions(false);
         $baseOpts = $baseDefinition ? $baseDefinition->getOptions() : array();
-
-        $options['nameWidth'] = max(
-            $this->getMaxOptionWidth($inputOpts),
-            $this->getMaxOptionWidth($baseOpts),
-            $this->getMaxArgumentWidth($inputArgs)
-        );
+        $subCommands = $command->getSubCommands();
+        $optCommands = $command->getOptionCommands();
 
         $this->printCommandUsage($command, $options);
-
-        $this->write("\n");
-
-        if ($aliases) {
-            $this->printAliases($aliases, $options);
-        }
-
-        if ($aliases && ($inputArgs || $inputOpts || $baseOpts || $help)) {
-            $this->write("\n");
-        }
 
         if ($inputArgs) {
             $this->printInputArguments($inputArgs, $options);
         }
 
-        if ($inputArgs && ($inputOpts || $baseOpts || $help)) {
-            $this->write("\n");
+        if (!$subCommands->isEmpty() || !$optCommands->isEmpty()) {
+            $this->printSubCommands($subCommands, $optCommands, $options);
         }
 
         if ($inputOpts) {
             $this->printInputOptions($inputOpts, $options);
         }
 
-        if ($inputOpts && ($baseOpts || $help)) {
-            $this->write("\n");
-        }
-
         if ($baseOpts) {
-            $this->printBaseInputOptions($baseOpts, $options);
-        }
-
-        if ($baseOpts && $help) {
-            $this->write("\n");
+            $this->printGlobalInputOptions($baseOpts, $options);
         }
 
         if ($help) {
             $this->printCommandHelp($help, $options);
         }
-
-        $this->write("\n");
     }
 
     /**
@@ -208,13 +153,13 @@ class TextDescriptor implements DescriptorInterface
     {
         $executableName = $application->getConfig()->getExecutableName();
 
-        $this->printApplicationName($application, $options);
-
-        $this->write('<h>USAGE</h>');
-        $this->write("\n");
+        $this->layout->add(new Paragraph("<h>USAGE</h>"));
+        $this->layout->beginBlock();
 
         $this->printSynopsis($inputDefinition, $executableName, '', true);
-        $this->write("\n");
+
+        $this->layout->endBlock();
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -222,6 +167,8 @@ class TextDescriptor implements DescriptorInterface
      *
      * @param Command $command The command to describe.
      * @param array   $options Additional options.
+     *
+     * @return string The output.
      */
     protected function printCommandUsage(Command $command, array $options = array())
     {
@@ -229,9 +176,10 @@ class TextDescriptor implements DescriptorInterface
         $prefix = $command->hasSubCommands() || $command->hasOptionCommands() ? '    ' : '';
         $subCommands = $command->getSubCommands();
         $optionCommands = $command->getOptionCommands();
+        $aliases = $command->getAliases();
 
-        $this->write('<h>USAGE</h>');
-        $this->write("\n");
+        $this->layout->add(new Paragraph('<h>USAGE</h>'));
+        $this->layout->beginBlock();
 
         if ($defaultSubCommand = $command->getDefaultSubCommand()) {
             $this->printSynopsis($defaultSubCommand->getInputDefinition(), $executableName, $prefix, false, true);
@@ -243,17 +191,21 @@ class TextDescriptor implements DescriptorInterface
             $this->printSynopsis($command->getInputDefinition(), $executableName, $prefix);
         }
 
-        $this->write("\n");
-
         foreach ($subCommands as $subCommand) {
             $this->printSynopsis($subCommand->getInputDefinition(), $executableName, 'or: ');
-            $this->write("\n");
         }
 
         foreach ($optionCommands as $optionCommand) {
             $this->printSynopsis($optionCommand->getInputDefinition(), $executableName, 'or: ');
-            $this->write("\n");
         }
+
+        if ($aliases) {
+            $this->layout->add(new EmptyLine());
+            $this->printAliases($aliases, $options);
+        }
+
+        $this->layout->endBlock();
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -261,16 +213,20 @@ class TextDescriptor implements DescriptorInterface
      *
      * @param InputArgument[] $inputArgs The input arguments to describe.
      * @param array           $options   Additional options.
+     *
+     * @return string The output.
      */
     protected function printInputArguments(array $inputArgs, array $options = array())
     {
-        $this->write('<h>ARGUMENTS</h>');
-        $this->write("\n");
+        $this->layout->add(new Paragraph('<h>ARGUMENTS</h>'));
+        $this->layout->beginBlock();
 
         foreach ($inputArgs as $argument) {
             $this->printInputArgument($argument, $options);
-            $this->write("\n");
         }
+
+        $this->layout->endBlock();
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -278,19 +234,20 @@ class TextDescriptor implements DescriptorInterface
      *
      * @param InputArgument $argument The input argument to describe.
      * @param array         $options  Additional options.
+     *
+     * @return string The output.
      */
     protected function printInputArgument(InputArgument $argument, array $options = array())
     {
-        $nameWidth = isset($options['nameWidth']) ? $options['nameWidth'] : null;
         $description = $argument->getDescription();
-        $name = $argument->getName();
+        $name = '<em><'.$argument->getName().'></em>';
         $defaultValue = $argument->getDefaultValue();
 
         if (null !== $defaultValue && (!is_array($defaultValue) || count($defaultValue))) {
             $description .= sprintf('<h> (default: %s)</h>', $this->formatDefaultValue($defaultValue));
         }
 
-        $this->printWrappedText($description, '<em><'.$name.'></em>', $nameWidth, 2);
+        $this->layout->add(new LabeledParagraph($name, $description));
     }
 
     /**
@@ -298,16 +255,20 @@ class TextDescriptor implements DescriptorInterface
      *
      * @param InputOption[] $inputOpts The input options to describe.
      * @param array         $options   Additional options.
+     *
+     * @return string The output.
      */
     protected function printInputOptions($inputOpts, array $options = array())
     {
-        $this->write('<h>OPTIONS</h>');
-        $this->write("\n");
+        $this->layout->add(new Paragraph('<h>OPTIONS</h>'));
+        $this->layout->beginBlock();
 
         foreach ($inputOpts as $option) {
             $this->printInputOption($option, $options);
-            $this->write("\n");
         }
+
+        $this->layout->endBlock();
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -315,16 +276,20 @@ class TextDescriptor implements DescriptorInterface
      *
      * @param InputOption[] $inputOpts The input options to describe.
      * @param array         $options   Additional options.
+     *
+     * @return string The output.
      */
-    protected function printBaseInputOptions($inputOpts, array $options = array())
+    protected function printGlobalInputOptions($inputOpts, array $options = array())
     {
-        $this->write('<h>GLOBAL OPTIONS</h>');
-        $this->write("\n");
+        $this->layout->add(new Paragraph('<h>GLOBAL OPTIONS</h>'));
+        $this->layout->beginBlock();
 
         foreach ($inputOpts as $option) {
             $this->printInputOption($option, $options);
-            $this->write("\n");
         }
+
+        $this->layout->endBlock();
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -335,13 +300,21 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function printInputOption(InputOption $option, array $options = array())
     {
-        $nameWidth = isset($options['nameWidth']) ? $options['nameWidth'] : null;
         $description = $option->getDescription();
-        $name = '<em>--'.$option->getLongName().'</em>';
         $defaultValue = $option->getDefaultValue();
 
-        if ($option->getShortName()) {
-            $name .= sprintf(' (-%s)', $option->getShortName());
+        if ($option->isLongNamePreferred()) {
+            $preferredName = '--'.$option->getLongName();
+            $alternativeName = $option->getShortName() ? '-'.$option->getShortName() : null;
+        } else {
+            $preferredName = '-'.$option->getShortName();
+            $alternativeName = '--'.$option->getLongName();
+        }
+
+        $name = '<em>'.$preferredName.'</em>';
+
+        if ($alternativeName) {
+            $name .= sprintf(' (%s)', $alternativeName);
         }
 
         if ($option->acceptsValue() && null !== $defaultValue && (!is_array($defaultValue) || count($defaultValue))) {
@@ -352,7 +325,101 @@ class TextDescriptor implements DescriptorInterface
             $description .= ' (multiple values allowed)';
         }
 
-        $this->printWrappedText($description, $name, $nameWidth, 2);
+        $this->layout->add(new LabeledParagraph($name, $description));
+    }
+
+    protected function printSubCommands(CommandCollection $subCommands, CommandCollection $optionCommands, array $options = array())
+    {
+        $this->layout->add(new Paragraph('<h>COMMANDS</h>'));
+        $this->layout->beginBlock();
+
+        foreach ($subCommands as $subCommand) {
+            $this->printSubCommand($subCommand, $options);
+        }
+
+        foreach ($optionCommands as $optionCommand) {
+            $this->printSubCommand($optionCommand, $options);
+        }
+
+        $this->layout->endBlock();
+    }
+
+    protected function printSubCommand(Command $command, array $options = array())
+    {
+        $config = $command->getConfig();
+        $description = $config->getDescription();
+        $help = $config->getHelp();
+        $inputArgs = $command->getInputDefinition()->getArguments(false);
+        $inputOpts = $command->getInputDefinition()->getOptions(false);
+
+        if ($config instanceof OptionCommandConfig) {
+            if ($config->isLongNamePreferred()) {
+                $preferredName = '--'.$config->getLongName();
+                $alternativeName = $config->getShortName() ? '-'.$config->getShortName() : null;
+            } else {
+                $preferredName = '-'.$config->getShortName();
+                $alternativeName = '--'.$config->getLongName();
+            }
+
+            $name = $preferredName;
+
+            if ($alternativeName) {
+                $name .= ', '.$alternativeName;
+            }
+        } else {
+            $name = $command->getName();
+        }
+
+        $this->layout->add(new Paragraph("<tt>$name</tt>"));
+        $this->layout->beginBlock();
+
+        if ($description) {
+            $this->printSubCommandDescription($description, $options);
+        }
+
+        if ($help) {
+            $this->printSubCommandHelp($help, $options);
+        }
+
+        if ($inputArgs) {
+            $this->printSubCommandArguments($inputArgs, $options);
+        }
+
+        if ($inputOpts) {
+            $this->printSubCommandOptions($inputOpts, $options);
+        }
+
+        $this->layout->endBlock();
+    }
+
+    protected function printSubCommandDescription($description, array $options = array())
+    {
+        $this->layout->add(new Paragraph($description));
+        $this->layout->add(new EmptyLine());
+    }
+
+    protected function printSubCommandHelp($help, array $options = array())
+    {
+        $this->layout->add(new Paragraph($help));
+        $this->layout->add(new EmptyLine());
+    }
+
+    protected function printSubCommandArguments(array $inputArgs, array $options = array())
+    {
+        foreach ($inputArgs as $argument) {
+            $this->printInputArgument($argument, $options);
+        }
+
+        $this->layout->add(new EmptyLine());
+    }
+
+    protected function printSubCommandOptions(array $inputOpts, array $options = array())
+    {
+        foreach ($inputOpts as $option) {
+            $this->printInputOption($option, $options);
+        }
+
+        $this->layout->add(new EmptyLine());
     }
 
     protected function printApplicationName(Application $application, array $options = array())
@@ -360,12 +427,12 @@ class TextDescriptor implements DescriptorInterface
         $config = $application->getConfig();
 
         if ('UNKNOWN' !== $config->getName() && 'UNKNOWN' !== $config->getVersion()) {
-            $this->write(sprintf("<info>%s</info> version <comment>%s</comment>\n", $config->getName(), $config->getVersion()));
+            $this->layout->add(new Paragraph("<info>{$config->getName()}</info> version <comment>{$config->getVersion()}</comment>"));
         } else {
-            $this->write("<info>Console Tool</info>\n");
+            $this->layout->add(new Paragraph("<info>Console Tool</info>"));
         }
 
-        $this->write("\n");
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -376,13 +443,15 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function printCommands(CommandCollection $commands, array $options = array())
     {
-        $this->write('<h>AVAILABLE COMMANDS</h>');
-        $this->write("\n");
+        $this->layout->add(new Paragraph('<h>AVAILABLE COMMANDS</h>'));
+        $this->layout->beginBlock();
 
         foreach ($commands as $command) {
             $this->printCommand($command, $options);
-            $this->write("\n");
         }
+
+        $this->layout->endBlock();
+        $this->layout->add(new EmptyLine());
     }
 
     /**
@@ -393,11 +462,10 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function printCommand(Command $command, array $options = array())
     {
-        $nameWidth = isset($options['nameWidth']) ? $options['nameWidth'] : null;
         $description = $command->getConfig()->getDescription();
-        $name = $command->getName();
+        $name = '<em>'.$command->getName().'</em>';
 
-        $this->printWrappedText($description, '<em>'.$name.'</em>', $nameWidth, 2);
+        $this->layout->add(new LabeledParagraph($name, $description));
     }
 
     /**
@@ -408,8 +476,7 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function printAliases($aliases, array $options = array())
     {
-        $this->write('  aliases: '.implode(', ', $aliases));
-        $this->write("\n");
+        $this->layout->add(new Paragraph('aliases: '.implode(', ', $aliases)));
     }
 
     /**
@@ -420,7 +487,7 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function printApplicationHelp($help, array $options = array())
     {
-        $this->write("$help\n");
+        $this->layout->add(new Paragraph($help));
     }
 
     /**
@@ -431,10 +498,13 @@ class TextDescriptor implements DescriptorInterface
      */
     protected function printCommandHelp($help, array $options = array())
     {
-        $this->write('<h>Help</h>');
-        $this->write("\n");
-        $this->write(' '.str_replace("\n", "\n ", $help));
-        $this->write("\n");
+        $this->layout
+            ->add(new Paragraph('<h>DESCRIPTION</h>'))
+            ->beginBlock()
+                ->add(new Paragraph($help))
+            ->endBlock()
+            ->add(new EmptyLine())
+        ;
     }
 
     protected function printSynopsis(InputDefinition $inputDefinition, $executableName, $prefix = '', $includeBaseOptions = false, $lastCommandOptional = false)
@@ -449,8 +519,9 @@ class TextDescriptor implements DescriptorInterface
         }
 
         foreach ($inputDefinition->getCommandOptions() as $commandOption) {
-            // TODO display preferred name
-            $nameParts[] = '-'.$commandOption->getShortName();
+            $nameParts[] = $commandOption->isLongNamePreferred()
+                ? '--'.$commandOption->getLongName()
+                : '-'.$commandOption->getShortName();
         }
 
         if ($lastCommandOptional) {
@@ -461,165 +532,37 @@ class TextDescriptor implements DescriptorInterface
         foreach ($inputDefinition->getOptions($includeBaseOptions) as $option) {
             // \xC2\xA0 is a non-breaking space
             if ($option->isValueRequired()) {
-                $format = "--%s\xC2\xA0<%s>";
+                $format = "%s\xC2\xA0<%s>";
             } elseif ($option->isValueOptional()) {
-                $format = "--%s\xC2\xA0[<%s>]";
+                $format = "%s\xC2\xA0[<%s>]";
             } else {
-                $format = '--%s';
+                $format = '%s';
             }
 
-            $argumentParts[] = sprintf('['.$format.']', $option->getLongName(), $option->getValueName());
+            $optionName = $option->isLongNamePreferred()
+                ? '--'.$option->getLongName()
+                : '-'.$option->getShortName();
+
+            $argumentParts[] = sprintf('['.$format.']', $optionName, $option->getValueName());
         }
 
         foreach ($inputDefinition->getArguments() as $argument) {
-            $name = $argument->getName();
+            $argName = $argument->getName();
 
             $argumentParts[] = sprintf(
                 $argument->isRequired() ? '<%s>' : '[<%s>]',
-                $name.($argument->isMultiValued() ? '1' : '')
+                $argName.($argument->isMultiValued() ? '1' : '')
             );
 
             if ($argument->isMultiValued()) {
-                $argumentParts[] = sprintf('... [<%sN>]', $name);
+                $argumentParts[] = sprintf('... [<%sN>]', $argName);
             }
         }
 
-        $this->printWrappedText(implode(' ', $argumentParts), $prefix.implode(' ', $nameParts));
-    }
+        $argsOpts = implode(' ', $argumentParts);
+        $name = implode(' ', $nameParts);
 
-    /**
-     * Prints wrapped text.
-     *
-     * The text will be wrapped to match the terminal width (if available) with
-     * a leading and a trailing space.
-     *
-     * You can optionally pass a label that is written before the text. The
-     * text will then be wrapped to start each line one space to the right of
-     * the label.
-     *
-     * If the label should have a minimum width, pass the `$labelWidth`
-     * parameter. You can highlight the label by setting `$highlightLabel` to
-     * `true`.
-     *
-     * @param string   $text           The text to write.
-     * @param string   $label          The label.
-     * @param int|null $minLabelWidth  The minimum width of the label.
-     * @param int      $labelDistance  The distance between the label and the
-     *                                 text in spaces.
-     */
-    protected function printWrappedText($text, $label = '', $minLabelWidth = null, $labelDistance = 1)
-    {
-        $visibleLabel = $this->filterStyleTags($label);
-        $styleTagLength = strlen($label) - strlen($visibleLabel);
-        $prefixSpace = '  ';
-
-        if (!$minLabelWidth) {
-            $minLabelWidth = strlen($visibleLabel);
-        }
-
-        // If we know the terminal width, wrap the text
-        if ($this->terminalDimensions->getWidth()) {
-            // 1 space after the label
-            $indentation = $minLabelWidth ? $minLabelWidth + $labelDistance : 0;
-            $linePrefix = $prefixSpace.str_repeat(' ', $indentation);
-
-            // 1 trailing space
-            $textWidth = $this->terminalDimensions->getWidth() - 1 - strlen($linePrefix);
-
-            $text = str_replace("\n", "\n".$linePrefix, wordwrap($text, $textWidth));
-        }
-
-        if ($label) {
-            // Add the total length of the style tags ("<h>", ...)
-            $minLabelWidth += $styleTagLength;
-
-            $text = sprintf(
-                "%-${minLabelWidth}s%-{$labelDistance}s%s",
-                $label,
-                '',
-                $text
-            );
-        }
-
-        $this->write(rtrim($prefixSpace.$text));
-    }
-
-    /**
-     * Writes text to the output.
-     *
-     * @param string $text
-     */
-    protected function write($text)
-    {
-        $this->output->write($text, false, OutputInterface::OUTPUT_NORMAL);
-    }
-
-    /**
-     * Returns the maximum width of the names of a list of options.
-     *
-     * @param InputOption[] $options The options.
-     *
-     * @return int The maximum width.
-     */
-    protected function getMaxOptionWidth(array $options)
-    {
-        $width = 0;
-
-        foreach ($options as $option) {
-            // Respect leading dashes "--"
-            $length = strlen($option->getLongName()) + 2;
-
-            if ($option->getShortName()) {
-                // Respect space, dash and braces " (-", ")"
-                $length += strlen($option->getShortName()) + 4;
-            }
-
-            $width = max($width, $length);
-        }
-
-        return $width;
-    }
-
-    /**
-     * Returns the maximum width of the names of a list of arguments.
-     *
-     * @param InputArgument[] $arguments The arguments.
-     *
-     * @return int The maximum width.
-     */
-    protected function getMaxArgumentWidth(array $arguments)
-    {
-        $width = 0;
-
-        foreach ($arguments as $argument) {
-            // Respect wrapping brackets "<", ">"
-            $width = max($width, strlen($argument->getName()) + 2);
-        }
-
-        return $width;
-    }
-
-    /**
-     * Returns the maximum width of the names of a list of commands.
-     *
-     * @param CommandCollection $commands The commands.
-     *
-     * @return int The maximum width.
-     */
-    protected function getMaxCommandWidth(CommandCollection $commands)
-    {
-        $width = 0;
-
-        foreach ($commands as $command) {
-            $width = max($width, strlen($command->getName()));
-        }
-
-        return $width;
-    }
-
-    protected function filterStyleTags($text)
-    {
-        return $this->filterFormatter->format($text);
+        $this->layout->add(new LabeledParagraph($prefix.$name, $argsOpts, 1, false));
     }
 
     /**

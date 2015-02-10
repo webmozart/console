@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\Handler;
 
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
+use Webmozart\Console\Api\Output\Output;
 
 /**
  * Base implementation for command handlers.
@@ -29,19 +29,19 @@ abstract class AbstractHandler implements CommandHandler
     protected $command;
 
     /**
-     * @var OutputInterface
+     * @var Output
      */
     protected $output;
 
     /**
-     * @var OutputInterface
+     * @var Output
      */
     protected $errorOutput;
 
     /**
      * {@inheritdoc}
      */
-    public function initialize(Command $command, OutputInterface $output, OutputInterface $errorOutput)
+    public function initialize(Command $command, Output $output, Output $errorOutput)
     {
         $this->command = $command;
         $this->output = $output;

@@ -11,10 +11,10 @@
 
 namespace Webmozart\Console\Descriptor;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\ExecutableFinder;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -72,13 +72,13 @@ class DefaultDescriptor extends DelegatingDescriptor
      * If the passed object is no command, the page passed in the "defaultPage"
      * option will be displayed.
      *
-     * @param OutputInterface $output  The console output.
-     * @param object          $object  The object to describe.
-     * @param array           $options Additional options.
+     * @param Output $output  The console output.
+     * @param object $object  The object to describe.
+     * @param array  $options Additional options.
      *
      * @return int The exit code.
      */
-    public function describe(OutputInterface $output, $object, array $options = array())
+    public function describe(Output $output, $object, array $options = array())
     {
         $options = array_replace(array(
             'manDir' => getcwd().'/docs',
@@ -101,7 +101,7 @@ class DefaultDescriptor extends DelegatingDescriptor
     /**
      * {@inheritdoc}
      */
-    protected function parseFormat(InputInterface $input, $object, array $options = array())
+    protected function parseFormat(Input $input, $object, array $options = array())
     {
         // If "-h" is given, always print the short text usage
         if ($input->hasParameterOption('-h')) {

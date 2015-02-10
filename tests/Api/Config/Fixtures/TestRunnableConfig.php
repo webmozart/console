@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\Tests\Api\Config\Fixtures;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Api\Runnable;
 
 /**
@@ -22,7 +22,7 @@ use Webmozart\Console\Api\Runnable;
  */
 class TestRunnableConfig extends CommandConfig implements Runnable
 {
-    public function run(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput)
+    public function run(Input $input, Output $output, Output $errorOutput)
     {
         return 'foo';
     }

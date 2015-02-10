@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\Api\Resolver;
 
-use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Input\Input;
 
 /**
  * Returns the command to execute for a console input.
@@ -26,10 +26,10 @@ interface CommandResolver
     /**
      * Returns the command to execute for a console input.
      *
-     * @param InputInterface    $input    The console input.
+     * @param Input             $input    The console input.
      * @param CommandCollection $commands The available commands.
      *
      * @return Command The command to execute.
      */
-    public function resolveCommand(InputInterface $input, CommandCollection $commands);
+    public function resolveCommand(Input $input, CommandCollection $commands);
 }

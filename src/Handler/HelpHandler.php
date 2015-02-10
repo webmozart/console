@@ -11,7 +11,7 @@
 
 namespace Webmozart\Console\Handler;
 
-use Symfony\Component\Console\Input\InputInterface;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Descriptor\DefaultDescriptor;
 
 /**
@@ -40,7 +40,7 @@ class HelpHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(InputInterface $input)
+    public function handle(Input $input)
     {
         $object = $this->getObjectToDescribe($input);
 
@@ -53,7 +53,7 @@ class HelpHandler extends AbstractHandler
         return $descriptor->describe($this->output, $object, $options);
     }
 
-    protected function getObjectToDescribe(InputInterface $input)
+    protected function getObjectToDescribe(Input $input)
     {
         // Describe the command
         if ($input->getArgument('command')) {

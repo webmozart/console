@@ -11,14 +11,20 @@
 
 namespace Webmozart\Console;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Webmozart\Console\Adapter\ApplicationAdapter;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Input\InputDefinition;
+use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Output\CompositeOutput;
 
 /**
  * A console application.
@@ -49,7 +55,7 @@ class ConsoleApplication implements Application
     private $applicationAdapter;
 
     /**
-     * Creates the console runner.
+     * Creates a new console application.
      *
      * @param ApplicationConfig $config The application configuration.
      */
@@ -123,8 +129,34 @@ class ConsoleApplication implements Application
     /**
      * {@inheritdoc}
      */
-    public function run(InputInterface $input = null, OutputInterface $output = null)
+    public function run(Input $input = null, Output $output = null, Output $errorOutput = null)
     {
-        return $this->applicationAdapter->run($input, $output);
+        $dimensions = $this->config->getOutputDimensions();
+        $styleSet = $this->config->getStyleSet();
+
+        if (null === $input) {
+            $input = new InputInterfaceAdapter(new ArgvInput());
+        }
+
+        if (null === $output) {
+            $output = new OutputInterfaceAdapter(new ConsoleOutput(), $dimensions);
+        }
+
+        if (null === $errorOutput) {
+            $errorOutput = $output instanceof ConsoleOutputInterface
+                ? new OutputInterfaceAdapter($output->getErrorOutput(), $dimensions)
+                : $output;
+        }
+
+        $output->setDimensions($dimensions);
+        $errorOutput->setDimensions($dimensions);
+
+        if ($styleSet) {
+            $output->setStyleSet($styleSet);
+            $errorOutput->setStyleSet($styleSet);
+        }
+
+        // Wrap outputs in a CompositeOutput while passing them through Symfony
+        return $this->applicationAdapter->run($input, new CompositeOutput($output, $errorOutput));
     }
 }

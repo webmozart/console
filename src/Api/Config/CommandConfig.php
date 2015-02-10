@@ -645,21 +645,24 @@ class CommandConfig
      * Read {@link InputOption} for a more detailed description of command
      * arguments.
      *
-     * @param string $longName    The long option name.
-     * @param string $shortName   The short option name. Can be `null`.
-     * @param int    $flags       A bitwise combination of the flag constants in
-     *                            the {@link InputOption} class.
-     * @param string $description A one-line description of the option.
-     * @param mixed  $default     The default value. Must be `null` if the
-     *                            flags contain {@link InputOption::VALUE_REQUIRED}.
+     * @param string      $longName     The long option name.
+     * @param string|null $shortName    The short option name.
+     * @param int         $flags        A bitwise combination of the option flag
+     *                                  constants.
+     * @param string      $description  A human-readable description of the option.
+     * @param mixed       $defaultValue The default value (must be null for
+     *                                  {@link VALUE_REQUIRED} or
+     *                                  {@link VALUE_NONE}).
+     * @param string      $valueName    The name of the value to be used in
+     *                                  usage examples of the option.
      *
      * @return static The current instance.
      *
      * @see getOptions(), addOptionCommandConfig()
      */
-    public function addOption($longName, $shortName = null, $flags = 0, $description = null, $default = null)
+    public function addOption($longName, $shortName = null, $flags = 0, $description = null, $defaultValue = null, $valueName = '...')
     {
-        $this->definitionBuilder->addOption(new InputOption($longName, $shortName, $flags, $description, $default));
+        $this->definitionBuilder->addOption(new InputOption($longName, $shortName, $flags, $description, $defaultValue, $valueName));
 
         return $this;
     }

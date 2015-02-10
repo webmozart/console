@@ -11,8 +11,8 @@
 
 namespace Webmozart\Console\Tests\Handler\Fixtures;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Api\Runnable;
 
 /**
@@ -28,7 +28,7 @@ class TestRunnable implements Runnable
         $this->callback = $callback;
     }
 
-    public function run(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput)
+    public function run(Input $input, Output $output, Output $errorOutput)
     {
         return call_user_func($this->callback, $input, $output, $errorOutput);
     }

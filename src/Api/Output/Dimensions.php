@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api;
+namespace Webmozart\Console\Api\Output;
 
 use Symfony\Component\Console\Application;
 
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Application;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class TerminalDimensions
+class Dimensions
 {
     /**
      * @var int
@@ -34,7 +34,7 @@ class TerminalDimensions
     /**
      * Creates a terminal window for the current window.
      *
-     * @return TerminalDimensions The terminal window.
+     * @return Dimensions The terminal window.
      */
     public static function forCurrentWindow()
     {

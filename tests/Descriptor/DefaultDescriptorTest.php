@@ -16,18 +16,19 @@ use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\ExecutableFinder;
-use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Adapter\InputDefinitionAdapter;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Input\InputOption;
-use Webmozart\Console\Adapter\InputDefinitionAdapter;
+use Webmozart\Console\Api\Output\Dimensions;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Descriptor\DefaultDescriptor;
 use Webmozart\Console\Process\ProcessLauncher;
-use Webmozart\Console\Style\NeptunStyle;
-use Webmozart\Console\Api\TerminalDimensions;
+use Webmozart\Console\Style\DefaultStyleSet;
 
 /**
  * @since  1.0
@@ -53,6 +54,11 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     /**
      * @var BufferedOutput
      */
+    private $buffer;
+
+    /**
+     * @var Output
+     */
     private $output;
 
     /**
@@ -69,9 +75,10 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->descriptor = new DefaultDescriptor($this->executableFinder, $this->processLauncher);
-        $this->output = new BufferedOutput();
-
-        NeptunStyle::addStyles($this->output->getFormatter());
+        $this->buffer = new BufferedOutput();
+        $this->output = new OutputInterfaceAdapter($this->buffer, new Dimensions(80, 20));
+        $this->output->setDecorated(false);
+        $this->output->setStyleSet(new DefaultStyleSet());
 
         $this->inputDefinition = new InputDefinition(array(
             new InputOption('all'),
@@ -153,7 +160,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
 
         $status = $this->descriptor->describe($this->output, $object, $options);
 
-        $this->assertApplicationHelp($this->output->fetch());
+        $this->assertApplicationHelp($this->buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -186,7 +193,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $status = $this->descriptor->describe($this->output, $object, $options);
-        $output = $this->output->fetch();
+        $output = $this->buffer->fetch();
 
         $this->assertStringStartsWith('<?xml version="1.0" encoding="UTF-8"?>', $output);
         $this->assertContains('<symfony name="Test Application" version="1.0.0">', $output);
@@ -217,7 +224,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
             ->method('launchProcess');
 
         $status = $this->descriptor->describe($this->output, $object, $options);
-        $output = $this->output->fetch();
+        $output = $this->buffer->fetch();
 
         $this->assertStringStartsWith('{"commands":[', $output);
         $this->assertSame(0, $status);
@@ -326,7 +333,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
 
         $status = $this->descriptor->describe($this->output, $object, $options);
 
-        $this->assertSame("Contents of application.txt\n", $this->output->fetch());
+        $this->assertSame("Contents of application.txt\n", $this->buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -360,7 +367,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
 
         $status = $this->descriptor->describe($this->output, $object, $options);
 
-        $this->assertSame("Contents of application.txt\n", $this->output->fetch());
+        $this->assertSame("Contents of application.txt\n", $this->buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -468,7 +475,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
 
         $status = $this->descriptor->describe($this->output, $object, $options);
 
-        $this->assertSame("Contents of application.txt\n", $this->output->fetch());
+        $this->assertSame("Contents of application.txt\n", $this->buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -497,7 +504,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
 
         $status = $this->descriptor->describe($this->output, $object, $options);
 
-        $this->assertApplicationHelp($this->output->fetch());
+        $this->assertApplicationHelp($this->buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -548,135 +555,7 @@ GLOBAL OPTIONS
 EOF;
 
 
-        $this->assertSame($expected, $this->output->fetch());
-        $this->assertSame(0, $status);
-    }
-
-    public function testDescribeCommandWithSubCommands()
-    {
-        $options = array(
-            'input' => $this->getStringInput('-h'),
-        );
-
-        $object = $this->getApplication()->getCommand('command2');
-
-        $this->executableFinder->expects($this->once())
-            ->method('find')
-            ->with('man')
-            ->will($this->returnValue('man-binary'));
-
-        $this->processLauncher->expects($this->any())
-            ->method('isSupported')
-            ->will($this->returnValue(true));
-
-        $this->processLauncher->expects($this->never())
-            ->method('launchProcess');
-
-        $status = $this->descriptor->describe($this->output, $object, $options);
-
-        $expected = <<<EOF
-USAGE
-      test-bin command2
-  or: test-bin command2 add <arg>
-  or: test-bin command2 list [<arg>]
-  or: test-bin command2 -d <arg>
-
-GLOBAL OPTIONS
-  --help (-h)            Description of the "help" option
-  --ansi                 Description of the "ansi" option
-  --no-interaction (-n)  Description of the "no-interaction" option
-
-
-EOF;
-
-
-        $this->assertSame($expected, $this->output->fetch());
-        $this->assertSame(0, $status);
-    }
-
-    public function testDescribeCommandWithDefaultSubCommand()
-    {
-        $options = array(
-            'input' => $this->getStringInput('-h'),
-        );
-
-        $config = $this->getApplicationConfig();
-        $config->getCommandConfig('command2')->setDefaultSubCommand('list');
-        $object = $this->getApplication($config)->getCommand('command2');
-
-        $this->executableFinder->expects($this->once())
-            ->method('find')
-            ->with('man')
-            ->will($this->returnValue('man-binary'));
-
-        $this->processLauncher->expects($this->any())
-            ->method('isSupported')
-            ->will($this->returnValue(true));
-
-        $this->processLauncher->expects($this->never())
-            ->method('launchProcess');
-
-        $status = $this->descriptor->describe($this->output, $object, $options);
-
-        $expected = <<<EOF
-USAGE
-      test-bin command2 [list] [<arg>]
-  or: test-bin command2 add <arg>
-  or: test-bin command2 -d <arg>
-
-GLOBAL OPTIONS
-  --help (-h)            Description of the "help" option
-  --ansi                 Description of the "ansi" option
-  --no-interaction (-n)  Description of the "no-interaction" option
-
-
-EOF;
-
-
-        $this->assertSame($expected, $this->output->fetch());
-        $this->assertSame(0, $status);
-    }
-
-    public function testDescribeCommandWithDefaultOptionCommand()
-    {
-        $options = array(
-            'input' => $this->getStringInput('-h'),
-        );
-
-        $config = $this->getApplicationConfig();
-        $config->getCommandConfig('command2')->setDefaultOptionCommand('delete');
-        $object = $this->getApplication($config)->getCommand('command2');
-
-        $this->executableFinder->expects($this->once())
-            ->method('find')
-            ->with('man')
-            ->will($this->returnValue('man-binary'));
-
-        $this->processLauncher->expects($this->any())
-            ->method('isSupported')
-            ->will($this->returnValue(true));
-
-        $this->processLauncher->expects($this->never())
-            ->method('launchProcess');
-
-        $status = $this->descriptor->describe($this->output, $object, $options);
-
-        $expected = <<<EOF
-USAGE
-      test-bin command2 [-d] <arg>
-  or: test-bin command2 add <arg>
-  or: test-bin command2 list [<arg>]
-
-GLOBAL OPTIONS
-  --help (-h)            Description of the "help" option
-  --ansi                 Description of the "ansi" option
-  --no-interaction (-n)  Description of the "no-interaction" option
-
-
-EOF;
-
-
-        $this->assertSame($expected, $this->output->fetch());
+        $this->assertSame($expected, $this->buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -705,7 +584,7 @@ EOF;
 
         $status = $this->descriptor->describe($this->output, $object, $options);
 
-        $output = $this->output->fetch();
+        $output = $this->buffer->fetch();
 
         $this->assertStringStartsWith('<?xml version="1.0" encoding="UTF-8"?>', $output);
         $this->assertContains('<command id="command1" name="command1">', $output);
@@ -736,7 +615,7 @@ EOF;
             ->method('launchProcess');
 
         $status = $this->descriptor->describe($this->output, $object, $options);
-        $output = $this->output->fetch();
+        $output = $this->buffer->fetch();
 
         $this->assertStringStartsWith('{"name":"command1",', $output);
         $this->assertSame(0, $status);
@@ -898,7 +777,7 @@ ARGUMENTS
   <command>              The command to execute
   <arg>                  The arguments of the command
 
-OPTIONS
+GLOBAL OPTIONS
   --help (-h)            Description of the "help" option
   --ansi                 Description of the "ansi" option
   --no-interaction (-n)  Description of the "no-interaction" option
@@ -919,7 +798,7 @@ EOF;
             ->setName('Test Application')
             ->setVersion('1.0.0')
             ->setExecutableName('test-bin')
-            ->setTerminalDimensions(new TerminalDimensions(80, null))
+            ->setOutputDimensions(new Dimensions(80, null))
 
             ->addOption('help', 'h', InputOption::VALUE_NONE, 'Description of the "help" option')
             ->addOption('ansi', null, InputOption::VALUE_NONE, 'Description of the "ansi" option')
@@ -958,7 +837,7 @@ EOF;
 
     private function getStringInput($inputString)
     {
-        $input = new StringInput($inputString);
+        $input = new InputInterfaceAdapter(new StringInput($inputString));
         $input->bind(new InputDefinitionAdapter($this->inputDefinition));
 
         return $input;

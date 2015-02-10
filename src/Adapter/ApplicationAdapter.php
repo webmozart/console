@@ -15,6 +15,8 @@ use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Assert\Assert;
 
 /**
  * Adapts the command API of this package to Symfony's {@link Application} API.
@@ -44,7 +46,7 @@ class ApplicationAdapter extends Application
         $this->application = $application;
 
         $config = $application->getConfig();
-        $terminalDimensions = $config->getTerminalDimensions();
+        $dimensions = $config->getOutputDimensions();
 
         parent::__construct($config->getName(), $config->getVersion());
 
@@ -54,7 +56,7 @@ class ApplicationAdapter extends Application
 
         $this->setAutoExit($config->isTerminatedAfterRun());
         $this->setCatchExceptions($config->isExceptionCaught());
-        $this->setTerminalDimensions($terminalDimensions->getWidth(), $terminalDimensions->getHeight());
+        $this->setTerminalDimensions($dimensions->getWidth(), $dimensions->getHeight());
 
         foreach ($application->getCommands() as $command) {
             $this->add(new CommandAdapter($command));
@@ -66,6 +68,9 @@ class ApplicationAdapter extends Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
+        Assert::isInstanceOf($input, 'Webmozart\Console\Api\Input\Input');
+
+        /** @var Input $input */
         $commandResolver = $this->application->getConfig()->getCommandResolver();
         $command = $commandResolver->resolveCommand($input, $this->application->getCommands());
 

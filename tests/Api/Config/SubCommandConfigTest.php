@@ -15,6 +15,8 @@ use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
@@ -56,11 +58,12 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $parentConfig->setCallback($callback = function () { return 'foo'; });
 
         $config = new SubCommandConfig('command', $parentConfig);
+        $input = new InputInterfaceAdapter(new StringInput('test'));
 
         $handler = $config->getHandler(new Command($config));
 
         $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
-        $this->assertSame('foo', $handler->handle(new StringInput('test')));
+        $this->assertSame('foo', $handler->handle($input));
     }
 
     public function testGetHandlerWithCallback()
@@ -71,12 +74,14 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $config = new SubCommandConfig('command', $parentConfig);
         $config->setCallback($callback = function () { return 'bar'; });
         $command = new Command($config);
+        $input = new InputInterfaceAdapter(new StringInput('test'));
+        $output = new OutputInterfaceAdapter(new BufferedOutput());
 
         $handler = $config->getHandler($command);
-        $handler->initialize($command, new BufferedOutput(), new BufferedOutput());
+        $handler->initialize($command, $output, $output);
 
         $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
-        $this->assertSame('bar', $handler->handle(new StringInput('test')));
+        $this->assertSame('bar', $handler->handle($input));
     }
 
     public function testGetHandlerWithRunnableConfig()
@@ -84,12 +89,14 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $parentConfig = new TestRunnableConfig();
         $config = new TestNestedRunnableConfig('command', $parentConfig);
         $command = new Command($config);
+        $input = new InputInterfaceAdapter(new StringInput('test'));
+        $output = new OutputInterfaceAdapter(new BufferedOutput());
 
         $handler = $config->getHandler($command);
-        $handler->initialize($command, new BufferedOutput(), new BufferedOutput());
+        $handler->initialize($command, $output, $output);
 
         $this->assertInstanceOf('Webmozart\Console\Handler\RunnableHandler', $handler);
-        $this->assertSame('bar', $handler->handle(new StringInput('test')));
+        $this->assertSame('bar', $handler->handle($input));
     }
 
     public function testSetHandler()

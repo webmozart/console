@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\Resolver;
 
-use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Resolver\CommandNotDefinedException;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Assert\Assert;
@@ -48,7 +48,7 @@ class DefaultResolver implements CommandResolver
     /**
      * {@inheritdoc}
      */
-    public function resolveCommand(InputInterface $input, CommandCollection $commands)
+    public function resolveCommand(Input $input, CommandCollection $commands)
     {
         list($argumentsToTest, $optionsToTest) = $this->splitInput($input);
 
@@ -87,9 +87,9 @@ class DefaultResolver implements CommandResolver
         return $command;
     }
 
-    private function splitInput(InputInterface $input)
+    private function splitInput(Input $input)
     {
-        $parts = explode(' ', (string) $input);
+        $parts = explode(' ', $input->toString());
         $argumentsToTest = array();
         $optionsToTest = array();
         $parseArguments = true;

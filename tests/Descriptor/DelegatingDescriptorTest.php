@@ -13,12 +13,13 @@ namespace Webmozart\Console\Tests\Descriptor;
 
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Descriptor\DescriptorInterface;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Descriptor\DelegatingDescriptor;
+use Webmozart\Console\Descriptor\Descriptor;
 
 /**
  * @since  1.0
@@ -32,7 +33,7 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
     private $descriptor;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|OutputInterface
+     * @var PHPUnit_Framework_MockObject_MockObject|Output
      */
     private $output;
 
@@ -42,12 +43,12 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
     private $object;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|DescriptorInterface
+     * @var PHPUnit_Framework_MockObject_MockObject|Descriptor
      */
     private $delegate1;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|DescriptorInterface
+     * @var PHPUnit_Framework_MockObject_MockObject|Descriptor
      */
     private $delegate2;
 
@@ -59,10 +60,10 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->descriptor = new DelegatingDescriptor();
-        $this->output = $this->getMock('Symfony\Component\Console\Output\OutputInterface');
+        $this->output = $this->getMock('Webmozart\Console\Api\Output\Output');
         $this->object = new \stdClass();
-        $this->delegate1 = $this->getMock('Symfony\Component\Console\Descriptor\DescriptorInterface');
-        $this->delegate2 = $this->getMock('Symfony\Component\Console\Descriptor\DescriptorInterface');
+        $this->delegate1 = $this->getMock('Webmozart\Console\Descriptor\Descriptor');
+        $this->delegate2 = $this->getMock('Webmozart\Console\Descriptor\Descriptor');
         $this->inputDefinition = new InputDefinition(array(
             new InputOption('format', null, InputOption::VALUE_REQUIRED),
         ));
@@ -150,7 +151,7 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
 
     private function getStringInput($inputString)
     {
-        $input = new StringInput($inputString);
+        $input = new InputInterfaceAdapter(new StringInput($inputString));
         $input->bind($this->inputDefinition);
 
         return $input;

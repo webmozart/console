@@ -13,8 +13,8 @@ namespace Webmozart\Console\Descriptor;
 
 use RuntimeException;
 use Symfony\Component\Console\Descriptor\DescriptorInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 
 /**
  * Describes an object using other registered descriptors.
@@ -30,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class DelegatingDescriptor implements DescriptorInterface
+class DelegatingDescriptor implements Descriptor
 {
     /**
      * @var DescriptorInterface[]
@@ -65,15 +65,15 @@ class DelegatingDescriptor implements DescriptorInterface
      * input. If no format is found, the first registered descriptor is used
      * by default. You can also pass a default format to {@link __construct()}.
      *
-     * @param OutputInterface $output  The console output.
-     * @param object          $object  The object to describe.
-     * @param array           $options Additional options.
+     * @param Output $output  The console output.
+     * @param object $object  The object to describe.
+     * @param array  $options Additional options.
      *
      * @return int The exit code.
      *
      * @throws RuntimeException If the format is not supported.
      */
-    public function describe(OutputInterface $output, $object, array $options = array())
+    public function describe(Output $output, $object, array $options = array())
     {
         $format = isset($options['input'])
             ? $this->parseFormat($options['input'], $object, $options)
@@ -85,10 +85,10 @@ class DelegatingDescriptor implements DescriptorInterface
     /**
      * Registers a descriptor for a format.
      *
-     * @param string              $format     The format.
-     * @param DescriptorInterface $descriptor The descriptor.
+     * @param string     $format     The format.
+     * @param Descriptor $descriptor The descriptor.
      */
-    public function register($format, DescriptorInterface $descriptor)
+    public function register($format, Descriptor $descriptor)
     {
         $this->descriptors[$format] = $descriptor;
     }
@@ -96,13 +96,13 @@ class DelegatingDescriptor implements DescriptorInterface
     /**
      * Returns the described format for the given console input.
      *
-     * @param InputInterface $input   The console input.
-     * @param object         $object  The described options.
-     * @param array          $options Additional options.
+     * @param Input  $input   The console input.
+     * @param object $object  The described options.
+     * @param array  $options Additional options.
      *
      * @return string The format to display.
      */
-    protected function parseFormat(InputInterface $input, $object, array $options = array())
+    protected function parseFormat(Input $input, $object, array $options = array())
     {
         if ($input->hasOption('format')) {
             return $input->getOption('format') ?: $this->getDefaultFormat();

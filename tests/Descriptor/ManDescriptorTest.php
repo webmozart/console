@@ -15,6 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Descriptor\ManDescriptor;
 use Webmozart\Console\Process\ProcessLauncher;
 
@@ -53,7 +54,8 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
 
     public function testDescribe()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -76,7 +78,8 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
 
     public function testDescribeWithCustomManBinary()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');
@@ -101,7 +104,8 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfFileNotPassed()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');
@@ -117,7 +121,8 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfFileNotFound()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');
@@ -135,7 +140,8 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfManNotFound()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -155,7 +161,8 @@ class ManDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfCustomManBinaryNotFound()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');

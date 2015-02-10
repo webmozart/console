@@ -17,8 +17,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Assert\Assert;
+use Webmozart\Console\Output\CompositeOutput;
 use Webmozart\Console\Util\ProcessTitle;
 
 /**
@@ -239,16 +242,21 @@ class CommandAdapter extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        $errorOutput = $output instanceof ConsoleOutput ? $output->getErrorOutput() : $output;
+        // These conditions should hold since we set the input/output
+        // accordingly in ConsoleApplication
+        Assert::isInstanceOf($input, 'Webmozart\Console\Api\Input\Input');
+        Assert::isInstanceOf($output, 'Webmozart\Console\Output\CompositeOutput');
 
+        /** @var Input $input */
         $this->bindAndValidateInput($input, $this->getDefinition());
 
-        $statusCode = $this->handleCommand($input, $output, $errorOutput);
+        /** @var CompositeOutput $output */
+        $statusCode = $this->handleCommand($input, $output, $output->getErrorOutput());
 
         return is_numeric($statusCode) ? (int) $statusCode : 0;
     }
 
-    private function bindAndValidateInput(InputInterface $input, InputDefinitionAdapter $definitionAdapter)
+    private function bindAndValidateInput(Input $input, InputDefinitionAdapter $definitionAdapter)
     {
         // Bind the input to the input definition of the command
         $input->bind($definitionAdapter);
@@ -266,14 +274,14 @@ class CommandAdapter extends Command
         $input->validate();
     }
 
-    private function ensureCommandNamesSet(InputInterface $input, InputDefinitionAdapter $definitionAdapter)
+    private function ensureCommandNamesSet(Input $input, InputDefinitionAdapter $definitionAdapter)
     {
         foreach ($definitionAdapter->getCommandNamesByArgumentName() as $argName => $commandName) {
             $input->setArgument($argName, $commandName);
         }
     }
 
-    private function handleCommand(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput)
+    private function handleCommand(Input $input, Output $output, Output $errorOutput)
     {
         $processTitle = $this->adaptedCommand->getConfig()->getProcessTitle();
         $commandHandler = $this->adaptedCommand->getConfig()->getHandler($this->adaptedCommand);
@@ -300,9 +308,9 @@ class CommandAdapter extends Command
         return $statusCode;
     }
 
-    private function warnIfProcessTitleNotSupported($processTitle, OutputInterface $errorOutput)
+    private function warnIfProcessTitleNotSupported($processTitle, Output $errorOutput)
     {
-        if ($processTitle && !ProcessTitle::isSupported() && OutputInterface::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
+        if ($processTitle && !ProcessTitle::isSupported() && Output::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
             $errorOutput->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
         }
     }

@@ -113,7 +113,8 @@ class Command
         $optionCommands = array();
 
         if ($config instanceof OptionCommandConfig) {
-            $definitionBuilder->addCommandOption(new CommandOption($config->getName(), $config->getShortName()));
+            $flags = $config->isLongNamePreferred() ? CommandOption::PREFER_LONG_NAME : CommandOption::PREFER_SHORT_NAME;
+            $definitionBuilder->addCommandOption(new CommandOption($config->getName(), $config->getShortName(), $flags));
         } else {
             $definitionBuilder->addCommandName(new CommandName($config->getName()));
         }

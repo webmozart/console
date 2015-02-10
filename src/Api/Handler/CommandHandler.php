@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\Api\Handler;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 
 /**
  * Handles a console command.
@@ -26,18 +26,18 @@ interface CommandHandler
     /**
      * Initializes the command handler.
      *
-     * @param Command         $command     The command to handle.
-     * @param OutputInterface $output      The standard output.
-     * @param OutputInterface $errorOutput The error output.
+     * @param Command $command     The command to handle.
+     * @param Output  $output      The standard output.
+     * @param Output  $errorOutput The error output.
      */
-    public function initialize(Command $command, OutputInterface $output, OutputInterface $errorOutput);
+    public function initialize(Command $command, Output $output, Output $errorOutput);
 
     /**
      * Handles a command.
      *
-     * @param InputInterface $input The console input.
+     * @param Input $input The console input.
      *
      * @return int Returns 0 on success and a positive integer on error.
      */
-    public function handle(InputInterface $input);
+    public function handle(Input $input);
 }

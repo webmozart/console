@@ -13,6 +13,7 @@ namespace Webmozart\Console\Tests\Resolver;
 
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\StringInput;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\CommandConfig;
@@ -101,7 +102,7 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
      */
     public function testResolveCommand($inputString, $commandName)
     {
-        $input = new StringInput($inputString);
+        $input = new InputInterfaceAdapter(new StringInput($inputString));
 
         $command = $this->resolver->resolveCommand($input, $this->commands);
 
@@ -450,14 +451,14 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
     public function testSuggestClosestAlternativeIfCommandNotFound()
     {
         try {
-            $this->resolver->resolveCommand(new StringInput('packa'), $this->commands);
+            $this->resolver->resolveCommand(new InputInterfaceAdapter(new StringInput('packa')), $this->commands);
             $this->fail('Expected a CommandNotDefinedException');
         } catch (CommandNotDefinedException $e) {
             $this->assertRegExp('~Did you mean one of these\?\s+pack\s+package~', $e->getMessage());
         }
 
         try {
-            $this->resolver->resolveCommand(new StringInput('packag'), $this->commands);
+            $this->resolver->resolveCommand(new InputInterfaceAdapter(new StringInput('packag')), $this->commands);
             $this->fail('Expected a CommandNotDefinedException');
         } catch (CommandNotDefinedException $e) {
             $this->assertRegExp('~Did you mean one of these\?\s+package\s+pack~', $e->getMessage());

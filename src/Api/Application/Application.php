@@ -12,12 +12,12 @@
 namespace Webmozart\Console\Api\Application;
 
 use OutOfBoundsException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Input\InputDefinition;
+use Webmozart\Console\Api\Output\Output;
 
 /**
  * A console application.
@@ -88,12 +88,16 @@ interface Application
     /**
      * Executes the command for a given input.
      *
-     * @param InputInterface  $input  The console input. If not given, the
-     *                                input passed to the PHP process is used.
-     * @param OutputInterface $output The console output. If not given, the
-     *                                application prints to the standard output.
+     * @param Input  $input       The console input. If not given, the input
+     *                            passed to the PHP process is used.
+     * @param Output $output      The standard output. If not given, the
+     *                            application prints to the standard output of
+     *                            the PHP process.
+     * @param Output $errorOutput The error output. If not given, the
+     *                            application prints to the error output of the
+     *                            PHP process.
      *
      * @return int The exit status.
      */
-    public function run(InputInterface $input = null, OutputInterface $output = null);
+    public function run(Input $input = null, Output $output = null, Output $errorOutput = null);
 }

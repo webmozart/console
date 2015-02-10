@@ -17,7 +17,7 @@ use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Adapter\InputDefinitionAdapter;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\TerminalDimensions;
+use Webmozart\Console\Api\Output\Dimensions;
 use Webmozart\Console\ConsoleApplication;
 
 /**
@@ -32,7 +32,7 @@ class ApplicationAdapterTest extends PHPUnit_Framework_TestCase
             ->setName('Test Name')
             ->setVersion('1.2.3')
             ->setHelperSet($helperSet = new HelperSet())
-            ->setTerminalDimensions(new TerminalDimensions(80, 20))
+            ->setOutputDimensions(new Dimensions(80, 20))
             ->beginCommand('command')->end()
         ;
 

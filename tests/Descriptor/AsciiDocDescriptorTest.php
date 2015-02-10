@@ -15,6 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Descriptor\AsciiDocDescriptor;
 use Webmozart\Console\Process\ProcessLauncher;
 
@@ -53,7 +54,8 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
 
     public function testDescribe()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -80,7 +82,8 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
 
     public function testDescribePrintsToOutputIfLessNotFound()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -97,13 +100,14 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
         ));
 
-        $this->assertSame("Contents of command1.txt\n", $output->fetch());
+        $this->assertSame("Contents of command1.txt\n", $buffer->fetch());
         $this->assertSame(0, $status);
     }
 
     public function testDescribePrintsToOutputIfProcessLauncherNotSupported()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->once())
             ->method('find')
@@ -121,13 +125,14 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             'asciiDocPath' => __DIR__.'/Fixtures/ascii-doc/command1.txt',
         ));
 
-        $this->assertSame("Contents of command1.txt\n", $output->fetch());
+        $this->assertSame("Contents of command1.txt\n", $buffer->fetch());
         $this->assertSame(0, $status);
     }
 
     public function testDescribeWithCustomLessBinary()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');
@@ -153,7 +158,8 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
 
     public function testDescribePrintsToOutputIfCustomLessBinaryNotFound()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');
@@ -169,7 +175,7 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
             'lessBinary' => false,
         ));
 
-        $this->assertSame("Contents of command1.txt\n", $output->fetch());
+        $this->assertSame("Contents of command1.txt\n", $buffer->fetch());
         $this->assertSame(0, $status);
     }
 
@@ -178,7 +184,8 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfFileNotPassed()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');
@@ -197,7 +204,8 @@ class AsciiDocDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfFileNotFound()
     {
-        $output = new BufferedOutput();
+        $buffer = new BufferedOutput();
+        $output = new OutputInterfaceAdapter($buffer);
 
         $this->executableFinder->expects($this->never())
             ->method('find');

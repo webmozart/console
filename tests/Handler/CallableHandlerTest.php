@@ -12,12 +12,14 @@
 namespace Webmozart\Console\Tests\Handler;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\OutputInterface;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Handler\CallableHandler;
 
 /**
@@ -28,15 +30,15 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
 {
     public function testHandleCommand()
     {
-        $input = new StringInput('ls /');
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
+        $input = new InputInterfaceAdapter(new StringInput('ls /'));
+        $output = new OutputInterfaceAdapter($buffer1 = new BufferedOutput());
+        $errorOutput = new OutputInterfaceAdapter($buffer2 = new BufferedOutput());
         $command = new Command(new CommandConfig('command'));
 
         $handler = new CallableHandler(
-            function (InputInterface $input, OutputInterface $output, OutputInterface $errorOutput) {
-                $output->write((string) $input);
-                $errorOutput->write((string) $input);
+            function (Input $input, Output $output, Output $errorOutput) {
+                $output->write($input->toString());
+                $errorOutput->write($input->toString());
 
                 return 123;
             }
@@ -45,7 +47,7 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
         $handler->initialize($command, $output, $errorOutput);
 
         $this->assertSame(123, $handler->handle($input));
-        $this->assertSame("ls '/'", $output->fetch());
-        $this->assertSame("ls '/'", $errorOutput->fetch());
+        $this->assertSame("ls '/'", $buffer1->fetch());
+        $this->assertSame("ls '/'", $buffer2->fetch());
     }
 }

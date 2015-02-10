@@ -12,10 +12,11 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
-use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
@@ -514,12 +515,14 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
     {
         $config = new TestRunnableConfig('command');
         $command = new Command($config);
+        $input = new InputInterfaceAdapter(new StringInput('test'));
+        $output = new OutputInterfaceAdapter(new BufferedOutput());
 
         $handler = $config->getHandler($command);
-        $handler->initialize($command, new BufferedOutput(), new BufferedOutput());
+        $handler->initialize($command, $output, $output);
 
         $this->assertInstanceOf('Webmozart\Console\Handler\RunnableHandler', $handler);
-        $this->assertSame('foo', $handler->handle(new StringInput('test')));
+        $this->assertSame('foo', $handler->handle($input));
     }
 
     public function testSetHandler()
@@ -561,12 +564,14 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
     {
         $this->config->setCallback(function () { return 'foo'; });
         $command = new Command($this->config);
+        $input = new InputInterfaceAdapter(new StringInput('test'));
+        $output = new OutputInterfaceAdapter(new BufferedOutput());
 
         $handler = $this->config->getHandler($command);
-        $handler->initialize($command, new BufferedOutput(), new BufferedOutput());
+        $handler->initialize($command, $output, $output);
 
         $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
-        $this->assertSame('foo', $handler->handle(new StringInput('test')));
+        $this->assertSame('foo', $handler->handle($input));
     }
 
     public function testSetDefaultSubCommand()
