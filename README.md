@@ -3,7 +3,7 @@ Webmozart Console
 
 [![Build Status](https://travis-ci.org/webmozart/console.svg?branch=master)](https://travis-ci.org/webmozart/console)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/webmozart/console/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/webmozart/console/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/96bbb04c-f5c3-47c2-8e43-1f92d26f7c3a/mini.png)](https://insight.sensiolabs.com/projects/96bbb04c-f5c3-47c2-8e43-1f92d26f7c3a)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/4160f60e-541b-4090-a850-3005e84d6a44/mini.png)](https://insight.sensiolabs.com/projects/4160f60e-541b-4090-a850-3005e84d6a44)
 [![Latest Stable Version](https://poser.pugx.org/webmozart/console/v/stable.svg)](https://packagist.org/packages/webmozart/console)
 [![Total Downloads](https://poser.pugx.org/webmozart/console/downloads.svg)](https://packagist.org/packages/webmozart/console)
 [![Dependency Status](https://www.versioneye.com/php/webmozart:console/1.0.0/badge.svg)](https://www.versioneye.com/php/webmozart:console/1.0.0)
