@@ -49,6 +49,7 @@ License
 
 All contents of this package are licensed under the [MIT license].
 
+[Composer]: https://getcomposer.org/
 [Symfony Console component]: http://symfony.com/doc/current/components/console/introduction.html
 [Bernhard Schussek]: http://webmozarts.com
 [The Community Contributors]: https://github.com/webmozart/console/graphs/contributors
