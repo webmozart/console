@@ -126,26 +126,11 @@ class SubCommandConfig extends CommandConfig
     }
 
     /**
-     * Returns the command handler to execute when the command is run.
-     *
-     * This method is identical to {@link CommandConfig::getHandler()}, except
-     * that the creation of the command handler is delegated to the parent
-     * configuration if no callback was set and the configuration does not
-     * implement {@link Runnable}.
-     *
-     * @param Command $command The command to handle.
-     *
-     * @return CommandHandler The command handler.
+     * {@inheritdoc}
      */
-    public function getHandler(Command $command)
+    protected function getDefaultHandler(Command $command)
     {
-        $handler = parent::getHandler($command);
-
-        if ($handler instanceof NullHandler) {
-            // Delegate to the parent config
-            return $this->parentConfig->getHandler($command);
-        }
-
-        return $handler;
+        // Delegate to the parent config
+        return $this->parentConfig->getHandler($command);
     }
 }

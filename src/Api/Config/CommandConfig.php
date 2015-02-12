@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Api\Config;
 
+use InvalidArgumentException;
 use OutOfBoundsException;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,11 +20,9 @@ use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputDefinitionBuilder;
 use Webmozart\Console\Api\Input\InputOption;
-use Webmozart\Console\Api\Runnable;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Handler\CallableHandler;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Handler\RunnableHandler;
 
 /**
  * The configuration of a console command.
@@ -71,7 +70,7 @@ use Webmozart\Console\Handler\RunnableHandler;
  *    }
  *    ```
  *
- * You can choose between three different ways of executing a command:
+ * You can choose between two different ways of executing a command:
  *
  *  * You can register a callback with {@link setCallback()}. The callback
  *    receives the input, the standard output and the error output as
@@ -83,18 +82,6 @@ use Webmozart\Console\Handler\RunnableHandler;
  *            // ...
  *        }
  *    );
- *    ```
- *
- *  * You can extend the class and implement the {@link Runnable} interface:
- *
- *    ```php
- *    class ServerConfig extends CommandConfig implements Runnable
- *    {
- *        public function run(InputInterface $input, OutputInterface $output, OutputInterface $errorOutput)
- *        {
- *            // ...
- *        }
- *    }
  *    ```
  *
  *  * You can implement a custom command handler and return the handler from
@@ -914,7 +901,6 @@ class CommandConfig
      *
      *  * Configuring a handler with {@link setHandler()}.
      *  * Passing a callable to {@link setCallback()}.
-     *  * Implementing {@link Runnable}.
      *  * Overriding this method and returning a custom {@link CommandHandler}.
      *
      * Implementing a {@link CommandHandler} is recommended if you want to test
@@ -929,10 +915,10 @@ class CommandConfig
     public function getHandler(Command $command)
     {
         if (!$this->handler) {
-            $this->handler = $this instanceof Runnable
-                ? new RunnableHandler($this)
-                : new NullHandler();
-        } elseif (is_callable($this->handler)) {
+            return $this->getDefaultHandler($command);
+        }
+
+        if (is_callable($this->handler)) {
             $this->handler = call_user_func($this->handler, $command);
         }
 
@@ -945,11 +931,10 @@ class CommandConfig
      * You can pass:
      *
      *  * A {@link CommandHandler} instance.
-     *  * A {@link Runnable} instance.
      *  * A callable that receives a {@link Command} and returns a
      *    {@link CommandHandler}.
      *
-     * @param CommandHandler|Runnable|callable $handler The command handler.
+     * @param CommandHandler|callback $handler The command handler (factory).
      *
      * @return static The current instance.
      *
@@ -957,9 +942,14 @@ class CommandConfig
      */
     public function setHandler($handler)
     {
-        $this->handler = $handler instanceof Runnable
-            ? new RunnableHandler($handler)
-            : $handler;
+        if (!$handler instanceof CommandHandler && !is_callable($handler)) {
+            throw new InvalidArgumentException(sprintf(
+                'Expected a CommandHandler or a callable. Got: %s',
+                is_object($handler) ? get_class($handler) : gettype($handler)
+            ));
+        }
+
+        $this->handler = $handler;
 
         return $this;
     }
@@ -1010,5 +1000,17 @@ class CommandConfig
      */
     protected function configure()
     {
+    }
+
+    /**
+     * Returns the command handler used if none is set.
+     *
+     * @param Command $command The command to handle.
+     *
+     * @return CommandHandler The default command handler.
+     */
+    protected function getDefaultHandler(Command $command)
+    {
+        return new NullHandler();
     }
 }

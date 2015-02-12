@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -25,9 +26,6 @@ use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Api\Input\InputArgument;
 use Webmozart\Console\Api\Input\InputOption;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Handler\RunnableHandler;
-use Webmozart\Console\Tests\Api\Config\Fixtures\TestRunnableConfig;
-use Webmozart\Console\Tests\Handler\Fixtures\TestRunnable;
 
 /**
  * @since  1.0
@@ -511,20 +509,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(new NullHandler(), $this->config->getHandler($command));
     }
 
-    public function testGetHandlerWithRunnableConfig()
-    {
-        $config = new TestRunnableConfig('command');
-        $command = new Command($config);
-        $input = new InputInterfaceAdapter(new StringInput('test'));
-        $output = new OutputInterfaceAdapter(new BufferedOutput());
-
-        $handler = $config->getHandler($command);
-        $handler->initialize($command, $output, $output);
-
-        $this->assertInstanceOf('Webmozart\Console\Handler\RunnableHandler', $handler);
-        $this->assertSame('foo', $handler->handle($input));
-    }
-
     public function testSetHandler()
     {
         $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
@@ -552,14 +536,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($command, $passedCommand);
     }
 
-    public function testSetHandlerToRunnable()
-    {
-        $this->config->setHandler($runnable = new TestRunnable(function () { return 'foo'; }));
-        $command = new Command($this->config);
-
-        $this->assertEquals(new RunnableHandler($runnable), $this->config->getHandler($command));
-    }
-
     public function testGetHandlerWithCallback()
     {
         $this->config->setCallback(function () { return 'foo'; });
@@ -572,6 +548,16 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
         $this->assertSame('foo', $handler->handle($input));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHandlerFailsIfNeitherCommandHandlerNorCallable()
+    {
+        $config = new CommandConfig('command');
+
+        $config->setHandler(new stdClass());
     }
 
     public function testSetDefaultSubCommand()

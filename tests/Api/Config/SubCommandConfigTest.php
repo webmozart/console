@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -21,10 +22,6 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
-use Webmozart\Console\Handler\RunnableHandler;
-use Webmozart\Console\Tests\Api\Config\Fixtures\TestNestedRunnableConfig;
-use Webmozart\Console\Tests\Api\Config\Fixtures\TestRunnableConfig;
-use Webmozart\Console\Tests\Handler\Fixtures\TestRunnable;
 
 /**
  * @since  1.0
@@ -84,21 +81,6 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame('bar', $handler->handle($input));
     }
 
-    public function testGetHandlerWithRunnableConfig()
-    {
-        $parentConfig = new TestRunnableConfig();
-        $config = new TestNestedRunnableConfig('command', $parentConfig);
-        $command = new Command($config);
-        $input = new InputInterfaceAdapter(new StringInput('test'));
-        $output = new OutputInterfaceAdapter(new BufferedOutput());
-
-        $handler = $config->getHandler($command);
-        $handler->initialize($command, $output, $output);
-
-        $this->assertInstanceOf('Webmozart\Console\Handler\RunnableHandler', $handler);
-        $this->assertSame('bar', $handler->handle($input));
-    }
-
     public function testSetHandler()
     {
         $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
@@ -130,16 +112,14 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($command, $passedCommand);
     }
 
-    public function testSetHandlerToRunnable()
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHandlerFailsIfNeitherCommandHandlerNorCallable()
     {
-        $runnable = new TestRunnable(function () { return 'bar'; });
+        $config = new SubCommandConfig('command');
 
-        $parentConfig = new CommandConfig();
-        $config = new SubCommandConfig('command', $parentConfig);
-        $config->setHandler($runnable);
-        $command = new Command($config);
-
-        $this->assertEquals(new RunnableHandler($runnable), $config->getHandler($command));
+        $config->setHandler(new stdClass());
     }
 
     public function testGetHelperSet()
