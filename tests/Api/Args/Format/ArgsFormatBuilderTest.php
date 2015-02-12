@@ -12,11 +12,11 @@
 namespace Webmozart\Console\Tests\Api\Args\Format;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Api\Args\Format\CommandName;
-use Webmozart\Console\Api\Args\Format\CommandOption;
-use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\ArgsFormatBuilder;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\CommandName;
+use Webmozart\Console\Api\Args\Format\CommandOption;
 use Webmozart\Console\Api\Args\Format\Option;
 
 /**
