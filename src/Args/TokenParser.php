@@ -12,12 +12,12 @@
 namespace Webmozart\Console\Args;
 
 /**
- * Parser for strings passed to {@link StringArgs}.
+ * Parses tokens from a string passed to {@link StringArgs}.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StringArgsParser
+class TokenParser
 {
     /**
      * @var string
@@ -46,7 +46,7 @@ class StringArgsParser
      *
      * @return array The tokens.
      */
-    public function parse($string)
+    public function parseTokens($string)
     {
         $this->string = $string;
         $this->cursor = 0;
@@ -56,7 +56,7 @@ class StringArgsParser
         // Unify result of ctype_space() across systems
         $previousLocale = setlocale(LC_CTYPE, 0);
         setlocale(LC_CTYPE, 'C');
-        $tokens = $this->parseTokens();
+        $tokens = $this->doParseTokens();
         setlocale(LC_CTYPE, $previousLocale);
 
         return $tokens;
@@ -92,7 +92,7 @@ class StringArgsParser
      *
      * @return array The parsed tokens.
      */
-    private function parseTokens()
+    private function doParseTokens()
     {
         $tokens = array();
 

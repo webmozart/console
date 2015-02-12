@@ -9,11 +9,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api\Args\Parser;
+namespace Webmozart\Console\Api\Args;
 
-use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
-use Webmozart\Console\Api\Args\RawArgs;
 
 /**
  * Parses a raw input and returns the parsed input.

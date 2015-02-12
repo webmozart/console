@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api\Args\Parser;
+namespace Webmozart\Console\Api\Args;
 
 use RuntimeException;
 

@@ -33,9 +33,9 @@ class StringArgs implements RawArgs
      */
     public function __construct($string)
     {
-        $parser = new StringArgsParser();
+        $parser = new TokenParser();
 
-        $this->tokens = $parser->parse($string);
+        $this->tokens = $parser->parseTokens($string);
     }
 
     /**
