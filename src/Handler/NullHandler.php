@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Handler;
 
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Input\Input;
@@ -34,7 +35,7 @@ class NullHandler implements CommandHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Input $input)
+    public function handle(Args $args, Input $input)
     {
     }
 }

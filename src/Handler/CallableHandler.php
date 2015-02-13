@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Handler;
 
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Assert\Assert;
 
@@ -30,9 +31,10 @@ class CallableHandler extends AbstractHandler
     /**
      * Creates the command handler.
      *
-     * The passed callable receives three arguments:
+     * The passed callable receives four arguments:
      *
-     *  * {@link Input} `$input`: The console input.
+     *  * {@link Args} `$args`: The console arguments.
+     *  * {@link Input} `$input`: The standard input.
      *  * {@link Output} `$output`: The standard output.
      *  * {@link Output} `$errorOutput`: The error output.
      *
@@ -51,8 +53,8 @@ class CallableHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Input $input)
+    public function handle(Args $args, Input $input)
     {
-        return call_user_func($this->callable, $input, $this->output, $this->errorOutput);
+        return call_user_func($this->callable, $args, $input, $this->output, $this->errorOutput);
     }
 }

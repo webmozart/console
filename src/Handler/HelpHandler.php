@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Handler;
 
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Descriptor\DefaultDescriptor;
 
@@ -40,27 +41,27 @@ class HelpHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Input $input)
+    public function handle(Args $args, Input $input)
     {
-        $object = $this->getObjectToDescribe($input);
+        $object = $this->getObjectToDescribe($args);
 
         $descriptor = new DefaultDescriptor();
         $options = array_replace($this->options, array(
             'input' => $input,
-            'printCompositeCommands' => $input->getOption('all'),
+            'printCompositeCommands' => $args->getOption('all'),
         ));
 
         return $descriptor->describe($this->output, $object, $options);
     }
 
-    protected function getObjectToDescribe(Input $input)
+    protected function getObjectToDescribe(Args $args)
     {
         // Describe the command
-        if ($input->getArgument('command')) {
-            $commandName = $input->getArgument('command');
+        if ($args->getArgument('command')) {
+            $commandName = $args->getArgument('command');
 
-            if ($input->getArgument('sub-command')) {
-                $commandName .= ' '.$input->getArgument('sub-command');
+            if ($args->getArgument('sub-command')) {
+                $commandName .= ' '.$args->getArgument('sub-command');
             }
 
             return $this->command->getApplication()->getCommand($commandName);

@@ -313,9 +313,10 @@ abstract class BaseConfig
      *
      * The callback receives three arguments:
      *
-     *  * {@link InputInterface} `$input`: The console input.
-     *  * {@link OutputInterface} `$output`: The standard output.
-     *  * {@link OutputInterface} `$errorOutput`: The error output.
+     *  * {@link Args} `$args`: The console arguments.
+     *  * {@link Input} `$input`: The standard input.
+     *  * {@link Output} `$output`: The standard output.
+     *  * {@link Output} `$errorOutput`: The error output.
      *
      * The callback should return 0 on success and a positive integer on error.
      *

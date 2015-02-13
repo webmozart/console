@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Api\Handler;
 
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Output\Output;
@@ -35,9 +36,10 @@ interface CommandHandler
     /**
      * Handles a command.
      *
-     * @param Input $input The console input.
+     * @param Args  $args  The console arguments.
+     * @param Input $input The standard input.
      *
      * @return int Returns 0 on success and a positive integer on error.
      */
-    public function handle(Input $input);
+    public function handle(Args $args, Input $input);
 }

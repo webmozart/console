@@ -11,16 +11,18 @@
 
 namespace Webmozart\Console\Tests\Handler;
 
+use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Args;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Input\StringInput;
 
 /**
  * @since  1.0
@@ -30,15 +32,18 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
 {
     public function testHandleCommand()
     {
-        $input = new InputInterfaceAdapter(new StringInput('ls /'));
+        $args = new Args(new ArgsFormat());
+        $input = new StringInput("line1\nline2");
         $output = new OutputInterfaceAdapter($buffer1 = new BufferedOutput());
         $errorOutput = new OutputInterfaceAdapter($buffer2 = new BufferedOutput());
         $command = new Command(new CommandConfig('command'));
 
         $handler = new CallableHandler(
-            function (Input $input, Output $output, Output $errorOutput) {
-                $output->write($input->toString());
-                $errorOutput->write($input->toString());
+            function (Args $passedArgs, Input $input, Output $output, Output $errorOutput) use ($args) {
+                PHPUnit_Framework_Assert::assertSame($args, $passedArgs);
+
+                $output->write($input->readLine());
+                $errorOutput->write($input->readLine());
 
                 return 123;
             }
@@ -46,8 +51,8 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
 
         $handler->initialize($command, $output, $errorOutput);
 
-        $this->assertSame(123, $handler->handle($input));
-        $this->assertSame("ls '/'", $buffer1->fetch());
-        $this->assertSame("ls '/'", $buffer2->fetch());
+        $this->assertSame(123, $handler->handle($args, $input));
+        $this->assertSame("line1\n", $buffer1->fetch());
+        $this->assertSame("line2", $buffer2->fetch());
     }
 }
