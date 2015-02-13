@@ -12,25 +12,18 @@
 namespace Webmozart\Console\Input;
 
 /**
- * An input that reads from a string.
+ * An input that reads from the console.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StringInput extends StreamInput
+class ConsoleInput extends StreamInput
 {
     /**
-     * Creates the input.
-     *
-     * @param string $string The input string.
+     * Creates a new input.
      */
-    public function __construct($string)
+    public function __construct()
     {
-        $handle = fopen('php://memory', 'rw');
-
-        fwrite($handle, $string);
-        rewind($handle);
-
-        parent::__construct($handle);
+        parent::__construct(fopen('php://stdin', 'r'));
     }
 }

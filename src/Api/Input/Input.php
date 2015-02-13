@@ -37,4 +37,9 @@ interface Input
      * @return string The characters read from the input.
      */
     public function readLine($length = null);
+
+    /**
+     * Closes the input.
+     */
+    public function close();
 }

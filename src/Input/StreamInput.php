@@ -12,14 +12,16 @@
 namespace Webmozart\Console\Input;
 
 use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\IOException;
+use Webmozart\Console\Assert\Assert;
 
 /**
- * An input that reads from a file path.
+ * An input that reads from a stream.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class FileInput implements Input
+class StreamInput implements Input
 {
     /**
      * @var resource
@@ -29,19 +31,13 @@ class FileInput implements Input
     /**
      * Creates the input.
      *
-     * @param string $path The file path.
+     * @param resource $handle A stream resource.
      */
-    public function __construct($path)
+    public function __construct($handle)
     {
-        $this->handle = fopen($path, 'r');
-    }
+        Assert::stream($handle);
 
-    /**
-     * Releases the acquired file handle.
-     */
-    public function __destruct()
-    {
-        fclose($this->handle);
+        $this->handle = $handle;
     }
 
     /**
@@ -49,6 +45,10 @@ class FileInput implements Input
      */
     public function read($length = 1)
     {
+        if (null === $this->handle) {
+            throw new IOException('Cannot read from a closed input.');
+        }
+
         if (feof($this->handle)) {
             return null;
         }
@@ -61,6 +61,10 @@ class FileInput implements Input
      */
     public function readLine($length = null)
     {
+        if (null === $this->handle) {
+            throw new IOException('Cannot read from a closed input.');
+        }
+
         if (feof($this->handle)) {
             return null;
         }
@@ -70,5 +74,16 @@ class FileInput implements Input
         }
 
         return fgets($this->handle);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+        if ($this->handle) {
+            @fclose($this->handle);
+            $this->handle = null;
+        }
     }
 }

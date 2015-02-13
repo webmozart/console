@@ -12,34 +12,35 @@
 namespace Webmozart\Console\Tests\Input;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Input\FileInput;
+use Webmozart\Console\Input\StreamInput;
 use Webmozart\Console\Input\StringInput;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class FileInputTest extends PHPUnit_Framework_TestCase
+class StreamInputTest extends PHPUnit_Framework_TestCase
 {
     const LOREM_IPSUM = "Lorem ipsum dolor sit amet,\nconsetetur sadipscing elitr,\nsed diam nonumy eirmod tempor invidunt";
 
-    private $path;
+    private $handle;
 
     protected function setUp()
     {
-        $this->path = tempnam(sys_get_temp_dir(), 'webmozart-FileInputTest');
+        $this->handle = fopen('php://memory', 'rw');
 
-        file_put_contents($this->path, self::LOREM_IPSUM);
+        fwrite($this->handle, self::LOREM_IPSUM);
+        rewind($this->handle);
     }
 
     protected function tearDown()
     {
-        unlink($this->path);
+        @fclose($this->handle);
     }
 
     public function testRead()
     {
-        $input = new FileInput($this->path);
+        $input = new StreamInput($this->handle);
 
         $this->assertSame('L', $input->read());
         $this->assertSame('o', $input->read());
@@ -48,14 +49,43 @@ class FileInputTest extends PHPUnit_Framework_TestCase
         $this->assertNull($input->read());
     }
 
+    /**
+     * @expectedException \Webmozart\Console\Api\IOException
+     */
+    public function testReadFailsAfterClose()
+    {
+        $input = new StreamInput($this->handle);
+        $input->close();
+
+        $input->read();
+    }
+
     public function testReadLine()
     {
-        $input = new FileInput($this->path);
+        $input = new StreamInput($this->handle);
 
         $this->assertSame("Lorem ipsum dolor sit amet,\n", $input->readLine());
         $this->assertSame('consetetu', $input->readLine(10));
         $this->assertSame("r sadipscing elitr,\n", $input->readLine(100));
         $this->assertSame('sed diam nonumy eirmod tempor invidunt', $input->readLine());
         $this->assertNull($input->read());
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\IOException
+     */
+    public function testReadLineFailsAfterClose()
+    {
+        $input = new StreamInput($this->handle);
+        $input->close();
+
+        $input->readLine();
+    }
+
+    public function testIgnoreDuplicateClose()
+    {
+        $input = new StreamInput($this->handle);
+        $input->close();
+        $input->close();
     }
 }

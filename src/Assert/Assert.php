@@ -136,6 +136,27 @@ class Assert
         }
     }
 
+    public static function resource($value, $message = '')
+    {
+        if (!is_resource($value)) {
+            throw new InvalidArgumentException(sprintf(
+                $message ?: 'Expected a resource. Got: %s',
+                is_object($value) ? get_class($value) : gettype($value)
+            ));
+        }
+    }
+
+    public static function stream($value, $message = '')
+    {
+        if (!is_resource($value) || 'stream' !== get_resource_type($value)) {
+            throw new InvalidArgumentException(sprintf(
+                $message ?: 'Expected a stream resource. Got: %s%s',
+                is_resource($value) ? get_resource_type($value).' ' : '',
+                is_object($value) ? get_class($value) : gettype($value)
+            ));
+        }
+    }
+
     public static function isCallable($value, $message = '')
     {
         if (!is_callable($value)) {
