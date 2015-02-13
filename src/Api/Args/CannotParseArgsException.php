@@ -14,7 +14,7 @@ namespace Webmozart\Console\Api\Args;
 use RuntimeException;
 
 /**
- * Thrown when an input cannot be parsed.
+ * Thrown when console arguments cannot be parsed.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
