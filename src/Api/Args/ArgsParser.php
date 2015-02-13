@@ -14,7 +14,7 @@ namespace Webmozart\Console\Api\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 
 /**
- * Parses a raw input and returns the parsed input.
+ * Parses raw console arguments and returns the parsed arguments.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
