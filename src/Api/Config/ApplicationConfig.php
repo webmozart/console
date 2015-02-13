@@ -11,15 +11,11 @@
 
 namespace Webmozart\Console\Api\Config;
 
-use OutOfBoundsException;
-use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputDefinitionBuilder;
-use Webmozart\Console\Api\Input\InputOption;
+use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Output\Dimensions;
 use Webmozart\Console\Api\Resolver\CommandResolver;
-use Webmozart\Console\Api\Style\StyleSet;
+use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -28,7 +24,7 @@ use Webmozart\Console\Resolver\DefaultResolver;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ApplicationConfig
+class ApplicationConfig extends BaseConfig
 {
     /**
      * @var string
@@ -38,12 +34,12 @@ class ApplicationConfig
     /**
      * @var string
      */
-    private $version;
+    private $displayName;
 
     /**
      * @var string
      */
-    private $executableName;
+    private $version;
 
     /**
      * @var CommandConfig[]
@@ -51,29 +47,19 @@ class ApplicationConfig
     private $commandConfigs = array();
 
     /**
+     * @var CommandConfig[]
+     */
+    private $unnamedCommandConfigs = array();
+
+    /**
      * @var Dimensions
      */
     private $outputDimensions;
 
     /**
-     * @var StyleSet
-     */
-    private $styleSet;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
-
-    /**
-     * @var HelperSet
-     */
-    private $helperSet;
-
-    /**
-     * @var InputDefinitionBuilder
-     */
-    private $definitionBuilder;
 
     /**
      * @var bool
@@ -90,7 +76,15 @@ class ApplicationConfig
      */
     private $commandResolver;
 
-    public static function create($name = 'UNKNOWN', $version = 'UNKNOWN')
+    /**
+     * Creates a new console application.
+     *
+     * @param string $name    The name of the application.
+     * @param string $version The application version.
+     *
+     * @return static The created instance.
+     */
+    public static function create($name = null, $version = null)
     {
         return new static($name, $version);
     }
@@ -101,22 +95,21 @@ class ApplicationConfig
      * @param string $name    The name of the application.
      * @param string $version The application version.
      */
-    public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN')
+    public function __construct($name = null, $version = null)
     {
         $this->name = $name;
         $this->version = $version;
         $this->outputDimensions = Dimensions::forCurrentWindow();
-        $this->commandResolver = new DefaultResolver('help');
-        $this->definitionBuilder = new InputDefinitionBuilder();
-        $this->helperSet = new HelperSet();
 
-        $this->configure();
+        parent::__construct();
     }
 
     /**
      * Returns the name of the application.
      *
      * @return string The application name.
+     *
+     * @see setName()
      */
     public function getName()
     {
@@ -128,11 +121,55 @@ class ApplicationConfig
      *
      * @param string $name The application name.
      *
-     * @return $this
+     * @return static The current instance.
+     *
+     * @see getName()
      */
     public function setName($name)
     {
+        if (null !== $name) {
+            Assert::string($name, 'The application name must be a string. Got: %s');
+            Assert::notEmpty($name, 'The application name must not be empty.');
+            Assert::regex($name, '~^[a-zA-Z0-9\-]+$~', 'The application name must contain letters, numbers and hyphens only.');
+        }
+
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Returns the application name as it is displayed in the help.
+     *
+     * If no display name is set with {@link setDisplayName()}, the humanized
+     * application name is returned.
+     *
+     * @return string The display name.
+     *
+     * @see setDisplayName()
+     */
+    public function getDisplayName()
+    {
+        return $this->displayName ?: $this->getDefaultDisplayName();
+    }
+
+    /**
+     * Sets the application name as it is displayed in the help.
+     *
+     * @param string $displayName The display name.
+     *
+     * @return static The current instance.
+     *
+     * @see getDisplayName()
+     */
+    public function setDisplayName($displayName)
+    {
+        if (null !== $displayName) {
+            Assert::string($displayName, 'The display name must be a string. Got: %s');
+            Assert::notEmpty($displayName, 'The display name must not be empty.');
+        }
+
+        $this->displayName = $displayName;
 
         return $this;
     }
@@ -152,42 +189,16 @@ class ApplicationConfig
      *
      * @param string $version The application version.
      *
-     * @return $this
+     * @return static The current instance.
      */
     public function setVersion($version)
     {
+        if (null !== $version) {
+            Assert::string($version, 'The application version must be a string. Got: %s');
+            Assert::notEmpty($version, 'The application version must not be empty.');
+        }
+
         $this->version = $version;
-
-        return $this;
-    }
-
-    /**
-     * Returns the name of the application's executable.
-     *
-     * If no name was set via {@link setExecutableName()}, the lowercase name
-     * of the application is returned.
-     *
-     * @return string The name of the executable.
-     *
-     * @see setExecutableName()
-     */
-    public function getExecutableName()
-    {
-        return $this->executableName ?: strtolower($this->name);
-    }
-
-    /**
-     * Sets the name of the application's executable.
-     *
-     * @param string $executableName The name of the executable.
-     *
-     * @return static The current instance.
-     *
-     * @see getExecutableName()
-     */
-    public function setExecutableName($executableName)
-    {
-        $this->executableName = $executableName;
 
         return $this;
     }
@@ -212,34 +223,6 @@ class ApplicationConfig
     public function setDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-
-        return $this;
-    }
-
-    /**
-     * Returns the helper set used by the application.
-     *
-     * @return HelperSet The helper set.
-     *
-     * @see setHelperSet()
-     */
-    public function getHelperSet()
-    {
-        return $this->helperSet;
-    }
-
-    /**
-     * Sets the helper set used by the application.
-     *
-     * @param HelperSet $helperSet The helper set.
-     *
-     * @return static The current instance.
-     *
-     * @see getHelperSet()
-     */
-    public function setHelperSet(HelperSet $helperSet)
-    {
-        $this->helperSet = $helperSet;
 
         return $this;
     }
@@ -271,7 +254,9 @@ class ApplicationConfig
      */
     public function setCatchExceptions($catch)
     {
-        $this->catchExceptions = (bool) $catch;
+        Assert::boolean($catch);
+
+        $this->catchExceptions = $catch;
 
         return $this;
     }
@@ -301,7 +286,9 @@ class ApplicationConfig
      */
     public function setTerminateAfterRun($terminate)
     {
-        $this->terminateAfterRun = (bool) $terminate;
+        Assert::boolean($terminate);
+
+        $this->terminateAfterRun = $terminate;
 
         return $this;
     }
@@ -335,34 +322,6 @@ class ApplicationConfig
     }
 
     /**
-     * Returns the used style set.
-     *
-     * @return StyleSet The style set.
-     *
-     * @see setStyleSet()
-     */
-    public function getStyleSet()
-    {
-        return $this->styleSet;
-    }
-
-    /**
-     * Sets the used style set.
-     *
-     * @param StyleSet $styleSet The style set to use.
-     *
-     * @return static The current instance.
-     *
-     * @see getStyleSet()
-     */
-    public function setStyleSet(StyleSet $styleSet)
-    {
-        $this->styleSet = $styleSet;
-
-        return $this;
-    }
-
-    /**
      * Returns the used command resolver.
      *
      * @return CommandResolver The command resolver.
@@ -371,6 +330,10 @@ class ApplicationConfig
      */
     public function getCommandResolver()
     {
+        if (!$this->commandResolver) {
+            $this->commandResolver = new DefaultResolver();
+        }
+
         return $this->commandResolver;
     }
 
@@ -391,142 +354,33 @@ class ApplicationConfig
     }
 
     /**
-     * Sets the default to run when no explicit command is requested.
+     * Starts a configuration block for a command.
      *
-     * @param string $commandName The name of the default command.
+     * The configuration of the command is returned by this method. You can use
+     * the fluent interface to configure the sub-command before jumping back to
+     * this configuration with {@link CommandConfig::end()}:
      *
-     * @return static The current instance.
-     */
-    public function setDefaultCommand($commandName)
-    {
-        $this->commandResolver = new DefaultResolver($commandName);
-
-        return $this;
-    }
-
-
-    /**
-     * Returns the input arguments of the command.
+     * ```php
+     * protected function configure()
+     * {
+     *     $this
+     *         ->setName('server')
+     *         ->setDescription('List and manage servers')
      *
-     * Read {@link InputArgument} for a more detailed description of input
-     * arguments.
+     *         ->beginCommand('add')
+     *             ->setDescription('Add a server')
+     *             ->addArgument('host', InputArgument::REQUIRED)
+     *             ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+     *         ->end()
      *
-     * @return InputArgument[] The input arguments.
+     *         // ...
+     *     ;
+     * }
+     * ```
      *
-     * @see addArgument()
-     */
-    public function getArguments()
-    {
-        return $this->definitionBuilder->getArguments();
-    }
-
-    /**
-     * Adds an input argument to the command.
+     * @param string $name The name of the command.
      *
-     * Read {@link InputArgument} for a more detailed description of input
-     * arguments.
-     *
-     * @param string $name        The argument name.
-     * @param int    $flags       A bitwise combination of the flag constants in
-     *                            the {@link InputArgument} class.
-     * @param string $description A one-line description of the argument.
-     * @param mixed  $default     The default value. Must be `null` if the
-     *                            flags contain {@link InputArgument::REQUIRED}.
-     *
-     * @return static The current instance.
-     *
-     * @see getArguments(), addSubCommandConfig()
-     */
-    public function addArgument($name, $flags = 0, $description = null, $default = null)
-    {
-        $this->definitionBuilder->addArgument(new InputArgument($name, $flags, $description, $default));
-
-        return $this;
-    }
-
-    /**
-     * Returns the input options of the command.
-     *
-     * Read {@link InputOption} for a more detailed description of input
-     * options.
-     *
-     * @return InputOption[] The input options.
-     *
-     * @see addOption()
-     */
-    public function getOptions()
-    {
-        return $this->definitionBuilder->getOptions();
-    }
-
-    /**
-     * Adds an input option.
-     *
-     * Read {@link InputOption} for a more detailed description of command
-     * arguments.
-     *
-     * @param string $longName    The long option name.
-     * @param string $shortName   The short option name. Can be `null`.
-     * @param int    $flags       A bitwise combination of the flag constants in
-     *                            the {@link InputOption} class.
-     * @param string $description A one-line description of the option.
-     * @param mixed  $default     The default value. Must be `null` if the
-     *                            flags contain {@link InputOption::VALUE_REQUIRED}.
-     *
-     * @return static The current instance.
-     *
-     * @see getOptions(), addOptionCommandConfig()
-     */
-    public function addOption($longName, $shortName = null, $flags = 0, $description = null, $default = null)
-    {
-        $this->definitionBuilder->addOption(new InputOption($longName, $shortName, $flags, $description, $default));
-
-        return $this;
-    }
-
-    /**
-     * Adds command configurations to the application.
-     *
-     * @param CommandConfig[] $configs The command configurations.
-     *
-     * @return static The current instance.
-     *
-     * @see beginCommand(), getCommandConfigs()
-     */
-    public function addCommandConfigs(array $configs)
-    {
-        foreach ($configs as $command) {
-            $this->addCommandConfig($command);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Adds a command configuration to the application.
-     *
-     * @param CommandConfig $config The command configuration.
-     *
-     * @return static The current instance.
-     *
-     * @see beginCommand(), getCommandConfigs()
-     */
-    public function addCommandConfig(CommandConfig $config)
-    {
-        // The name is dynamic, so don't store by name
-        $this->commandConfigs[] = $config;
-
-        return $this;
-    }
-
-    /**
-     * Builds a command
-     *
-     * @param $name
-     *
-     * @return CommandConfig
-     *
-     * @see addCommandConfig(), getCommandConfigs()
+     * @return CommandConfig The command configuration.
      */
     public function beginCommand($name)
     {
@@ -539,15 +393,68 @@ class ApplicationConfig
     }
 
     /**
+     * Adds a command configuration to the application.
+     *
+     * @param CommandConfig $config The command configuration.
+     *
+     * @return static The current instance.
+     *
+     * @see beginCommand()
+     */
+    public function addCommandConfig(CommandConfig $config)
+    {
+        // The name is dynamic, so don't store by name
+        $this->commandConfigs[] = $config;
+
+        return $this;
+    }
+
+    /**
+     * Adds command configurations to the application.
+     *
+     * @param CommandConfig[] $configs The command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginCommand()
+     */
+    public function addCommandConfigs(array $configs)
+    {
+        foreach ($configs as $command) {
+            $this->addCommandConfig($command);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the command configurations of the application.
+     *
+     * @param CommandConfig[] $configs The command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginCommand()
+     */
+    public function setCommandConfigs(array $configs)
+    {
+        $this->commandConfigs = array();
+
+        $this->addCommandConfigs($configs);
+
+        return $this;
+    }
+
+    /**
      * Returns the command configuration for a given name.
      *
      * @param string $name The name of the command.
      *
      * @return CommandConfig The command configuration.
      *
-     * @throws OutOfBoundsException If the command configuration is not found.
+     * @throws NoSuchCommandException If the command configuration is not found.
      *
-     * @see addCommandConfig(), getCommandConfigs()
+     * @see beginCommand()
      */
     public function getCommandConfig($name)
     {
@@ -557,10 +464,7 @@ class ApplicationConfig
             }
         }
 
-        throw new OutOfBoundsException(sprintf(
-            'The command configuration named "%s" does not exist.',
-            $name
-        ));
+        throw NoSuchCommandException::forCommandName($name);
     }
 
     /**
@@ -568,7 +472,7 @@ class ApplicationConfig
      *
      * @return CommandConfig[] The command configurations.
      *
-     * @see addCommandConfig(), getCommandConfig()
+     * @see beginCommand()
      */
     public function getCommandConfigs()
     {
@@ -583,7 +487,7 @@ class ApplicationConfig
      * @return bool Returns `true` if the command configuration with the given
      *              name exists and `false` otherwise.
      *
-     * @see hasCommandConfigs(), getCommandConfig()
+     * @see beginCommand()
      */
     public function hasCommandConfig($name)
     {
@@ -602,7 +506,7 @@ class ApplicationConfig
      * @return bool Returns `true` if command configurations were added to the
      *              application and `false` otherwise.
      *
-     * @see hasCommandConfig(), getCommandConfigs()
+     * @see beginCommand()
      */
     public function hasCommandConfigs()
     {
@@ -610,11 +514,137 @@ class ApplicationConfig
     }
 
     /**
-     * Configures the application.
+     * Starts a configuration block for an unnamed command.
      *
-     * Override this method in your own subclasses to configure the instance.
+     * The configuration of the command is returned by this method. You can use
+     * the fluent interface to configure the command before jumping back to this
+     * configuration with {@link CommandConfig::end()}:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     $this
+     *         ->setName('server')
+     *
+     *         ->beginUnnamedCommand()
+     *             ->setDescription('List all servers')
+     *             ->addOption('port', 'p', InputOption::VALUE_REQUIRED, 'Only list servers with that port')
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * An unnamed command is executed if no named command is explicitly
+     * requested. The above command could be called with:
+     *
+     * ```
+     * $ server -p 80
+     * ```
+     *
+     * @return CommandConfig The command configuration.
      */
-    protected function configure()
+    public function beginUnnamedCommand()
     {
+        $config = new CommandConfig(null, $this);
+
+        $this->unnamedCommandConfigs[] = $config;
+
+        return $config;
+    }
+
+    /**
+     * Adds configuration for an unnamed command.
+     *
+     * @param CommandConfig $config The command configuration.
+     *
+     * @return static The current instance.
+     *
+     * @see beginUnnamedCommand()
+     */
+    public function addUnnamedCommandConfig(CommandConfig $config)
+    {
+        $this->unnamedCommandConfigs[] = $config;
+
+        $config->setApplicationConfig($this);
+
+        return $this;
+    }
+
+    /**
+     * Adds configurations for unnamed commands.
+     *
+     * @param CommandConfig[] $configs The command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginUnnamedCommand()
+     */
+    public function addUnnamedCommandConfigs(array $configs)
+    {
+        foreach ($configs as $command) {
+            $this->addUnnamedCommandConfig($command);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the unnamed command configurations of the application.
+     *
+     * @param CommandConfig[] $configs The command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginUnnamedCommand()
+     */
+    public function setUnnamedCommandConfigs(array $configs)
+    {
+        $this->unnamedCommandConfigs = array();
+
+        $this->addUnnamedCommandConfigs($configs);
+
+        return $this;
+    }
+
+    /**
+     * Returns the configurations of all unnamed commands.
+     *
+     * @return CommandConfig[] The configurations of the unnamed commands.
+     *
+     * @see beginUnnamedCommand()
+     */
+    public function getUnnamedCommandConfigs()
+    {
+        return $this->unnamedCommandConfigs;
+    }
+
+    /**
+     * Returns whether the application has any registered unnamed command
+     * configurations.
+     *
+     * @return bool Returns `true` if unnamed command configurations were added
+     *              to the application and `false` otherwise.
+     *
+     * @see beginUnnamedCommand()
+     */
+    public function hasUnnamedCommandConfigs()
+    {
+        return count($this->unnamedCommandConfigs) > 0;
+    }
+
+    /**
+     * Returns the default display name used if no display name is set.
+     *
+     * @return string The default display name.
+     */
+    protected function getDefaultDisplayName()
+    {
+        if (!$this->name) {
+            return null;
+        }
+
+        return ucwords(preg_replace('~[\s-_]+~', ' ', $this->name));
     }
 }

@@ -12,20 +12,15 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
-use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputOption;
+use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Handler\NullHandler;
+use Webmozart\Console\Style\DefaultStyleSet;
 
 /**
  * @since  1.0
@@ -397,18 +392,246 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->config->setProcessTitle(1234);
     }
 
-    public function testGetHelperSet()
+    public function testBeginSubCommand()
     {
-        $helperSet1 = new HelperSet();
-        $helperSet2 = new HelperSet();
+        $this->config
+            ->beginSubCommand('command1')->end()
+            ->beginSubCommand('command2')->end()
+        ;
 
-        $this->applicationConfig->setHelperSet($helperSet1);
-        $this->config->setHelperSet($helperSet2);
-
-        $this->assertSame($helperSet2, $this->config->getHelperSet());
+        $this->assertEquals(array(
+            new SubCommandConfig('command1', $this->config, $this->applicationConfig),
+            new SubCommandConfig('command2', $this->config, $this->applicationConfig),
+        ), $this->config->getSubCommandConfigs());
     }
 
-    public function testGetHelperSetReturnsApplicationHelperSetIfNotSet()
+    public function testAddSubCommandConfig()
+    {
+        $this->config->addSubCommandConfig($config1 = new SubCommandConfig('command1'));
+        $this->config->addSubCommandConfig($config2 = new SubCommandConfig('command2'));
+
+        $this->assertSame(array($config1, $config2), $this->config->getSubCommandConfigs());
+
+        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
+        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
+    }
+
+    public function testAddSubCommandConfigs()
+    {
+        $this->config->addSubCommandConfig($config1 = new SubCommandConfig('command1'));
+        $this->config->addSubCommandConfigs(array(
+            $config2 = new SubCommandConfig('command2'),
+            $config3 = new SubCommandConfig('command3'),
+        ));
+
+        $this->assertSame(array($config1, $config2, $config3), $this->config->getSubCommandConfigs());
+    }
+
+    public function testSetSubCommandConfigs()
+    {
+        $this->config->addSubCommandConfig($config1 = new SubCommandConfig('command1'));
+        $this->config->setSubCommandConfigs(array(
+            $config2 = new SubCommandConfig('command2'),
+            $config3 = new SubCommandConfig('command3'),
+        ));
+
+        $this->assertSame(array($config2, $config3), $this->config->getSubCommandConfigs());
+    }
+
+    public function testGetSubCommandConfig()
+    {
+        $this->config->addSubCommandConfig($config = new SubCommandConfig());
+
+        $config->setName('command');
+
+        $this->assertSame($config, $this->config->getSubCommandConfig('command'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
+     */
+    public function testGetSubCommandConfigFailsIfCommandNotFound()
+    {
+        $this->config->getSubCommandConfig('command');
+    }
+
+    public function testHasSubCommandConfig()
+    {
+        $this->config->addSubCommandConfig($config = new SubCommandConfig());
+
+        $this->assertFalse($this->config->hasSubCommandConfig('command'));
+        $this->assertFalse($this->config->hasSubCommandConfig('foobar'));
+
+        $config->setName('command');
+
+        $this->assertTrue($this->config->hasSubCommandConfig('command'));
+        $this->assertFalse($this->config->hasSubCommandConfig('foobar'));
+    }
+
+    public function testHasSubCommandConfigs()
+    {
+        $this->assertFalse($this->config->hasSubCommandConfigs());
+
+        $this->config->addSubCommandConfig($config = new SubCommandConfig());
+
+        $this->assertTrue($this->config->hasSubCommandConfigs());
+    }
+
+    public function testBeginOptionCommand()
+    {
+        $this->config
+            ->beginOptionCommand('command1', 'a')->end()
+            ->beginOptionCommand('command2', 'b')->end()
+        ;
+
+        $this->assertEquals(array(
+            new OptionCommandConfig('command1', 'a', $this->config, $this->applicationConfig),
+            new OptionCommandConfig('command2', 'b', $this->config, $this->applicationConfig),
+        ), $this->config->getOptionCommandConfigs());
+    }
+
+    public function testAddOptionCommandConfig()
+    {
+        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
+        $this->config->addOptionCommandConfig($config2 = new OptionCommandConfig('command2', 'b'));
+
+        $this->assertSame(array($config1, $config2), $this->config->getOptionCommandConfigs());
+
+        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
+        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
+    }
+
+    public function testAddOptionCommandConfigs()
+    {
+        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
+        $this->config->addOptionCommandConfigs(array(
+            $config2 = new OptionCommandConfig('command2', 'b'),
+            $config3 = new OptionCommandConfig('command3', 'c'),
+        ));
+
+        $this->assertSame(array($config1, $config2, $config3), $this->config->getOptionCommandConfigs());
+    }
+
+    public function testSetOptionCommandConfigs()
+    {
+        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
+        $this->config->setOptionCommandConfigs(array(
+            $config2 = new OptionCommandConfig('command2', 'b'),
+            $config3 = new OptionCommandConfig('command3', 'c'),
+        ));
+
+        $this->assertSame(array($config2, $config3), $this->config->getOptionCommandConfigs());
+    }
+
+    public function testGetOptionCommandConfig()
+    {
+        $this->config->addOptionCommandConfig($config = new OptionCommandConfig());
+
+        $config->setName('command');
+
+        $this->assertSame($config, $this->config->getOptionCommandConfig('command'));
+
+        $config->setShortName('c');
+
+        $this->assertSame($config, $this->config->getOptionCommandConfig('c'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
+     */
+    public function testGetOptionCommandConfigFailsIfCommandNotFound()
+    {
+        $this->config->getOptionCommandConfig('command');
+    }
+
+    public function testHasOptionCommandConfig()
+    {
+        $this->config->addOptionCommandConfig($config = new OptionCommandConfig());
+
+        $this->assertFalse($this->config->hasOptionCommandConfig('command'));
+        $this->assertFalse($this->config->hasOptionCommandConfig('c'));
+        $this->assertFalse($this->config->hasOptionCommandConfig('foobar'));
+
+        $config->setName('command');
+
+        $this->assertTrue($this->config->hasOptionCommandConfig('command'));
+        $this->assertFalse($this->config->hasOptionCommandConfig('c'));
+        $this->assertFalse($this->config->hasOptionCommandConfig('foobar'));
+
+        $config->setShortName('c');
+
+        $this->assertTrue($this->config->hasOptionCommandConfig('command'));
+        $this->assertTrue($this->config->hasOptionCommandConfig('c'));
+        $this->assertFalse($this->config->hasOptionCommandConfig('foobar'));
+    }
+
+    public function testHasOptionCommandConfigs()
+    {
+        $this->assertFalse($this->config->hasOptionCommandConfigs());
+
+        $this->config->addOptionCommandConfig($config = new OptionCommandConfig());
+
+        $this->assertTrue($this->config->hasOptionCommandConfigs());
+    }
+
+    public function testBeginUnnamedCommand()
+    {
+        $this->config
+            ->beginUnnamedCommand()->setProcessTitle('title1')->end()
+            ->beginUnnamedCommand()->setProcessTitle('title2')->end()
+        ;
+
+        $config1 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
+        $config1->setProcessTitle('title1');
+        $config2 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
+        $config2->setProcessTitle('title2');
+
+        $this->assertEquals(array($config1, $config2), $this->config->getUnnamedCommandConfigs());
+    }
+
+    public function testAddUnnamedCommandConfig()
+    {
+        $this->config->addUnnamedCommandConfig($config1 = new SubCommandConfig() );
+        $this->config->addUnnamedCommandConfig($config2 = new SubCommandConfig() );
+
+        $this->assertSame(array($config1, $config2), $this->config->getUnnamedCommandConfigs());
+
+        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
+        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
+    }
+
+    public function testAddUnnamedCommandConfigs()
+    {
+        $this->config->addUnnamedCommandConfig($config1 = new SubCommandConfig() );
+        $this->config->addUnnamedCommandConfigs(array(
+            $config2 = new SubCommandConfig() ,
+            $config3 = new SubCommandConfig() ,
+        ));
+
+        $this->assertSame(array($config1, $config2, $config3), $this->config->getUnnamedCommandConfigs());
+    }
+
+    public function testSetUnnamedCommandConfigs()
+    {
+        $this->config->addUnnamedCommandConfig($config1 = new SubCommandConfig() );
+        $this->config->setUnnamedCommandConfigs(array(
+            $config2 = new SubCommandConfig() ,
+            $config3 = new SubCommandConfig() ,
+        ));
+
+        $this->assertSame(array($config2, $config3), $this->config->getUnnamedCommandConfigs());
+    }
+
+    public function testHasUnnamedCommandConfigs()
+    {
+        $this->assertFalse($this->config->hasUnnamedCommandConfigs());
+
+        $this->config->addUnnamedCommandConfig(new SubCommandConfig());
+
+        $this->assertTrue($this->config->hasUnnamedCommandConfigs());
+    }
+
+    public function testGetHelperSetReturnsApplicationHelperSetByDefault()
     {
         $helperSet = new HelperSet();
 
@@ -417,214 +640,31 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($helperSet, $this->config->getHelperSet());
     }
 
-    public function testGetHelperSetReturnsNullIfNotSetAndNoFallback()
+    public function testGetStyleSetReturnsApplicationStyleSetByDefault()
     {
-        $helperSet = new HelperSet();
+        $styleSet = new DefaultStyleSet();
 
-        $this->applicationConfig->setHelperSet($helperSet);
+        $this->applicationConfig->setStyleSet($styleSet);
 
-        $this->assertNull($this->config->getHelperSet(false));
+        $this->assertSame($styleSet, $this->config->getStyleSet());
     }
 
-    public function testAddArgument()
+    public function testGetHandlerReturnsApplicationHandlerByDefault()
     {
-        $this->config->addArgument('argument1', InputArgument::REQUIRED, 'Description 1');
-        $this->config->addArgument('argument2', InputArgument::OPTIONAL, 'Description 2', 'Default');
+        $handler = new NullHandler();
+        $command = new Command(new CommandConfig('command'));
 
-        $this->assertEquals(array(
-            'argument1' => new InputArgument('argument1', InputArgument::REQUIRED, 'Description 1'),
-            'argument2' => new InputArgument('argument2', InputArgument::OPTIONAL, 'Description 2', 'Default'),
-        ), $this->config->getArguments());
-    }
-
-    public function testAddOption()
-    {
-        $this->config->addOption('option1', 'o', InputOption::VALUE_REQUIRED, 'Description 1');
-        $this->config->addOption('option2', 'p', InputOption::VALUE_OPTIONAL, 'Description 2', 'Default');
-
-        $this->assertEquals(array(
-            'option1' => new InputOption('option1', 'o', InputOption::VALUE_REQUIRED, 'Description 1'),
-            'option2' => new InputOption('option2', 'p', InputOption::VALUE_OPTIONAL, 'Description 2', 'Default'),
-        ), $this->config->getOptions());
-    }
-
-    public function testAddSubCommand()
-    {
-        $this->config->addSubCommandConfig($config1 = new SubCommandConfig('add'));
-        $this->config->addSubCommandConfig($config2 = new SubCommandConfig('remove'));
-
-        $this->assertSame(array(
-            'add' => $config1,
-            'remove' => $config2,
-        ), $this->config->getSubCommandConfigs());
-
-        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
-        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
-    }
-
-    public function testBeginSubCommand()
-    {
-        $this->config
-            ->beginSubCommand('add')->end()
-            ->beginSubCommand('remove')->end()
-        ;
-
-        $this->assertEquals(array(
-            'add' => new SubCommandConfig('add', $this->config, $this->applicationConfig),
-            'remove' => new SubCommandConfig('remove', $this->config, $this->applicationConfig),
-        ), $this->config->getSubCommandConfigs());
-    }
-
-    public function testAddOptionCommandConfig()
-    {
-        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('add', 'a'));
-        $this->config->addOptionCommandConfig($config2 = new OptionCommandConfig('delete', 'd'));
-
-        $this->assertSame(array(
-            'add' => $config1,
-            'delete' => $config2,
-        ), $this->config->getOptionCommandConfigs());
-
-        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
-        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
-    }
-
-    public function testBeginOptionCommand()
-    {
-        $this->config
-            ->beginOptionCommand('add', 'a')->end()
-            ->beginOptionCommand('delete', 'd')->end()
-        ;
-
-        $this->assertEquals(array(
-            'add' => new OptionCommandConfig('add', 'a', $this->config, $this->applicationConfig),
-            'delete' => new OptionCommandConfig('delete', 'd', $this->config, $this->applicationConfig),
-        ), $this->config->getOptionCommandConfigs());
-    }
-
-    public function testGetHandler()
-    {
-        $command = new Command($this->config);
-
-        $this->assertEquals(new NullHandler(), $this->config->getHandler($command));
-    }
-
-    public function testSetHandler()
-    {
-        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
-
-        $this->config->setHandler($handler);
-        $command = new Command($this->config);
+        $this->applicationConfig->setHandler($handler);
 
         $this->assertSame($handler, $this->config->getHandler($command));
     }
 
-    public function testSetHandlerToFactoryCallback()
+    public function testGetArgsParserReturnsApplicationArgsParserByDefault()
     {
-        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $parser = new DefaultArgsParser();
 
-        $factory = function (Command $command) use (&$passedCommand, $handler) {
-            $passedCommand = $command;
+        $this->applicationConfig->setArgsParser($parser);
 
-            return $handler;
-        };
-
-        $this->config->setHandler($factory);
-        $command = new Command($this->config);
-
-        $this->assertSame($handler, $this->config->getHandler($command));
-        $this->assertSame($command, $passedCommand);
-    }
-
-    public function testGetHandlerWithCallback()
-    {
-        $this->config->setCallback(function () { return 'foo'; });
-        $command = new Command($this->config);
-        $input = new InputInterfaceAdapter(new StringInput('test'));
-        $output = new OutputInterfaceAdapter(new BufferedOutput());
-
-        $handler = $this->config->getHandler($command);
-        $handler->initialize($command, $output, $output);
-
-        $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
-        $this->assertSame('foo', $handler->handle($input));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetHandlerFailsIfNeitherCommandHandlerNorCallable()
-    {
-        $config = new CommandConfig('command');
-
-        $config->setHandler(new stdClass());
-    }
-
-    public function testSetDefaultSubCommand()
-    {
-        $this->assertNull($this->config->getDefaultSubCommand());
-
-        $this->config
-            ->addSubCommandConfig(new SubCommandConfig('sub'))
-            ->setDefaultSubCommand('sub')
-        ;
-
-        $this->assertSame('sub', $this->config->getDefaultSubCommand());
-    }
-
-    /**
-     * @expectedException \OutOfBoundsException
-     * @expectedExceptionMessage sub
-     */
-    public function testSetDefaultSubCommandFailsIfNotFound()
-    {
-        $this->config->setDefaultSubCommand('sub');
-    }
-
-    public function testSetDefaultOptionCommand()
-    {
-        $this->assertNull($this->config->getDefaultOptionCommand());
-
-        $this->config
-            ->addOptionCommandConfig(new OptionCommandConfig('option'))
-            ->setDefaultOptionCommand('option')
-        ;
-
-        $this->assertSame('option', $this->config->getDefaultOptionCommand());
-    }
-
-    /**
-     * @expectedException \OutOfBoundsException
-     * @expectedExceptionMessage option
-     */
-    public function testSetDefaultOptionCommandFailsIfNotFound()
-    {
-        $this->config->setDefaultOptionCommand('option');
-    }
-
-    public function testSetDefaultSubCommandResetsDefaultOptionCommand()
-    {
-        $this->config
-            ->addSubCommandConfig(new SubCommandConfig('sub'))
-            ->addOptionCommandConfig(new OptionCommandConfig('option'))
-            ->setDefaultOptionCommand('option')
-            ->setDefaultSubCommand('sub')
-        ;
-
-        $this->assertSame('sub', $this->config->getDefaultSubCommand());
-        $this->assertNull($this->config->getDefaultOptionCommand());
-    }
-
-    public function testSetDefaultOptionCommandResetsDefaultSubCommand()
-    {
-        $this->config
-            ->addSubCommandConfig(new SubCommandConfig('sub'))
-            ->addOptionCommandConfig(new OptionCommandConfig('option'))
-            ->setDefaultSubCommand('sub')
-            ->setDefaultOptionCommand('option')
-        ;
-
-        $this->assertNull($this->config->getDefaultSubCommand());
-        $this->assertSame('option', $this->config->getDefaultOptionCommand());
+        $this->assertSame($parser, $this->config->getArgsParser());
     }
 }

@@ -11,18 +11,9 @@
 
 namespace Webmozart\Console\Api\Config;
 
-use InvalidArgumentException;
-use OutOfBoundsException;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputDefinitionBuilder;
-use Webmozart\Console\Api\Input\InputOption;
+use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Assert\Assert;
-use Webmozart\Console\Handler\CallableHandler;
-use Webmozart\Console\Handler\NullHandler;
 
 /**
  * The configuration of a console command.
@@ -101,7 +92,7 @@ use Webmozart\Console\Handler\NullHandler;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CommandConfig
+class CommandConfig extends BaseConfig
 {
     /**
      * @var string
@@ -139,14 +130,9 @@ class CommandConfig
     private $processTitle;
 
     /**
-     * @var HelperSet
+     * @var SubCommandConfig[]
      */
-    private $helperSet;
-
-    /**
-     * @var InputDefinitionBuilder
-     */
-    private $definitionBuilder;
+    private $unnamedCommandConfigs = array();
 
     /**
      * @var SubCommandConfig[]
@@ -157,21 +143,6 @@ class CommandConfig
      * @var OptionCommandConfig[]
      */
     private $optionCommandConfigs = array();
-
-    /**
-     * @var string
-     */
-    private $defaultSubCommand;
-
-    /**
-     * @var string
-     */
-    private $defaultOptionCommand;
-
-    /**
-     * @var CommandHandler|callable
-     */
-    private $handler;
 
     /**
      * Creates a new configuration.
@@ -195,11 +166,12 @@ class CommandConfig
     public function __construct($name = null, ApplicationConfig $applicationConfig = null)
     {
         $this->applicationConfig = $applicationConfig;
-        $this->definitionBuilder = new InputDefinitionBuilder();
 
-        $this->setName($name);
+        parent::__construct();
 
-        $this->configure();
+        if ($name) {
+            $this->setName($name);
+        }
     }
 
     /**
@@ -538,154 +510,6 @@ class CommandConfig
     }
 
     /**
-     * Returns the helper set used by the command.
-     *
-     * @param bool $fallback Whether to return the application helper set if
-     *                       none is set.
-     *
-     * @return HelperSet The helper set.
-     *
-     * @see setHelperSet()
-     */
-    public function getHelperSet($fallback = true)
-    {
-        if (null === $this->helperSet && $fallback && $this->applicationConfig) {
-            return $this->applicationConfig->getHelperSet();
-        }
-
-        return $this->helperSet;
-    }
-
-    /**
-     * Sets the helper set used by the command.
-     *
-     * @param HelperSet $helperSet The helper set.
-     *
-     * @return static The current instance.
-     *
-     * @see getHelperSet()
-     */
-    public function setHelperSet(HelperSet $helperSet)
-    {
-        $this->helperSet = $helperSet;
-
-        return $this;
-    }
-
-    /**
-     * Returns the input arguments of the command.
-     *
-     * Read {@link InputArgument} for a more detailed description of input
-     * arguments.
-     *
-     * @return InputArgument[] The input arguments.
-     *
-     * @see addArgument()
-     */
-    public function getArguments()
-    {
-        return $this->definitionBuilder->getArguments();
-    }
-
-    /**
-     * Adds an input argument to the command.
-     *
-     * Read {@link InputArgument} for a more detailed description of input
-     * arguments.
-     *
-     * @param string $name        The argument name.
-     * @param int    $flags       A bitwise combination of the flag constants in
-     *                            the {@link InputArgument} class.
-     * @param string $description A one-line description of the argument.
-     * @param mixed  $default     The default value. Must be `null` if the
-     *                            flags contain {@link InputArgument::REQUIRED}.
-     *
-     * @return static The current instance.
-     *
-     * @see getArguments(), addSubCommandConfig()
-     */
-    public function addArgument($name, $flags = 0, $description = null, $default = null)
-    {
-        $this->definitionBuilder->addArgument(new InputArgument($name, $flags, $description, $default));
-
-        return $this;
-    }
-
-    /**
-     * Returns the input options of the command.
-     *
-     * Read {@link InputOption} for a more detailed description of input
-     * options.
-     *
-     * @return InputOption[] The input options.
-     *
-     * @see addOption()
-     */
-    public function getOptions()
-    {
-        return $this->definitionBuilder->getOptions();
-    }
-
-    /**
-     * Adds an input option.
-     *
-     * Read {@link InputOption} for a more detailed description of command
-     * arguments.
-     *
-     * @param string      $longName     The long option name.
-     * @param string|null $shortName    The short option name.
-     * @param int         $flags        A bitwise combination of the option flag
-     *                                  constants.
-     * @param string      $description  A human-readable description of the option.
-     * @param mixed       $defaultValue The default value (must be null for
-     *                                  {@link VALUE_REQUIRED} or
-     *                                  {@link VALUE_NONE}).
-     * @param string      $valueName    The name of the value to be used in
-     *                                  usage examples of the option.
-     *
-     * @return static The current instance.
-     *
-     * @see getOptions(), addOptionCommandConfig()
-     */
-    public function addOption($longName, $shortName = null, $flags = 0, $description = null, $defaultValue = null, $valueName = '...')
-    {
-        $this->definitionBuilder->addOption(new InputOption($longName, $shortName, $flags, $description, $defaultValue, $valueName));
-
-        return $this;
-    }
-
-    /**
-     * Returns the configurations of all embedded commands.
-     *
-     * @return SubCommandConfig[] The sub-command configurations indexed by
-     *                            their names.
-     *
-     * @see beginSubCommand(), addSubCommandConfig()
-     */
-    public function getSubCommandConfigs()
-    {
-        return $this->subCommandConfigs;
-    }
-
-    /**
-     * Adds configuration for a sub-command.
-     *
-     * @param SubCommandConfig $config The sub-command configuration.
-     *
-     * @return static The current instance.
-     *
-     * @see beginSubCommand(), getSubCommandConfigs()
-     */
-    public function addSubCommandConfig(SubCommandConfig $config)
-    {
-        $this->subCommandConfigs[$config->getName()] = $config;
-
-        $config->setParentConfig($this);
-
-        return $this;
-    }
-
-    /**
      * Starts a configuration block for a sub-command.
      *
      * A sub-command is executed if the name of the command is passed after the
@@ -721,47 +545,139 @@ class CommandConfig
      * @param string $name The name of the sub-command.
      *
      * @return SubCommandConfig The sub-command configuration.
-     *
-     * @see addSubCommandConfig(), getSubCommandConfigs()
      */
     public function beginSubCommand($name)
     {
         $config = new SubCommandConfig($name, $this);
 
-        $this->subCommandConfigs[$name] = $config;
+        // The name is dynamic, so don't store by name
+        $this->subCommandConfigs[] = $config;
 
         return $config;
     }
 
     /**
-     * Returns the configurations of all option commands.
+     * Adds configuration for a sub-command.
      *
-     * @return OptionCommandConfig[] The option command configurations indexed
-     *                               by their names.
-     *
-     * @see beginOptionCommand(), addOptionCommandConfig()
-     */
-    public function getOptionCommandConfigs()
-    {
-        return $this->optionCommandConfigs;
-    }
-
-    /**
-     * Adds configuration for an option command.
-     *
-     * @param OptionCommandConfig $config The option command configuration.
+     * @param SubCommandConfig $config The sub-command configuration.
      *
      * @return static The current instance.
      *
-     * @see beginOptionCommand(), getOptionCommandConfigs()
+     * @see beginSubCommand()
      */
-    public function addOptionCommandConfig(OptionCommandConfig $config)
+    public function addSubCommandConfig(SubCommandConfig $config)
     {
-        $this->optionCommandConfigs[$config->getName()] = $config;
+        // The name is dynamic, so don't store by name
+        $this->subCommandConfigs[] = $config;
 
         $config->setParentConfig($this);
 
         return $this;
+    }
+
+    /**
+     * Adds sub-command configurations to the command.
+     *
+     * @param SubCommandConfig[] $configs The sub-command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginSubCommand()
+     */
+    public function addSubCommandConfigs(array $configs)
+    {
+        foreach ($configs as $command) {
+            $this->addSubCommandConfig($command);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the sub-command configurations of the command.
+     *
+     * @param SubCommandConfig[] $configs The sub-command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginSubCommand()
+     */
+    public function setSubCommandConfigs(array $configs)
+    {
+        $this->subCommandConfigs = array();
+
+        $this->addSubCommandConfigs($configs);
+
+        return $this;
+    }
+
+    /**
+     * Returns the sub-command configuration for a given name.
+     *
+     * @param string $name The name of the sub-command.
+     *
+     * @return SubCommandConfig The sub-command configuration.
+     *
+     * @throws NoSuchCommandException If the sub-command configuration is not
+     *                                found.
+     *
+     * @see beginSubCommand()
+     */
+    public function getSubCommandConfig($name)
+    {
+        foreach ($this->subCommandConfigs as $commandConfig) {
+            if ($name === $commandConfig->getName()) {
+                return $commandConfig;
+            }
+        }
+
+        throw NoSuchCommandException::forCommandName($name);
+    }
+
+    /**
+     * Returns the configurations of all sub-commands.
+     *
+     * @return SubCommandConfig[] The sub-command configurations.
+     *
+     * @see beginSubCommand()
+     */
+    public function getSubCommandConfigs()
+    {
+        return $this->subCommandConfigs;
+    }
+
+    /**
+     * Returns whether the command has a sub-command with a given name.
+     *
+     * @param string $name The name of the sub-command.
+     *
+     * @return bool Returns `true` if the sub-command configuration with the
+     *              given name exists and `false` otherwise.
+     *
+     * @see beginSubCommand()
+     */
+    public function hasSubCommandConfig($name)
+    {
+        foreach ($this->subCommandConfigs as $commandConfig) {
+            if ($name === $commandConfig->getName()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether the command has any registered sub-command configurations.
+     *
+     * @return bool Returns `true` if sub-command configurations were added to
+     *              the command and `false` otherwise.
+     *
+     * @see beginSubCommand()
+     */
+    public function hasSubCommandConfigs()
+    {
+        return count($this->subCommandConfigs) > 0;
     }
 
     /**
@@ -811,206 +727,297 @@ class CommandConfig
     {
         $config = new OptionCommandConfig($name, $shortName, $this);
 
-        $this->optionCommandConfigs[$name] = $config;
+        // The name is dynamic, so don't store by name
+        $this->optionCommandConfigs[] = $config;
 
         return $config;
     }
 
     /**
-     * Returns the name of the sub-command that is executed if no explicit
-     * sub-command name is passed.
+     * Adds configuration for an option command.
      *
-     * @return string|null Returns the name of the sub-command or `null` if the
-     *                     current command should be executed when no
-     *                     sub-command is passed.
-     */
-    public function getDefaultSubCommand()
-    {
-        return $this->defaultSubCommand;
-    }
-
-    /**
-     * Configures the command to run a sub-command if no explicit sub-command
-     * is passed.
-     *
-     * @param string $commandName The name of the sub-command.
+     * @param OptionCommandConfig $config The option command configuration.
      *
      * @return static The current instance.
      *
-     * @throws OutOfBoundsException If no sub-command exists with the given name.
+     * @see beginOptionCommand(), getOptionCommandConfigs()
      */
-    public function setDefaultSubCommand($commandName)
+    public function addOptionCommandConfig(OptionCommandConfig $config)
     {
-        if (!isset($this->subCommandConfigs[$commandName])) {
-            throw new OutOfBoundsException(sprintf(
-                'The sub-command "%s" does not exist.',
-                $commandName
-            ));
-        }
+        // The name is dynamic, so don't store by name
+        $this->optionCommandConfigs[] = $config;
 
-        $this->defaultSubCommand = $commandName;
-        $this->defaultOptionCommand = null;
+        $config->setParentConfig($this);
 
         return $this;
     }
 
     /**
-     * Returns the name of the option command that is executed if no explicit
-     * option command is passed.
+     * Adds option command configurations to the command.
      *
-     * @return string|null Returns the name of the option command or `null` if
-     *                     the current command should be executed when no
-     *                     option command is passed.
-     */
-    public function getDefaultOptionCommand()
-    {
-        return $this->defaultOptionCommand;
-    }
-
-    /**
-     * Configures the command to run an option command if no explicit option
-     * command is passed.
-     *
-     * @param string $commandName The name of the option command.
+     * @param OptionCommandConfig[] $configs The option command configurations.
      *
      * @return static The current instance.
      *
-     * @throws OutOfBoundsException If no option command exists with the given
-     *                              name.
+     * @see beginOptionCommand()
      */
-    public function setDefaultOptionCommand($commandName)
+    public function addOptionCommandConfigs(array $configs)
     {
-        if (!isset($this->optionCommandConfigs[$commandName])) {
-            throw new OutOfBoundsException(sprintf(
-                'The option command "%s%s" does not exist.',
-                strlen($commandName) > 1 ? '--' : '-',
-                $commandName
-            ));
+        foreach ($configs as $command) {
+            $this->addOptionCommandConfig($command);
         }
-
-        $this->defaultOptionCommand = $commandName;
-        $this->defaultSubCommand = null;
 
         return $this;
     }
 
     /**
-     * Returns the command handler to execute when the command is run.
+     * Sets the option command configurations of the command.
      *
-     * You can set a command handler by:
-     *
-     *  * Configuring a handler with {@link setHandler()}.
-     *  * Passing a callable to {@link setCallback()}.
-     *  * Overriding this method and returning a custom {@link CommandHandler}.
-     *
-     * Implementing a {@link CommandHandler} is recommended if you want to test
-     * the command handler.
-     *
-     * @param Command $command The command to handle.
-     *
-     * @return CommandHandler The command handler.
-     *
-     * @see setHandler(), setCallback()
-     */
-    public function getHandler(Command $command)
-    {
-        if (!$this->handler) {
-            return $this->getDefaultHandler($command);
-        }
-
-        if (is_callable($this->handler)) {
-            $this->handler = call_user_func($this->handler, $command);
-        }
-
-        return $this->handler;
-    }
-
-    /**
-     * Sets the command handler to execute when the command is run.
-     *
-     * You can pass:
-     *
-     *  * A {@link CommandHandler} instance.
-     *  * A callable that receives a {@link Command} and returns a
-     *    {@link CommandHandler}.
-     *
-     * @param CommandHandler|callback $handler The command handler (factory).
+     * @param OptionCommandConfig[] $configs The option command configurations.
      *
      * @return static The current instance.
      *
-     * @see setCallback(), getHandler()
+     * @see beginOptionCommand()
      */
-    public function setHandler($handler)
+    public function setOptionCommandConfigs(array $configs)
     {
-        if (!$handler instanceof CommandHandler && !is_callable($handler)) {
-            throw new InvalidArgumentException(sprintf(
-                'Expected a CommandHandler or a callable. Got: %s',
-                is_object($handler) ? get_class($handler) : gettype($handler)
-            ));
-        }
+        $this->optionCommandConfigs = array();
 
-        $this->handler = $handler;
+        $this->addOptionCommandConfigs($configs);
 
         return $this;
     }
 
     /**
-     * Sets the callback to execute when the command is run.
+     * Returns the option command configuration for a given name.
      *
-     * The callback receives three arguments:
+     * @param string $name The long or short name of the option command.
      *
-     *  * {@link InputInterface} `$input`: The console input.
-     *  * {@link OutputInterface} `$output`: The standard output.
-     *  * {@link OutputInterface} `$errorOutput`: The error output.
+     * @return OptionCommandConfig The option command configuration.
      *
-     * The callback should return 0 on success and a positive integer on error.
+     * @throws NoSuchCommandException If the option command configuration is not
+     *                                found.
      *
-     * Alternatively to setting a callback, you can implement {@link run()} or
-     * return a {@link CommandHandler} implementation from {@link getHandler()}.
+     * @see beginOptionCommand()
+     */
+    public function getOptionCommandConfig($name)
+    {
+        foreach ($this->optionCommandConfigs as $commandConfig) {
+            if ($name === $commandConfig->getLongName() || $name === $commandConfig->getShortName()) {
+                return $commandConfig;
+            }
+        }
+
+        throw NoSuchCommandException::forCommandName($name);
+    }
+
+    /**
+     * Returns the configurations of all option commands.
      *
-     * @param callable $callback The callback to execute when the command is run.
+     * @return OptionCommandConfig[] The option command configurations indexed
+     *                               by their names.
+     *
+     * @see beginOptionCommand(), addOptionCommandConfig()
+     */
+    public function getOptionCommandConfigs()
+    {
+        return $this->optionCommandConfigs;
+    }
+
+    /**
+     * Returns whether the command has a option command with a given name.
+     *
+     * @param string $name The long or short name of the option command.
+     *
+     * @return bool Returns `true` if the option command configuration with the
+     *              given name exists and `false` otherwise.
+     *
+     * @see beginOptionCommand()
+     */
+    public function hasOptionCommandConfig($name)
+    {
+        foreach ($this->optionCommandConfigs as $commandConfig) {
+            if ($name === $commandConfig->getLongName() || $name === $commandConfig->getShortName()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns whether the command has any registered option command configurations.
+     *
+     * @return bool Returns `true` if option command configurations were added to
+     *              the command and `false` otherwise.
+     *
+     * @see beginOptionCommand()
+     */
+    public function hasOptionCommandConfigs()
+    {
+        return count($this->optionCommandConfigs) > 0;
+    }
+
+    /**
+     * Starts a configuration block for an unnamed sub-command.
+     *
+     * An unnamed sub-command is executed if neither a named sub-command nor an
+     * option command is executed. For example, if the command "server" has an
+     * unnamed sub-command, that command can be called with:
+     *
+     * ```
+     * $ console server ...
+     * ```
+     *
+     * The configuration of the sub-command is returned by this method. You can
+     * use the fluent interface to configure the sub-command before jumping back
+     * to this configuration with {@link SubCommandConfig::end()}:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     $this
+     *         ->setName('server')
+     *         ->setDescription('List and manage servers')
+     *
+     *         ->beginUnnamedCommand()
+     *             ->setDescription('List all servers')
+     *             ->addOption('port', 'p', InputOption::VALUE_REQUIRED, 'Only list servers with that port')
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * @return SubCommandConfig The sub-command configuration.
+     */
+    public function beginUnnamedCommand()
+    {
+        $config = new SubCommandConfig(null, $this);
+
+        $this->unnamedCommandConfigs[] = $config;
+
+        return $config;
+    }
+
+    /**
+     * Adds configuration for an unnamed sub-command.
+     *
+     * @param SubCommandConfig $config The sub-command configuration.
      *
      * @return static The current instance.
      *
-     * @see setHandler(), getHandler()
+     * @see beginUnnamedCommand()
      */
-    public function setCallback($callback)
+    public function addUnnamedCommandConfig(SubCommandConfig $config)
     {
-        $this->setHandler(new CallableHandler($callback));
+        $this->unnamedCommandConfigs[] = $config;
+
+        $config->setParentConfig($this);
 
         return $this;
     }
 
     /**
-     * Executed when a command is executed interactively.
+     * Adds unnamed sub-command configurations to the command.
      *
-     * You can override this method to query the user for missing options and
-     * arguments.
+     * @param SubCommandConfig[] $configs The sub-command configurations.
      *
-     * @param InputInterface $input The console input.
+     * @return static The current instance.
+     *
+     * @see beginUnnamedCommand()
      */
-    public function interact(InputInterface $input)
+    public function addUnnamedCommandConfigs(array $configs)
     {
+        foreach ($configs as $command) {
+            $this->addUnnamedCommandConfig($command);
+        }
+
+        return $this;
     }
 
     /**
-     * Configures the command.
+     * Sets the unnamed sub-command configurations of the command.
      *
-     * Override this method in your own subclasses to configure the instance.
+     * @param SubCommandConfig[] $configs The sub-command configurations.
+     *
+     * @return static The current instance.
+     *
+     * @see beginUnnamedCommand()
      */
-    protected function configure()
+    public function setUnnamedCommandConfigs(array $configs)
     {
+        $this->unnamedCommandConfigs = array();
+
+        $this->addUnnamedCommandConfigs($configs);
+
+        return $this;
     }
 
     /**
-     * Returns the command handler used if none is set.
+     * Returns the configurations of all unnamed sub-commands.
      *
-     * @param Command $command The command to handle.
+     * @return SubCommandConfig[] The configurations of the unnamed sub-commands.
      *
-     * @return CommandHandler The default command handler.
+     * @see beginUnnamedCommand()
+     */
+    public function getUnnamedCommandConfigs()
+    {
+        return $this->unnamedCommandConfigs;
+    }
+
+    /**
+     * Returns whether the command has any registered unnamed sub-command
+     * configurations.
+     *
+     * @return bool Returns `true` if unnamed sun-command configurations were
+     *              added to the command and `false` otherwise.
+     *
+     * @see beginUnnamedCommand()
+     */
+    public function hasUnnamedCommandConfigs()
+    {
+        return count($this->unnamedCommandConfigs) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultHelperSet()
+    {
+        return $this->applicationConfig
+            ? $this->applicationConfig->getHelperSet()
+            : parent::getDefaultHelperSet();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultStyleSet()
+    {
+        return $this->applicationConfig
+            ? $this->applicationConfig->getStyleSet()
+            : parent::getDefaultStyleSet();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     protected function getDefaultHandler(Command $command)
     {
-        return new NullHandler();
+        return $this->applicationConfig
+            ? $this->applicationConfig->getHandler($command)
+            : parent::getDefaultHandler($command);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultArgsParser()
+    {
+        return $this->applicationConfig
+            ? $this->applicationConfig->getArgsParser()
+            : parent::getDefaultArgsParser();
     }
 }

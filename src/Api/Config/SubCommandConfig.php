@@ -11,10 +11,7 @@
 
 namespace Webmozart\Console\Api\Config;
 
-use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
-use Webmozart\Console\Handler\NullHandler;
 
 /**
  * The configuration of an console sub-command.
@@ -78,8 +75,9 @@ class SubCommandConfig extends CommandConfig
      * Ends the block when dynamically configuring a nested configuration.
      *
      * This method is usually used together with
-     * {@link CommandConfig::beginSubCommand()} or
-     * {@link CommandConfig::beginOptionCommand()}:
+     * {@link CommandConfig::beginSubCommand()},
+     * {@link CommandConfig::beginOptionCommand()} or
+     * {@link CommandConfig::beginUnnamedCommand()}:
      *
      * ```php
      * $config
@@ -99,30 +97,23 @@ class SubCommandConfig extends CommandConfig
     }
 
     /**
-     * Returns the helper set used by the command.
-     *
-     * @param bool $fallback Whether to return the parent helper set if none is
-     *                       set.
-     *
-     * @return HelperSet The helper set.
-     *
-     * @see setHelperSet()
+     * {@inheritdoc}
      */
-    public function getHelperSet($fallback = true)
+    protected function getDefaultHelperSet()
     {
-        $actualHelperSet = parent::getHelperSet(false);
+        return $this->parentConfig
+            ? $this->parentConfig->getHelperSet()
+            : parent::getDefaultHelperSet();
+    }
 
-        if (!$fallback) {
-            return $actualHelperSet;
-        }
-
-        if (null === $actualHelperSet && $fallback && $this->parentConfig) {
-            return $this->parentConfig->getHelperSet();
-        }
-
-        // The application config is only set if the parent config is set, so
-        // we don't need to call parent::getHelperSet() here
-        return $actualHelperSet;
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultStyleSet()
+    {
+        return $this->parentConfig
+            ? $this->parentConfig->getStyleSet()
+            : parent::getDefaultStyleSet();
     }
 
     /**
@@ -130,7 +121,18 @@ class SubCommandConfig extends CommandConfig
      */
     protected function getDefaultHandler(Command $command)
     {
-        // Delegate to the parent config
-        return $this->parentConfig->getHandler($command);
+        return $this->parentConfig
+            ? $this->parentConfig->getHandler($command)
+            : parent::getDefaultHandler($command);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultArgsParser()
+    {
+        return $this->parentConfig
+            ? $this->parentConfig->getArgsParser()
+            : parent::getDefaultArgsParser();
     }
 }

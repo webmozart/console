@@ -12,16 +12,14 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
-use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
+use Webmozart\Console\Args\DefaultArgsParser;
+use Webmozart\Console\Handler\NullHandler;
+use Webmozart\Console\Style\DefaultStyleSet;
 
 /**
  * @since  1.0
@@ -29,6 +27,28 @@ use Webmozart\Console\Api\Config\SubCommandConfig;
  */
 class SubCommandConfigTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var SubCommandConfig
+     */
+    private $config;
+
+    /**
+     * @var CommandConfig
+     */
+    private $parentConfig;
+
+    /**
+     * @var ApplicationConfig
+     */
+    private $applicationConfig;
+
+    protected function setUp()
+    {
+        $this->applicationConfig = new ApplicationConfig();
+        $this->parentConfig = new CommandConfig('command', $this->applicationConfig);
+        $this->config = new SubCommandConfig('sub-command', $this->parentConfig, $this->applicationConfig);
+    }
+
     public function testCreate()
     {
         $config = new SubCommandConfig();
@@ -42,134 +62,47 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
     {
         $applicationConfig = new ApplicationConfig();
         $parentConfig = new CommandConfig('command', $applicationConfig);
-        $config = new SubCommandConfig('sub', $parentConfig, $applicationConfig);
+        $config = new SubCommandConfig('sub-command', $parentConfig, $applicationConfig);
 
         $this->assertSame($parentConfig, $config->getParentConfig());
         $this->assertSame($applicationConfig, $config->getApplicationConfig());
-        $this->assertSame('sub', $config->getName());
+        $this->assertSame('sub-command', $config->getName());
     }
 
-    public function testGetHandlerInheritsParentHandlerByDefault()
-    {
-        $parentConfig = new CommandConfig();
-        $parentConfig->setCallback($callback = function () { return 'foo'; });
-
-        $config = new SubCommandConfig('command', $parentConfig);
-        $input = new InputInterfaceAdapter(new StringInput('test'));
-
-        $handler = $config->getHandler(new Command($config));
-
-        $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
-        $this->assertSame('foo', $handler->handle($input));
-    }
-
-    public function testGetHandlerWithCallback()
-    {
-        $parentConfig = new CommandConfig();
-        $parentConfig->setCallback($parentCallback = function () { return 'foo'; });
-
-        $config = new SubCommandConfig('command', $parentConfig);
-        $config->setCallback($callback = function () { return 'bar'; });
-        $command = new Command($config);
-        $input = new InputInterfaceAdapter(new StringInput('test'));
-        $output = new OutputInterfaceAdapter(new BufferedOutput());
-
-        $handler = $config->getHandler($command);
-        $handler->initialize($command, $output, $output);
-
-        $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
-        $this->assertSame('bar', $handler->handle($input));
-    }
-
-    public function testSetHandler()
-    {
-        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
-
-        $parentConfig = new CommandConfig();
-        $config = new SubCommandConfig('command', $parentConfig);
-        $config->setHandler($handler);
-        $command = new Command($config);
-
-        $this->assertSame($handler, $config->getHandler($command));
-    }
-
-    public function testSetHandlerToFactoryCallback()
-    {
-        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
-
-        $factory = function (Command $command) use (&$passedCommand, $handler) {
-            $passedCommand = $command;
-
-            return $handler;
-        };
-
-        $parentConfig = new CommandConfig();
-        $config = new SubCommandConfig('command', $parentConfig);
-        $config->setHandler($factory);
-        $command = new Command($config);
-
-        $this->assertSame($handler, $config->getHandler($command));
-        $this->assertSame($command, $passedCommand);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetHandlerFailsIfNeitherCommandHandlerNorCallable()
-    {
-        $config = new SubCommandConfig('command');
-
-        $config->setHandler(new stdClass());
-    }
-
-    public function testGetHelperSet()
-    {
-        $helperSet1 = new HelperSet();
-        $helperSet2 = new HelperSet();
-
-        $parentConfig = new CommandConfig();
-        $config = new SubCommandConfig('command', $parentConfig);
-
-        $parentConfig->setHelperSet($helperSet1);
-        $config->setHelperSet($helperSet2);
-
-        $this->assertSame($helperSet2, $config->getHelperSet());
-    }
-
-    public function testGetHelperSetReturnsParentHelperSetIfNotSet()
+    public function testGetHelperSetReturnsParentHelperSetByDefault()
     {
         $helperSet = new HelperSet();
 
-        $parentConfig = new CommandConfig();
-        $config = new SubCommandConfig('command', $parentConfig);
+        $this->parentConfig->setHelperSet($helperSet);
 
-        $parentConfig->setHelperSet($helperSet);
-
-        $this->assertSame($helperSet, $config->getHelperSet());
+        $this->assertSame($helperSet, $this->config->getHelperSet());
     }
 
-    public function testGetHelperSetReturnsApplicationHelperSetIfNotSet()
+    public function testGetStyleSetReturnsParentStyleSetByDefault()
     {
-        $helperSet = new HelperSet();
+        $styleSet = new DefaultStyleSet();
 
-        $applicationConfig = new ApplicationConfig();
-        $parentConfig = new CommandConfig(null, $applicationConfig);
-        $config = new SubCommandConfig('command', $parentConfig);
+        $this->parentConfig->setStyleSet($styleSet);
 
-        $applicationConfig->setHelperSet($helperSet);
-
-        $this->assertSame($helperSet, $config->getHelperSet());
+        $this->assertSame($styleSet, $this->config->getStyleSet());
     }
 
-    public function testGetHelperSetReturnsNullIfNotSetAndNoFallback()
+    public function testGetHandlerReturnsParentHandlerByDefault()
     {
-        $helperSet = new HelperSet();
+        $handler = new NullHandler();
+        $command = new Command(new CommandConfig('command'));
 
-        $parentConfig = new CommandConfig();
-        $config = new SubCommandConfig('command', $parentConfig);
+        $this->parentConfig->setHandler($handler);
 
-        $parentConfig->setHelperSet($helperSet);
+        $this->assertSame($handler, $this->config->getHandler($command));
+    }
 
-        $this->assertNull($config->getHelperSet(false));
+    public function testGetArgsParserReturnsParentArgsParserByDefault()
+    {
+        $parser = new DefaultArgsParser();
+
+        $this->parentConfig->setArgsParser($parser);
+
+        $this->assertSame($parser, $this->config->getArgsParser());
     }
 }
