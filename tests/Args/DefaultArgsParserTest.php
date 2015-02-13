@@ -116,6 +116,36 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array('argument1' => 'foo', 'argument2' => 'bar'), $args->getArguments(false));
     }
 
+    public function testParseArgumentsIgnoresMissingCommandNames()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandName(new CommandName('add'))
+            ->addArgument(new Argument('argument1'))
+            ->addArgument(new Argument('argument2'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument1' => 'foo', 'argument2' => 'bar'), $args->getArguments(false));
+    }
+
+    public function testParseArgumentsIgnoresMissingCommandOptions()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument1'))
+            ->addArgument(new Argument('argument2'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument1' => 'foo', 'argument2' => 'bar'), $args->getArguments(false));
+    }
+
     public function testParseIgnoresMissingOptionalArguments()
     {
         $format = ArgsFormat::build()
@@ -149,6 +179,38 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Not enough arguments
+     */
+    public function testParseFailsIfMissingRequiredArgumentWithMissingCommandNames()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandName(new CommandName('add'))
+            ->addArgument(new Argument('argument1', Argument::REQUIRED))
+            ->addArgument(new Argument('argument2', Argument::REQUIRED))
+            ->getFormat();
+
+        $this->parser->parseArgs(new StringArgs('server foo'), $format);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Not enough arguments
+     */
+    public function testParseFailsIfMissingRequiredArgumentWithMissingCommandOptions()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument1', Argument::REQUIRED))
+            ->addArgument(new Argument('argument2', Argument::REQUIRED))
+            ->getFormat();
+
+        $this->parser->parseArgs(new StringArgs('server foo'), $format);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
      * @expectedExceptionMessage Too many arguments
      */
     public function testParseFailsIfTooManyArguments()
@@ -160,6 +222,78 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->getFormat();
 
         $this->parser->parseArgs(new StringArgs('server --add foo bar'), $format);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Too many arguments
+     */
+    public function testParseFailsIfTooManyArgumentsMissingCommandNames()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandName(new CommandName('add'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Too many arguments
+     */
+    public function testParseFailsIfTooManyArgumentsMissingCommandOptions()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
+    }
+
+    public function testParseMultiValuedArgument()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('multi', Argument::MULTI_VALUED))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server --add one two three'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('multi' => array('one', 'two', 'three')), $args->getArguments(false));
+    }
+
+    public function testParseMultiValuedArgumentIgnoresMissingCommandNames()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandName(new CommandName('add'))
+            ->addArgument(new Argument('multi', Argument::MULTI_VALUED))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server one two three'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('multi' => array('one', 'two', 'three')), $args->getArguments(false));
+    }
+
+    public function testParseMultiValuedArgumentIgnoresMissingCommandOptions()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('multi', Argument::MULTI_VALUED))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server one two three'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('multi' => array('one', 'two', 'three')), $args->getArguments(false));
     }
 
     public function testParseLongOptionWithoutValue()
