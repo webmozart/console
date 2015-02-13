@@ -101,7 +101,7 @@ abstract class BaseConfig
      * @param mixed  $default     The default value. Must be `null` if the
      *                            flags contain {@link InputArgument::REQUIRED}.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getArguments()
      */
@@ -139,7 +139,7 @@ abstract class BaseConfig
      * @param mixed  $default     The default value. Must be `null` if the
      *                            flags contain {@link InputOption::VALUE_REQUIRED}.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getOptions()
      */
@@ -171,7 +171,7 @@ abstract class BaseConfig
      *
      * @param HelperSet $helperSet The helper set.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getHelperSet()
      */
@@ -203,7 +203,7 @@ abstract class BaseConfig
      *
      * @param StyleSet $styleSet The style set to use.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getStyleSet()
      */
@@ -235,7 +235,7 @@ abstract class BaseConfig
      *
      * @param ArgsParser $argsParser The argument parser.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getArgsParser()
      */
@@ -290,7 +290,7 @@ abstract class BaseConfig
      *                                         callable creating a new command
      *                                         handler on demand.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see setCallback(), getHandler()
      */
@@ -321,7 +321,7 @@ abstract class BaseConfig
      *
      * @param callable $callback The callback to execute when the command is run.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see setHandler(), getHandler()
      */
@@ -349,7 +349,7 @@ abstract class BaseConfig
      *
      * @param string $commandName The name of the default command.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see addDefaultCommands(), setDefaultCommands()
      */
@@ -368,7 +368,7 @@ abstract class BaseConfig
      *
      * @param string[] $commandNames The names of the default commands.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see addDefaultCommand(), setDefaultCommands()
      */
@@ -389,7 +389,7 @@ abstract class BaseConfig
      *
      * @param string[] $commandNames The names of the default commands.
      *
-     * @return static The current instance.
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getDefaultCommands(), addDefaultCommand()
      */
