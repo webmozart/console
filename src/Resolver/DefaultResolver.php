@@ -11,15 +11,22 @@
 
 namespace Webmozart\Console\Resolver;
 
+use RuntimeException;
+use Webmozart\Console\Adapter\InputDefinitionAdapter;
+use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Args\CannotParseArgsException;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Resolver\CommandNotDefinedException;
+use Webmozart\Console\Api\Args\Args;
+use Webmozart\Console\Api\Resolver\ResolvedCommand;
+use Webmozart\Console\Resolver\CommandResult;
+use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Assert\Assert;
 
 /**
- * Checks an input for command, sub-command and option command names.
+ * Parses the raw console arguments for the command to execute.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -27,150 +34,187 @@ use Webmozart\Console\Assert\Assert;
 class DefaultResolver implements CommandResolver
 {
     /**
-     * @var string
-     */
-    private $defaultCommandName;
-
-    /**
-     * Creates the resolver.
-     *
-     * @param string $defaultCommandName The name of the default command to run
-     *                                   if no explicit command is requested.
-     */
-    public function __construct($defaultCommandName)
-    {
-        Assert::string($defaultCommandName, 'The default command name must be a string. Got: %s');
-        Assert::notEmpty($defaultCommandName, 'The default command name must not be empty.');
-
-        $this->defaultCommandName = $defaultCommandName;
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function resolveCommand(Input $input, CommandCollection $commands)
+    public function resolveCommand(RawArgs $args, Application $application)
     {
-        list($argumentsToTest, $optionsToTest) = $this->splitInput($input);
+        $tokens = $args->getTokens();
 
-        // Parse the arguments as far as possible to determine the command
-        // to execute
-        // e.g. "server add localhost"
-        //                  ^-- parsing stops here
-        $command = $this->getCommandForArguments($argumentsToTest, $commands);
+        $argumentsToTest = $this->getArgumentsToTest($tokens);
+        $optionsToTest = $this->getOptionsToTest($tokens);
 
-        if (null === $command) {
-            if ($argumentsToTest) {
-                throw CommandNotDefinedException::forCommandName(reset($argumentsToTest), $commands);
-            }
-
-            // If no arguments were passed, return the default command
-            $command = $commands->get($this->defaultCommandName);
+        // Try to find a command for the passed arguments and options.
+        if ($result = $this->processArguments($args, $application->getCommands(), $argumentsToTest, $optionsToTest)) {
+            return $result;
         }
 
-        // Check whether the found command has a default sub-command
-        // e.g. "server" could default to "server list"
-        if ($result = $command->getDefaultSubCommand()) {
-            $command = $result;
+        // If arguments were passed, we did not find the matching command.
+        if ($argumentsToTest) {
+            throw CannotResolveCommandException::nameNotFound(reset($argumentsToTest), $application->getCommands());
         }
 
-        // Check whether we can find an option command for the current command
-        // e.g. "server --list"
-        if ($result = $this->getCommandForOptions($optionsToTest, $command)) {
-            $command = $result;
-        } elseif ($result = $command->getDefaultOptionCommand()) {
-            // If no option command was passed, check whether a default option
-            // command is set
-            // e.g. "server" could default to "server --list"
-            $command = $result;
+        // If no arguments were passed, run the application's default command.
+        if ($result = $this->processDefaultCommands($args, $application->getDefaultCommands())) {
+            return $result;
         }
 
-        return $command;
+        // No default command is configured.
+        throw CannotResolveCommandException::noDefaultCommand();
     }
 
-    private function splitInput(Input $input)
+    /**
+     * @param RawArgs           $args
+     * @param CommandCollection $commands
+     * @param string[]          $argumentsToTest
+     * @param string[]          $optionsToTest
+     *
+     * @return ResolvedCommand
+     */
+    private function processArguments(RawArgs $args, CommandCollection $commands, array $argumentsToTest, array $optionsToTest)
     {
-        $parts = explode(' ', $input->toString());
-        $argumentsToTest = array();
-        $optionsToTest = array();
-        $parseArguments = true;
+        $currentCommand = null;
 
-        foreach ($parts as $part) {
-            if (empty($part)) {
-                continue;
-            }
-
-            // "--" stops option parsing
-            if ('--' === $part) {
+        // Parse the arguments for command names until we fail to find a
+        // matching command
+        foreach ($argumentsToTest as $name) {
+            if (!$commands->contains($name)) {
                 break;
             }
 
-            if (isset($part[0]) && '-' === $part[0]) {
-                // Stop argument parsing when we reach the first option.
+            $currentCommand = $commands->get($name);
+            $commands = $currentCommand->getSubCommands();
+        }
 
-                // Command names must be passed before any option. The reason
-                // is that we cannot determine whether an argument after an
-                // option is the value of that option or an argument by itself
-                // without getting the input definition of the corresponding
-                // command first.
+        if (!$currentCommand) {
+            return null;
+        }
 
-                // For example, in the command "server -f add" we don't know
-                // whether "add" is the value of the "-f" option or an argument.
-                // Hence we stop argument parsing after "-f" and assume that
-                // "server" (or "server -f") is the command to execute.
+        return $this->processOptions($args, $currentCommand, $optionsToTest);
+    }
 
-                $parseArguments = false;
+    /**
+     * @param RawArgs  $args
+     * @param Command  $currentCommand
+     * @param string[] $optionsToTest
+     *
+     * @return ResolvedCommand
+     */
+    private function processOptions(RawArgs $args, Command $currentCommand, array $optionsToTest)
+    {
+        foreach ($optionsToTest as $option) {
+            $commands = $currentCommand->getOptionCommands();
 
-                if ('--' === substr($part, 0, 2) && strlen($part) > 2) {
-                    $optionsToTest[] = substr($part, 2);
-                } elseif (2 === strlen($part)) {
-                    $optionsToTest[] = substr($part, 1);
+            if (!$commands->contains($option)) {
+                continue;
+            }
+
+            $currentCommand = $commands->get($option);
+        }
+
+        return $this->processDefaultSubCommands($args, $currentCommand);
+    }
+
+    /**
+     * @param RawArgs $args
+     * @param Command $currentCommand
+     *
+     * @return ResolvedCommand
+     */
+    private function processDefaultSubCommands(RawArgs $args, Command $currentCommand)
+    {
+        $defaultCommands = $currentCommand->getDefaultCommands();
+
+        if ($result = $this->processDefaultCommands($args, $defaultCommands)) {
+            return $result;
+        }
+
+        // No default commands, return the current command
+        return new ResolvedCommand($currentCommand, $args);
+    }
+
+    /**
+     * @param RawArgs   $args
+     * @param Command[] $defaultCommands
+     *
+     * @return ResolvedCommand
+     */
+    private function processDefaultCommands(RawArgs $args, array $defaultCommands)
+    {
+        $firstResult = null;
+
+        foreach ($defaultCommands as $defaultCommand) {
+            $resolvedCommand = new ResolvedCommand($defaultCommand, $args);
+
+            if ($resolvedCommand->isParsable()) {
+                return $resolvedCommand;
+            }
+
+            if (!$firstResult) {
+                $firstResult = $resolvedCommand;
+            }
+        }
+
+        // Return the first default command if one was found
+        return $firstResult;
+    }
+
+    private function getArgumentsToTest(array &$tokens)
+    {
+        $argumentsToTest = array();
+
+        for (; null !== key($tokens); next($tokens)) {
+            $token = current($tokens);
+
+            // "--" stops argument parsing
+            if ('--' === $token) {
+                break;
+            }
+
+            // Stop argument parsing when we reach the first option.
+
+            // Command names must be passed before any option. The reason
+            // is that we cannot determine whether an argument after an
+            // option is the value of that option or an argument by itself
+            // without getting the input definition of the corresponding
+            // command first.
+
+            // For example, in the command "server -f add" we don't know
+            // whether "add" is the value of the "-f" option or an argument.
+            // Hence we stop argument parsing after "-f" and assume that
+            // "server" (or "server -f") is the command to execute.
+            if (isset($token[0]) && '-' === $token[0]) {
+                break;
+            }
+
+            $argumentsToTest[] = $token;
+        }
+
+        return $argumentsToTest;
+    }
+
+    private function getOptionsToTest(array &$tokens)
+    {
+        $optionsToTest = array();
+
+        for (; null !== key($tokens); next($tokens)) {
+            $token = current($tokens);
+
+            // "--" stops option parsing
+            if ('--' === $token) {
+                break;
+            }
+
+            if (isset($token[0]) && '-' === $token[0]) {
+                if ('--' === substr($token, 0, 2) && strlen($token) > 2) {
+                    $optionsToTest[] = substr($token, 2);
+                } elseif (2 === strlen($token)) {
+                    $optionsToTest[] = substr($token, 1);
                 }
 
                 continue;
             }
-
-            if ($parseArguments) {
-                $argumentsToTest[] = $part;
-            }
         }
 
-        return array($argumentsToTest, $optionsToTest);
-    }
-
-    private function getCommandForArguments(array $argumentsToTest, CommandCollection $possibleCommands)
-    {
-        $command = null;
-
-        // Parse the arguments for command names until we fail to find a
-        // matching command
-        foreach ($argumentsToTest as $argument) {
-            if (!$possibleCommands->contains($argument)) {
-                break;
-            }
-
-            $command = $possibleCommands->get($argument);
-
-            // Search the sub-commands in the next iteration
-            $possibleCommands = $command->getSubCommands();
-        }
-
-        return $command;
-    }
-
-    private function getCommandForOptions(array $optionsToTest, Command $currentCommand)
-    {
-        $command = null;
-
-        foreach ($optionsToTest as $option) {
-            $possibleCommands = $currentCommand->getOptionCommands();
-
-            if (!$possibleCommands->contains($option)) {
-                continue;
-            }
-
-            $command = $possibleCommands->get($option);
-        }
-
-        return $command;
+        return $optionsToTest;
     }
 }

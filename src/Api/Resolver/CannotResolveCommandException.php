@@ -17,31 +17,37 @@ use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Util\SimilarCommandName;
 
 /**
+ * Thrown when a command cannot be resolved.
+ *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CommandNotDefinedException extends RuntimeException
+class CannotResolveCommandException extends RuntimeException
 {
     /**
-     * @var string[]
+     * Code: The passed command name was not found.
      */
-    private $suggestedNames = array();
+    const NAME_NOT_FOUND = 1;
 
     /**
-     * Creates an exception for the given command name.
+     * Code: No command was passed and no default was configured.
+     */
+    const NO_DEFAULT_COMMAND = 2;
+
+    /**
+     * Creates an exception for the code {@link NAME_NOT_FOUND}.
      *
      * Suggested alternatives are searched in the passed commands.
      *
      * @param string            $commandName The command name that was not found.
      * @param CommandCollection $commands    A list of available commands that
      *                                       is searched for similar names.
-     * @param int               $code        The exception code.
      * @param Exception         $cause       The exception that caused this
      *                                       exception.
      *
      * @return static The created exception.
      */
-    public static function forCommandName($commandName, CommandCollection $commands, $code = 0, Exception $cause = null)
+    public static function nameNotFound($commandName, CommandCollection $commands, Exception $cause = null)
     {
         $message = sprintf('The command "%s" is not defined.', $commandName);
 
@@ -56,31 +62,18 @@ class CommandNotDefinedException extends RuntimeException
             $message .= implode("\n    ", $suggestedNames);
         }
 
-        return new static($message, $suggestedNames, $code, $cause);
+        return new static($message, self::NAME_NOT_FOUND, $cause);
     }
 
     /**
-     * Creates an exception.
+     * Creates an exception for the code {@link NO_DEFAULT_COMMAND}.
      *
-     * @param string    $message        The exception message.
-     * @param string[]  $suggestedNames The suggested command names.
-     * @param int       $code           The exception code.
-     * @param Exception $cause          The exception that caused this exception.
-     */
-    public function __construct($message = '', array $suggestedNames = array(), $code = 0, Exception $cause = null)
-    {
-        parent::__construct($message, $code, $cause);
-
-        $this->suggestedNames = $suggestedNames;
-    }
-
-    /**
-     * Returns the suggested command names.
+     * @param Exception $cause The exception that caused this exception.
      *
-     * @return string[] The suggested command names.
+     * @return static The created exception.
      */
-    public function getSuggestedCommandNames()
+    public static function noDefaultCommand(Exception $cause = null)
     {
-        return $this->suggestedNames;
+        return new static('No default command is defined.', self::NO_DEFAULT_COMMAND, $cause);
     }
 }

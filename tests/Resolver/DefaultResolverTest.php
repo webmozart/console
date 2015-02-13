@@ -16,8 +16,13 @@ use Symfony\Component\Console\Input\StringInput;
 use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Api\Resolver\CommandNotDefinedException;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\Option;
+use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
+use Webmozart\Console\Args\StringArgs;
+use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -27,74 +32,69 @@ use Webmozart\Console\Resolver\DefaultResolver;
 class DefaultResolverTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var CommandCollection
+     * @var ConsoleApplication
      */
-    private $commands;
+    private static $application;
 
     /**
      * @var DefaultResolver
      */
     private $resolver;
 
+    public static function setUpBeforeClass()
+    {
+        $config = ApplicationConfig::create()
+            ->addOption('option', 'o')
+            ->addOption('value', 'v', Option::VALUE_OPTIONAL)
+
+            ->addDefaultCommand('default')
+
+            ->beginCommand('package')
+                ->addAlias('package-alias')
+                ->beginSubCommand('add')
+                    ->addAlias('add-alias')
+                ->end()
+                ->beginSubCommand('addon')->end()
+                ->beginOptionCommand('delete', 'd')
+                    ->addAlias('delete-alias')
+                ->end()
+                ->beginOptionCommand('delete-all')->end()
+            ->end()
+
+            ->beginCommand('pack')->end()
+
+            ->beginCommand('default')->end()
+
+            ->beginCommand('stash')
+                ->beginSubCommand('save')
+                    ->beginOptionCommand('do', 'D')->end()
+                ->end()
+                ->addDefaultCommand('save')
+            ->end()
+
+            ->beginCommand('server')
+                ->beginOptionCommand('list')->end()
+                ->addDefaultCommand('list')
+            ->end()
+
+            ->beginCommand('bind')
+                ->beginSubCommand('list')
+                    ->beginOptionCommand('do', 'D')->end()
+                ->end()
+                ->beginSubCommand('add')
+                    ->addArgument('binding', Argument::REQUIRED)
+                    ->beginOptionCommand('do', 'D')->end()
+                ->end()
+                ->addDefaultCommands(array('list', 'add'))
+            ->end()
+        ;
+
+        self::$application = new ConsoleApplication($config);
+    }
+
     protected function setUp()
     {
-        $this->commands = new CommandCollection(array(
-            new Command(
-                CommandConfig::create('package')
-                    ->addAlias('package-alias')
-                    ->beginSubCommand('add')
-                        ->addAlias('add-alias')
-                    ->end()
-                    ->beginSubCommand('addon')->end()
-                    ->beginOptionCommand('delete', 'd')
-                        ->addAlias('delete-alias')
-                    ->end()
-                    ->beginOptionCommand('delete-all')->end()
-            ),
-            new Command(CommandConfig::create('pack')),
-            new Command(
-                CommandConfig::create('default')
-                    ->beginOptionCommand('do', 'D')->end()
-            ),
-            new Command(
-                CommandConfig::create('stash')
-                    ->beginSubCommand('save')
-                        ->beginOptionCommand('do', 'D')->end()
-                    ->end()
-                    ->setDefaultSubCommand('save')
-            ),
-            new Command(
-                CommandConfig::create('server')
-                    ->beginOptionCommand('list')->end()
-                    ->setDefaultOptionCommand('list')
-            ),
-        ));
-
         $this->resolver = new DefaultResolver('default');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testCreateFailsIfDefaultCommandNameNull()
-    {
-        new DefaultResolver(null);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testCreateFailsIfDefaultCommandNameEmpty()
-    {
-        new DefaultResolver('');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testCreateFailsIfDefaultCommandNameNoString()
-    {
-        new DefaultResolver(1234);
     }
 
     /**
@@ -102,12 +102,10 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
      */
     public function testResolveCommand($inputString, $commandName)
     {
-        $input = new InputInterfaceAdapter(new StringInput($inputString));
+        $resolvedCommand = $this->resolver->resolveCommand(new StringArgs($inputString), self::$application);
 
-        $command = $this->resolver->resolveCommand($input, $this->commands);
-
-        $this->assertInstanceOf('Webmozart\Console\Api\Command\Command', $command);
-        $this->assertSame($commandName, $command->getName());
+        $this->assertInstanceOf('Webmozart\Console\Api\Resolver\ResolvedCommand', $resolvedCommand);
+        $this->assertSame($commandName, $resolvedCommand->getCommand()->getName());
     }
 
     public function getInputOutputTests()
@@ -312,54 +310,6 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             array('--value="1" arg', 'default'),
             array('--value=\'1\' arg', 'default'),
 
-            // options before long option command of default command
-            array('-o --do', 'do'),
-            array('--option --do', 'do'),
-            array('-v1 --do', 'do'),
-            array('-v 1 --do', 'do'),
-            array('--value="1" --do', 'do'),
-            array('--value=\'1\' --do', 'do'),
-
-            // options before short option command of default command
-            array('-o -D', 'do'),
-            array('--option -D', 'do'),
-            array('-v1 -D', 'do'),
-            array('-v 1 -D', 'do'),
-            array('--value="1" -D', 'do'),
-            array('--value=\'1\' -D', 'do'),
-
-            // options after long option command of default command
-            array('--do -o', 'do'),
-            array('--do --option', 'do'),
-            array('--do -v1', 'do'),
-            array('--do -v 1', 'do'),
-            array('--do --value="1"', 'do'),
-            array('--do --value=\'1\'', 'do'),
-
-            // options after short option command of default command
-            array('-D -o', 'do'),
-            array('-D --option', 'do'),
-            array('-D -v1', 'do'),
-            array('-D -v 1', 'do'),
-            array('-D --value="1"', 'do'),
-            array('-D --value=\'1\'', 'do'),
-
-            // options+args after long option command of default command
-            array('--do -o arg', 'do'),
-            array('--do --option arg', 'do'),
-            array('--do -v1 arg', 'do'),
-            array('--do -v 1 arg', 'do'),
-            array('--do --value="1" arg', 'do'),
-            array('--do --value=\'1\' arg', 'do'),
-
-            // options+args after short option command of default command
-            array('-D -o arg', 'do'),
-            array('-D --option arg', 'do'),
-            array('-D -v1 arg', 'do'),
-            array('-D -v 1 arg', 'do'),
-            array('-D --value="1" arg', 'do'),
-            array('-D --value=\'1\' arg', 'do'),
-
             // default sub command
             array('stash', 'save'),
 
@@ -379,54 +329,6 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             array('stash --value="1" arg', 'save'),
             array('stash --value=\'1\' arg', 'save'),
 
-            // options before long option command of default sub command
-            array('stash -o --do', 'do'),
-            array('stash --option --do', 'do'),
-            array('stash -v1 --do', 'do'),
-            array('stash -v 1 --do', 'do'),
-            array('stash --value="1" --do', 'do'),
-            array('stash --value=\'1\' --do', 'do'),
-
-            // options before short option command of default sub command
-            array('stash -o -D', 'do'),
-            array('stash --option -D', 'do'),
-            array('stash -v1 -D', 'do'),
-            array('stash -v 1 -D', 'do'),
-            array('stash --value="1" -D', 'do'),
-            array('stash --value=\'1\' -D', 'do'),
-
-            // options after long option command of default sub command
-            array('stash --do -o', 'do'),
-            array('stash --do --option', 'do'),
-            array('stash --do -v1', 'do'),
-            array('stash --do -v 1', 'do'),
-            array('stash --do --value="1"', 'do'),
-            array('stash --do --value=\'1\'', 'do'),
-
-            // options after short option command of default sub command
-            array('stash -D -o', 'do'),
-            array('stash -D --option', 'do'),
-            array('stash -D -v1', 'do'),
-            array('stash -D -v 1', 'do'),
-            array('stash -D --value="1"', 'do'),
-            array('stash -D --value=\'1\'', 'do'),
-
-            // options+args after long option command of default sub command
-            array('stash --do -o arg', 'do'),
-            array('stash --do --option arg', 'do'),
-            array('stash --do -v1 arg', 'do'),
-            array('stash --do -v 1 arg', 'do'),
-            array('stash --do --value="1" arg', 'do'),
-            array('stash --do --value=\'1\' arg', 'do'),
-
-            // options+args after short option command of default sub command
-            array('stash -D -o arg', 'do'),
-            array('stash -D --option arg', 'do'),
-            array('stash -D -v1 arg', 'do'),
-            array('stash -D -v 1 arg', 'do'),
-            array('stash -D --value="1" arg', 'do'),
-            array('stash -D --value=\'1\' arg', 'do'),
-
             // default option command
             array('server', 'list'),
 
@@ -445,22 +347,41 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             array('server -v 1 arg', 'list'),
             array('server --value="1" arg', 'list'),
             array('server --value=\'1\' arg', 'list'),
+
+            // multiple default sub commands
+            array('bind', 'list'),
+
+            // options with multiple default sub commands
+            array('bind -o', 'list'),
+            array('bind --option', 'list'),
+            array('bind -v1', 'list'),
+            array('bind -v 1', 'list'),
+            array('bind --value="1"', 'list'),
+            array('bind --value=\'1\'', 'list'),
+
+            // options+args with multiple default sub commands
+            array('bind -o arg', 'add'),
+            array('bind --option arg', 'add'),
+            array('bind -v1 arg', 'add'),
+            array('bind -v 1 arg', 'add'),
+            array('bind --value="1" arg', 'add'),
+            array('bind --value=\'1\' arg', 'add'),
         );
     }
 
     public function testSuggestClosestAlternativeIfCommandNotFound()
     {
         try {
-            $this->resolver->resolveCommand(new InputInterfaceAdapter(new StringInput('packa')), $this->commands);
-            $this->fail('Expected a CommandNotDefinedException');
-        } catch (CommandNotDefinedException $e) {
+            $this->resolver->resolveCommand(new StringArgs('packa'), self::$application);
+            $this->fail('Expected a CannotResolveCommandException');
+        } catch (CannotResolveCommandException $e) {
             $this->assertRegExp('~Did you mean one of these\?\s+pack\s+package~', $e->getMessage());
         }
 
         try {
-            $this->resolver->resolveCommand(new InputInterfaceAdapter(new StringInput('packag')), $this->commands);
-            $this->fail('Expected a CommandNotDefinedException');
-        } catch (CommandNotDefinedException $e) {
+            $this->resolver->resolveCommand(new StringArgs('packag'), self::$application);
+            $this->fail('Expected a CannotResolveCommandException');
+        } catch (CannotResolveCommandException $e) {
             $this->assertRegExp('~Did you mean one of these\?\s+package\s+pack~', $e->getMessage());
         }
     }

@@ -11,12 +11,11 @@
 
 namespace Webmozart\Console\Api\Resolver;
 
-use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Args\RawArgs;
 
 /**
- * Returns the command to execute for a console input.
+ * Returns the command to execute for the given console arguments.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -24,12 +23,14 @@ use Webmozart\Console\Api\Input\Input;
 interface CommandResolver
 {
     /**
-     * Returns the command to execute for a console input.
+     * Returns the command to execute for the given console arguments.
      *
-     * @param Input             $input    The console input.
-     * @param CommandCollection $commands The available commands.
+     * @param RawArgs     $args        The console arguments.
+     * @param Application $application The application.
      *
-     * @return Command The command to execute.
+     * @return ResolvedCommand The command to execute.
+     *
+     * @throws CannotResolveCommandException If the command cannot be resolved.
      */
-    public function resolveCommand(Input $input, CommandCollection $commands);
+    public function resolveCommand(RawArgs $args, Application $application);
 }
