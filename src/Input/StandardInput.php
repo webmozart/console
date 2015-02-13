@@ -12,12 +12,12 @@
 namespace Webmozart\Console\Input;
 
 /**
- * An input that reads from the console.
+ * An input that reads from the standard input.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ConsoleInput extends StreamInput
+class StandardInput extends StreamInput
 {
     /**
      * Creates a new input.
