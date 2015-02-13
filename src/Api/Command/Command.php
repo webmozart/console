@@ -110,11 +110,7 @@ class Command
         }
 
         foreach ($config->getUnnamedCommandConfigs() as $subConfig) {
-            $this->unnamedCommands[] = new Command($subConfig, $this->application, $this);
-        }
-
-        foreach ($this->unnamedCommands as $command) {
-            $this->defaultCommands[] = $command;
+            $this->unnamedCommands[] = $this->defaultCommands[] = new Command($subConfig, $this->application, $this);
         }
 
         foreach ($config->getDefaultCommands() as $commandName) {
@@ -286,11 +282,10 @@ class Command
     }
 
     /**
-     * Returns the option command that should be executed if no explicit option
-     * command is passed.
+     * Returns the commands that should be executed if no explicit command is
+     * passed.
      *
-     * @return Command[] The option command or `null` if this command should
-     *                   be executed when no option command is passed.
+     * @return Command[] The default commands.
      */
     public function getDefaultCommands()
     {
@@ -302,6 +297,8 @@ class Command
      *
      * @return bool Returns `true` if the command has default commands and
      *              `false` otherwise.
+     *
+     * @see getDefaultCommands()
      */
     public function hasDefaultCommands()
     {

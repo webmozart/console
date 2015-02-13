@@ -16,13 +16,15 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputDefinition;
-use Webmozart\Console\Api\Input\InputOption;
 use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\ConsoleApplication;
 
@@ -46,48 +48,158 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $this->config
-            ->addArgument('argument')
-            ->addOption('option', 'o')
-            ->beginCommand('command')->end()
-        ;
+        $this->config->addArgument('argument');
+        $this->config->addOption('option', 'o');
 
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame($this->config, $application->getConfig());
 
-        $this->assertEquals(new InputDefinition(array(
-            new InputArgument('argument'),
-            new InputOption('option', 'o'),
-        )), $application->getBaseInputDefinition());
-
-        $this->assertEquals(new Command(
-            $this->config->getCommandConfig('command'),
-            $application->getBaseInputDefinition(),
-            $application
-        ), $application->getCommand('command'));
+        $this->assertEquals(new ArgsFormat(array(
+            new Argument('argument'),
+            new Option('option', 'o'),
+        )), $application->getGlobalArgsFormat());
     }
 
-    public function testCreateIgnoresDisabledCommands()
+    public function testGetCommands()
     {
-        $this->config
-            ->addArgument('argument')
-            ->addOption('option', 'o')
-            ->beginCommand('enabled')->enable()->end()
-            ->beginCommand('disabled')->disable()->end()
-        ;
+        $this->config->addCommandConfig($config1 = new CommandConfig('command1'));
+        $this->config->addCommandConfig($config2 = new CommandConfig('command2'));
 
         $application = new ConsoleApplication($this->config);
 
-        $this->assertSame($this->config, $application->getConfig());
+        $this->assertEquals(new CommandCollection(array(
+            new NamedCommand($config1, $application),
+            new NamedCommand($config2, $application),
+        )), $application->getCommands());
+    }
 
-        $enabledCommand = new Command(
-            $this->config->getCommandConfig('enabled'),
-            $application->getBaseInputDefinition(),
-            $application
-        );
+    public function testGetCommandsExcludesDisabledCommands()
+    {
+        $this->config->addCommandConfig($enabled = CommandConfig::create('command1')->enable());
+        $this->config->addCommandConfig($disabled = CommandConfig::create('command2')->disable());
 
-        $this->assertEquals(new CommandCollection(array($enabledCommand)), $application->getCommands());
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertEquals(new CommandCollection(array(
+            new NamedCommand($enabled, $application),
+        )), $application->getCommands());
+    }
+
+    public function testGetCommand()
+    {
+        $this->config->addCommandConfig($config = new CommandConfig('command'));
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertEquals(new NamedCommand($config, $application), $application->getCommand('command'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
+     * @expectedExceptionMessage foobar
+     */
+    public function testGetCommandFailsIfNotFound()
+    {
+        $application = new ConsoleApplication($this->config);
+
+        $application->getCommand('foobar');
+    }
+
+    public function testHasCommand()
+    {
+        $this->config->addCommandConfig($config = new CommandConfig('command'));
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertTrue($application->hasCommand('command'));
+        $this->assertFalse($application->hasCommand('foobar'));
+    }
+
+    public function testHasCommands()
+    {
+        $this->config->addCommandConfig($config = new CommandConfig('command'));
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertTrue($application->hasCommands());
+    }
+
+    public function testHasNoCommands()
+    {
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertFalse($application->hasCommands());
+    }
+
+    public function testGetUnnamedCommands()
+    {
+        $this->config->addUnnamedCommandConfig($config1 = CommandConfig::create()->setProcessTitle('title1'));
+        $this->config->addUnnamedCommandConfig($config2 = CommandConfig::create()->setProcessTitle('title2'));
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertEquals(array(
+            new Command($config1, $application),
+            new Command($config2, $application),
+        ), $application->getUnnamedCommands());
+    }
+
+    public function testHasUnnamedCommands()
+    {
+        $this->config->addUnnamedCommandConfig(new CommandConfig());
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertTrue($application->hasUnnamedCommands());
+    }
+
+    public function testHasNoUnnamedCommands()
+    {
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertFalse($application->hasUnnamedCommands());
+    }
+
+    public function testGetDefaultCommands()
+    {
+        $this->config->addUnnamedCommandConfig($config1 = CommandConfig::create()->setProcessTitle('title'));
+        $this->config->addCommandConfig($config2 = new CommandConfig('command1'));
+        $this->config->addCommandConfig($config3 = new CommandConfig('command2'));
+        $this->config->addDefaultCommand('command2');
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertEquals(array(
+            new Command($config1, $application),
+            new NamedCommand($config3, $application),
+        ), $application->getDefaultCommands());
+    }
+
+    public function testHasDefaultCommandsIfUnnamedCommands()
+    {
+        $this->config->addUnnamedCommandConfig(new CommandConfig());
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertTrue($application->hasDefaultCommands());
+    }
+
+    public function testHasDefaultCommandsIfDefaultCommands()
+    {
+        $this->config->addCommandConfig(new CommandConfig('command'));
+        $this->config->addDefaultCommand('command');
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertTrue($application->hasDefaultCommands());
+    }
+
+    public function testHasNoDefaultCommands()
+    {
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertFalse($application->hasDefaultCommands());
     }
 
     public function testRunCommand()

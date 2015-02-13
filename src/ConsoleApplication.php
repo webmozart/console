@@ -18,11 +18,12 @@ use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Output\CompositeOutput;
 
@@ -45,9 +46,19 @@ class ConsoleApplication implements Application
     private $commands;
 
     /**
-     * @var InputDefinition
+     * @var Command[]
      */
-    private $baseDefinition;
+    private $unnamedCommands = array();
+
+    /**
+     * @var Command[]
+     */
+    private $defaultCommands = array();
+
+    /**
+     * @var ArgsFormat
+     */
+    private $globalArgsFormat;
 
     /**
      * @var ApplicationAdapter
@@ -64,15 +75,23 @@ class ConsoleApplication implements Application
         $this->config = $config;
         $this->commands = new CommandCollection();
 
-        $this->baseDefinition = new InputDefinition(array_merge(
+        $this->globalArgsFormat = new ArgsFormat(array_merge(
             $config->getOptions(),
             $config->getArguments()
         ));
 
         foreach ($config->getCommandConfigs() as $commandConfig) {
             if ($commandConfig->isEnabled()) {
-                $this->commands->add(new Command($commandConfig, $this->baseDefinition, $this));
+                $this->commands->add(new NamedCommand($commandConfig, $this));
             }
+        }
+
+        foreach ($config->getUnnamedCommandConfigs() as $commandConfig) {
+            $this->unnamedCommands[] = $this->defaultCommands[] = new Command($commandConfig, $this);
+        }
+
+        foreach ($config->getDefaultCommands() as $commandName) {
+            $this->defaultCommands[] = $this->commands->get($commandName);
         }
 
         $this->applicationAdapter = new ApplicationAdapter($this);
@@ -89,9 +108,9 @@ class ConsoleApplication implements Application
     /**
      * {@inheritdoc}
      */
-    public function getBaseInputDefinition()
+    public function getGlobalArgsFormat()
     {
-        return $this->baseDefinition;
+        return $this->globalArgsFormat;
     }
 
     /**
@@ -124,6 +143,38 @@ class ConsoleApplication implements Application
     public function hasCommands()
     {
         return !$this->commands->isEmpty();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUnnamedCommands()
+    {
+        return $this->unnamedCommands;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasUnnamedCommands()
+    {
+        return count($this->unnamedCommands) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultCommands()
+    {
+        return $this->defaultCommands;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasDefaultCommands()
+    {
+        return count($this->defaultCommands) > 0;
     }
 
     /**

@@ -20,12 +20,9 @@ use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
-use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
-use Webmozart\Console\Api\Input\InputDefinition;
-use Webmozart\Console\Api\Input\InputOption;
 
 /**
  * @since  1.0

@@ -12,8 +12,10 @@
 namespace Webmozart\Console\Api\Application;
 
 use OutOfBoundsException;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Input\InputDefinition;
@@ -35,11 +37,11 @@ interface Application
     public function getConfig();
 
     /**
-     * Returns the base input definition of the application.
+     * Returns the global arguments format of the application.
      *
-     * @return InputDefinition The base input definition.
+     * @return ArgsFormat The global arguments format.
      */
-    public function getBaseInputDefinition();
+    public function getGlobalArgsFormat();
 
     /**
      * Returns the command for a given name.
@@ -48,7 +50,7 @@ interface Application
      *
      * @return Command The command.
      *
-     * @throws OutOfBoundsException If the command is not found.
+     * @throws NoSuchCommandException If the command is not found.
      *
      * @see addCommand(), getCommands()
      */
@@ -84,6 +86,39 @@ interface Application
      * @see hasCommand(), getCommands()
      */
     public function hasCommands();
+
+    /**
+     * Returns all unnamed commands of the application.
+     *
+     * @return Command[] The unnamed commands.
+     */
+    public function getUnnamedCommands();
+
+    /**
+     * Returns whether the application has any unnamed sub-commands.
+     *
+     * @return bool Returns `true` if the application has unnamed sub-commands
+     *              and `false` otherwise.
+     */
+    public function hasUnnamedCommands();
+
+    /**
+     * Returns the commands that should be executed if no explicit command is
+     * passed.
+     *
+     * @return Command[] The default commands.
+     */
+    public function getDefaultCommands();
+
+    /**
+     * Returns whether the application has any default commands.
+     *
+     * @return bool Returns `true` if the application has default commands and
+     *              `false` otherwise.
+     *
+     * @see getDefaultCommands()
+     */
+    public function hasDefaultCommands();
 
     /**
      * Executes the command for a given input.
