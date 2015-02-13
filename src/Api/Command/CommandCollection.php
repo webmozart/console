@@ -16,10 +16,9 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use LogicException;
-use OutOfBoundsException;
 
 /**
- * A collection of commands.
+ * A collection of named commands.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -27,7 +26,7 @@ use OutOfBoundsException;
 class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
-     * @var Command[]
+     * @var NamedCommand[]
      */
     private $commands = array();
 
@@ -44,7 +43,8 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Creates a new command collection.
      *
-     * @param Command[] $commands The commands to initially add to the collection.
+     * @param NamedCommand[] $commands The commands to initially add to the
+     *                                 collection.
      */
     public function __construct(array $commands = array())
     {
@@ -57,11 +57,11 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * If a command exists with the same name in the collection, that command
      * is overwritten.
      *
-     * @param Command $command The command to add.
+     * @param NamedCommand $command The command to add.
      *
      * @see merge(), replace()
      */
-    public function add(Command $command)
+    public function add(NamedCommand $command)
     {
         $name = $command->getName();
 
@@ -85,7 +85,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * Existing commands are preserved. Commands with the same names as the
      * passed commands are overwritten.
      *
-     * @param Command[] $commands The commands to add.
+     * @param NamedCommand[] $commands The commands to add.
      *
      * @see add(), replace()
      */
@@ -101,7 +101,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      *
      * Existing commands are replaced.
      *
-     * @param Command[] $commands The commands to set.
+     * @param NamedCommand[] $commands The commands to set.
      *
      * @see add(), merge()
      */
@@ -116,10 +116,10 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name of the command.
      *
-     * @return Command The command.
+     * @return NamedCommand The command.
      *
-     * @throws OutOfBoundsException If no command with that name exists in the
-     *                              collection.
+     * @throws NoSuchCommandException If no command with that name exists in the
+     *                                collection.
      */
     public function get($name)
     {
@@ -135,10 +135,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
             return $this->commands[$this->aliasIndex[$name]];
         }
 
-        throw new OutOfBoundsException(sprintf(
-            'The command "%s" does not exist.',
-            $name
-        ));
+        throw NoSuchCommandException::forCommandName($name);
     }
 
     /**
@@ -217,8 +214,8 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * The commands in the collection are returned indexed by their names. The
      * result is sorted alphabetically by the command names.
      *
-     * @return Command[] The commands indexed and sorted by their names in
-     *                   ascending order.
+     * @return NamedCommand[] The commands indexed and sorted by their names in
+     *                        ascending order.
      */
     public function toArray()
     {

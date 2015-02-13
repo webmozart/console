@@ -11,7 +11,8 @@
 
 namespace Webmozart\Console\Api\Args\Format;
 
-use LogicException;
+use Webmozart\Console\Api\Args\CannotAddArgumentException;
+use Webmozart\Console\Api\Args\CannotAddOptionException;
 use Webmozart\Console\Api\Args\NoSuchArgumentException;
 use Webmozart\Console\Api\Args\NoSuchOptionException;
 use Webmozart\Console\Assert\Assert;
@@ -226,7 +227,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect command option is given.
+     * @throws CannotAddOptionException If an option cannot be added.
      *
      * @see addCommandOption()
      */
@@ -249,7 +250,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect command option is given.
+     * @throws CannotAddOptionException If an option cannot be added.
      *
      * @see addCommandOption()
      */
@@ -271,7 +272,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect command option is given.
+     * @throws CannotAddOptionException If the option cannot be added.
      *
      * @see addCommandOptions()
      */
@@ -281,11 +282,11 @@ class ArgsFormatBuilder
         $shortName = $commandOption->getShortName();
 
         if (isset($this->commandOptions[$longName]) || isset($this->options[$longName])) {
-            throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
+            throw CannotAddOptionException::existsAlready($longName);
         }
 
         if (isset($this->commandOptionsByShortName[$shortName]) || isset($this->optionsByShortName[$shortName])) {
-            throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
+            throw CannotAddOptionException::existsAlready($shortName);
         }
 
         $this->commandOptions[$longName] = $commandOption;
@@ -414,7 +415,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect argument is given.
+     * @throws CannotAddArgumentException If an argument cannot be added.
      *
      * @see addArgument()
      */
@@ -438,7 +439,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect argument is given.
+     * @throws CannotAddArgumentException If an argument cannot be added.
      *
      * @see addArgument()
      */
@@ -466,22 +467,22 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect argument is given.
+     * @throws CannotAddArgumentException If the argument cannot be added.
      */
     public function addArgument(Argument $argument)
     {
         $name = $argument->getName();
 
         if ($this->hasArgument($name)) {
-            throw new LogicException(sprintf('An argument with the name "%s" exists already.', $name));
+            throw CannotAddArgumentException::existsAlready($name);
         }
 
         if ($this->hasMultiValuedArgument()) {
-            throw new LogicException('Cannot add an argument after a multi-valued argument.');
+            throw CannotAddArgumentException::cannotAddAfterMultiValued();
         }
 
         if ($argument->isRequired() && $this->hasOptionalArgument()) {
-            throw new LogicException('Cannot add a required argument after an optional one.');
+            throw CannotAddArgumentException::cannotAddRequiredAfterOptional();
         }
 
         if ($argument->isMultiValued()) {
@@ -696,7 +697,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect option is given.
+     * @throws CannotAddOptionException If an option cannot be added.
      *
      * @see addOption()
      */
@@ -719,7 +720,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect option is given.
+     * @throws CannotAddOptionException If an option cannot be added.
      *
      * @see addOption()
      */
@@ -741,7 +742,7 @@ class ArgsFormatBuilder
      *
      * @return static The current instance.
      *
-     * @throws LogicException If an incorrect option is given.
+     * @throws CannotAddOptionException If the option cannot be added.
      *
      * @see addOptions()
      */
@@ -751,11 +752,11 @@ class ArgsFormatBuilder
         $shortName = $option->getShortName();
 
         if (isset($this->options[$longName]) || isset($this->commandOptions[$longName])) {
-            throw new LogicException(sprintf('An option named "--%s" exists already.', $longName));
+            throw CannotAddOptionException::existsAlready($longName);
         }
 
         if (isset($this->optionsByShortName[$shortName]) || isset($this->commandOptionsByShortName[$shortName])) {
-            throw new LogicException(sprintf('An option named "-%s" exists already.', $shortName));
+            throw CannotAddOptionException::existsAlready($shortName);
         }
 
         $this->options[$longName] = $option;
