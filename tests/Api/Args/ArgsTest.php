@@ -56,7 +56,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionReturnsOptionValue()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -69,7 +69,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionReturnsTrueIfNoValueAccepted()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_NONE))
+            ->addOption(new Option('option', 'o', Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -82,7 +82,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionReturnsFalseIfNoValueAcceptedAndNotSet()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_NONE))
+            ->addOption(new Option('option', 'o', Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -94,7 +94,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionReturnsDefaultValueIfNotSet()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL, null, 'default'))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -106,7 +106,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionPrefersSetNullOverDefaultValue()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL, null, 'default'))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -131,7 +131,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     {
         $format = ArgsFormat::build()
             ->addOption(new Option('option1'))
-            ->addOption(new Option('option2', null, Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -147,7 +147,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsAlwaysReturnsOptionsByLongName()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL | Option::PREFER_SHORT_NAME))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE | Option::PREFER_SHORT_NAME))
             ->getFormat();
 
         $args = new Args($format);
@@ -161,8 +161,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsIncludesDefaults()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_OPTIONAL))
-            ->addOption(new Option('option2', null, Option::VALUE_OPTIONAL, null, 'default'))
+            ->addOption(new Option('option1', null, Option::OPTIONAL_VALUE))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -177,8 +177,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsDoesNotIncludeDefaultsIfDisabled()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_OPTIONAL))
-            ->addOption(new Option('option2', null, Option::VALUE_OPTIONAL, null, 'default'))
+            ->addOption(new Option('option1', null, Option::OPTIONAL_VALUE))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -192,8 +192,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsReturnsFalseForUnsetOptionsWithoutValues()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_OPTIONAL))
-            ->addOption(new Option('option2', null, Option::VALUE_NONE))
+            ->addOption(new Option('option1', null, Option::OPTIONAL_VALUE))
+            ->addOption(new Option('option2', null, Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -208,8 +208,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsExcludesUnsetOptionsWithoutValuesIfNoMergeDefault()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_OPTIONAL))
-            ->addOption(new Option('option2', null, Option::VALUE_NONE))
+            ->addOption(new Option('option1', null, Option::OPTIONAL_VALUE))
+            ->addOption(new Option('option2', null, Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -223,7 +223,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsPrefersSetNullOverDefaultValue()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', null, Option::VALUE_OPTIONAL, null, 'default'))
+            ->addOption(new Option('option', null, Option::OPTIONAL_VALUE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -237,7 +237,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testSetOptionToFalse()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_NONE))
+            ->addOption(new Option('option', 'o', Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -250,7 +250,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testSetOptionIgnoresValueIfNoValueAccepted()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_NONE))
+            ->addOption(new Option('option', 'o', Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -263,7 +263,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testSetOptionCastsValueToConfiguredType()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL | Option::INTEGER))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE | Option::INTEGER))
             ->getFormat();
 
         $args = new Args($format);
@@ -276,7 +276,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testSetMultiValuedOption()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_REQUIRED | Option::INTEGER | Option::MULTI_VALUED))
+            ->addOption(new Option('option', 'o', Option::REQUIRED_VALUE | Option::INTEGER | Option::MULTI_VALUED))
             ->getFormat();
 
         $args = new Args($format);
@@ -289,7 +289,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testSetOptionCastsValueToArrayIfMultiValued()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::VALUE_REQUIRED | Option::INTEGER | Option::MULTI_VALUED))
+            ->addOption(new Option('option', 'o', Option::REQUIRED_VALUE | Option::INTEGER | Option::MULTI_VALUED))
             ->getFormat();
 
         $args = new Args($format);
@@ -313,8 +313,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testSetOptions()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_NONE))
-            ->addOption(new Option('option2', null, Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option1', null, Option::NO_VALUE))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -326,8 +326,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testIsOptionSet()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_NONE))
-            ->addOption(new Option('option2', null, Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option1', null, Option::NO_VALUE))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = new Args($format);
@@ -360,8 +360,8 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testIsOptionDefined()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option1', null, Option::VALUE_NONE))
-            ->addOption(new Option('option2', null, Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option1', null, Option::NO_VALUE))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = new Args($format);

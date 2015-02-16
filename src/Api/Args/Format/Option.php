@@ -64,17 +64,17 @@ class Option extends AbstractOption
     /**
      * Flag: The option has no value.
      */
-    const VALUE_NONE = 4;
+    const NO_VALUE = 4;
 
     /**
      * Flag: The option has a required value.
      */
-    const VALUE_REQUIRED = 8;
+    const REQUIRED_VALUE = 8;
 
     /**
      * Flag: The option has an optional value.
      */
-    const VALUE_OPTIONAL = 16;
+    const OPTIONAL_VALUE = 16;
 
     /**
      * Flag: The option can be stated multiple times with different values.
@@ -157,7 +157,7 @@ class Option extends AbstractOption
      */
     public function acceptsValue()
     {
-        return !(self::VALUE_NONE & $this->flags);
+        return !(self::NO_VALUE & $this->flags);
     }
 
     /**
@@ -201,7 +201,7 @@ class Option extends AbstractOption
      */
     public function isValueRequired()
     {
-        return (bool) (self::VALUE_REQUIRED & $this->flags);
+        return (bool) (self::REQUIRED_VALUE & $this->flags);
     }
 
     /**
@@ -212,7 +212,7 @@ class Option extends AbstractOption
      */
     public function isValueOptional()
     {
-        return (bool) (self::VALUE_OPTIONAL & $this->flags);
+        return (bool) (self::OPTIONAL_VALUE & $this->flags);
     }
 
     /**
@@ -286,12 +286,12 @@ class Option extends AbstractOption
     {
         Assert::integer($flags, 'The option flags must be an integer. Got: %s');
 
-        if ($flags & self::VALUE_NONE) {
-            if ($flags & self::VALUE_REQUIRED) {
+        if ($flags & self::NO_VALUE) {
+            if ($flags & self::REQUIRED_VALUE) {
                 throw new InvalidArgumentException('The option flags VALUE_NONE and VALUE_REQUIRED cannot be combined.');
             }
 
-            if ($flags & self::VALUE_OPTIONAL) {
+            if ($flags & self::OPTIONAL_VALUE) {
                 throw new InvalidArgumentException('The option flags VALUE_NONE and VALUE_OPTIONAL cannot be combined.');
             }
 
@@ -300,7 +300,7 @@ class Option extends AbstractOption
             }
         }
 
-        if (($flags & self::VALUE_OPTIONAL) && ($flags & self::MULTI_VALUED)) {
+        if (($flags & self::OPTIONAL_VALUE) && ($flags & self::MULTI_VALUED)) {
             throw new InvalidArgumentException('The option flags VALUE_OPTIONAL and MULTI_VALUED cannot be combined.');
         }
 
@@ -333,16 +333,16 @@ class Option extends AbstractOption
 
     private function addDefaultFlags(&$flags)
     {
-        if (!($flags & (self::VALUE_NONE | self::VALUE_REQUIRED | self::VALUE_OPTIONAL | self::MULTI_VALUED))) {
-            $flags |= self::VALUE_NONE;
+        if (!($flags & (self::NO_VALUE | self::REQUIRED_VALUE | self::OPTIONAL_VALUE | self::MULTI_VALUED))) {
+            $flags |= self::NO_VALUE;
         }
 
         if (!($flags & (self::STRING | self::BOOLEAN | self::INTEGER | self::FLOAT))) {
             $flags |= self::STRING;
         }
 
-        if (($flags & self::MULTI_VALUED) && !($flags & self::VALUE_REQUIRED)) {
-            $flags |= self::VALUE_REQUIRED;
+        if (($flags & self::MULTI_VALUED) && !($flags & self::REQUIRED_VALUE)) {
+            $flags |= self::REQUIRED_VALUE;
         }
     }
 }

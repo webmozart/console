@@ -120,10 +120,10 @@ class OptionTest extends PHPUnit_Framework_TestCase
     public function getInvalidFlagCombinations()
     {
         return array(
-            array(Option::VALUE_NONE | Option::VALUE_OPTIONAL),
-            array(Option::VALUE_NONE | Option::VALUE_REQUIRED),
-            array(Option::VALUE_NONE | Option::MULTI_VALUED),
-            array(Option::VALUE_OPTIONAL | Option::MULTI_VALUED),
+            array(Option::NO_VALUE | Option::OPTIONAL_VALUE),
+            array(Option::NO_VALUE | Option::REQUIRED_VALUE),
+            array(Option::NO_VALUE | Option::MULTI_VALUED),
+            array(Option::OPTIONAL_VALUE | Option::MULTI_VALUED),
             array(Option::PREFER_SHORT_NAME | Option::PREFER_LONG_NAME),
             array(Option::STRING | Option::BOOLEAN),
             array(Option::STRING | Option::INTEGER),
@@ -174,7 +174,7 @@ class OptionTest extends PHPUnit_Framework_TestCase
 
     public function testNoValue()
     {
-        $option = new Option('option', null, Option::VALUE_NONE);
+        $option = new Option('option', null, Option::NO_VALUE);
 
         $this->assertFalse($option->acceptsValue());
         $this->assertFalse($option->isValueRequired());
@@ -188,12 +188,12 @@ class OptionTest extends PHPUnit_Framework_TestCase
      */
     public function testFailIfNoValueAndDefaultValue()
     {
-        new Option('option', null, Option::VALUE_NONE, null, 'Default');
+        new Option('option', null, Option::NO_VALUE, null, 'Default');
     }
 
     public function testOptionalValue()
     {
-        $option = new Option('option', null, Option::VALUE_OPTIONAL);
+        $option = new Option('option', null, Option::OPTIONAL_VALUE);
 
         $this->assertTrue($option->acceptsValue());
         $this->assertFalse($option->isValueRequired());
@@ -204,7 +204,7 @@ class OptionTest extends PHPUnit_Framework_TestCase
 
     public function testOptionalValueWithDefaultValue()
     {
-        $option = new Option('option', null, Option::VALUE_OPTIONAL, null, 'Default');
+        $option = new Option('option', null, Option::OPTIONAL_VALUE, null, 'Default');
 
         $this->assertTrue($option->acceptsValue());
         $this->assertFalse($option->isValueRequired());
@@ -215,7 +215,7 @@ class OptionTest extends PHPUnit_Framework_TestCase
 
     public function testRequiredValue()
     {
-        $option = new Option('option', null, Option::VALUE_REQUIRED);
+        $option = new Option('option', null, Option::REQUIRED_VALUE);
 
         $this->assertTrue($option->acceptsValue());
         $this->assertTrue($option->isValueRequired());
@@ -226,7 +226,7 @@ class OptionTest extends PHPUnit_Framework_TestCase
 
     public function testRequiredValueWithDefaultValue()
     {
-        $option = new Option('option', null, Option::VALUE_REQUIRED, null, 'Default');
+        $option = new Option('option', null, Option::REQUIRED_VALUE, null, 'Default');
 
         $this->assertTrue($option->acceptsValue());
         $this->assertTrue($option->isValueRequired());

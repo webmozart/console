@@ -66,12 +66,12 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
 
     public function testAddOption()
     {
-        $this->config->addOption('option1', 'o', Option::VALUE_REQUIRED, 'Description 1');
-        $this->config->addOption('option2', 'p', Option::VALUE_OPTIONAL, 'Description 2', 'Default');
+        $this->config->addOption('option1', 'o', Option::REQUIRED_VALUE, 'Description 1');
+        $this->config->addOption('option2', 'p', Option::OPTIONAL_VALUE, 'Description 2', 'Default');
 
         $this->assertEquals(array(
-            'option1' => new Option('option1', 'o', Option::VALUE_REQUIRED, 'Description 1'),
-            'option2' => new Option('option2', 'p', Option::VALUE_OPTIONAL, 'Description 2', 'Default'),
+            'option1' => new Option('option1', 'o', Option::REQUIRED_VALUE, 'Description 1'),
+            'option2' => new Option('option2', 'p', Option::OPTIONAL_VALUE, 'Description 2', 'Default'),
         ), $this->config->getOptions());
     }
 

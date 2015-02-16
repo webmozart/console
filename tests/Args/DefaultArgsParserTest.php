@@ -312,7 +312,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
             ->addCommandOption(new CommandOption('add', 'a'))
-            ->addOption(new Option('option', null, Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = $this->parser->parseArgs(new StringArgs('server --add --option foo'), $format);
@@ -326,7 +326,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
             ->addCommandOption(new CommandOption('add', 'a'))
-            ->addOption(new Option('option', null, Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = $this->parser->parseArgs(new StringArgs('server --add --option=foo'), $format);
@@ -344,7 +344,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
             ->addCommandOption(new CommandOption('add', 'a'))
-            ->addOption(new Option('option', null, Option::VALUE_REQUIRED))
+            ->addOption(new Option('option', null, Option::REQUIRED_VALUE))
             ->getFormat();
 
         $this->parser->parseArgs(new StringArgs('server --add --option'), $format);
@@ -369,7 +369,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
             ->addCommandOption(new CommandOption('add', 'a'))
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = $this->parser->parseArgs(new StringArgs('server --add -o foo'), $format);
@@ -383,7 +383,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
             ->addCommandOption(new CommandOption('add', 'a'))
-            ->addOption(new Option('option', 'o', Option::VALUE_OPTIONAL))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE))
             ->getFormat();
 
         $args = $this->parser->parseArgs(new StringArgs('server --add -ofoo'), $format);
@@ -401,7 +401,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
             ->addCommandOption(new CommandOption('add', 'a'))
-            ->addOption(new Option('option', 'o', Option::VALUE_REQUIRED))
+            ->addOption(new Option('option', 'o', Option::REQUIRED_VALUE))
             ->getFormat();
 
         $this->parser->parseArgs(new StringArgs('server --add -o'), $format);

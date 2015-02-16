@@ -45,7 +45,7 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
     {
         $config = ApplicationConfig::create()
             ->addOption('option', 'o')
-            ->addOption('value', 'v', Option::VALUE_OPTIONAL)
+            ->addOption('value', 'v', Option::OPTIONAL_VALUE)
 
             ->addDefaultCommand('default')
 

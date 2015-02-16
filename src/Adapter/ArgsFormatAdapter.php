@@ -45,7 +45,9 @@ class ArgsFormatAdapter extends InputDefinition
         $i = 1;
 
         foreach ($format->getCommandNames() as $commandName) {
-            $this->addArgument($argument = $this->adaptCommandName($commandName, $i++));
+            do { $argName = 'cmd'.$i++; } while ($format->hasArgument($argName));
+
+            $this->addArgument($argument = $this->adaptCommandName($commandName, $argName));
 
             $this->commandNames[$argument->getName()] = $commandName->toString();
         }
@@ -77,13 +79,13 @@ class ArgsFormatAdapter extends InputDefinition
      * Creates an input argument for the given command name.
      *
      * @param CommandName $commandName The command name.
-     * @param int         $index       The index of the command name.
+     * @param string      $argName     The name of the added argument.
      *
      * @return InputArgument The created input argument.
      */
-    private function adaptCommandName(CommandName $commandName, $index)
+    private function adaptCommandName(CommandName $commandName, $argName)
     {
-        return new InputArgument('cmd'.$index, InputArgument::REQUIRED);
+        return new InputArgument($argName, InputArgument::REQUIRED);
     }
 
     /**
@@ -121,7 +123,7 @@ class ArgsFormatAdapter extends InputDefinition
             $mode |= InputOption::VALUE_REQUIRED;
         }
 
-        return new InputOption($option->getLongName(), $option->getShortName(), $mode, '', $option->getDefaultValue());
+        return new InputOption($option->getLongName(), $option->getShortName(), $mode, $option->getDescription(), $option->getDefaultValue());
     }
 
     /**
@@ -147,6 +149,6 @@ class ArgsFormatAdapter extends InputDefinition
             $mode |= InputArgument::REQUIRED;
         }
 
-        return new InputArgument($argument->getName(), $mode, '', $argument->getDefaultValue());
+        return new InputArgument($argument->getName(), $mode, $argument->getDescription(), $argument->getDefaultValue());
     }
 }
