@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api\Input;
+namespace Webmozart\Console\Api\IO;
 
 /**
  * The console input.
@@ -25,8 +25,10 @@ interface Input
      * @param int $length The number of characters to read.
      *
      * @return string The characters read from the input.
+     *
+     * @throws IOException If reading fails or if the input is closed.
      */
-    public function read($length = 1);
+    public function read($length);
 
     /**
      * Reads a line from the input.
@@ -35,6 +37,8 @@ interface Input
      *                    all characters up to the first newline are returned.
      *
      * @return string The characters read from the input.
+     *
+     * @throws IOException If reading fails or if the input is closed.
      */
     public function readLine($length = null);
 

@@ -9,28 +9,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Input;
+namespace Webmozart\Console\IO\Input;
 
 /**
- * An input that reads from a string.
+ * An input that reads from the standard input.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StringInput extends StreamInput
+class StandardInput extends StreamInput
 {
     /**
      * Creates the input.
-     *
-     * @param string $string The input string.
      */
-    public function __construct($string)
+    public function __construct()
     {
-        $handle = fopen('php://memory', 'rw');
-
-        fwrite($handle, $string);
-        rewind($handle);
-
-        parent::__construct($handle);
+        parent::__construct(fopen('php://stdin', 'r'));
     }
 }

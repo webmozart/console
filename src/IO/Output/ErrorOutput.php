@@ -9,21 +9,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Input;
+namespace Webmozart\Console\IO\Output;
 
 /**
- * An input that reads from the standard input.
+ * An output that writes to the error output.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StandardInput extends StreamInput
+class ErrorOutput extends StreamOutput
 {
     /**
-     * Creates a new input.
+     * Creates the output.
      */
     public function __construct()
     {
-        parent::__construct(fopen('php://stdin', 'r'));
+        parent::__construct(fopen('php://stderr', 'w'));
     }
 }

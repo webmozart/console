@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Api;
+namespace Webmozart\Console\Api\IO;
 
 use RuntimeException;
 
