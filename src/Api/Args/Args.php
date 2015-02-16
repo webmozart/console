@@ -224,6 +224,29 @@ class Args
     /**
      * Sets the values of multiple options.
      *
+     * The existing options are preserved.
+     *
+     * @param array $options The options indexed by their long or short names
+     *                       and their values.
+     *
+     * @return static The current instance.
+     *
+     * @see setOption()
+     */
+    public function addOptions(array $options)
+    {
+        foreach ($options as $name => $value) {
+            $this->setOption($name, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the values of multiple options.
+     *
+     * The existing options are unset.
+     *
      * @param array $options The options indexed by their long or short names
      *                       and their values.
      *
@@ -233,9 +256,9 @@ class Args
      */
     public function setOptions(array $options)
     {
-        foreach ($options as $name => $value) {
-            $this->setOption($name, $value);
-        }
+        $this->options = array();
+
+        $this->addOptions($options);
 
         return $this;
     }
@@ -354,6 +377,29 @@ class Args
     /**
      * Sets the values of multiple arguments.
      *
+     * The existing arguments are preserved.
+     *
+     * @param array $arguments The argument values indexed by the argument names
+     *                         or their 0-based positions in the argument list.
+     *
+     * @return static The current instance.
+     *
+     * @see setArgument()
+     */
+    public function addArguments(array $arguments)
+    {
+        foreach ($arguments as $name => $value) {
+            $this->setArgument($name, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the values of multiple arguments.
+     *
+     * The existing arguments are unset.
+     *
      * @param array $arguments The argument values indexed by the argument names
      *                         or their 0-based positions in the argument list.
      *
@@ -363,9 +409,9 @@ class Args
      */
     public function setArguments(array $arguments)
     {
-        foreach ($arguments as $name => $value) {
-            $this->setArgument($name, $value);
-        }
+        $this->arguments = array();
+
+        $this->addArguments($arguments);
 
         return $this;
     }

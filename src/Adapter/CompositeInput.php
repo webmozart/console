@@ -40,6 +40,11 @@ class CompositeInput implements InputInterface
      */
     private $args;
 
+    /**
+     * @var bool
+     */
+    private $interactive = true;
+
     public function __construct(RawArgs $rawArgs, Input $input, Args $args = null)
     {
         $this->rawArgs = $rawArgs;
@@ -86,10 +91,16 @@ class CompositeInput implements InputInterface
      */
     public function hasParameterOption($values)
     {
+        $tokens = $this->rawArgs->getTokens();
+
         foreach ((array) $values as $value) {
-            if (!$this->rawArgs->hasToken($value)) {
-                return false;
+            foreach ($tokens as $token) {
+                if ($token === $value || 0 === strpos($token, $value.'=')) {
+                    return true;
+                }
             }
+
+            return false;
         }
 
         return true;
@@ -100,7 +111,30 @@ class CompositeInput implements InputInterface
      */
     public function getParameterOption($values, $default = false)
     {
+        $tokens = $this->rawArgs->getTokens();
 
+        foreach ((array) $values as $value) {
+            for (reset($tokens); null !== key($tokens); next($tokens)) {
+                $token = current($tokens);
+
+                // Long/short option with value in the next argument
+                if ($token === $value) {
+                    return next($tokens) ?: null;
+                }
+
+                // Long option with =
+                if (0 === strpos($token, $value.'=')) {
+                    return substr($token, strlen($value) + 1);
+                }
+
+                // Short option
+                if (strlen($token) > 2 && '-' === $token[0] && '-' !== $token[1] && 0 === strpos($token, $value)) {
+                    return substr($token, 2);
+                }
+            }
+        }
+
+        return $default;
     }
 
     /**
@@ -108,7 +142,6 @@ class CompositeInput implements InputInterface
      */
     public function bind(InputDefinition $definition)
     {
-
     }
 
     /**
@@ -116,7 +149,6 @@ class CompositeInput implements InputInterface
      */
     public function validate()
     {
-
     }
 
     /**
@@ -124,7 +156,7 @@ class CompositeInput implements InputInterface
      */
     public function getArguments()
     {
-
+        return $this->args ? $this->args->getArguments() : array();
     }
 
     /**
@@ -132,7 +164,7 @@ class CompositeInput implements InputInterface
      */
     public function getArgument($name)
     {
-
+        return $this->args ? $this->args->getArgument($name) : null;
     }
 
     /**
@@ -140,7 +172,9 @@ class CompositeInput implements InputInterface
      */
     public function setArgument($name, $value)
     {
-
+        if ($this->args) {
+            $this->args->setArgument($name, $value);
+        }
     }
 
     /**
@@ -148,7 +182,7 @@ class CompositeInput implements InputInterface
      */
     public function hasArgument($name)
     {
-
+        return $this->args ? $this->args->isArgumentDefined($name) : false;
     }
 
     /**
@@ -156,7 +190,7 @@ class CompositeInput implements InputInterface
      */
     public function getOptions()
     {
-
+        return $this->args ? $this->args->getOptions() : array();
     }
 
     /**
@@ -164,7 +198,7 @@ class CompositeInput implements InputInterface
      */
     public function getOption($name)
     {
-
+        return $this->args ? $this->args->getOption($name) : null;
     }
 
     /**
@@ -172,7 +206,9 @@ class CompositeInput implements InputInterface
      */
     public function setOption($name, $value)
     {
-
+        if ($this->args) {
+            $this->args->setOption($name, $value);
+        }
     }
 
     /**
@@ -180,7 +216,7 @@ class CompositeInput implements InputInterface
      */
     public function hasOption($name)
     {
-
+        return $this->args ? $this->args->isOptionDefined($name) : false;
     }
 
     /**
@@ -188,7 +224,7 @@ class CompositeInput implements InputInterface
      */
     public function isInteractive()
     {
-
+        return $this->interactive;
     }
 
     /**
@@ -196,6 +232,6 @@ class CompositeInput implements InputInterface
      */
     public function setInteractive($interactive)
     {
-
+        $this->interactive = (bool) $interactive;
     }
 }

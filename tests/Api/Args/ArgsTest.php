@@ -310,17 +310,48 @@ class ArgsTest extends PHPUnit_Framework_TestCase
         $args->setOption('foobar');
     }
 
+    public function testAddOptions()
+    {
+        $format = ArgsFormat::build()
+            ->addOption(new Option('option1', null, Option::NO_VALUE))
+            ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE))
+            ->addOption(new Option('option3', null, Option::NO_VALUE))
+            ->getFormat();
+
+        $args = new Args($format);
+        $args->setOption('option1');
+        $args->addOptions(array(
+            'option2' => 'value',
+            'option3' => true,
+        ));
+
+        $this->assertSame(array(
+            'option1' => true,
+            'option2' => 'value',
+            'option3' => true,
+        ), $args->getOptions());
+    }
+
     public function testSetOptions()
     {
         $format = ArgsFormat::build()
             ->addOption(new Option('option1', null, Option::NO_VALUE))
             ->addOption(new Option('option2', null, Option::OPTIONAL_VALUE))
+            ->addOption(new Option('option3', null, Option::NO_VALUE))
             ->getFormat();
 
         $args = new Args($format);
-        $args->setOptions(array('option1' => true, 'option2' => 'value'));
+        $args->setOption('option1');
+        $args->setOptions(array(
+            'option2' => 'value',
+            'option3' => true,
+        ));
 
-        $this->assertSame(array('option1' => true, 'option2' => 'value'), $args->getOptions());
+        $this->assertSame(array(
+            'option2' => 'value',
+            'option3' => true,
+            'option1' => false,
+        ), $args->getOptions());
     }
 
     public function testIsOptionSet()
@@ -576,22 +607,47 @@ class ArgsTest extends PHPUnit_Framework_TestCase
         $args->setArgument('foobar', 'value');
     }
 
-    public function testSetArguments()
+    public function testAddArguments()
     {
         $format = ArgsFormat::build()
             ->addArgument(new Argument('argument1'))
             ->addArgument(new Argument('argument2'))
+            ->addArgument(new Argument('argument3'))
             ->getFormat();
 
         $args = new Args($format);
-        $args->setArguments(array(
-            'argument1' => 'value1',
+        $args->setArgument('argument1', 'value1');
+        $args->addArguments(array(
             'argument2' => 'value2',
+            'argument3' => 'value3',
         ));
 
         $this->assertSame(array(
             'argument1' => 'value1',
             'argument2' => 'value2',
+            'argument3' => 'value3',
+        ), $args->getArguments());
+    }
+
+    public function testSetArguments()
+    {
+        $format = ArgsFormat::build()
+            ->addArgument(new Argument('argument1'))
+            ->addArgument(new Argument('argument2'))
+            ->addArgument(new Argument('argument3'))
+            ->getFormat();
+
+        $args = new Args($format);
+        $args->setArgument('argument1', 'value1');
+        $args->setArguments(array(
+            'argument2' => 'value2',
+            'argument3' => 'value3',
+        ));
+
+        $this->assertSame(array(
+            'argument1' => null,
+            'argument2' => 'value2',
+            'argument3' => 'value3',
         ), $args->getArguments());
     }
 
