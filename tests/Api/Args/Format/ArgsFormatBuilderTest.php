@@ -155,7 +155,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingCommandOptionWithSameLongNameAsOtherCommandOption()
     {
@@ -164,7 +164,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingCommandOptionWithSameLongNameAsOtherOption()
     {
@@ -173,7 +173,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingCommandOptionWithSameShortNameAsOtherCommandOption()
     {
@@ -182,7 +182,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingCommandOptionWithSameShortNameAsOtherOption()
     {
@@ -444,7 +444,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingRequiredArgumentAfterOptionalArgument()
     {
@@ -453,7 +453,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingRequiredArgumentAfterOptionalArgumentInBaseDefinition()
     {
@@ -464,7 +464,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingRequiredArgumentAfterMultiValuedArgument()
     {
@@ -473,7 +473,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingRequiredArgumentAfterMultiValuedArgumentInBaseDefinition()
     {
@@ -484,7 +484,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingOptionalArgumentAfterMultiValuedArgument()
     {
@@ -493,7 +493,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingOptionalArgumentAfterMultiValuedArgumentInBaseDefinition()
     {
@@ -504,7 +504,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingArgumentWithExistingName()
     {
@@ -513,7 +513,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddArgumentException
      */
     public function testFailIfAddingArgumentWithExistingNameInBaseDefinition()
     {
@@ -902,7 +902,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingOptionWithSameLongNameAsOtherOption()
     {
@@ -911,7 +911,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingOptionWithSameLongNameAsOtherCommandOption()
     {
@@ -920,7 +920,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingOptionWithSameShortNameAsOtherOption()
     {
@@ -929,7 +929,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
     public function testFailIfAddingOptionWithSameShortNameAsOtherCommandOption()
     {
