@@ -11,15 +11,15 @@
 
 namespace Webmozart\Console\Api\Application;
 
-use OutOfBoundsException;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Input\InputDefinition;
 use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\Runnable;
 
 /**
  * A console application.
@@ -27,7 +27,7 @@ use Webmozart\Console\Api\Output\Output;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface Application
+interface Application extends Runnable
 {
     /**
      * Returns the application configuration.
@@ -123,16 +123,19 @@ interface Application
     /**
      * Executes the command for a given input.
      *
-     * @param Input  $input       The console input. If not given, the input
-     *                            passed to the PHP process is used.
-     * @param Output $output      The standard output. If not given, the
-     *                            application prints to the standard output of
-     *                            the PHP process.
-     * @param Output $errorOutput The error output. If not given, the
-     *                            application prints to the error output of the
-     *                            PHP process.
+     * @param RawArgs $args        The console arguments. If not given, the
+     *                             arguments passed to the PHP process are used.
+     * @param Input   $input       The standard input. If not given, the
+     *                             application reads from the standard input of
+     *                             the PHP process.
+     * @param Output  $output      The standard output. If not given, the
+     *                             application prints to the standard output of
+     *                             the PHP process.
+     * @param Output  $errorOutput The error output. If not given, the
+     *                             application prints to the error output of the
+     *                             PHP process.
      *
      * @return int The exit status.
      */
-    public function run(Input $input = null, Output $output = null, Output $errorOutput = null);
+    public function run(RawArgs $args = null, Input $input = null, Output $output = null, Output $errorOutput = null);
 }

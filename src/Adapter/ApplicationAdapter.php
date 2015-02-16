@@ -15,7 +15,6 @@ use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Assert\Assert;
 
 /**
@@ -29,7 +28,7 @@ class ApplicationAdapter extends Application
     /**
      * @var \Webmozart\Console\Api\Application\Application
      */
-    private $application;
+    private $adaptedApplication;
 
     /**
      * @var CommandAdapter
@@ -43,12 +42,12 @@ class ApplicationAdapter extends Application
      */
     public function __construct(\Webmozart\Console\Api\Application\Application $application)
     {
-        $this->application = $application;
+        $this->adaptedApplication = $application;
 
         $config = $application->getConfig();
         $dimensions = $config->getOutputDimensions();
 
-        parent::__construct($config->getName(), $config->getVersion());
+        parent::__construct($config->getDisplayName(), $config->getVersion());
 
         if ($dispatcher = $config->getDispatcher()) {
             $this->setDispatcher($dispatcher);
@@ -59,8 +58,20 @@ class ApplicationAdapter extends Application
         $this->setTerminalDimensions($dimensions->getWidth(), $dimensions->getHeight());
 
         foreach ($application->getCommands() as $command) {
-            $this->add(new CommandAdapter($command));
+            $this->add(new CommandAdapter($command, $this));
         }
+
+        foreach ($application->getUnnamedCommands() as $command) {
+            $this->add(new CommandAdapter($command, $this));
+        }
+    }
+
+    /**
+     * @return \Webmozart\Console\Api\Application\Application
+     */
+    public function getAdaptedApplication()
+    {
+        return $this->adaptedApplication;
     }
 
     /**
@@ -68,14 +79,21 @@ class ApplicationAdapter extends Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        Assert::isInstanceOf($input, 'Webmozart\Console\Api\Input\Input');
+        /** @var CompositeInput $input */
+        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\CompositeInput');
 
-        /** @var Input $input */
-        $commandResolver = $this->application->getConfig()->getCommandResolver();
-        $command = $commandResolver->resolveCommand($input, $this->application->getCommands());
+        $commandResolver = $this->adaptedApplication->getConfig()->getCommandResolver();
+        $resolvedCommand = $commandResolver->resolveCommand($input->getRawArgs(), $this->adaptedApplication);
+
+        if (!$resolvedCommand->isParsable()) {
+            throw $resolvedCommand->getParseError();
+        }
+
+        // Add parsed Args to the composite input
+        $input = new CompositeInput($input->getRawArgs(), $input->getInput(), $resolvedCommand->getParsedArgs());
 
         // Don't use $this->get() as get() does not work for sub-commands
-        $this->currentCommand = new CommandAdapter($command);
+        $this->currentCommand = new CommandAdapter($resolvedCommand->getCommand(), $this);
         $this->currentCommand->setApplication($this);
 
         try {
@@ -113,7 +131,7 @@ class ApplicationAdapter extends Application
      */
     protected function getDefaultInputDefinition()
     {
-        return new InputDefinitionAdapter($this->application->getBaseInputDefinition());
+        return new ArgsFormatAdapter($this->adaptedApplication->getGlobalArgsFormat());
     }
 
     /**
@@ -129,6 +147,6 @@ class ApplicationAdapter extends Application
      */
     protected function getDefaultHelperSet()
     {
-        return $this->application->getConfig()->getHelperSet();
+        return $this->adaptedApplication->getConfig()->getHelperSet();
     }
 }

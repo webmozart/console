@@ -11,21 +11,23 @@
 
 namespace Webmozart\Console;
 
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Webmozart\Console\Adapter\ApplicationAdapter;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
+use Webmozart\Console\Adapter\CompositeInput;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Output\Output;
-use Webmozart\Console\Output\CompositeOutput;
+use Webmozart\Console\Args\ArgvArgs;
+use Webmozart\Console\Adapter\CompositeOutput;
+use Webmozart\Console\Input\StandardInput;
 
 /**
  * A console application.
@@ -180,13 +182,17 @@ class ConsoleApplication implements Application
     /**
      * {@inheritdoc}
      */
-    public function run(Input $input = null, Output $output = null, Output $errorOutput = null)
+    public function run(RawArgs $args = null, Input $input = null, Output $output = null, Output $errorOutput = null)
     {
         $dimensions = $this->config->getOutputDimensions();
         $styleSet = $this->config->getStyleSet();
 
+        if (null === $args) {
+            $args = new ArgvArgs();
+        }
+
         if (null === $input) {
-            $input = new InputInterfaceAdapter(new ArgvInput());
+            $input = new StandardInput();
         }
 
         if (null === $output) {
@@ -207,7 +213,10 @@ class ConsoleApplication implements Application
             $errorOutput->setStyleSet($styleSet);
         }
 
-        // Wrap outputs in a CompositeOutput while passing them through Symfony
-        return $this->applicationAdapter->run($input, new CompositeOutput($output, $errorOutput));
+        // Wrap inputs and outputs while passing them through Symfony
+        return $this->applicationAdapter->run(
+            new CompositeInput($args, $input),
+            new CompositeOutput($output, $errorOutput)
+        );
     }
 }

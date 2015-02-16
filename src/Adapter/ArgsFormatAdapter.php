@@ -40,6 +40,8 @@ class ArgsFormatAdapter extends InputDefinition
      */
     public function __construct(ArgsFormat $format)
     {
+        parent::__construct();
+
         $i = 1;
 
         foreach ($format->getCommandNames() as $commandName) {

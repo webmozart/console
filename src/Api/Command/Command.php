@@ -11,11 +11,19 @@
 
 namespace Webmozart\Console\Api\Command;
 
+use Exception;
 use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Args\Args;
+use Webmozart\Console\Api\Args\CannotParseArgsException;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\Runnable;
+use Webmozart\Console\Util\ProcessTitle;
 
 /**
  * A console command.
@@ -42,7 +50,7 @@ use Webmozart\Console\Api\Config\SubCommandConfig;
  * @author Bernhard Schussek <bschussek@gmail.com>
  * @see    NamedCommand
  */
-class Command
+class Command implements Runnable
 {
     /**
      * @var CommandConfig
@@ -306,6 +314,67 @@ class Command
     }
 
     /**
+     * Parses the raw console arguments and returns the parsed arguments.
+     *
+     * @param RawArgs $args The raw console arguments.
+     *
+     * @return Args The parsed console arguments.
+     *
+     * @throws CannotParseArgsException If the arguments cannot be parsed.
+     */
+    public function parseArgs(RawArgs $args)
+    {
+        return $this->config->getArgsParser()->parseArgs($args, $this->argsFormat);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function run(RawArgs $args, Input $input, Output $output, Output $errorOutput)
+    {
+        return $this->handle($this->parseArgs($args), $input, $output, $errorOutput);
+    }
+
+    /**
+     * Executes the command for the given arguments.
+     *
+     * @param Args   $args        The parsed console arguments.
+     * @param Input  $input       The standard input.
+     * @param Output $output      The standard output.
+     * @param Output $errorOutput The error output.
+     *
+     * @return int Returns 0 on success and any other integer on error.
+     *
+     * @throws Exception
+     */
+    public function handle(Args $args, Input $input, Output $output, Output $errorOutput)
+    {
+        $processTitle = $this->config->getProcessTitle();
+        $commandHandler = $this->config->getHandler($this);
+        $commandHandler->initialize($this, $output, $errorOutput);
+
+        $this->warnIfProcessTitleNotSupported($processTitle, $errorOutput);
+
+        if ($processTitle && ProcessTitle::isSupported()) {
+            ProcessTitle::setProcessTitle($processTitle);
+
+            try {
+                $statusCode = $commandHandler->handle($args, $input);
+            } catch (Exception $e) {
+                ProcessTitle::resetProcessTitle();
+
+                throw $e;
+            }
+
+            ProcessTitle::resetProcessTitle();
+        } else {
+            $statusCode = $commandHandler->handle($args, $input);
+        }
+
+        return $statusCode;
+    }
+
+    /**
      * Creates the arguments format of the command.
      *
      * @return ArgsFormat The created format for the console arguments.
@@ -387,5 +456,12 @@ class Command
         }
 
         $this->optionCommands->add(new NamedCommand($config, $this->application, $this));
+    }
+
+    private function warnIfProcessTitleNotSupported($processTitle, Output $errorOutput)
+    {
+        if ($processTitle && !ProcessTitle::isSupported() && Output::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
+            $errorOutput->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
+        }
     }
 }

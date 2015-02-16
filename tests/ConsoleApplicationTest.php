@@ -11,14 +11,15 @@
 
 namespace Webmozart\Console\Tests;
 
+use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
@@ -26,7 +27,9 @@ use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
+use Webmozart\Console\Input\StringInput;
 
 /**
  * @since  1.0
@@ -202,102 +205,135 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($application->hasDefaultCommands());
     }
 
-    public function testRunCommand()
+    /**
+     * @dataProvider getRunConfigurations
+     */
+    public function testRunCommand($argString, $configCallback)
     {
-        $callback = function (Input $input, Output $output, Output $errorOutput) {
-            $output->writeln('stdout: '.$input->toString());
-            $errorOutput->writeln('stderr: '.$input->toString());
+        $callback = function (Args $args, Input $input, Output $output, Output $errorOutput) {
+            $output->write($input->readLine());
+            $errorOutput->write($input->readLine());
 
             return 123;
         };
 
-        $this->config
-            ->beginCommand('list')
-                ->setCallback($callback)
-            ->end()
-        ;
+        $configCallback($this->config, $callback);
 
-        $input = new InputInterfaceAdapter(new StringInput('list'));
-        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
-        $runner = new ConsoleApplication($this->config);
+        $args = new StringArgs($argString);
+        $input = new StringInput("line1\nline2");
+        $output = new OutputInterfaceAdapter($buffer1 = new BufferedOutput());
+        $errorOutput = new OutputInterfaceAdapter($buffer2 = new BufferedOutput());
+        $application = new ConsoleApplication($this->config);
 
-        $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: list\nstderr: list\n", $buffer->fetch());
+        $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
+        $this->assertSame("line1\n", $buffer1->fetch());
+        $this->assertSame("line2", $buffer2->fetch());
     }
 
-    public function testRunDefaultCommand()
+    public function getRunConfigurations()
     {
-        $callback = function (Input $input, Output $output, Output $errorOutput) {
-            $output->writeln('stdout: '.$input->toString());
-            $errorOutput->writeln('stderr: '.$input->toString());
-
-            return 123;
-        };
-
-        $this->config
-            ->beginCommand('list')
-                ->setCallback($callback)
-            ->end()
-            ->setDefaultCommand('list')
-        ;
-
-        $input = new InputInterfaceAdapter(new StringInput(''));
-        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
-        $runner = new ConsoleApplication($this->config);
-
-        $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: \nstderr: \n", $buffer->fetch());
-    }
-
-    public function testRunDefaultSubCommand()
-    {
-        $callback = function (Input $input, Output $output, Output $errorOutput) {
-            $output->writeln('stdout: '.$input->toString());
-            $errorOutput->writeln('stderr: '.$input->toString());
-
-            return 123;
-        };
-
-        $this->config
-            ->beginCommand('server')
-                ->beginSubCommand('list')
-                    ->setCallback($callback)
-                ->end()
-                ->setDefaultSubCommand('list')
-            ->end()
-        ;
-
-        $input = new InputInterfaceAdapter(new StringInput('server'));
-        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
-        $runner = new ConsoleApplication($this->config);
-
-        $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: server\nstderr: server\n", $buffer->fetch());
-    }
-
-    public function testRunDefaultOptionCommand()
-    {
-        $callback = function (Input $input, Output $output, Output $errorOutput) {
-            $output->writeln('stdout: '.$input->toString());
-            $errorOutput->writeln('stderr: '.$input->toString());
-
-            return 123;
-        };
-
-        $this->config
-            ->beginCommand('server')
-                ->beginOptionCommand('list')
-                    ->setCallback($callback)
-                ->end()
-                ->setDefaultOptionCommand('list')
-            ->end()
-        ;
-
-        $input = new InputInterfaceAdapter(new StringInput('server'));
-        $output = new OutputInterfaceAdapter($buffer = new BufferedOutput());
-        $runner = new ConsoleApplication($this->config);
-
-        $this->assertSame(123, $runner->run($input, $output));
-        $this->assertSame("stdout: server\nstderr: server\n", $buffer->fetch());
+        return array(
+            // Simple command
+            array(
+                'list',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('list')
+                            ->setCallback($callback)
+                        ->end()
+                    ;
+                }
+            ),
+            // Default command
+            array(
+                '',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->addDefaultCommand('list')
+                        ->beginCommand('list')
+                            ->setCallback($callback)
+                        ->end()
+                    ;
+                }
+            ),
+            // Unnamed command
+            array(
+                '',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginUnnamedCommand()
+                            ->setCallback($callback)
+                        ->end()
+                    ;
+                }
+            ),
+            // Sub-command
+            array(
+                'server add',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('server')
+                            ->beginSubCommand('add')
+                                ->setCallback($callback)
+                            ->end()
+                        ->end()
+                    ;
+                }
+            ),
+            // Default sub-command
+            array(
+                'server',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('server')
+                            ->addDefaultCommand('add')
+                            ->beginSubCommand('add')
+                                ->setCallback($callback)
+                            ->end()
+                        ->end()
+                    ;
+                }
+            ),
+            // Option command
+            array(
+                'server --add',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('server')
+                            ->beginOptionCommand('add')
+                                ->setCallback($callback)
+                            ->end()
+                        ->end()
+                    ;
+                }
+            ),
+            // Default option command
+            array(
+                'server',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('server')
+                            ->addDefaultCommand('add')
+                            ->beginOptionCommand('add')
+                                ->setCallback($callback)
+                            ->end()
+                        ->end()
+                    ;
+                }
+            ),
+            // Unnamed sub-command
+            array(
+                'server',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('server')
+                            ->beginUnnamedCommand()
+                                ->setCallback($callback)
+                            ->end()
+                        ->end()
+                    ;
+                }
+            ),
+        );
     }
 }

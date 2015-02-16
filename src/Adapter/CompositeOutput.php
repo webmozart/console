@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Output;
+namespace Webmozart\Console\Adapter;
 
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Webmozart\Console\Api\Output\Dimensions;
@@ -17,7 +17,7 @@ use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Api\Style\StyleSet;
 
 /**
- * An output that wraps a standard and an error output.
+ * An output that wraps the standard and the error output.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>

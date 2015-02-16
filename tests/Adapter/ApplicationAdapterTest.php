@@ -14,8 +14,8 @@ namespace Webmozart\Console\Tests\Adapter;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Adapter\ApplicationAdapter;
+use Webmozart\Console\Adapter\ArgsFormatAdapter;
 use Webmozart\Console\Adapter\CommandAdapter;
-use Webmozart\Console\Adapter\InputDefinitionAdapter;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Output\Dimensions;
 use Webmozart\Console\ConsoleApplication;
@@ -29,7 +29,8 @@ class ApplicationAdapterTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $config = ApplicationConfig::create()
-            ->setName('Test Name')
+            ->setName('test-bin')
+            ->setDisplayName('Test Name')
             ->setVersion('1.2.3')
             ->setHelperSet($helperSet = new HelperSet())
             ->setOutputDimensions(new Dimensions(80, 20))
@@ -46,9 +47,9 @@ class ApplicationAdapterTest extends PHPUnit_Framework_TestCase
         $this->assertSame($helperSet, $adapter->getHelperSet());
         $this->assertSame(array(80, 20), $adapter->getTerminalDimensions());
         $this->assertSame(array(), $adapter->getNamespaces());
-        $this->assertEquals(new InputDefinitionAdapter($application->getBaseInputDefinition()), $adapter->getDefinition());
+        $this->assertEquals(new ArgsFormatAdapter($application->getGlobalArgsFormat()), $adapter->getDefinition());
 
-        $commandAdapter = new CommandAdapter($application->getCommand('command'));
+        $commandAdapter = new CommandAdapter($application->getCommand('command'), $adapter);
         $commandAdapter->setApplication($adapter);
         $commandAdapter->setHelperSet($helperSet);
 

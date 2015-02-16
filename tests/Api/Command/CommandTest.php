@@ -11,9 +11,11 @@
 
 namespace Webmozart\Console\Tests\Api\Command;
 
+use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
@@ -23,6 +25,11 @@ use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
+use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Args\StringArgs;
+use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Input\StringInput;
 
 /**
  * @since  1.0
@@ -410,5 +417,78 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $config->addOptionCommandConfig(new OptionCommandConfig('option2', 'o'));
 
         new Command($config);
+    }
+
+    public function testParseArgs()
+    {
+        $rawArgs = $this->getMock('Webmozart\Console\Api\Args\RawArgs');
+        $parsedArgs = new Args(new ArgsFormat());
+        $parser = $this->getMock('Webmozart\Console\Api\Args\ArgsParser');
+        $config = new CommandConfig('command');
+        $config->setArgsParser($parser);
+        $command = new Command($config);
+
+        $parser->expects($this->once())
+            ->method('parseArgs')
+            ->with($this->identicalTo($rawArgs))
+            ->willReturn($parsedArgs);
+
+        $this->assertSame($parsedArgs, $command->parseArgs($rawArgs));
+    }
+
+    public function testHandle()
+    {
+        $args = new Args(new ArgsFormat());
+        $input = $this->getMock('Webmozart\Console\Api\Input\Input');
+        $output = $this->getMock('Webmozart\Console\Api\Output\Output');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\Output\Output');
+        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+
+        $config = new CommandConfig('command');
+        $config->setHandler($handler);
+        $command = new Command($config);
+
+        $handler->expects($this->at(0))
+            ->method('initialize')
+            ->with($command, $output, $errorOutput);
+
+        $handler->expects($this->at(1))
+            ->method('handle')
+            ->with($args, $input)
+            ->willReturn(123);
+
+        $this->assertSame(123, $command->handle($args, $input, $output, $errorOutput));
+    }
+
+    public function testRun()
+    {
+        $rawArgs = $this->getMock('Webmozart\Console\Api\Args\RawArgs');
+        $parsedArgs = new Args(new ArgsFormat());
+        $input = $this->getMock('Webmozart\Console\Api\Input\Input');
+        $output = $this->getMock('Webmozart\Console\Api\Output\Output');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\Output\Output');
+        $parser = $this->getMock('Webmozart\Console\Api\Args\ArgsParser');
+        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+
+        $config = new CommandConfig('command');
+        $config->setArgsParser($parser);
+        $config->setHandler($handler);
+        $command = new Command($config);
+
+        $parser->expects($this->once())
+            ->method('parseArgs')
+            ->with($this->identicalTo($rawArgs))
+            ->willReturn($parsedArgs);
+
+        $handler->expects($this->at(0))
+            ->method('initialize')
+            ->with($command, $output, $errorOutput);
+
+        $handler->expects($this->at(1))
+            ->method('handle')
+            ->with($parsedArgs, $input)
+            ->willReturn(123);
+
+        $this->assertSame(123, $command->run($rawArgs, $input, $output, $errorOutput));
     }
 }

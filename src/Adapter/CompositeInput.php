@@ -13,30 +13,62 @@ namespace Webmozart\Console\Adapter;
 
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Webmozart\Console\Api\Args\Args;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Input\Input;
 
 /**
+ * An input that wraps the console arguments and the standard input.
+ *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class InputInterfaceAdapter implements Input
+class CompositeInput implements InputInterface
 {
     /**
-     * @var InputInterface
+     * @var RawArgs
      */
-    private $adaptedInput;
+    private $rawArgs;
 
-    public function __construct(InputInterface $adaptedInput)
+    /**
+     * @var Input
+     */
+    private $input;
+
+    /**
+     * @var Args
+     */
+    private $args;
+
+    public function __construct(RawArgs $rawArgs, Input $input, Args $args = null)
     {
-        $this->adaptedInput = $adaptedInput;
+        $this->rawArgs = $rawArgs;
+        $this->input = $input;
+        $this->args = $args;
     }
 
     /**
-     * @return InputInterface
+     * @return RawArgs
      */
-    public function getAdaptedInput()
+    public function getRawArgs()
     {
-        return $this->adaptedInput;
+        return $this->rawArgs;
+    }
+
+    /**
+     * @return Input
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @return Args
+     */
+    public function getArgs()
+    {
+        return $this->args;
     }
 
     /**
@@ -44,7 +76,9 @@ class InputInterfaceAdapter implements Input
      */
     public function getFirstArgument()
     {
-        return $this->adaptedInput->getFirstArgument();
+        $tokens = $this->rawArgs->getTokens();
+
+        return count($tokens) > 0 ? reset($tokens) : null;
     }
 
     /**
@@ -52,7 +86,13 @@ class InputInterfaceAdapter implements Input
      */
     public function hasParameterOption($values)
     {
-        return $this->adaptedInput->hasParameterOption($values);
+        foreach ((array) $values as $value) {
+            if (!$this->rawArgs->hasToken($value)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -60,7 +100,7 @@ class InputInterfaceAdapter implements Input
      */
     public function getParameterOption($values, $default = false)
     {
-        return $this->adaptedInput->getParameterOption($values, $default);
+
     }
 
     /**
@@ -68,7 +108,7 @@ class InputInterfaceAdapter implements Input
      */
     public function bind(InputDefinition $definition)
     {
-        return $this->adaptedInput->bind($definition);
+
     }
 
     /**
@@ -76,7 +116,7 @@ class InputInterfaceAdapter implements Input
      */
     public function validate()
     {
-        return $this->adaptedInput->validate();
+
     }
 
     /**
@@ -84,7 +124,7 @@ class InputInterfaceAdapter implements Input
      */
     public function getArguments()
     {
-        return $this->adaptedInput->getArguments();
+
     }
 
     /**
@@ -92,7 +132,7 @@ class InputInterfaceAdapter implements Input
      */
     public function getArgument($name)
     {
-        return $this->adaptedInput->getArgument($name);
+
     }
 
     /**
@@ -100,7 +140,7 @@ class InputInterfaceAdapter implements Input
      */
     public function setArgument($name, $value)
     {
-        return $this->adaptedInput->setArgument($name, $value);
+
     }
 
     /**
@@ -108,7 +148,7 @@ class InputInterfaceAdapter implements Input
      */
     public function hasArgument($name)
     {
-        return $this->adaptedInput->hasArgument($name);
+
     }
 
     /**
@@ -116,7 +156,7 @@ class InputInterfaceAdapter implements Input
      */
     public function getOptions()
     {
-        return $this->adaptedInput->getOptions();
+
     }
 
     /**
@@ -124,7 +164,7 @@ class InputInterfaceAdapter implements Input
      */
     public function getOption($name)
     {
-        return $this->adaptedInput->getOption($name);
+
     }
 
     /**
@@ -132,7 +172,7 @@ class InputInterfaceAdapter implements Input
      */
     public function setOption($name, $value)
     {
-        return $this->adaptedInput->setOption($name, $value);
+
     }
 
     /**
@@ -140,7 +180,7 @@ class InputInterfaceAdapter implements Input
      */
     public function hasOption($name)
     {
-        return $this->adaptedInput->hasOption($name);
+
     }
 
     /**
@@ -148,7 +188,7 @@ class InputInterfaceAdapter implements Input
      */
     public function isInteractive()
     {
-        return $this->adaptedInput->isInteractive();
+
     }
 
     /**
@@ -156,14 +196,6 @@ class InputInterfaceAdapter implements Input
      */
     public function setInteractive($interactive)
     {
-        return $this->adaptedInput->setInteractive($interactive);
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function toString()
-    {
-        return $this->adaptedInput->__toString();
     }
 }

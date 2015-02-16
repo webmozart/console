@@ -11,21 +11,17 @@
 
 namespace Webmozart\Console\Adapter;
 
-use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Assert\Assert;
-use Webmozart\Console\Output\CompositeOutput;
-use Webmozart\Console\Util\ProcessTitle;
 
 /**
- * Adapts the command API of this package to Symfony's {@link Command} API.
+ * Adapts a command of this package to Symfony's {@link Command} API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -43,20 +39,24 @@ class CommandAdapter extends Command
      * @param \Webmozart\Console\Api\Command\Command $adaptedCommand The adapted command.
      * @param Application                            $application    The application.
      */
-    public function __construct(\Webmozart\Console\Api\Command\Command $adaptedCommand, Application $application = null)
+    public function __construct(\Webmozart\Console\Api\Command\Command $adaptedCommand, Application $application)
     {
-        parent::setName($adaptedCommand->getName());
+        parent::setName($this->createName($adaptedCommand, $application));
+
         parent::__construct();
 
         $this->adaptedCommand = $adaptedCommand;
 
         $config = $adaptedCommand->getConfig();
 
-        parent::setDefinition(new InputDefinitionAdapter($this->adaptedCommand->getInputDefinition()));
-        parent::setAliases($adaptedCommand->getAliases());
+        parent::setDefinition(new ArgsFormatAdapter($this->adaptedCommand->getArgsFormat()));
         parent::setApplication($application);
         parent::setDescription($config->getDescription());
         parent::setHelp($config->getHelp());
+
+        if ($adaptedCommand instanceof NamedCommand) {
+            parent::setAliases($adaptedCommand->getAliases());
+        }
 
         if ($helperSet = $config->getHelperSet()) {
             parent::setHelperSet($helperSet);
@@ -66,7 +66,7 @@ class CommandAdapter extends Command
     /**
      * Returns the adapted command.
      *
-     * @return \Webmozart\Console\Api\Command\Command The adapted command.
+     * @return Command The adapted command.
      */
     public function getAdaptedCommand()
     {
@@ -242,76 +242,26 @@ class CommandAdapter extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        // These conditions should hold since we set the input/output
-        // accordingly in ConsoleApplication
-        Assert::isInstanceOf($input, 'Webmozart\Console\Api\Input\Input');
-        Assert::isInstanceOf($output, 'Webmozart\Console\Output\CompositeOutput');
-
-        /** @var Input $input */
-        $this->bindAndValidateInput($input, $this->getDefinition());
-
+        /** @var CompositeInput $input */
         /** @var CompositeOutput $output */
-        $statusCode = $this->handleCommand($input, $output, $output->getErrorOutput());
+        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\CompositeInput');
+        Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\CompositeOutput');
 
-        return is_numeric($statusCode) ? (int) $statusCode : 0;
+        return $this->adaptedCommand->handle($input->getArgs(), $input->getInput(), $output->getOutput(), $output->getErrorOutput());
     }
 
-    private function bindAndValidateInput(Input $input, InputDefinitionAdapter $definitionAdapter)
+    private function createName(\Webmozart\Console\Api\Command\Command $command, Application $application)
     {
-        // Bind the input to the input definition of the command
-        $input->bind($definitionAdapter);
-
-        // Set the command names in case they are missing from the input
-        // This happens if a default command is executed
-        $this->ensureCommandNamesSet($input, $definitionAdapter);
-
-        // Set more arguments/options interactively
-        if ($input->isInteractive()) {
-            $this->adaptedCommand->getConfig()->interact($input);
+        if ($command instanceof NamedCommand) {
+            return $command->getName();
         }
 
-        // Now validate the input
-        $input->validate();
-    }
+        $i = 1;
 
-    private function ensureCommandNamesSet(Input $input, InputDefinitionAdapter $definitionAdapter)
-    {
-        foreach ($definitionAdapter->getCommandNamesByArgumentName() as $argName => $commandName) {
-            $input->setArgument($argName, $commandName);
-        }
-    }
-
-    private function handleCommand(Input $input, Output $output, Output $errorOutput)
-    {
-        $processTitle = $this->adaptedCommand->getConfig()->getProcessTitle();
-        $commandHandler = $this->adaptedCommand->getConfig()->getHandler($this->adaptedCommand);
-        $commandHandler->initialize($this->adaptedCommand, $output, $errorOutput);
-
-        $this->warnIfProcessTitleNotSupported($processTitle, $errorOutput);
-
-        if ($processTitle && ProcessTitle::isSupported()) {
-            ProcessTitle::setProcessTitle($processTitle);
-
-            try {
-                $statusCode = $commandHandler->handle($input);
-            } catch (Exception $e) {
-                ProcessTitle::resetProcessTitle();
-
-                throw $e;
-            }
-
-            ProcessTitle::resetProcessTitle();
-        } else {
-            $statusCode = $commandHandler->handle($input);
+        while ($application->has('unnamed'.$i)) {
+            ++$i;
         }
 
-        return $statusCode;
-    }
-
-    private function warnIfProcessTitleNotSupported($processTitle, Output $errorOutput)
-    {
-        if ($processTitle && !ProcessTitle::isSupported() && Output::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
-            $errorOutput->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
-        }
+        return 'unnamed'.$i;
     }
 }
