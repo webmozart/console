@@ -14,9 +14,9 @@ namespace Webmozart\Console\Tests\Descriptor;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputOption;
 use Webmozart\Console\Api\Output\Dimensions;
 use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\ConsoleApplication;
@@ -61,7 +61,7 @@ class TextDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeCommand()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->addArgument('global-argument', 0, 'Description of "global-argument"')
             ->addOption('global-option', 'g', 0, 'Description of "global-option"')
             ->beginCommand('command')
@@ -106,9 +106,9 @@ EOF;
     public function testDescribeRequiredArgument()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
-                ->addArgument('argument', InputArgument::REQUIRED, 'Description of "argument"')
+                ->addArgument('argument', Argument::REQUIRED, 'Description of "argument"')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -133,9 +133,9 @@ EOF;
     public function testDescribeOptionWithOptionalValue()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
-                ->addOption('option', 'o', InputOption::VALUE_OPTIONAL, 'Description of "option"')
+                ->addOption('option', 'o', Option::OPTIONAL_VALUE, 'Description of "option"')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -160,9 +160,9 @@ EOF;
     public function testDescribeOptionWithRequiredValue()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
-                ->addOption('option', 'o', InputOption::VALUE_REQUIRED, 'Description of "option"')
+                ->addOption('option', 'o', Option::REQUIRED_VALUE, 'Description of "option"')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -187,9 +187,9 @@ EOF;
     public function testDescribeOptionWithDefaultValue()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
-                ->addOption('option', 'o', InputOption::VALUE_OPTIONAL, 'Description of "option"', 'Default')
+                ->addOption('option', 'o', Option::OPTIONAL_VALUE, 'Description of "option"', 'Default')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -214,9 +214,9 @@ EOF;
     public function testDescribeOptionWithNamedValue()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
-                ->addOption('option', 'o', InputOption::VALUE_OPTIONAL, 'Description of "option"', null, 'value')
+                ->addOption('option', 'o', Option::OPTIONAL_VALUE, 'Description of "option"', null, 'value')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -241,9 +241,9 @@ EOF;
     public function testDescribeOptionWithPreferredShortName()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
-                ->addOption('option', 'o', InputOption::PREFER_SHORT_NAME, 'Description of "option"')
+                ->addOption('option', 'o', Option::PREFER_SHORT_NAME, 'Description of "option"')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -268,7 +268,7 @@ EOF;
     public function testDescribeCommandWithSubCommands()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->addOption('global-option', 'g', 0, 'Description of "global-option"')
             ->beginCommand('command')
                 ->addArgument('argument', 0, 'Description of "argument"')
@@ -329,8 +329,9 @@ EOF;
     public function testDescribeCommandWithDefaultSubCommand()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
+                ->addDefaultCommand('add')
                 ->beginSubCommand('add')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -338,7 +339,6 @@ EOF;
                 ->beginSubCommand('delete')
                     ->setDescription('Description of "delete"')
                 ->end()
-                ->setDefaultSubCommand('add')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -370,7 +370,7 @@ EOF;
     public function testDescribeCommandWithOptionCommands()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->addOption('global-option', 'g', 0, 'Description of "global-option"')
             ->beginCommand('command')
                 ->addArgument('argument', 0, 'Description of "argument"')
@@ -431,8 +431,9 @@ EOF;
     public function testDescribeCommandWithDefaultOptionCommand()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
+                ->addDefaultCommand('add')
                 ->beginOptionCommand('add', 'a')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -440,7 +441,6 @@ EOF;
                 ->beginOptionCommand('delete')
                     ->setDescription('Description of "delete"')
                 ->end()
-                ->setDefaultOptionCommand('add')
             ->end();
 
         $application = new ConsoleApplication($config);
@@ -472,7 +472,7 @@ EOF;
     public function testDescribeOptionCommandWithPreferredLongName()
     {
         $config = ApplicationConfig::create()
-            ->setExecutableName('test-bin')
+            ->setName('test-bin')
             ->beginCommand('command')
                 ->beginOptionCommand('add', 'a')
                     ->setDescription('Description of "add"')

@@ -13,10 +13,9 @@ namespace Webmozart\Console\Tests\Descriptor;
 
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\StringInput;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Args;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Descriptor\DelegatingDescriptor;
 use Webmozart\Console\Descriptor\Descriptor;
@@ -53,9 +52,9 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
     private $delegate2;
 
     /**
-     * @var InputDefinition
+     * @var ArgsFormat
      */
-    private $inputDefinition;
+    private $argsFormat;
 
     protected function setUp()
     {
@@ -64,17 +63,16 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
         $this->object = new \stdClass();
         $this->delegate1 = $this->getMock('Webmozart\Console\Descriptor\Descriptor');
         $this->delegate2 = $this->getMock('Webmozart\Console\Descriptor\Descriptor');
-        $this->inputDefinition = new InputDefinition(array(
-            new InputOption('format', null, InputOption::VALUE_REQUIRED),
+        $this->argsFormat = new ArgsFormat(array(
+            new Option('format', null, Option::REQUIRED_VALUE),
         ));
     }
 
     public function testDescribe()
     {
-        $options = array(
-            'input' => $this->getStringInput('--format=xml'),
-            'option' => 'value',
-        );
+        $args = new Args($this->argsFormat);
+        $args->setOption('format', 'xml');
+        $options = array('args' => $args);
 
         $this->descriptor->register('text', $this->delegate1);
         $this->descriptor->register('xml', $this->delegate2);
@@ -94,10 +92,8 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
 
     public function testDescribeUsesFirstRegisteredDescriptorByDefault()
     {
-        $options = array(
-            'input' => $this->getStringInput(''),
-            'option' => 'value',
-        );
+        $args = new Args($this->argsFormat);
+        $options = array('args' => $args);
 
         $this->descriptor->register('text', $this->delegate1);
         $this->descriptor->register('xml', $this->delegate2);
@@ -115,12 +111,11 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
         $this->assertSame(123, $status);
     }
 
-    public function testDescribeUsesDefaultDescriptor()
+    public function testDescribeUsesDefaultDescriptorPassedToConstructor()
     {
-        $options = array(
-            'input' => $this->getStringInput(''),
-            'option' => 'value',
-        );
+        $args = new Args($this->argsFormat);
+        $args->setOption('format', 'xml');
+        $options = array('args' => $args);
 
         $this->descriptor = new DelegatingDescriptor('xml');
         $this->descriptor->register('text', $this->delegate1);
@@ -144,16 +139,10 @@ class DelegatingDescriptorTest extends PHPUnit_Framework_TestCase
      */
     public function testDescribeFailsIfFormatNotSupported()
     {
-        $this->descriptor->describe($this->output, $this->object, array(
-            'input' => $this->getStringInput('--format=xml'),
-        ));
-    }
+        $args = new Args($this->argsFormat);
+        $args->setOption('format', 'xml');
+        $options = array('args' => $args);
 
-    private function getStringInput($inputString)
-    {
-        $input = new InputInterfaceAdapter(new StringInput($inputString));
-        $input->bind($this->inputDefinition);
-
-        return $input;
+        $this->descriptor->describe($this->output, $this->object, $options);
     }
 }

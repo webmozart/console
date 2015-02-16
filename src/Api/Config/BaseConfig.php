@@ -138,14 +138,16 @@ abstract class BaseConfig
      * @param string $description A one-line description of the option.
      * @param mixed  $default     The default value. Must be `null` if the
      *                            flags contain {@link InputOption::VALUE_REQUIRED}.
+     * @param string $valueName   The name of the value to be used in usage
+     *                            examples of the option.
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
      * @see getOptions()
      */
-    public function addOption($longName, $shortName = null, $flags = 0, $description = null, $default = null)
+    public function addOption($longName, $shortName = null, $flags = 0, $description = null, $default = null, $valueName = '...')
     {
-        $this->formatBuilder->addOption(new Option($longName, $shortName, $flags, $description, $default));
+        $this->formatBuilder->addOption(new Option($longName, $shortName, $flags, $description, $default, $valueName));
 
         return $this;
     }

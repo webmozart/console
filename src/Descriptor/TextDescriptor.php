@@ -13,13 +13,13 @@ namespace Webmozart\Console\Descriptor;
 
 use InvalidArgumentException;
 use Webmozart\Console\Api\Application\Application;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputDefinition;
-use Webmozart\Console\Api\Input\InputDefinitionBuilder;
-use Webmozart\Console\Api\Input\InputOption;
 use Webmozart\Console\Api\Output\Output;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
@@ -78,22 +78,17 @@ class TextDescriptor implements Descriptor
     {
         $commands = $application->getCommands();
 
-        $definitionBuilder = new InputDefinitionBuilder($application->getBaseInputDefinition());
-        $definitionBuilder->addArgument(new InputArgument('command', InputArgument::REQUIRED, 'The command to execute'));
-        $definitionBuilder->addArgument(new InputArgument('arg', InputArgument::MULTI_VALUED, 'The arguments of the command'));
-        $inputDefinition = $definitionBuilder->getDefinition();
-        $inputArgs = $inputDefinition->getArguments();
-        $inputOpts = $inputDefinition->getOptions();
+        $argsFormat = ArgsFormat::build($application->getGlobalArgsFormat())
+            ->addArgument(new Argument('command', Argument::REQUIRED, 'The command to execute'))
+            ->addArgument(new Argument('arg', Argument::MULTI_VALUED, 'The arguments of the command'))
+            ->getFormat();
 
         $this->printApplicationName($application, $options);
-        $this->printApplicationUsage($application, $inputDefinition, $options);
+        $this->printApplicationUsage($application, $argsFormat, $options);
+        $this->printArguments($argsFormat->getArguments(), $options);
 
-        if ($inputArgs) {
-            $this->printInputArguments($inputArgs, $options);
-        }
-
-        if ($inputOpts) {
-            $this->printGlobalInputOptions($inputOpts, $options);
+        if ($argsFormat->hasOptions()) {
+            $this->printGlobalOptions($argsFormat->getOptions(), $options);
         }
 
         if (!$commands->isEmpty()) {
@@ -110,30 +105,26 @@ class TextDescriptor implements Descriptor
     protected function describeCommand(Command $command, array $options = array())
     {
         $help = $command->getConfig()->getHelp();
-        $inputDefinition = $command->getInputDefinition();
-        $baseDefinition = $inputDefinition->getBaseDefinition();
-        $inputArgs = $inputDefinition->getArguments();
-        $inputOpts = $inputDefinition->getOptions(false);
-        $baseOpts = $baseDefinition ? $baseDefinition->getOptions() : array();
+        $argsFormat = $command->getArgsFormat();
         $subCommands = $command->getSubCommands();
         $optCommands = $command->getOptionCommands();
 
         $this->printCommandUsage($command, $options);
 
-        if ($inputArgs) {
-            $this->printInputArguments($inputArgs, $options);
+        if ($argsFormat->hasArguments()) {
+            $this->printArguments($argsFormat->getArguments(), $options);
         }
 
         if (!$subCommands->isEmpty() || !$optCommands->isEmpty()) {
             $this->printSubCommands($subCommands, $optCommands, $options);
         }
 
-        if ($inputOpts) {
-            $this->printInputOptions($inputOpts, $options);
+        if ($argsFormat->hasOptions(false)) {
+            $this->printOptions($argsFormat->getOptions(false), $options);
         }
 
-        if ($baseOpts) {
-            $this->printGlobalInputOptions($baseOpts, $options);
+        if ($argsFormat->getBaseFormat() && $argsFormat->getBaseFormat()->hasOptions()) {
+            $this->printGlobalOptions($argsFormat->getBaseFormat()->getOptions(), $options);
         }
 
         if ($help) {
@@ -144,19 +135,19 @@ class TextDescriptor implements Descriptor
     /**
      * Prints the usage of an application.
      *
-     * @param Application     $application     The application to describe.
-     * @param InputDefinition $inputDefinition The input definition of the
-     *                                         application.
-     * @param array           $options         Additional options.
+     * @param Application $application The application to describe.
+     * @param ArgsFormat  $argsFormat  The format of the console arguments.
+     * @param array       $options     Additional options.
      */
-    protected function printApplicationUsage(Application $application, InputDefinition $inputDefinition, array $options = array())
+    protected function printApplicationUsage(Application $application, ArgsFormat $argsFormat, array $options = array())
     {
-        $executableName = $application->getConfig()->getExecutableName();
+        $appName = $application->getConfig()->getName();
 
         $this->layout->add(new Paragraph("<h>USAGE</h>"));
         $this->layout->beginBlock();
 
-        $this->printSynopsis($inputDefinition, $executableName, '', true);
+        // true: print global options
+        $this->printSynopsis($argsFormat, $appName, '', true);
 
         $this->layout->endBlock();
         $this->layout->add(new EmptyLine());
@@ -172,36 +163,53 @@ class TextDescriptor implements Descriptor
      */
     protected function printCommandUsage(Command $command, array $options = array())
     {
-        $executableName = $command->getApplication()->getConfig()->getExecutableName();
-        $prefix = $command->hasSubCommands() || $command->hasOptionCommands() ? '    ' : '';
-        $subCommands = $command->getSubCommands();
-        $optionCommands = $command->getOptionCommands();
-        $aliases = $command->getAliases();
+        $formatsToPrint = array();
+
+        // Start with the default commands
+        if ($command->hasDefaultCommands()) {
+            // If the command has default commands, print them
+            foreach ($command->getDefaultCommands() as $subCommand) {
+                if ($subCommand instanceof NamedCommand) {
+                    // true: wrap the sub-command name in "[" "]"
+                    $formatsToPrint[$subCommand->getName()] = array($subCommand->getArgsFormat(), true);
+                } else {
+                    $formatsToPrint[] = array($subCommand->getArgsFormat(), false);
+                }
+            }
+        } else {
+            // Otherwise print the command's usage itself
+            $formatsToPrint[] = array($command->getArgsFormat(), false);
+        }
+
+        // Add remaining sub-commands
+        foreach ($command->getSubCommands() as $subCommand) {
+            // Don't duplicate default commands
+            if (!isset($formatsToPrint[$subCommand->getName()])) {
+                $formatsToPrint[$subCommand->getName()] = array($subCommand->getArgsFormat(), false);
+            }
+        }
+        foreach ($command->getOptionCommands() as $optionCommand) {
+            // Don't duplicate default commands
+            if (!isset($formatsToPrint[$optionCommand->getName()])) {
+                $formatsToPrint[$optionCommand->getName()] = array($optionCommand->getArgsFormat(), false);
+            }
+        }
+
+        $appName = $command->getApplication()->getConfig()->getName();
+        $prefix = count($formatsToPrint) > 1 ? '    ' : '';
 
         $this->layout->add(new Paragraph('<h>USAGE</h>'));
         $this->layout->beginBlock();
 
-        if ($defaultSubCommand = $command->getDefaultSubCommand()) {
-            $this->printSynopsis($defaultSubCommand->getInputDefinition(), $executableName, $prefix, false, true);
-            unset($subCommands[$defaultSubCommand->getName()]);
-        } elseif ($defaultOptionCommand = $command->getDefaultOptionCommand()) {
-            $this->printSynopsis($defaultOptionCommand->getInputDefinition(), $executableName, $prefix, false, true);
-            unset($optionCommands[$defaultOptionCommand->getName()]);
-        } else {
-            $this->printSynopsis($command->getInputDefinition(), $executableName, $prefix);
+        foreach ($formatsToPrint as $vars) {
+            // false: don't include global options
+            $this->printSynopsis($vars[0], $appName, $prefix, false, $vars[1]);
+            $prefix = 'or: ';
         }
 
-        foreach ($subCommands as $subCommand) {
-            $this->printSynopsis($subCommand->getInputDefinition(), $executableName, 'or: ');
-        }
-
-        foreach ($optionCommands as $optionCommand) {
-            $this->printSynopsis($optionCommand->getInputDefinition(), $executableName, 'or: ');
-        }
-
-        if ($aliases) {
+        if ($command instanceof NamedCommand && $command->hasAliases()) {
             $this->layout->add(new EmptyLine());
-            $this->printAliases($aliases, $options);
+            $this->printAliases($command->getAliases(), $options);
         }
 
         $this->layout->endBlock();
@@ -209,20 +217,20 @@ class TextDescriptor implements Descriptor
     }
 
     /**
-     * Prints a list of input arguments.
+     * Prints a list of arguments.
      *
-     * @param InputArgument[] $inputArgs The input arguments to describe.
-     * @param array           $options   Additional options.
+     * @param Argument[] $arguments The arguments to describe.
+     * @param array      $options   Additional options.
      *
      * @return string The output.
      */
-    protected function printInputArguments(array $inputArgs, array $options = array())
+    protected function printArguments(array $arguments, array $options = array())
     {
         $this->layout->add(new Paragraph('<h>ARGUMENTS</h>'));
         $this->layout->beginBlock();
 
-        foreach ($inputArgs as $argument) {
-            $this->printInputArgument($argument, $options);
+        foreach ($arguments as $argument) {
+            $this->printArgument($argument, $options);
         }
 
         $this->layout->endBlock();
@@ -230,14 +238,14 @@ class TextDescriptor implements Descriptor
     }
 
     /**
-     * Prints an input argument.
+     * Prints an argument.
      *
-     * @param InputArgument $argument The input argument to describe.
-     * @param array         $options  Additional options.
+     * @param Argument $argument The argument to describe.
+     * @param array    $options  Additional options.
      *
      * @return string The output.
      */
-    protected function printInputArgument(InputArgument $argument, array $options = array())
+    protected function printArgument(Argument $argument, array $options = array())
     {
         $description = $argument->getDescription();
         $name = '<em><'.$argument->getName().'></em>';
@@ -251,19 +259,19 @@ class TextDescriptor implements Descriptor
     }
 
     /**
-     * Prints a list of input options.
+     * Prints a list of options.
      *
-     * @param InputOption[] $inputOpts The input options to describe.
-     * @param array         $options   Additional options.
+     * @param Option[] $opts    The options to describe.
+     * @param array    $options Additional options.
      *
      * @return string The output.
      */
-    protected function printInputOptions($inputOpts, array $options = array())
+    protected function printOptions(array $opts, array $options = array())
     {
         $this->layout->add(new Paragraph('<h>OPTIONS</h>'));
         $this->layout->beginBlock();
 
-        foreach ($inputOpts as $option) {
+        foreach ($opts as $option) {
             $this->printInputOption($option, $options);
         }
 
@@ -272,19 +280,19 @@ class TextDescriptor implements Descriptor
     }
 
     /**
-     * Prints a list of global input options.
+     * Prints a list of global options.
      *
-     * @param InputOption[] $inputOpts The input options to describe.
-     * @param array         $options   Additional options.
+     * @param Option[] $opts    The global options to describe.
+     * @param array    $options Additional options.
      *
      * @return string The output.
      */
-    protected function printGlobalInputOptions($inputOpts, array $options = array())
+    protected function printGlobalOptions($opts, array $options = array())
     {
         $this->layout->add(new Paragraph('<h>GLOBAL OPTIONS</h>'));
         $this->layout->beginBlock();
 
-        foreach ($inputOpts as $option) {
+        foreach ($opts as $option) {
             $this->printInputOption($option, $options);
         }
 
@@ -295,10 +303,10 @@ class TextDescriptor implements Descriptor
     /**
      * Prints an input option.
      *
-     * @param InputOption $option  The input option to describe.
-     * @param array       $options Additional options.
+     * @param Option $option  The option to describe.
+     * @param array  $options Additional options.
      */
-    protected function printInputOption(InputOption $option, array $options = array())
+    protected function printInputOption(Option $option, array $options = array())
     {
         $description = $option->getDescription();
         $defaultValue = $option->getDefaultValue();
@@ -344,13 +352,13 @@ class TextDescriptor implements Descriptor
         $this->layout->endBlock();
     }
 
-    protected function printSubCommand(Command $command, array $options = array())
+    protected function printSubCommand(NamedCommand $command, array $options = array())
     {
         $config = $command->getConfig();
         $description = $config->getDescription();
         $help = $config->getHelp();
-        $inputArgs = $command->getInputDefinition()->getArguments(false);
-        $inputOpts = $command->getInputDefinition()->getOptions(false);
+        $inputArgs = $command->getArgsFormat()->getArguments(false);
+        $inputOpts = $command->getArgsFormat()->getOptions(false);
 
         if ($config instanceof OptionCommandConfig) {
             if ($config->isLongNamePreferred()) {
@@ -407,7 +415,7 @@ class TextDescriptor implements Descriptor
     protected function printSubCommandArguments(array $inputArgs, array $options = array())
     {
         foreach ($inputArgs as $argument) {
-            $this->printInputArgument($argument, $options);
+            $this->printArgument($argument, $options);
         }
 
         $this->layout->add(new EmptyLine());
@@ -426,8 +434,8 @@ class TextDescriptor implements Descriptor
     {
         $config = $application->getConfig();
 
-        if ('UNKNOWN' !== $config->getName() && 'UNKNOWN' !== $config->getVersion()) {
-            $this->layout->add(new Paragraph("<info>{$config->getName()}</info> version <comment>{$config->getVersion()}</comment>"));
+        if ($config->getDisplayName() && $config->getVersion()) {
+            $this->layout->add(new Paragraph("<info>{$config->getDisplayName()}</info> version <comment>{$config->getVersion()}</comment>"));
         } else {
             $this->layout->add(new Paragraph("<info>Console Tool</info>"));
         }
@@ -457,10 +465,10 @@ class TextDescriptor implements Descriptor
     /**
      * Prints a command of an application.
      *
-     * @param Command $command The command to describe.
-     * @param array   $options Additional options.
+     * @param NamedCommand $command The command to describe.
+     * @param array        $options Additional options.
      */
-    protected function printCommand(Command $command, array $options = array())
+    protected function printCommand(NamedCommand $command, array $options = array())
     {
         $description = $command->getConfig()->getDescription();
         $name = '<em>'.$command->getName().'</em>';
@@ -507,18 +515,18 @@ class TextDescriptor implements Descriptor
         ;
     }
 
-    protected function printSynopsis(InputDefinition $inputDefinition, $executableName, $prefix = '', $includeBaseOptions = false, $lastCommandOptional = false)
+    protected function printSynopsis(ArgsFormat $argsFormat, $appName, $prefix = '', $includeBaseOptions = false, $lastCommandOptional = false)
     {
         $nameParts = array();
         $argumentParts = array();
 
-        $nameParts[] = '<tt>'.$executableName.'</tt>';
+        $nameParts[] = '<tt>'.$appName.'</tt>';
 
-        foreach ($inputDefinition->getCommandNames() as $commandName) {
+        foreach ($argsFormat->getCommandNames() as $commandName) {
             $nameParts[] = '<tt>'.$commandName->toString().'</tt>';
         }
 
-        foreach ($inputDefinition->getCommandOptions() as $commandOption) {
+        foreach ($argsFormat->getCommandOptions() as $commandOption) {
             $nameParts[] = $commandOption->isLongNamePreferred()
                 ? '--'.$commandOption->getLongName()
                 : '-'.$commandOption->getShortName();
@@ -529,7 +537,7 @@ class TextDescriptor implements Descriptor
             $nameParts[$lastIndex] = '['.$nameParts[$lastIndex].']';
         }
 
-        foreach ($inputDefinition->getOptions($includeBaseOptions) as $option) {
+        foreach ($argsFormat->getOptions($includeBaseOptions) as $option) {
             // \xC2\xA0 is a non-breaking space
             if ($option->isValueRequired()) {
                 $format = "%s\xC2\xA0<%s>";
@@ -546,7 +554,7 @@ class TextDescriptor implements Descriptor
             $argumentParts[] = sprintf('['.$format.']', $optionName, $option->getValueName());
         }
 
-        foreach ($inputDefinition->getArguments() as $argument) {
+        foreach ($argsFormat->getArguments() as $argument) {
             $argName = $argument->getName();
 
             $argumentParts[] = sprintf(

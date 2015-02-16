@@ -30,7 +30,7 @@ class JsonDescriptor implements Descriptor
         if ($object instanceof Application) {
             $object = new ApplicationAdapter($object);
         } elseif ($object instanceof Command) {
-            $object = new CommandAdapter($object);
+            $object = new CommandAdapter($object, new ApplicationAdapter($object->getApplication()));
         }
 
         $descriptor->describe($output, $object, $options);

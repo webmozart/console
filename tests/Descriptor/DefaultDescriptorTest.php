@@ -13,18 +13,17 @@ namespace Webmozart\Console\Tests\Descriptor;
 
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\ExecutableFinder;
-use Webmozart\Console\Adapter\InputDefinitionAdapter;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\Input\InputArgument;
-use Webmozart\Console\Api\Input\InputDefinition;
-use Webmozart\Console\Api\Input\InputOption;
 use Webmozart\Console\Api\Output\Dimensions;
 use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Args\DefaultArgsParser;
+use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Descriptor\DefaultDescriptor;
 use Webmozart\Console\Process\ProcessLauncher;
@@ -62,9 +61,9 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     private $output;
 
     /**
-     * @var InputDefinition
+     * @var ArgsFormat
      */
-    private $inputDefinition;
+    private $argsFormat;
 
     protected function setUp()
     {
@@ -80,14 +79,14 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
         $this->output->setDecorated(false);
         $this->output->setStyleSet(new DefaultStyleSet());
 
-        $this->inputDefinition = new InputDefinition(array(
-            new InputOption('all'),
-            new InputOption('man'),
-            new InputOption('ascii-doc'),
-            new InputOption('xml'),
-            new InputOption('json'),
-            new InputOption('text'),
-            new InputOption('help', 'h'),
+        $this->argsFormat = new ArgsFormat(array(
+            new Option('all'),
+            new Option('man'),
+            new Option('ascii-doc'),
+            new Option('xml'),
+            new Option('json'),
+            new Option('text'),
+            new Option('help', 'h'),
         ));
     }
 
@@ -141,7 +140,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsText($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
         );
 
         $object = $this->getApplication();
@@ -175,7 +174,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsXml($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
         );
 
         $object = $this->getApplication();
@@ -206,7 +205,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsJson($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
         );
 
         $object = $this->getApplication();
@@ -236,7 +235,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsMan($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
             'manDir' => __DIR__.'/Fixtures/man',
             'defaultPage' => 'application',
         );
@@ -270,7 +269,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsAsciiDoc($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'application',
         );
@@ -306,7 +305,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsAsciiDocPrintsWhenLessNotFound()
     {
         $options = array(
-            'input' => $this->getStringInput('--ascii-doc'),
+            'args' => $this->parseArgs('--ascii-doc'),
             'manDir' => __DIR__.'/Fixtures/man',
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'application',
@@ -340,7 +339,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsAsciiDocPrintsWhenProcessLauncherNotSupported()
     {
         $options = array(
-            'input' => $this->getStringInput('--ascii-doc'),
+            'args' => $this->parseArgs('--ascii-doc'),
             'manDir' => __DIR__.'/Fixtures/man',
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'application',
@@ -374,7 +373,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsAsciiDocWhenManBinaryNotFound()
     {
         $options = array(
-            'input' => $this->getStringInput('--help'),
+            'args' => $this->parseArgs('--help'),
             'manDir' => __DIR__.'/Fixtures/man',
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'application',
@@ -411,7 +410,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsAsciiDocWhenManPageNotFound()
     {
         $options = array(
-            'input' => $this->getStringInput('--help'),
+            'args' => $this->parseArgs('--help'),
             'manDir' => __DIR__.'/Fixtures/man',
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'man-not-found',
@@ -448,7 +447,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testPrintAsciiDocWhenProcessLauncherNotSupported()
     {
         $options = array(
-            'input' => $this->getStringInput('--help'),
+            'args' => $this->parseArgs('--help'),
             'manDir' => __DIR__.'/Fixtures/man',
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'application',
@@ -482,7 +481,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeApplicationAsTextWhenAsciiDocPageNotFound()
     {
         $options = array(
-            'input' => $this->getStringInput('--help'),
+            'args' => $this->parseArgs('--help'),
             'manDir' => __DIR__.'/Fixtures/man',
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'defaultPage' => 'not-found',
@@ -514,7 +513,7 @@ class DefaultDescriptorTest extends PHPUnit_Framework_TestCase
     public function testDescribeCommandAsText($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
         );
 
         $object = $this->getApplication()->getCommand('command1');
@@ -565,7 +564,7 @@ EOF;
     public function testDescribeCommandAsXml($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
         );
 
         $object = $this->getApplication()->getCommand('command1');
@@ -597,7 +596,7 @@ EOF;
     public function testDescribeCommandAsJson($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
         );
 
         $object = $this->getApplication()->getCommand('command1');
@@ -627,7 +626,7 @@ EOF;
     public function testDescribeCommandAsMan($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
             'manDir' => __DIR__.'/Fixtures/man',
         );
 
@@ -660,7 +659,7 @@ EOF;
     public function testDescribeCommandAsManWithPrefix($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
             'manDir' => __DIR__.'/Fixtures/man',
             'commandPrefix' => 'prefix-',
         );
@@ -694,7 +693,7 @@ EOF;
     public function testDescribeCommandAsAsciiDoc($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
         );
 
@@ -732,7 +731,7 @@ EOF;
     public function testDescribeCommandAsAsciiDocWithPrefix($inputString)
     {
         $options = array(
-            'input' => $this->getStringInput($inputString),
+            'args' => $this->parseArgs($inputString),
             'asciiDocDir' => __DIR__.'/Fixtures/ascii-doc',
             'commandPrefix' => 'prefix-',
         );
@@ -795,36 +794,36 @@ EOF;
     private function getApplicationConfig()
     {
         return ApplicationConfig::create()
-            ->setName('Test Application')
+            ->setName('test-bin')
             ->setVersion('1.0.0')
-            ->setExecutableName('test-bin')
+            ->setDisplayName('Test Application')
             ->setOutputDimensions(new Dimensions(80, null))
 
-            ->addOption('help', 'h', InputOption::VALUE_NONE, 'Description of the "help" option')
-            ->addOption('ansi', null, InputOption::VALUE_NONE, 'Description of the "ansi" option')
-            ->addOption('no-interaction', 'n', InputOption::VALUE_NONE, 'Description of the "no-interaction" option')
+            ->addOption('help', 'h', Option::NO_VALUE, 'Description of the "help" option')
+            ->addOption('ansi', null, Option::NO_VALUE, 'Description of the "ansi" option')
+            ->addOption('no-interaction', 'n', Option::NO_VALUE, 'Description of the "no-interaction" option')
 
             ->beginCommand('command1')
                 ->addAlias('command1-alias')
                 ->setDescription('Description of command1')
-                ->addArgument('arg', InputArgument::OPTIONAL, 'Description of the "arg" argument')
-                ->addOption('option', 'o', InputOption::VALUE_NONE, 'Description of the "option" option')
-                ->addOption('value', 'v', InputOption::VALUE_REQUIRED, 'Description of the "value" option')
+                ->addArgument('arg', Argument::OPTIONAL, 'Description of the "arg" argument')
+                ->addOption('option', 'o', Option::NO_VALUE, 'Description of the "option" option')
+                ->addOption('value', 'v', Option::REQUIRED_VALUE, 'Description of the "value" option')
             ->end()
 
             ->beginCommand('command2')
                 ->setDescription('Description of command2')
 
                 ->beginSubCommand('list')
-                    ->addArgument('arg', InputArgument::OPTIONAL)
+                    ->addArgument('arg', Argument::OPTIONAL)
                 ->end()
 
                 ->beginSubCommand('add')
-                    ->addArgument('arg', InputArgument::REQUIRED)
+                    ->addArgument('arg', Argument::REQUIRED)
                 ->end()
 
                 ->beginOptionCommand('delete', 'd')
-                    ->addArgument('arg', InputArgument::REQUIRED)
+                    ->addArgument('arg', Argument::REQUIRED)
                 ->end()
             ->end()
         ;
@@ -835,11 +834,11 @@ EOF;
         return new ConsoleApplication($config ?: $this->getApplicationConfig());
     }
 
-    private function getStringInput($inputString)
+    private function parseArgs($string)
     {
-        $input = new InputInterfaceAdapter(new StringInput($inputString));
-        $input->bind(new InputDefinitionAdapter($this->inputDefinition));
+        $rawArgs = new StringArgs($string);
+        $parser = new DefaultArgsParser();
 
-        return $input;
+        return $parser->parseArgs($rawArgs, $this->argsFormat);
     }
 }

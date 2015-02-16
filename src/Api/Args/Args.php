@@ -60,6 +60,11 @@ class Args
     private $format;
 
     /**
+     * @var RawArgs
+     */
+    private $rawArgs;
+
+    /**
      * @var array
      */
     private $options = array();
@@ -72,12 +77,14 @@ class Args
     /**
      * Creates the console arguments.
      *
-     * @param ArgsFormat $format The format that the arguments and options must
-     *                           adhere to.
+     * @param ArgsFormat $format  The format that the arguments and options must
+     *                            adhere to.
+     * @param RawArgs    $rawArgs The raw console arguments.
      */
-    public function __construct(ArgsFormat $format)
+    public function __construct(ArgsFormat $format, RawArgs $rawArgs = null)
     {
         $this->format = $format;
+        $this->rawArgs = $rawArgs;
     }
 
     /**
@@ -451,5 +458,15 @@ class Args
     public function getFormat()
     {
         return $this->format;
+    }
+
+    /**
+     * Returns the raw console arguments.
+     *
+     * @return RawArgs The raw arguments.
+     */
+    public function getRawArgs()
+    {
+        return $this->rawArgs;
     }
 }

@@ -130,7 +130,7 @@ class ApplicationConfig extends BaseConfig
         if (null !== $name) {
             Assert::string($name, 'The application name must be a string. Got: %s');
             Assert::notEmpty($name, 'The application name must not be empty.');
-            Assert::regex($name, '~^[a-zA-Z0-9\-]+$~', 'The application name must contain letters, numbers and hyphens only.');
+            Assert::regex($name, '~^[a-zA-Z0-9\-]+$~', 'The application name must contain letters, numbers and hyphens only. Did you mean to call setDisplayName()?');
         }
 
         $this->name = $name;

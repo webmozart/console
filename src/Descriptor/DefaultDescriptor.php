@@ -12,6 +12,8 @@
 namespace Webmozart\Console\Descriptor;
 
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Console\Api\Args\Args;
+use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Input\Input;
 use Webmozart\Console\Api\Output\Output;
@@ -101,23 +103,30 @@ class DefaultDescriptor extends DelegatingDescriptor
     /**
      * {@inheritdoc}
      */
-    protected function parseFormat(Input $input, $object, array $options = array())
+    protected function parseFormat(Args $args, $object, array $options = array())
     {
+        $rawArgs = $args->getRawArgs();
+
+        // Check whether the raw arguments are available
+        if (!$rawArgs) {
+            return 'text';
+        }
+
         // If "-h" is given, always print the short text usage
-        if ($input->hasParameterOption('-h')) {
+        if ($rawArgs->hasToken('-h')) {
             return 'text';
         }
 
         // Check if any of the options is set
         foreach (array('man', 'ascii-doc', 'xml', 'json', 'text') as $format) {
-            if ($input->hasParameterOption('--'.$format)) {
+            if ($rawArgs->hasToken('--'.$format)) {
                 return $format;
             }
         }
 
         // No format option is set, "-h" is not set
         // If a command is given or if "--help" is set, display the manual
-        if ($input->hasParameterOption('--help')) {
+        if ($rawArgs->hasToken('--help')) {
             // Return "man" if the binary is available and the man page exists
             // The process launcher must be supported on the system
             if ($options['manBinary'] && file_exists($options['manPath']) && $this->processLauncher->isSupported()) {

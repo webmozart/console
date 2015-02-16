@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\CommandName;
 use Webmozart\Console\Api\Args\Format\CommandOption;
 use Webmozart\Console\Api\Args\Format\Option;
+use Webmozart\Console\Args\StringArgs;
 
 /**
  * @since  1.0
@@ -692,5 +693,22 @@ class ArgsTest extends PHPUnit_Framework_TestCase
         $args = new Args($format);
 
         $this->assertSame($format, $args->getFormat());
+    }
+
+    public function testGetRawArgs()
+    {
+        $rawArgs = new StringArgs('');
+        $format = new ArgsFormat();
+        $args = new Args($format, $rawArgs);
+
+        $this->assertSame($rawArgs, $args->getRawArgs());
+    }
+
+    public function testGetNoRawArgs()
+    {
+        $format = new ArgsFormat();
+        $args = new Args($format);
+
+        $this->assertNull($args->getRawArgs());
     }
 }

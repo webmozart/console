@@ -58,19 +58,20 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         // Prevent failing validation if not all command names are given
         $this->insertMissingCommandNames($formatAdapter);
 
-        return $this->createArgs($format);
+        return $this->createArgs($format, $args);
     }
 
     /**
      * Creates the arguments from the current class state.
      *
-     * @param ArgsFormat $format The format.
+     * @param ArgsFormat $format  The format.
+     * @param RawArgs    $rawArgs The raw arguments.
      *
      * @return Args The created console arguments.
      */
-    private function createArgs(ArgsFormat $format)
+    private function createArgs(ArgsFormat $format, RawArgs $rawArgs)
     {
-        $args = new Args($format);
+        $args = new Args($format, $rawArgs);
 
         foreach ($this->arguments as $name => $value) {
             // Filter command names

@@ -101,6 +101,17 @@ class NamedCommand extends Command
     }
 
     /**
+     * Returns whether the command has aliases.
+     *
+     * @return bool Returns `true` if the command has aliases and `false`
+     *              otherwise.
+     */
+    public function hasAliases()
+    {
+        return count($this->aliases) > 0;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function buildFormat()

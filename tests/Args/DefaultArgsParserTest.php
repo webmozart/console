@@ -406,4 +406,17 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
 
         $this->parser->parseArgs(new StringArgs('server --add -o'), $format);
     }
+
+    public function testParseSetsRawArgs()
+    {
+        $rawArgs = new StringArgs('server');
+
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs($rawArgs, $format);
+
+        $this->assertSame($rawArgs, $args->getRawArgs());
+    }
 }
