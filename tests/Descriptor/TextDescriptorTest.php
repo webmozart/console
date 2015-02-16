@@ -501,4 +501,50 @@ EOF;
         $this->assertSame(0, $status);
     }
 
+    public function testDescribeCommandWithUnnamedCommands()
+    {
+        $config = ApplicationConfig::create()
+            ->setName('test-bin')
+            ->beginCommand('command')
+                ->addDefaultCommand('add')
+                ->addDefaultCommand('delete')
+                ->beginUnnamedCommand()
+                    ->addArgument('unnamed', Argument::REQUIRED, 'Description of "unnamed"')
+                ->end()
+                ->beginSubCommand('add')
+                    ->setDescription('Description of "add"')
+                    ->addArgument('argument', 0, 'Description of "argument"')
+                ->end()
+                ->beginOptionCommand('delete')
+                    ->setDescription('Description of "delete"')
+                ->end()
+            ->end();
+
+        $application = new ConsoleApplication($config);
+        $command = $application->getCommand('command');
+
+        $status = $this->descriptor->describe($this->output, $command);
+
+        $expected = <<<EOF
+USAGE
+      test-bin command <unnamed>
+  or: test-bin command [add] [<argument>]
+  or: test-bin command [--delete]
+
+COMMANDS
+  add
+    Description of "add"
+
+    <argument>  Description of "argument"
+
+  --delete
+    Description of "delete"
+
+
+EOF;
+
+        $this->assertSame($expected, $this->buffer->fetch());
+        $this->assertSame(0, $status);
+    }
+
 }
