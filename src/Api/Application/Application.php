@@ -15,6 +15,7 @@ use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\IO\Input;
@@ -47,7 +48,7 @@ interface Application
      *
      * @param string $name The name of the command.
      *
-     * @return Command The command.
+     * @return NamedCommand The command.
      *
      * @throws NoSuchCommandException If the command is not found.
      *
