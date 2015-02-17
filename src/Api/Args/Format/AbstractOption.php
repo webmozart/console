@@ -75,12 +75,13 @@ abstract class AbstractOption
         $this->assertLongNameValid($longName);
         $this->assertShortNameValid($shortName, $flags);
 
-        $this->addDefaultFlags($flags);
-
         $this->longName = $longName;
         $this->shortName = $shortName;
-        $this->flags = $flags;
         $this->description = $description;
+
+        $this->addDefaultFlags($flags);
+
+        $this->flags = $flags;
     }
 
     /**
@@ -193,7 +194,7 @@ abstract class AbstractOption
     private function addDefaultFlags(&$flags)
     {
         if (!($flags & (self::PREFER_LONG_NAME | self::PREFER_SHORT_NAME))) {
-            $flags |= self::PREFER_LONG_NAME;
+            $flags |= ($this->shortName ? self::PREFER_SHORT_NAME : self::PREFER_LONG_NAME);
         }
     }
 }

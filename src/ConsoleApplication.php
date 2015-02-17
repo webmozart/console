@@ -14,8 +14,7 @@ namespace Webmozart\Console;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Webmozart\Console\Adapter\ApplicationAdapter;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
-use Webmozart\Console\Adapter\CompositeInput;
+use Webmozart\Console\Adapter\ArgsAdapter;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
@@ -23,11 +22,16 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
-use Webmozart\Console\Adapter\CompositeOutput;
-use Webmozart\Console\Input\StandardInput;
+use Webmozart\Console\Adapter\IOAdapter;
+use Webmozart\Console\Formatter\AnsiFormatter;
+use Webmozart\Console\IO\FormattedIO;
+use Webmozart\Console\IO\Input\StandardInput;
+use Webmozart\Console\IO\Output\ErrorOutput;
+use Webmozart\Console\IO\Output\StandardOutput;
+use Webmozart\Console\IO\RawIO;
 
 /**
  * A console application.
@@ -184,9 +188,6 @@ class ConsoleApplication implements Application
      */
     public function run(RawArgs $args = null, Input $input = null, Output $output = null, Output $errorOutput = null)
     {
-        $dimensions = $this->config->getOutputDimensions();
-        $styleSet = $this->config->getStyleSet();
-
         if (null === $args) {
             $args = new ArgvArgs();
         }
@@ -196,27 +197,15 @@ class ConsoleApplication implements Application
         }
 
         if (null === $output) {
-            $output = new OutputInterfaceAdapter(new ConsoleOutput(), $dimensions);
+            $output = new StandardOutput();
         }
 
         if (null === $errorOutput) {
-            $errorOutput = $output instanceof ConsoleOutputInterface
-                ? new OutputInterfaceAdapter($output->getErrorOutput(), $dimensions)
-                : $output;
+            $errorOutput = new ErrorOutput();
         }
 
-        $output->setDimensions($dimensions);
-        $errorOutput->setDimensions($dimensions);
+        $io = new FormattedIO($input, $output, $errorOutput, new AnsiFormatter());
 
-        if ($styleSet) {
-            $output->setStyleSet($styleSet);
-            $errorOutput->setStyleSet($styleSet);
-        }
-
-        // Wrap inputs and outputs while passing them through Symfony
-        return $this->applicationAdapter->run(
-            new CompositeInput($args, $input),
-            new CompositeOutput($output, $errorOutput)
-        );
+        return $this->applicationAdapter->run(new ArgsAdapter($args), new IOAdapter($io));
     }
 }

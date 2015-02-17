@@ -38,16 +38,16 @@ class CommandOptionTest extends PHPUnit_Framework_TestCase
         $this->assertSame('delete', $option->getLongName());
         $this->assertSame('d', $option->getShortName());
         $this->assertNull($option->getDescription());
-        $this->assertTrue($option->isLongNamePreferred());
-        $this->assertFalse($option->isShortNamePreferred());
+        $this->assertFalse($option->isLongNamePreferred());
+        $this->assertTrue($option->isShortNamePreferred());
     }
 
     public function testCreateWithDescription()
     {
-        $option = new CommandOption('delete', 'd', 0, 'Description');
+        $option = new CommandOption('delete', null, 0, 'Description');
 
         $this->assertSame('delete', $option->getLongName());
-        $this->assertSame('d', $option->getShortName());
+        $this->assertNull($option->getShortName());
         $this->assertSame('Description', $option->getDescription());
         $this->assertTrue($option->isLongNamePreferred());
         $this->assertFalse($option->isShortNamePreferred());

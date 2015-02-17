@@ -20,9 +20,7 @@ use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
-use Webmozart\Console\Api\Runnable;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Util\ProcessTitle;
 
 /**
@@ -50,7 +48,7 @@ use Webmozart\Console\Util\ProcessTitle;
  * @author Bernhard Schussek <bschussek@gmail.com>
  * @see    NamedCommand
  */
-class Command implements Runnable
+class Command
 {
     /**
      * @var CommandConfig
@@ -328,38 +326,40 @@ class Command implements Runnable
     }
 
     /**
-     * {@inheritdoc}
+     * Executes the command for the given unparsed arguments.
+     *
+     * @param RawArgs $args The unparsed console arguments.
+     * @param IO      $io   The I/O.
+     *
+     * @return int Returns 0 on success and any other integer on error.
      */
-    public function run(RawArgs $args, Input $input, Output $output, Output $errorOutput)
+    public function run(RawArgs $args, IO $io)
     {
-        return $this->handle($this->parseArgs($args), $input, $output, $errorOutput);
+        return $this->handle($this->parseArgs($args), $io);
     }
 
     /**
-     * Executes the command for the given arguments.
+     * Executes the command for the given parsed arguments.
      *
-     * @param Args   $args        The parsed console arguments.
-     * @param Input  $input       The standard input.
-     * @param Output $output      The standard output.
-     * @param Output $errorOutput The error output.
+     * @param Args $args The parsed console arguments.
+     * @param IO   $io   The I/O.
      *
      * @return int Returns 0 on success and any other integer on error.
      *
      * @throws Exception
      */
-    public function handle(Args $args, Input $input, Output $output, Output $errorOutput)
+    public function handle(Args $args, IO $io)
     {
         $processTitle = $this->config->getProcessTitle();
         $commandHandler = $this->config->getHandler($this);
-        $commandHandler->initialize($this, $output, $errorOutput);
 
-        $this->warnIfProcessTitleNotSupported($processTitle, $errorOutput);
+        $this->warnIfProcessTitleNotSupported($processTitle, $io);
 
         if ($processTitle && ProcessTitle::isSupported()) {
             ProcessTitle::setProcessTitle($processTitle);
 
             try {
-                $statusCode = $commandHandler->handle($args, $input);
+                $statusCode = $commandHandler->handle($this, $args, $io);
             } catch (Exception $e) {
                 ProcessTitle::resetProcessTitle();
 
@@ -368,7 +368,7 @@ class Command implements Runnable
 
             ProcessTitle::resetProcessTitle();
         } else {
-            $statusCode = $commandHandler->handle($args, $input);
+            $statusCode = $commandHandler->handle($this, $args, $io);
         }
 
         return $statusCode;
@@ -458,10 +458,13 @@ class Command implements Runnable
         $this->optionCommands->add(new NamedCommand($config, $this->application, $this));
     }
 
-    private function warnIfProcessTitleNotSupported($processTitle, Output $errorOutput)
+    private function warnIfProcessTitleNotSupported($processTitle, IO $io)
     {
-        if ($processTitle && !ProcessTitle::isSupported() && Output::VERBOSITY_VERY_VERBOSE === $errorOutput->getVerbosity()) {
-            $errorOutput->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
+        if ($processTitle && !ProcessTitle::isSupported()) {
+            $io->errorLine(
+                '<comment>Install the proctitle PECL to be able to change the process title.</comment>',
+                IO::VERY_VERBOSE
+            );
         }
     }
 }

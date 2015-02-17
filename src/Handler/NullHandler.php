@@ -14,8 +14,7 @@ namespace Webmozart\Console\Handler;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
 
 /**
  * A command handler that does nothing.
@@ -28,14 +27,7 @@ class NullHandler implements CommandHandler
     /**
      * {@inheritdoc}
      */
-    public function initialize(Command $command, Output $output, Output $errorOutput)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function handle(Args $args, Input $input)
+    public function handle(Command $command, Args $args, IO $io)
     {
     }
 }

@@ -25,11 +25,11 @@ use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\Handler\CallableHandler;
-use Webmozart\Console\Input\StringInput;
+use Webmozart\Console\IO\Input\BufferedInput;
 
 /**
  * @since  1.0
@@ -439,34 +439,26 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandle()
     {
         $args = new Args(new ArgsFormat());
-        $input = $this->getMock('Webmozart\Console\Api\Input\Input');
-        $output = $this->getMock('Webmozart\Console\Api\Output\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\Output\Output');
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
         $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
 
         $config = new CommandConfig('command');
         $config->setHandler($handler);
         $command = new Command($config);
 
-        $handler->expects($this->at(0))
-            ->method('initialize')
-            ->with($command, $output, $errorOutput);
-
-        $handler->expects($this->at(1))
+        $handler->expects($this->once())
             ->method('handle')
-            ->with($args, $input)
+            ->with($command, $args, $io)
             ->willReturn(123);
 
-        $this->assertSame(123, $command->handle($args, $input, $output, $errorOutput));
+        $this->assertSame(123, $command->handle($args, $io));
     }
 
     public function testRun()
     {
         $rawArgs = $this->getMock('Webmozart\Console\Api\Args\RawArgs');
         $parsedArgs = new Args(new ArgsFormat());
-        $input = $this->getMock('Webmozart\Console\Api\Input\Input');
-        $output = $this->getMock('Webmozart\Console\Api\Output\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\Output\Output');
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
         $parser = $this->getMock('Webmozart\Console\Api\Args\ArgsParser');
         $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
 
@@ -480,15 +472,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
             ->with($this->identicalTo($rawArgs))
             ->willReturn($parsedArgs);
 
-        $handler->expects($this->at(0))
-            ->method('initialize')
-            ->with($command, $output, $errorOutput);
-
-        $handler->expects($this->at(1))
+        $handler->expects($this->once())
             ->method('handle')
-            ->with($parsedArgs, $input)
+            ->with($command, $parsedArgs, $io)
             ->willReturn(123);
 
-        $this->assertSame(123, $command->run($rawArgs, $input, $output, $errorOutput));
+        $this->assertSame(123, $command->run($rawArgs, $io));
     }
 }

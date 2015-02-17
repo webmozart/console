@@ -17,9 +17,8 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
-use Webmozart\Console\Api\Runnable;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\Output;
 
 /**
  * A console application.
@@ -27,7 +26,7 @@ use Webmozart\Console\Api\Runnable;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface Application extends Runnable
+interface Application
 {
     /**
      * Returns the application configuration.
@@ -121,7 +120,7 @@ interface Application extends Runnable
     public function hasDefaultCommands();
 
     /**
-     * Executes the command for a given input.
+     * Executes the command.
      *
      * @param RawArgs $args        The console arguments. If not given, the
      *                             arguments passed to the PHP process are used.

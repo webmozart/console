@@ -12,7 +12,10 @@
 namespace Webmozart\Console\Handler;
 
 use Webmozart\Console\Api\Args\Args;
-use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Handler\CommandHandler;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 
 /**
@@ -21,7 +24,7 @@ use Webmozart\Console\Assert\Assert;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CallableHandler extends AbstractHandler
+class CallableHandler implements CommandHandler
 {
     /**
      * @var callable
@@ -31,12 +34,11 @@ class CallableHandler extends AbstractHandler
     /**
      * Creates the command handler.
      *
-     * The passed callable receives four arguments:
+     * The passed callable receives three arguments:
      *
+     *  * {@link Command} `$command`: The executed command.
      *  * {@link Args} `$args`: The console arguments.
-     *  * {@link Input} `$input`: The standard input.
-     *  * {@link Output} `$output`: The standard output.
-     *  * {@link Output} `$errorOutput`: The error output.
+     *  * {@link IO} `$io`: The I/O.
      *
      * The callable should return 0 on success and a positive integer on error.
      *
@@ -53,8 +55,8 @@ class CallableHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Args $args, Input $input)
+    public function handle(Command $command, Args $args, IO $io)
     {
-        return call_user_func($this->callable, $args, $input, $this->output, $this->errorOutput);
+        return call_user_func($this->callable, $command, $args, $io);
     }
 }
