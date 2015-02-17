@@ -51,7 +51,7 @@ class FormattedIO extends RawIO
      * @param Output    $errorOutput The error output.
      * @param Formatter $formatter   The formatter.
      */
-    public function __construct(Input $input, Output $output, Output $errorOutput, Formatter $formatter)
+    public function __construct(Input $input, Output $output, Output $errorOutput, Formatter $formatter = null)
     {
         parent::__construct($input, $output, $errorOutput);
 

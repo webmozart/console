@@ -12,7 +12,6 @@
 namespace Webmozart\Console\IO;
 
 use Webmozart\Console\Api\Formatter\Formatter;
-use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\IO\Input\BufferedInput;
 use Webmozart\Console\IO\Output\BufferedOutput;
 
@@ -51,7 +50,7 @@ class BufferedIO extends FormattedIO
         $this->output = new BufferedOutput();
         $this->errorOutput = new BufferedOutput();
 
-        parent::__construct($this->input, $this->output, $this->errorOutput, $formatter ?: new PlainFormatter());
+        parent::__construct($this->input, $this->output, $this->errorOutput, $formatter);
     }
 
     /**
