@@ -19,8 +19,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 
 /**
- * Adapts the console arguments of this package to Symfony's
- * {@link InputInterface} API.
+ * Adapts an {@link Args} instance to Symfony's {@link InputInterface} API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>

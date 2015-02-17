@@ -21,7 +21,8 @@ use Webmozart\Console\Api\Args\Format\CommandOption;
 use Webmozart\Console\Api\Args\Format\Option;
 
 /**
- * Adapts an {@link ArgsFormat} instance to Symfony's {@link InputDefinition} API.
+ * Adapts an {@link ArgsFormat} instance to Symfony's {@link InputDefinition}
+ * API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>

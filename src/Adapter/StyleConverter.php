@@ -15,11 +15,20 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Webmozart\Console\Api\Formatter\Style;
 
 /**
+ * Converts {@link Style} instances to Symfony's {@link OutputFormatterStyle}.
+ *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StyleConverter
 {
+    /**
+     * Converts a {@link Style} instance to an {@link OutputFormatterStyle}.
+     *
+     * @param Style $style The style to convert.
+     *
+     * @return OutputFormatterStyle The converted style.
+     */
     public static function convert(Style $style)
     {
         $options = array();

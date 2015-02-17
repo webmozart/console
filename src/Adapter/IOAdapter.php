@@ -20,7 +20,7 @@ use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Api\Formatter\StyleSet;
 
 /**
- * Adapts the I/O of this package to Symfony's {@link OutputInterface} API.
+ * Adapts an {@link IO} instance to Symfony's {@link OutputInterface} API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>

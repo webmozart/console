@@ -21,7 +21,7 @@ use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Assert\Assert;
 
 /**
- * Adapts a command of this package to Symfony's {@link Command} API.
+ * Adapts a `Command` instance of this package to Symfony's {@link Command} API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>

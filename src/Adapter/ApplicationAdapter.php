@@ -18,7 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Assert\Assert;
 
 /**
- * Adapts the command API of this package to Symfony's {@link Application} API.
+ * Adapts an `Application` instance of this package to Symfony's
+ * {@link Application} API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
