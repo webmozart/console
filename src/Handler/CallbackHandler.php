@@ -24,17 +24,17 @@ use Webmozart\Console\Assert\Assert;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CallableHandler implements CommandHandler
+class CallbackHandler implements CommandHandler
 {
     /**
      * @var callable
      */
-    private $callable;
+    private $callback;
 
     /**
      * Creates the command handler.
      *
-     * The passed callable receives three arguments:
+     * The passed callback receives three arguments:
      *
      *  * {@link Command} `$command`: The executed command.
      *  * {@link Args} `$args`: The console arguments.
@@ -42,14 +42,14 @@ class CallableHandler implements CommandHandler
      *
      * The callable should return 0 on success and a positive integer on error.
      *
-     * @param callable $callable The callable to execute when handling a
+     * @param callable $callback The callback to execute when handling a
      *                           command.
      */
-    public function __construct($callable)
+    public function __construct($callback)
     {
-        Assert::isCallable($callable);
+        Assert::isCallable($callback);
 
-        $this->callable = $callable;
+        $this->callback = $callback;
     }
 
     /**
@@ -57,6 +57,6 @@ class CallableHandler implements CommandHandler
      */
     public function handle(Command $command, Args $args, IO $io)
     {
-        return call_user_func($this->callable, $command, $args, $io);
+        return call_user_func($this->callback, $command, $args, $io);
     }
 }

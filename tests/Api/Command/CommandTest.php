@@ -28,7 +28,7 @@ use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\StringArgs;
-use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\IO\Input\BufferedInput;
 
 /**

@@ -22,7 +22,7 @@ use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Assert\Assert;
-use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\Handler\NullHandler;
 use Webmozart\Console\Formatter\DefaultStyleSet;
 
@@ -330,7 +330,7 @@ abstract class BaseConfig
      */
     public function setCallback($callback)
     {
-        $this->setHandler(new CallableHandler($callback));
+        $this->setHandler(new CallbackHandler($callback));
 
         return $this;
     }

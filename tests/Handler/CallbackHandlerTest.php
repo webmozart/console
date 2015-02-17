@@ -18,14 +18,14 @@ use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\IO\BufferedIO;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CallableHandlerTest extends PHPUnit_Framework_TestCase
+class CallbackHandlerTest extends PHPUnit_Framework_TestCase
 {
     public function testHandleCommand()
     {
@@ -33,7 +33,7 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
         $io = new BufferedIO("line1\nline2");
         $command = new Command(new CommandConfig('command'));
 
-        $handler = new CallableHandler(
+        $handler = new CallbackHandler(
             function (Command $command, Args $passedArgs, IO $io) use ($args) {
                 PHPUnit_Framework_Assert::assertSame($args, $passedArgs);
 

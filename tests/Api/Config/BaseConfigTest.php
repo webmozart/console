@@ -25,7 +25,7 @@ use Webmozart\Console\Api\Config\BaseConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
-use Webmozart\Console\Handler\CallableHandler;
+use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\Handler\NullHandler;
 use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Tests\Api\Config\Fixtures\ConcreteConfig;
@@ -173,7 +173,7 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
 
         $handler = $this->config->getHandler($command);
 
-        $this->assertEquals(new CallableHandler($callback), $handler);
+        $this->assertEquals(new CallbackHandler($callback), $handler);
 
         // The above test does not test whether the correct callable is passed
         // to the handler. Test that now.
@@ -182,7 +182,7 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
         $output = new OutputInterfaceAdapter(new BufferedOutput());
         $handler->initialize($command, $output, $output);
 
-        $this->assertInstanceOf('Webmozart\Console\Handler\CallableHandler', $handler);
+        $this->assertInstanceOf('Webmozart\Console\Handler\CallbackHandler', $handler);
         $this->assertSame('foo', $handler->handle($input));
         */
     }
