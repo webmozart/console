@@ -15,15 +15,17 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\RawArgs;
-use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
 
 /**
- * An input that wraps the console arguments and the standard input.
+ * Adapts the console arguments of this package to Symfony's
+ * {@link InputInterface} API.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CompositeInput implements InputInterface
+class ArgsAdapter implements InputInterface
 {
     /**
      * @var RawArgs
@@ -31,24 +33,19 @@ class CompositeInput implements InputInterface
     private $rawArgs;
 
     /**
-     * @var Input
-     */
-    private $input;
-
-    /**
      * @var Args
      */
     private $args;
 
     /**
-     * @var bool
+     * Creates the adapter.
+     *
+     * @param RawArgs $rawArgs The unparsed console arguments.
+     * @param Args    $args    The parsed console arguments.
      */
-    private $interactive = true;
-
-    public function __construct(RawArgs $rawArgs, Input $input, Args $args = null)
+    public function __construct(RawArgs $rawArgs, Args $args = null)
     {
         $this->rawArgs = $rawArgs;
-        $this->input = $input;
         $this->args = $args;
     }
 
@@ -58,14 +55,6 @@ class CompositeInput implements InputInterface
     public function getRawArgs()
     {
         return $this->rawArgs;
-    }
-
-    /**
-     * @return Input
-     */
-    public function getInput()
-    {
-        return $this->input;
     }
 
     /**
@@ -224,7 +213,7 @@ class CompositeInput implements InputInterface
      */
     public function isInteractive()
     {
-        return $this->interactive;
+        return true;
     }
 
     /**
@@ -232,6 +221,5 @@ class CompositeInput implements InputInterface
      */
     public function setInteractive($interactive)
     {
-        $this->interactive = (bool) $interactive;
     }
 }

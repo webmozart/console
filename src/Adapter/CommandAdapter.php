@@ -242,12 +242,12 @@ class CommandAdapter extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        /** @var CompositeInput $input */
-        /** @var CompositeOutput $output */
-        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\CompositeInput');
-        Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\CompositeOutput');
+        /** @var ArgsAdapter $input */
+        /** @var IOAdapter $output */
+        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsAdapter');
+        Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\IOAdapter');
 
-        return $this->adaptedCommand->handle($input->getArgs(), $input->getInput(), $output->getOutput(), $output->getErrorOutput());
+        return $this->adaptedCommand->handle($input->getArgs(), $output->getIO());
     }
 
     private function createName(\Webmozart\Console\Api\Command\Command $command, Application $application)

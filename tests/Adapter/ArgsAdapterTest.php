@@ -12,21 +12,21 @@
 namespace Webmozart\Console\Tests\Adapter;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\CompositeInput;
+use Webmozart\Console\Adapter\ArgsAdapter;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Args\RawArgs;
-use Webmozart\Console\Api\Input\Input;
+use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Args\StringArgs;
-use Webmozart\Console\Input\StringInput;
+use Webmozart\Console\IO\Input\BufferedInput;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CompositeInputTest extends PHPUnit_Framework_TestCase
+class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var RawArgs
@@ -38,11 +38,6 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
      */
     private $args;
 
-    /**
-     * @var Input
-     */
-    private $input;
-
     protected function setUp()
     {
         $this->rawArgs = new StringArgs('');
@@ -52,44 +47,41 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
             new Option('option1', 'o', Option::NO_VALUE),
             new Option('option2', null, Option::OPTIONAL_VALUE, null, 'default'),
         )));
-        $this->input = new StringInput('');
     }
 
     public function testCreate()
     {
-        $input = new CompositeInput($this->rawArgs, $this->input, $this->args);
+        $input = new ArgsAdapter($this->rawArgs, $this->args);
 
         $this->assertSame($this->rawArgs, $input->getRawArgs());
-        $this->assertSame($this->input, $input->getInput());
         $this->assertSame($this->args, $input->getArgs());
     }
 
     public function testCreateNoArgs()
     {
-        $input = new CompositeInput($this->rawArgs, $this->input);
+        $input = new ArgsAdapter($this->rawArgs);
 
         $this->assertSame($this->rawArgs, $input->getRawArgs());
-        $this->assertSame($this->input, $input->getInput());
         $this->assertNull($input->getArgs());
     }
 
     public function testGetFirstArgument()
     {
-        $input = new CompositeInput(new StringArgs('one -o two --option three'), $this->input);
+        $input = new ArgsAdapter(new StringArgs('one -o two --option three'));
 
         $this->assertSame('one', $input->getFirstArgument());
     }
 
     public function testGetNoFirstArgument()
     {
-        $input = new CompositeInput(new StringArgs(''), $this->input);
+        $input = new ArgsAdapter(new StringArgs(''));
 
         $this->assertNull($input->getFirstArgument());
     }
 
     public function testHasParameterOption()
     {
-        $input = new CompositeInput(new StringArgs('-o --option --value=value'), $this->input);
+        $input = new ArgsAdapter(new StringArgs('-o --option --value=value'));
 
         $this->assertTrue($input->hasParameterOption('-o'));
         $this->assertTrue($input->hasParameterOption('--option'));
@@ -99,7 +91,7 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testHasMultipleParameterOptions()
     {
-        $input = new CompositeInput(new StringArgs('-o --option --value=value'), $this->input);
+        $input = new ArgsAdapter(new StringArgs('-o --option --value=value'));
 
         $this->assertTrue($input->hasParameterOption(array('-o', '--option')));
         // sufficient if any of the options exists
@@ -109,7 +101,7 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testGetParameterOption()
     {
-        $input = new CompositeInput(new StringArgs('-vvalue1  --value=value2 --space value3 --last'), $this->input);
+        $input = new ArgsAdapter(new StringArgs('-vvalue1  --value=value2 --space value3 --last'));
 
         $this->assertSame('value1', $input->getParameterOption('-v'));
         $this->assertSame('value2', $input->getParameterOption('--value'));
@@ -120,8 +112,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testGetArguments()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $this->args->setArguments(array(
             'argument1' => 'value1',
@@ -137,8 +129,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgument()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $this->args->setArguments(array(
             'argument1' => 'value1',
@@ -151,8 +143,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testSetArgument()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $inputArgs->setArgument('argument1', 'value1');
         $inputNoArgs->setArgument('argument1', 'value1');
@@ -163,8 +155,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testHasArgument()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $this->args->setArguments(array(
             'argument1' => 'value1',
@@ -178,8 +170,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testGetOptions()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $this->args->setOptions(array(
             'option1' => true,
@@ -195,8 +187,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testGetOption()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $this->args->setOptions(array(
             'option1' => true,
@@ -209,8 +201,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testSetOption()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $inputArgs->setOption('option2', 'value1');
         $inputNoArgs->setOption('option2', 'value1');
@@ -221,8 +213,8 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
 
     public function testHasOption()
     {
-        $inputArgs = new CompositeInput($this->rawArgs, $this->input, $this->args);
-        $inputNoArgs = new CompositeInput($this->rawArgs, $this->input);
+        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsAdapter($this->rawArgs);
 
         $this->args->setOptions(array(
             'option1' => true,
@@ -232,16 +224,5 @@ class CompositeInputTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($inputArgs->hasOption('option2'));
         $this->assertFalse($inputArgs->hasOption('option3'));
         $this->assertFalse($inputNoArgs->hasOption('option1'));
-    }
-
-    public function testSetInteractive()
-    {
-        $input = new CompositeInput($this->rawArgs, $this->input);
-
-        $this->assertTrue($input->isInteractive());
-        $input->setInteractive(false);
-        $this->assertFalse($input->isInteractive());
-        $input->setInteractive(true);
-        $this->assertTrue($input->isInteractive());
     }
 }

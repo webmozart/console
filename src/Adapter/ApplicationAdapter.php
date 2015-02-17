@@ -79,8 +79,8 @@ class ApplicationAdapter extends Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        /** @var CompositeInput $input */
-        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\CompositeInput');
+        /** @var ArgsAdapter $input */
+        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsAdapter');
 
         $commandResolver = $this->adaptedApplication->getConfig()->getCommandResolver();
         $resolvedCommand = $commandResolver->resolveCommand($input->getRawArgs(), $this->adaptedApplication);
@@ -90,7 +90,7 @@ class ApplicationAdapter extends Application
         }
 
         // Add parsed Args to the composite input
-        $input = new CompositeInput($input->getRawArgs(), $input->getInput(), $resolvedCommand->getParsedArgs());
+        $input = new ArgsAdapter($input->getRawArgs(), $resolvedCommand->getParsedArgs());
 
         // Don't use $this->get() as get() does not work for sub-commands
         $this->currentCommand = new CommandAdapter($resolvedCommand->getCommand(), $this);
