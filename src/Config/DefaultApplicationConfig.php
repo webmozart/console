@@ -19,6 +19,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Handler\Help\HelpHandler;
 
 /**
  * The default application configuration.
@@ -52,13 +53,12 @@ class DefaultApplicationConfig extends ApplicationConfig
             ->beginCommand('help')
                 ->setDescription('Display the manual of a command')
                 ->addArgument('command', Argument::OPTIONAL, 'The command name')
-                ->addArgument('sub-command', Argument::OPTIONAL, 'The sub command name')
-                ->addOption('all', 'a', Option::NO_VALUE, 'Print all available commands')
                 ->addOption('man', 'm', Option::NO_VALUE, 'Output the help as man page')
                 ->addOption('ascii-doc', null, Option::NO_VALUE, 'Output the help as AsciiDoc document')
                 ->addOption('text', 't', Option::NO_VALUE, 'Output the help as plain text')
                 ->addOption('xml', 'x', Option::NO_VALUE, 'Output the help as XML')
                 ->addOption('json', 'j', Option::NO_VALUE, 'Output the help as JSON')
+                ->setHandler(function () { return new HelpHandler(); })
             ->end()
         ;
     }

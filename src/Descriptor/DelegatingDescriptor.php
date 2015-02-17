@@ -14,8 +14,9 @@ namespace Webmozart\Console\Descriptor;
 use RuntimeException;
 use Symfony\Component\Console\Descriptor\DescriptorInterface;
 use Webmozart\Console\Api\Args\Args;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 
 /**
  * Describes an object using other registered descriptors.
@@ -66,7 +67,7 @@ class DelegatingDescriptor implements Descriptor
      * format is found, the first registered descriptor is used by default. You
      * can also pass a default format to {@link __construct()}.
      *
-     * @param Output $output  The console output.
+     * @param IO     $io      The I/O.
      * @param object $object  The object to describe.
      * @param array  $options Additional options.
      *
@@ -74,13 +75,13 @@ class DelegatingDescriptor implements Descriptor
      *
      * @throws RuntimeException If the format is not supported.
      */
-    public function describe(Output $output, $object, array $options = array())
+    public function describe(IO $io, $object, array $options = array())
     {
         $format = isset($options['args'])
             ? $this->parseFormat($options['args'], $object, $options)
             : $this->getDefaultFormat();
 
-        return (int) $this->getDescriptor($format)->describe($output, $object, $options);
+        return (int) $this->getDescriptor($format)->describe($io, $object, $options);
     }
 
     /**

@@ -14,7 +14,8 @@ namespace Webmozart\Console\Descriptor;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -29,29 +30,6 @@ use Webmozart\Console\Process\ProcessLauncher;
  */
 class ManDescriptor implements Descriptor
 {
-    /**
-     * @var ExecutableFinder
-     */
-    private $executableFinder;
-
-    /**
-     * @var ProcessLauncher
-     */
-    private $processLauncher;
-
-    /**
-     * Creates a new AsciiDoc descriptor.
-     *
-     * @param ExecutableFinder $executableFinder The finder used to find the
-     *                                           "man" binary.
-     * @param ProcessLauncher  $processLauncher  The launcher for executing the
-     *                                           "man" binary.
-     */
-    public function __construct(ExecutableFinder $executableFinder = null, ProcessLauncher $processLauncher = null)
-    {
-        $this->executableFinder = $executableFinder ?: new ExecutableFinder();
-        $this->processLauncher = $processLauncher ?: new ProcessLauncher();
-    }
 
     /**
      * Describes an object by displaying a man page.
@@ -62,7 +40,7 @@ class ManDescriptor implements Descriptor
      *  * "manBinary": The path to the "less" binary. If not passed, the path
      *    is searched for on the system.
      *
-     * @param Output $output  The console output.
+     * @param IO     $io      The I/O.
      * @param object $object  The object to describe.
      * @param array  $options Additional options.
      *
@@ -72,31 +50,7 @@ class ManDescriptor implements Descriptor
      * @throws RuntimeException If the AsciiDoc file or the "man" binary is not
      *                           found.
      */
-    public function describe(Output $output, $object, array $options = array())
+    public function describe(IO $io, $object, array $options = array())
     {
-        if (!isset($options['manPath'])) {
-            throw new InvalidArgumentException('The option "manPath" is required.');
-        }
-
-        if (!file_exists($options['manPath'])) {
-            throw new RuntimeException(sprintf(
-                'The file %s does not exist.',
-                $options['manPath']
-            ));
-        }
-
-        if (!isset($options['manBinary'])) {
-            $options['manBinary'] = $this->executableFinder->find('man');
-        }
-
-        if (!$options['manBinary']) {
-            throw new RuntimeException('The "man" binary was not found.');
-        }
-
-        return $this->processLauncher->launchProcess(sprintf(
-            '%s -l %s',
-            $options['manBinary'],
-            escapeshellarg($options['manPath'])
-        ), false);
     }
 }

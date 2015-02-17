@@ -15,8 +15,9 @@ use Symfony\Component\Process\ExecutableFinder;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -74,13 +75,13 @@ class DefaultDescriptor extends DelegatingDescriptor
      * If the passed object is no command, the page passed in the "defaultPage"
      * option will be displayed.
      *
-     * @param Output $output  The console output.
+     * @param IO     $io      The I/O.
      * @param object $object  The object to describe.
      * @param array  $options Additional options.
      *
      * @return int The exit code.
      */
-    public function describe(Output $output, $object, array $options = array())
+    public function describe(IO $io, $object, array $options = array())
     {
         $options = array_replace(array(
             'manDir' => getcwd().'/docs',
@@ -97,7 +98,7 @@ class DefaultDescriptor extends DelegatingDescriptor
         $options['manPath'] = $options['manDir'].'/'.$page.'.1';
         $options['asciiDocPath'] = $options['asciiDocDir'].'/'.$page.'.txt';
 
-        return (int) parent::describe($output, $object, $options);
+        return (int) parent::describe($io, $object, $options);
     }
 
     /**
@@ -105,41 +106,6 @@ class DefaultDescriptor extends DelegatingDescriptor
      */
     protected function parseFormat(Args $args, $object, array $options = array())
     {
-        $rawArgs = $args->getRawArgs();
-
-        // Check whether the raw arguments are available
-        if (!$rawArgs) {
-            return 'text';
-        }
-
-        // If "-h" is given, always print the short text usage
-        if ($rawArgs->hasToken('-h')) {
-            return 'text';
-        }
-
-        // Check if any of the options is set
-        foreach (array('man', 'ascii-doc', 'xml', 'json', 'text') as $format) {
-            if ($rawArgs->hasToken('--'.$format)) {
-                return $format;
-            }
-        }
-
-        // No format option is set, "-h" is not set
-        // If a command is given or if "--help" is set, display the manual
-        if ($rawArgs->hasToken('--help')) {
-            // Return "man" if the binary is available and the man page exists
-            // The process launcher must be supported on the system
-            if ($options['manBinary'] && file_exists($options['manPath']) && $this->processLauncher->isSupported()) {
-                return 'man';
-            }
-
-            if (file_exists($options['asciiDocPath'])) {
-                return 'ascii-doc';
-            }
-        }
-
-        // No command, no option -> display command list as text
-        return 'text';
     }
 
     protected function getDefaultFormat()

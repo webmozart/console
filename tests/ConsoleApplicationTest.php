@@ -11,25 +11,23 @@
 
 namespace Webmozart\Console\Tests;
 
-use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
-use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
-use Webmozart\Console\Input\StringInput;
+use Webmozart\Console\IO\Input\BufferedInput;
+use Webmozart\Console\IO\Output\BufferedOutput;
 
 /**
  * @since  1.0
@@ -210,9 +208,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
      */
     public function testRunCommand($argString, $configCallback)
     {
-        $callback = function (Args $args, Input $input, Output $output, Output $errorOutput) {
-            $output->write($input->readLine());
-            $errorOutput->write($input->readLine());
+        $callback = function (Command $command, Args $args, IO $io) {
+            $io->write($io->readLine());
+            $io->error($io->readLine());
 
             return 123;
         };
@@ -220,9 +218,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $configCallback($this->config, $callback);
 
         $args = new StringArgs($argString);
-        $input = new StringInput("line1\nline2");
-        $output = new OutputInterfaceAdapter($buffer1 = new BufferedOutput());
-        $errorOutput = new OutputInterfaceAdapter($buffer2 = new BufferedOutput());
+        $input = new BufferedInput("line1\nline2");
+        $output = $buffer1 = new BufferedOutput();
+        $errorOutput = $buffer2 = new BufferedOutput();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));

@@ -14,7 +14,8 @@ namespace Webmozart\Console\Descriptor;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -32,29 +33,7 @@ use Webmozart\Console\Process\ProcessLauncher;
  */
 class AsciiDocDescriptor implements Descriptor
 {
-    /**
-     * @var ExecutableFinder
-     */
-    private $executableFinder;
 
-    /**
-     * @var ProcessLauncher
-     */
-    private $processLauncher;
-
-    /**
-     * Creates a new AsciiDoc descriptor.
-     *
-     * @param ExecutableFinder $executableFinder The finder used to find the
-     *                                           "less" binary.
-     * @param ProcessLauncher  $processLauncher  The launcher for executing the
-     *                                           "less" binary.
-     */
-    public function __construct(ExecutableFinder $executableFinder = null, ProcessLauncher $processLauncher = null)
-    {
-        $this->executableFinder = $executableFinder ?: new ExecutableFinder();
-        $this->processLauncher = $processLauncher ?: new ProcessLauncher();
-    }
 
     /**
      * Describes an object by displaying an AsciiDoc page.
@@ -65,7 +44,7 @@ class AsciiDocDescriptor implements Descriptor
      *  * "lessBinary": The path to the "less" binary. If not passed, the path
      *    is searched for on the system.
      *
-     * @param Output $output  The console output.
+     * @param IO     $io      The I/O.
      * @param object $object  The object to describe.
      * @param array  $options Additional options.
      *
@@ -74,33 +53,7 @@ class AsciiDocDescriptor implements Descriptor
      * @throws InvalidArgumentException If the "asciiDocPath" option is missing.
      * @throws RuntimeException If the AsciiDoc file is not found.
      */
-    public function describe(Output $output, $object, array $options = array())
+    public function describe(IO $io, $object, array $options = array())
     {
-        if (!isset($options['asciiDocPath'])) {
-            throw new InvalidArgumentException('The option "asciiDocPath" is required.');
-        }
-
-        if (!file_exists($options['asciiDocPath'])) {
-            throw new RuntimeException(sprintf(
-                'The file %s does not exist.',
-                $options['asciiDocPath']
-            ));
-        }
-
-        if (!isset($options['lessBinary'])) {
-            $options['lessBinary'] = $this->executableFinder->find('less');
-        }
-
-        if ($options['lessBinary'] && $this->processLauncher->isSupported()) {
-            return $this->processLauncher->launchProcess(sprintf(
-                '%s %s',
-                $options['lessBinary'],
-                escapeshellarg($options['asciiDocPath'])
-            ), false);
-        }
-
-        $output->write(file_get_contents($options['asciiDocPath']));
-
-        return 0;
     }
 }

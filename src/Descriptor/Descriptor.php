@@ -11,20 +11,24 @@
 
 namespace Webmozart\Console\Descriptor;
 
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
 
 /**
+ * Describes objects.
+ *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface Descriptor
 {
     /**
-     * @param Output $output
-     * @param        $object
-     * @param array  $options
+     * Describes an object.
+     *
+     * @param IO     $io      The I/O.
+     * @param object $object  The object to describe.
+     * @param array  $options Additional options.
      *
      * @return int The status code.
      */
-    public function describe(Output $output, $object, array $options = array());
+    public function describe(IO $io, $object, array $options = array());
 }

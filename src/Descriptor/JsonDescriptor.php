@@ -13,9 +13,11 @@ namespace Webmozart\Console\Descriptor;
 
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\CommandAdapter;
+use Webmozart\Console\Adapter\IOAdapter;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 
 /**
  * @since  1.0
@@ -23,7 +25,7 @@ use Webmozart\Console\Api\Output\Output;
  */
 class JsonDescriptor implements Descriptor
 {
-    public function describe(Output $output, $object, array $options = array())
+    public function describe(IO $io, $object, array $options = array())
     {
         $descriptor = new \Symfony\Component\Console\Descriptor\JsonDescriptor();
 
@@ -33,7 +35,7 @@ class JsonDescriptor implements Descriptor
             $object = new CommandAdapter($object, new ApplicationAdapter($object->getApplication()));
         }
 
-        $descriptor->describe($output, $object, $options);
+        $descriptor->describe(new IOAdapter($io), $object, $options);
 
         return 0;
     }
