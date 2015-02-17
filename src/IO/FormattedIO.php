@@ -18,6 +18,7 @@ use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Formatter\AnsiFormatter;
+use Webmozart\Console\Formatter\PlainFormatter;
 
 /**
  * A formatted I/O.
@@ -54,9 +55,9 @@ class FormattedIO extends RawIO
     {
         parent::__construct($input, $output, $errorOutput);
 
-        $this->formatter = $formatter;
-        $this->formatOutput = $output->supportsAnsi() || !($formatter instanceof AnsiFormatter);
-        $this->formatErrors = $errorOutput->supportsAnsi() || !($formatter instanceof AnsiFormatter);
+        $this->formatter = $formatter ?: new PlainFormatter();
+        $this->formatOutput = $output->supportsAnsi() || !($this->formatter instanceof AnsiFormatter);
+        $this->formatErrors = $errorOutput->supportsAnsi() || !($this->formatter instanceof AnsiFormatter);
     }
 
     /**

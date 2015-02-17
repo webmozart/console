@@ -39,10 +39,12 @@ class PlainFormatter implements Formatter
     {
         $this->innerFormatter = new OutputFormatter(false);
 
-        if ($styleSet) {
-            foreach ($styleSet->toArray() as $tag => $style) {
-                $this->innerFormatter->setStyle($tag, StyleConverter::convert($style));
-            }
+        if (!$styleSet) {
+            $styleSet = new DefaultStyleSet();
+        }
+
+        foreach ($styleSet->toArray() as $tag => $style) {
+            $this->innerFormatter->setStyle($tag, StyleConverter::convert($style));
         }
     }
 

@@ -41,10 +41,12 @@ class AnsiFormatter implements Formatter
     {
         $this->innerFormatter = new OutputFormatter(true);
 
-        if ($styleSet) {
-            foreach ($styleSet->toArray() as $tag => $style) {
-                $this->innerFormatter->setStyle($tag, StyleConverter::convert($style));
-            }
+        if (!$styleSet) {
+            $styleSet = new DefaultStyleSet();
+        }
+
+        foreach ($styleSet->toArray() as $tag => $style) {
+            $this->innerFormatter->setStyle($tag, StyleConverter::convert($style));
         }
     }
 
