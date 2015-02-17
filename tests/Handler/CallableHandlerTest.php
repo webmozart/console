@@ -13,16 +13,13 @@ namespace Webmozart\Console\Tests\Handler;
 
 use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Api\Input\Input;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Handler\CallableHandler;
-use Webmozart\Console\Input\StringInput;
+use Webmozart\Console\IO\BufferedIO;
 
 /**
  * @since  1.0
@@ -33,26 +30,22 @@ class CallableHandlerTest extends PHPUnit_Framework_TestCase
     public function testHandleCommand()
     {
         $args = new Args(new ArgsFormat());
-        $input = new StringInput("line1\nline2");
-        $output = new OutputInterfaceAdapter($buffer1 = new BufferedOutput());
-        $errorOutput = new OutputInterfaceAdapter($buffer2 = new BufferedOutput());
+        $io = new BufferedIO("line1\nline2");
         $command = new Command(new CommandConfig('command'));
 
         $handler = new CallableHandler(
-            function (Args $passedArgs, Input $input, Output $output, Output $errorOutput) use ($args) {
+            function (Command $command, Args $passedArgs, IO $io) use ($args) {
                 PHPUnit_Framework_Assert::assertSame($args, $passedArgs);
 
-                $output->write($input->readLine());
-                $errorOutput->write($input->readLine());
+                $io->write($io->readLine());
+                $io->error($io->readLine());
 
                 return 123;
             }
         );
 
-        $handler->initialize($command, $output, $errorOutput);
-
-        $this->assertSame(123, $handler->handle($args, $input));
-        $this->assertSame("line1\n", $buffer1->fetch());
-        $this->assertSame("line2", $buffer2->fetch());
+        $this->assertSame(123, $handler->handle($command, $args, $io));
+        $this->assertSame("line1\n", $io->fetchOutput());
+        $this->assertSame("line2", $io->fetchErrors());
     }
 }
