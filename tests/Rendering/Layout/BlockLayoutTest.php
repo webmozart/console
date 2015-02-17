@@ -14,8 +14,10 @@ namespace Webmozart\Console\Tests\Rendering\Layout;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
-use Webmozart\Console\Api\Output\Dimensions;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\IO\BufferedIO;
+use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Rendering\Dimensions;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Element\Paragraph;
@@ -30,19 +32,20 @@ class BlockLayoutTest extends PHPUnit_Framework_TestCase
     const LOREM_IPSUM = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt';
 
     /**
-     * @var BufferedOutput
+     * @var BufferedIO
      */
-    private $buffer;
+    private $io;
 
     /**
-     * @var Output
+     * @var Canvas
      */
-    private $output;
+    private $canvas;
 
     protected function setUp()
     {
-        $this->buffer = new BufferedOutput();
-        $this->output = new OutputInterfaceAdapter($this->buffer, new Dimensions(80, 20));
+        $this->io = new BufferedIO();
+        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
+        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
@@ -52,9 +55,9 @@ class BlockLayoutTest extends PHPUnit_Framework_TestCase
         $layout
             ->add(new Paragraph('HEADING 1'))
             ->add(new Paragraph(self::LOREM_IPSUM))
-            ->add(new \Webmozart\Console\Rendering\Element\EmptyLine())
+            ->add(new EmptyLine())
             ->add(new LabeledParagraph('Not Aligned', self::LOREM_IPSUM, 1, false))
-            ->add(new \Webmozart\Console\Rendering\Element\EmptyLine())
+            ->add(new EmptyLine())
             ->add(new Paragraph('HEADING 2'))
             ->beginBlock()
                 ->add(new LabeledParagraph('Label 1', self::LOREM_IPSUM))
@@ -66,7 +69,7 @@ class BlockLayoutTest extends PHPUnit_Framework_TestCase
             ->endBlock()
         ;
 
-        $layout->render($this->output);
+        $layout->render($this->canvas);
 
         $expected = <<<EOF
 HEADING 1
@@ -87,12 +90,12 @@ HEADING 3
 
 EOF;
 
-        $this->assertSame($expected, $this->buffer->fetch());
+        $this->assertSame($expected, $this->io->fetchOutput());
     }
 
     public function testRenderWithIndentation()
     {
-        $layout = new \Webmozart\Console\Rendering\Layout\BlockLayout();
+        $layout = new BlockLayout();
 
         $layout
             ->add(new Paragraph('HEADING 1'))
@@ -111,7 +114,7 @@ EOF;
             ->endBlock()
         ;
 
-        $layout->render($this->output, 4);
+        $layout->render($this->canvas, 4);
 
         $expected = <<<EOF
     HEADING 1
@@ -132,6 +135,6 @@ EOF;
 
 EOF;
 
-        $this->assertSame($expected, $this->buffer->fetch());
+        $this->assertSame($expected, $this->io->fetchOutput());
     }
 }

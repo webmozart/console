@@ -15,7 +15,7 @@ use PHPUnit_Framework_TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Api\Output\Dimensions;
+use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -182,6 +182,37 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
     public function testSetVersionFailsIfNoString()
     {
         $this->config->setVersion(1234);
+    }
+
+    public function testSetHelp()
+    {
+        $this->config->setHelp('help');
+
+        $this->assertSame('help', $this->config->getHelp());
+    }
+
+    public function testSetHelpNull()
+    {
+        $this->config->setHelp('help');
+        $this->config->setHelp(null);
+
+        $this->assertNull($this->config->getHelp());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHelpFailsIfEmpty()
+    {
+        $this->config->setHelp('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHelpFailsIfNoString()
+    {
+        $this->config->setHelp(1234);
     }
 
     public function testSetDispatcher()

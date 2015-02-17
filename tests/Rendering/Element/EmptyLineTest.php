@@ -14,7 +14,10 @@ namespace Webmozart\Console\Tests\Rendering\Element;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\IO\BufferedIO;
+use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 
 /**
@@ -24,35 +27,36 @@ use Webmozart\Console\Rendering\Element\EmptyLine;
 class EmptyLineTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var BufferedOutput
+     * @var BufferedIO
      */
-    private $buffer;
+    private $io;
 
     /**
-     * @var Output
+     * @var Canvas
      */
-    private $output;
+    private $canvas;
 
     protected function setUp()
     {
-        $this->buffer = new BufferedOutput();
-        $this->output = new OutputInterfaceAdapter($this->buffer);
+        $this->io = new BufferedIO();
+        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
+        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
     {
         $line = new EmptyLine();
-        $line->render($this->output);
+        $line->render($this->canvas);
 
-        $this->assertSame("\n", $this->buffer->fetch());
+        $this->assertSame("\n", $this->io->fetchOutput());
     }
 
     public function testRenderIgnoresIndentation()
     {
         $line = new EmptyLine();
-        $line->render($this->output, 10);
+        $line->render($this->canvas, 10);
 
-        $this->assertSame("\n", $this->buffer->fetch());
+        $this->assertSame("\n", $this->io->fetchOutput());
     }
 
 }

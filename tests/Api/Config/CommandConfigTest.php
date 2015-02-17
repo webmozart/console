@@ -20,7 +20,7 @@ use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Style\DefaultStyleSet;
+use Webmozart\Console\Formatter\DefaultStyleSet;
 
 /**
  * @since  1.0

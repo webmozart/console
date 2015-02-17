@@ -11,7 +11,7 @@
 
 namespace Webmozart\Console\Rendering\Alignment;
 
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 
 /**
@@ -63,17 +63,16 @@ class LabelAlignment
      * The passed indentation is added to the indentations of all labeled
      * paragraphs.
      *
-     * @param OutputFormatterInterface $formatter   The formatter used to remove
-     *                                              style tags when calculating
-     *                                              the label width.
-     * @param int                      $indentation The indentation.
+     * @param Formatter $formatter   The formatter used to remove style tags when
+     *                               calculating the label width.
+     * @param int       $indentation The indentation.
      */
-    public function align(OutputFormatterInterface $formatter, $indentation = 0)
+    public function align(Formatter $formatter, $indentation = 0)
     {
         $this->textOffset = 0;
 
         foreach ($this->paragraphs as $i => $item) {
-            $label = $this->filterStyleTags($item->getLabel(), $formatter);
+            $label = $formatter->removeFormat($item->getLabel());
             $textOffset = $this->indentations[$i] + strlen($label) + $item->getPadding();
 
             $this->textOffset = max($this->textOffset, $textOffset);
@@ -103,16 +102,6 @@ class LabelAlignment
     public function getTextOffset()
     {
         return $this->textOffset;
-    }
-
-    private function filterStyleTags($text, OutputFormatterInterface $formatter)
-    {
-        $decorated = $formatter->isDecorated();
-        $formatter->setDecorated(false);
-        $filteredText = $formatter->format($text);
-        $formatter->setDecorated($decorated);
-
-        return $filteredText;
     }
 }
 

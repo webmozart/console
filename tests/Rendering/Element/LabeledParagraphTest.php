@@ -14,8 +14,10 @@ namespace Webmozart\Console\Tests\Rendering\Element;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
-use Webmozart\Console\Api\Output\Dimensions;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\IO\BufferedIO;
+use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Rendering\Dimensions;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 
@@ -28,59 +30,60 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
     const LOREM_IPSUM = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt';
 
     /**
-     * @var BufferedOutput
+     * @var BufferedIO
      */
-    private $buffer;
+    private $io;
 
     /**
-     * @var Output
+     * @var Canvas
      */
-    private $output;
+    private $canvas;
 
     protected function setUp()
     {
-        $this->buffer = new BufferedOutput();
-        $this->output = new OutputInterfaceAdapter($this->buffer, new Dimensions(80, 20));
+        $this->io = new BufferedIO();
+        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
+        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
     {
         $para = new LabeledParagraph('Label', 'Text');
-        $para->render($this->output);
+        $para->render($this->canvas);
 
-        $this->assertSame("Label  Text\n", $this->buffer->fetch());
+        $this->assertSame("Label  Text\n", $this->io->fetchOutput());
     }
 
     public function testRenderWithTrailingNewline()
     {
         $para = new LabeledParagraph('Label', "Text\n");
-        $para->render($this->output);
+        $para->render($this->canvas);
 
-        $this->assertSame("Label  Text\n", $this->buffer->fetch());
+        $this->assertSame("Label  Text\n", $this->io->fetchOutput());
     }
 
     public function testRenderWithIndentation()
     {
         $para = new LabeledParagraph('Label', 'Text');
-        $para->render($this->output, 4);
+        $para->render($this->canvas, 4);
 
-        $this->assertSame("    Label  Text\n", $this->buffer->fetch());
+        $this->assertSame("    Label  Text\n", $this->io->fetchOutput());
     }
 
     public function testRenderWithLabelDistance()
     {
         $para = new LabeledParagraph('Label', 'Text', 1);
-        $para->render($this->output);
+        $para->render($this->canvas);
 
-        $this->assertSame("Label Text\n", $this->buffer->fetch());
+        $this->assertSame("Label Text\n", $this->io->fetchOutput());
     }
 
     public function testRenderWithoutText()
     {
         $para = new LabeledParagraph('Label', '');
-        $para->render($this->output);
+        $para->render($this->canvas);
 
-        $this->assertSame("Label\n", $this->buffer->fetch());
+        $this->assertSame("Label\n", $this->io->fetchOutput());
     }
 
     public function testRenderWithAlignment()
@@ -90,9 +93,9 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
 
         $para = new LabeledParagraph('Label', 'Text');
         $para->setAlignment($alignment);
-        $para->render($this->output);
+        $para->render($this->canvas);
 
-        $this->assertSame("Label     Text\n", $this->buffer->fetch());
+        $this->assertSame("Label     Text\n", $this->io->fetchOutput());
     }
 
     public function testRenderWithAlignmentIgnoresIfTextOffsetToSmall()
@@ -102,15 +105,15 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
 
         $para = new LabeledParagraph('Label', 'Text');
         $para->setAlignment($alignment);
-        $para->render($this->output);
+        $para->render($this->canvas);
 
-        $this->assertSame("Label  Text\n", $this->buffer->fetch());
+        $this->assertSame("Label  Text\n", $this->io->fetchOutput());
     }
 
     public function testRenderWrapsText()
     {
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM);
-        $para->render($this->output);
+        $para->render($this->canvas);
 
         $expected = <<<EOF
 Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
@@ -118,13 +121,13 @@ Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
 
 EOF;
 
-        $this->assertSame($expected, $this->buffer->fetch());
+        $this->assertSame($expected, $this->io->fetchOutput());
     }
 
     public function testRenderWithIndentationWrapsText()
     {
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM);
-        $para->render($this->output, 4);
+        $para->render($this->canvas, 4);
 
         $expected = <<<EOF
     Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
@@ -132,13 +135,13 @@ EOF;
 
 EOF;
 
-        $this->assertSame($expected, $this->buffer->fetch());
+        $this->assertSame($expected, $this->io->fetchOutput());
     }
 
     public function testRenderWithLabelDistanceWrapsText()
     {
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM, 6);
-        $para->render($this->output);
+        $para->render($this->canvas);
 
         $expected = <<<EOF
 Label      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
@@ -146,6 +149,6 @@ Label      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
 
 EOF;
 
-        $this->assertSame($expected, $this->buffer->fetch());
+        $this->assertSame($expected, $this->io->fetchOutput());
     }
 }

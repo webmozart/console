@@ -13,7 +13,7 @@ namespace Webmozart\Console\Api\Config;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
-use Webmozart\Console\Api\Output\Dimensions;
+use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Resolver\DefaultResolver;
@@ -42,6 +42,11 @@ class ApplicationConfig extends BaseConfig
     private $version;
 
     /**
+     * @var string
+     */
+    private $help;
+
+    /**
      * @var CommandConfig[]
      */
     private $commandConfigs = array();
@@ -52,7 +57,7 @@ class ApplicationConfig extends BaseConfig
     private $unnamedCommandConfigs = array();
 
     /**
-     * @var Dimensions
+     * @var \Webmozart\Console\Rendering\Dimensions
      */
     private $outputDimensions;
 
@@ -204,6 +209,35 @@ class ApplicationConfig extends BaseConfig
     }
 
     /**
+     * Returns the help text of the application.
+     *
+     * @return string The help text.
+     */
+    public function getHelp()
+    {
+        return $this->help;
+    }
+
+    /**
+     * Sets the help text of the application.
+     *
+     * @param string $help The help text.
+     *
+     * @return static The current instance.
+     */
+    public function setHelp($help)
+    {
+        if (null !== $help) {
+            Assert::string($help, 'The help text must be a string. Got: %s');
+            Assert::notEmpty($help, 'The help text must not be empty.');
+        }
+
+        $this->help = $help;
+
+        return $this;
+    }
+
+    /**
      * Returns the event dispatcher used to dispatch the console events.
      *
      * @return EventDispatcherInterface The event dispatcher.
@@ -296,7 +330,7 @@ class ApplicationConfig extends BaseConfig
     /**
      * Returns the dimensions of the output window.
      *
-     * @return Dimensions The output dimensions.
+     * @return \Webmozart\Console\Rendering\Dimensions The output dimensions.
      *
      * @see setOutputDimensions()
      */
@@ -308,7 +342,7 @@ class ApplicationConfig extends BaseConfig
     /**
      * Sets the dimensions of the output window.
      *
-     * @param Dimensions $dimensions The output dimensions.
+     * @param \Webmozart\Console\Rendering\Dimensions $dimensions The output dimensions.
      *
      * @return static The current instance.
      *

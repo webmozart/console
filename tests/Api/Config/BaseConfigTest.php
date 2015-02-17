@@ -23,11 +23,11 @@ use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\BaseConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Api\Style\StyleSet;
+use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Handler\CallableHandler;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Style\DefaultStyleSet;
+use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Tests\Api\Config\Fixtures\ConcreteConfig;
 
 /**
@@ -178,7 +178,7 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
         // The above test does not test whether the correct callable is passed
         // to the handler. Test that now.
         /*
-        $input = new InputInterfaceAdapter(new StringInput(''));
+        $input = new InputInterfaceAdapter(new BufferedInput(''));
         $output = new OutputInterfaceAdapter(new BufferedOutput());
         $handler->initialize($command, $output, $output);
 

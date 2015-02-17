@@ -358,8 +358,10 @@ class CommandConfig extends BaseConfig
      */
     public function setDescription($description)
     {
-        Assert::nullOrString($description, 'The command description must be a string or null. Got: %s');
-        Assert::nullOrNotEmpty($description, 'The command description must not be empty.');
+        if (null !== $description) {
+            Assert::string($description, 'The command description must be a string or null. Got: %s');
+            Assert::notEmpty($description, 'The command description must not be empty.');
+        }
 
         $this->description = $description;
 
@@ -395,8 +397,10 @@ class CommandConfig extends BaseConfig
      */
     public function setHelp($help)
     {
-        Assert::nullOrString($help, 'The command help must be a string or null. Got: %s');
-        Assert::nullOrNotEmpty($help, 'The command help must not be empty.');
+        if (null !== $help) {
+            Assert::string($help, 'The help text must be a string or null. Got: %s');
+            Assert::notEmpty($help, 'The help text must not be empty.');
+        }
 
         $this->help = $help;
 
@@ -501,8 +505,10 @@ class CommandConfig extends BaseConfig
      */
     public function setProcessTitle($processTitle)
     {
-        Assert::nullOrString($processTitle, 'The command process title must be a string or null. Got: %s');
-        Assert::nullOrNotEmpty($processTitle, 'The command process title must not be empty.');
+        if (null !== $processTitle) {
+            Assert::string($processTitle, 'The command process title must be a string or null. Got: %s');
+            Assert::notEmpty($processTitle, 'The command process title must not be empty.');
+        }
 
         $this->processTitle = $processTitle;
 

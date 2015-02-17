@@ -11,7 +11,7 @@
 
 namespace Webmozart\Console\Rendering\Element;
 
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Renderable;
 
 /**
@@ -42,15 +42,15 @@ class Paragraph implements Renderable
     /**
      * Renders the paragraph.
      *
-     * @param Output $output      The output.
+     * @param Canvas $canvas      The canvas.
      * @param int    $indentation The number of spaces to indent.
      */
-    public function render(Output $output, $indentation = 0)
+    public function render(Canvas $canvas, $indentation = 0)
     {
         $linePrefix = str_repeat(' ', $indentation);
-        $textWidth = $output->getDimensions()->getWidth() - 1 - $indentation;
+        $textWidth = $canvas->getWidth() - 1 - $indentation;
         $text = str_replace("\n", "\n".$linePrefix, wordwrap($this->text, $textWidth));
 
-        $output->write($linePrefix.rtrim($text)."\n");
+        $canvas->write($linePrefix.rtrim($text)."\n");
     }
 }

@@ -12,8 +12,10 @@
 namespace Webmozart\Console\Rendering\Element;
 
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
+use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Renderable;
 
 /**
@@ -126,13 +128,13 @@ class LabeledParagraph implements Renderable
     /**
      * Renders the paragraph.
      *
-     * @param Output $output      The output.
+     * @param Canvas $canvas      The canvas.
      * @param int    $indentation The number of spaces to indent.
      */
-    public function render(Output $output, $indentation = 0)
+    public function render(Canvas $canvas, $indentation = 0)
     {
         $linePrefix = str_repeat(' ', $indentation);
-        $visibleLabel = $this->filterStyleTags($this->label, $output->getFormatter());
+        $visibleLabel = $canvas->getIO()->removeFormat($this->label);
         $styleTagLength = strlen($this->label) - strlen($visibleLabel);
 
         $textOffset = $this->aligned && $this->alignment ? $this->alignment->getTextOffset() - $indentation : 0;
@@ -140,27 +142,17 @@ class LabeledParagraph implements Renderable
         $textPrefix = str_repeat(' ', $textOffset);
 
         // 1 trailing space
-        $textWidth = $output->getDimensions()->getWidth() - 1 - $textOffset - $indentation;
+        $textWidth = $canvas->getWidth() - 1 - $textOffset - $indentation;
         $text = str_replace("\n", "\n".$linePrefix.$textPrefix, wordwrap($this->text, $textWidth));
 
         // Add the total length of the style tags ("<h>", ...)
         $labelWidth = $textOffset + $styleTagLength;
 
-        $output->write(rtrim(sprintf(
+        $canvas->write(rtrim(sprintf(
             "%s%-${labelWidth}s%s",
             $linePrefix,
             $this->label,
             rtrim($text)
         ))."\n");
-    }
-
-    private function filterStyleTags($text, OutputFormatterInterface $formatter)
-    {
-        $decorated = $formatter->isDecorated();
-        $formatter->setDecorated(false);
-        $filteredText = $formatter->format($text);
-        $formatter->setDecorated($decorated);
-
-        return $filteredText;
     }
 }

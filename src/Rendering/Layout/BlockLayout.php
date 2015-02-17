@@ -11,8 +11,10 @@
 
 namespace Webmozart\Console\Rendering\Layout;
 
-use Webmozart\Console\Api\Output\Output;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
+use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Renderable;
 
@@ -99,15 +101,15 @@ class BlockLayout implements Renderable
     /**
      * Renders all elements in the layout.
      *
-     * @param Output $output      The output.
+     * @param Canvas $canvas      The canvas.
      * @param int    $indentation The number of spaces to indent.
      */
-    public function render(Output $output, $indentation = 0)
+    public function render(Canvas $canvas, $indentation = 0)
     {
-        $this->alignment->align($output->getFormatter(), $indentation);
+        $this->alignment->align($canvas->getIO(), $indentation);
 
         foreach ($this->elements as $i => $element) {
-            $element->render($output, $this->indentations[$i] + $indentation);
+            $element->render($canvas, $this->indentations[$i] + $indentation);
         }
 
         $this->elements = array();
