@@ -148,7 +148,7 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
     {
         reset($commandNames);
 
-        while (null !== key($arguments) && null !== key($commandNames) && current($arguments) === current($commandNames)) {
+        while (null !== key($arguments) && null !== key($commandNames) && current($commandNames)->match(current($arguments))) {
             next($arguments);
             next($commandNames);
         }

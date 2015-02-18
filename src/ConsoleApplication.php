@@ -24,6 +24,8 @@ use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
+use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Args\ArgvArgs;
 use Webmozart\Console\Adapter\IOAdapter;
 use Webmozart\Console\Formatter\AnsiFormatter;
@@ -181,6 +183,14 @@ class ConsoleApplication implements Application
     public function hasDefaultCommands()
     {
         return count($this->defaultCommands) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveCommand(RawArgs $args)
+    {
+        return $this->config->getCommandResolver()->resolveCommand($args, $this);
     }
 
     /**

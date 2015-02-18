@@ -280,19 +280,41 @@ class ArgsFormatBuilder
     {
         $longName = $commandOption->getLongName();
         $shortName = $commandOption->getShortName();
+        $longAliases = $commandOption->getLongAliases();
+        $shortAliases = $commandOption->getShortAliases();
 
-        if (isset($this->commandOptions[$longName]) || isset($this->options[$longName])) {
+        if ($this->hasOption($longName) || $this->hasCommandOption($longName)) {
             throw CannotAddOptionException::existsAlready($longName);
         }
 
-        if (isset($this->commandOptionsByShortName[$shortName]) || isset($this->optionsByShortName[$shortName])) {
+        foreach ($longAliases as $shortAlias) {
+            if ($this->hasOption($shortAlias) || $this->hasCommandOption($shortAlias)) {
+                throw CannotAddOptionException::existsAlready($shortAlias);
+            }
+        }
+
+        if ($shortName && ($this->hasOption($shortName) || $this->hasCommandOption($shortName))) {
             throw CannotAddOptionException::existsAlready($shortName);
+        }
+
+        foreach ($shortAliases as $shortAlias) {
+            if ($this->hasOption($shortAlias) || $this->hasCommandOption($shortAlias)) {
+                throw CannotAddOptionException::existsAlready($shortAlias);
+            }
         }
 
         $this->commandOptions[$longName] = $commandOption;
 
         if ($shortName) {
             $this->commandOptionsByShortName[$shortName] = $commandOption;
+        }
+
+        foreach ($longAliases as $longAlias) {
+            $this->commandOptions[$longAlias] = $commandOption;
+        }
+
+        foreach ($shortAliases as $shortAlias) {
+            $this->commandOptionsByShortName[$shortAlias] = $commandOption;
         }
 
         return $this;
@@ -396,11 +418,11 @@ class ArgsFormatBuilder
     {
         Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
-        $commandOptions = $this->commandOptions;
+        $commandOptions = array_values($this->commandOptions);
 
         if ($includeBase && $this->baseFormat) {
             // prepend base command options
-            $commandOptions = array_replace($this->baseFormat->getCommandOptions(), $commandOptions);
+            $commandOptions = array_merge($this->baseFormat->getCommandOptions(), $commandOptions);
         }
 
         return $commandOptions;
@@ -751,11 +773,11 @@ class ArgsFormatBuilder
         $longName = $option->getLongName();
         $shortName = $option->getShortName();
 
-        if (isset($this->options[$longName]) || isset($this->commandOptions[$longName])) {
+        if ($this->hasOption($longName) || $this->hasCommandOption($longName)) {
             throw CannotAddOptionException::existsAlready($longName);
         }
 
-        if (isset($this->optionsByShortName[$shortName]) || isset($this->commandOptionsByShortName[$shortName])) {
+        if ($shortName && ($this->hasOption($shortName) || $this->hasCommandOption($shortName))) {
             throw CannotAddOptionException::existsAlready($shortName);
         }
 

@@ -30,7 +30,7 @@ use Webmozart\Console\Api\Args\Format\Option;
 class ArgsFormatAdapter extends InputDefinition
 {
     /**
-     * @var string[]
+     * @var CommandName[]
      */
     private $commandNames = array();
 
@@ -50,7 +50,7 @@ class ArgsFormatAdapter extends InputDefinition
 
             $this->addArgument($argument = $this->adaptCommandName($commandName, $argName));
 
-            $this->commandNames[$argument->getName()] = $commandName->toString();
+            $this->commandNames[$argument->getName()] = $commandName;
         }
 
         foreach ($format->getCommandOptions() as $commandOption) {
@@ -69,7 +69,7 @@ class ArgsFormatAdapter extends InputDefinition
     /**
      * Returns the command names indexed by their argument names.
      *
-     * @return string[] The command names.
+     * @return CommandName[] The command names.
      */
     public function getCommandNamesByArgumentName()
     {

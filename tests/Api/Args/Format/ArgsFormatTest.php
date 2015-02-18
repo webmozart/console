@@ -54,7 +54,7 @@ class ArgsFormatTest extends PHPUnit_Framework_TestCase
         ));
 
         $this->assertSame(array($server), $format->getCommandNames());
-        $this->assertSame(array('add' => $add), $format->getCommandOptions());
+        $this->assertSame(array($add), $format->getCommandOptions());
         $this->assertSame(array('host' => $host), $format->getArguments());
         $this->assertSame(array('port' => $port), $format->getOptions());
         $this->assertSame(1, $format->getNumberOfArguments());
@@ -71,7 +71,7 @@ class ArgsFormatTest extends PHPUnit_Framework_TestCase
             ->getFormat();
 
         $this->assertSame(array($server), $format->getCommandNames());
-        $this->assertSame(array('add' => $add), $format->getCommandOptions());
+        $this->assertSame(array($add), $format->getCommandOptions());
         $this->assertSame(array('host' => $host), $format->getArguments());
         $this->assertSame(array('port' => $port), $format->getOptions());
         $this->assertSame(1, $format->getNumberOfArguments());
@@ -636,7 +636,7 @@ class ArgsFormatTest extends PHPUnit_Framework_TestCase
             $option2 = new CommandOption('option2'),
         ));
 
-        $this->assertSame(array('option1' => $option1, 'option2' => $option2), $format->getCommandOptions());
+        $this->assertSame(array($option1, $option2), $format->getCommandOptions());
     }
 
     public function testGetCommandOptionsWithBaseFormat()
@@ -649,16 +649,8 @@ class ArgsFormatTest extends PHPUnit_Framework_TestCase
             $option3 = new CommandOption('option3'),
         ), $baseFormat);
 
-        $this->assertSame(array(
-            'option1' => $option1,
-            'option2' => $option2,
-            'option3' => $option3,
-        ), $format->getCommandOptions());
-
-        $this->assertSame(array(
-            'option2' => $option2,
-            'option3' => $option3,
-        ), $format->getCommandOptions(false));
+        $this->assertSame(array($option1, $option2, $option3), $format->getCommandOptions());
+        $this->assertSame(array($option2, $option3), $format->getCommandOptions(false));
     }
 
     /**
@@ -706,6 +698,24 @@ class ArgsFormatTest extends PHPUnit_Framework_TestCase
         $format = new ArgsFormat(array(), $baseFormat);
 
         $this->assertSame($option, $format->getCommandOption('o'));
+    }
+
+    public function testGetCommandOptionByLongAlias()
+    {
+        $format = new ArgsFormat(array(
+            $option = new CommandOption('option', 'o', array('alias')),
+        ));
+
+        $this->assertSame($option, $format->getCommandOption('alias'));
+    }
+
+    public function testGetCommandOptionByShortAlias()
+    {
+        $format = new ArgsFormat(array(
+            $option = new CommandOption('option', 'o', array('a')),
+        ));
+
+        $this->assertSame($option, $format->getCommandOption('a'));
     }
 
     /**

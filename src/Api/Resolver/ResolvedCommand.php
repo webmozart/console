@@ -32,33 +32,18 @@ class ResolvedCommand
     /**
      * @var RawArgs
      */
-    private $rawArgs;
-
-    /**
-     * @var Args
-     */
-    private $parsedArgs;
-
-    /**
-     * @var CannotParseArgsException
-     */
-    private $parseError;
-
-    /**
-     * @var bool
-     */
-    private $parsed = false;
+    private $args;
 
     /**
      * Creates a new resolved command.
      *
      * @param Command $command The command.
-     * @param RawArgs $rawArgs The raw console arguments.
+     * @param Args    $args    The console arguments.
      */
-    public function __construct(Command $command, RawArgs $rawArgs)
+    public function __construct(Command $command, Args $args)
     {
         $this->command = $command;
-        $this->rawArgs = $rawArgs;
+        $this->args = $args;
     }
 
     /**
@@ -72,74 +57,12 @@ class ResolvedCommand
     }
 
     /**
-     * The raw console arguments.
-     *
-     * @return RawArgs The raw console arguments.
-     */
-    public function getRawArgs()
-    {
-        return $this->rawArgs;
-    }
-
-    /**
      * Returns the parsed console arguments.
      *
-     * @return Args The parsed console arguments or `null` if the console
-     *              arguments cannot be parsed.
-     *
-     * @see isParsable(), getParseError()
+     * @return Args The parsed console arguments.
      */
-    public function getParsedArgs()
+    public function getArgs()
     {
-        if (!$this->parsed) {
-            $this->parse();
-        }
-
-        return $this->parsedArgs;
-    }
-
-    /**
-     * Returns the error that happened during argument parsing.
-     *
-     * @return CannotParseArgsException The parse error or `null` if the
-     *                                  arguments were parsed successfully.
-     *
-     * @see isParsable(), getParsedArgs()
-     */
-    public function getParseError()
-    {
-        if (!$this->parsed) {
-            $this->parse();
-        }
-
-        return $this->parseError;
-    }
-
-    /**
-     * Returns whether the console arguments can be parsed.
-     *
-     * @return bool Returns `true` if the console arguments can be parsed and
-     *              `false` if a parse error occurred.
-     *
-     * @see getParsedArgs(), getParseError()
-     */
-    public function isParsable()
-    {
-        if (!$this->parsed) {
-            $this->parse();
-        }
-
-        return null === $this->parseError;
-    }
-
-    private function parse()
-    {
-        try {
-            $this->parsedArgs = $this->command->parseArgs($this->rawArgs);
-        } catch (CannotParseArgsException $e) {
-            $this->parseError = $e;
-        }
-
-        $this->parsed = true;
+        return $this->args;
     }
 }

@@ -102,7 +102,7 @@ class ArgsFormat
     /**
      * @var CommandOption[]
      */
-    private $commandOptions;
+    private $commandOptions = array();
 
     /**
      * @var CommandOption[]
@@ -173,7 +173,6 @@ class ArgsFormat
 
         $this->baseFormat = $baseFormat;
         $this->commandNames = $builder->getCommandNames(false);
-        $this->commandOptions = $builder->getCommandOptions(false);
         $this->arguments = $builder->getArguments(false);
         $this->options = $builder->getOptions(false);
         $this->hasMultiValuedArg = $builder->hasMultiValuedArgument(false);
@@ -185,9 +184,19 @@ class ArgsFormat
             }
         }
 
-        foreach ($this->commandOptions as $commandOption) {
+        foreach ($builder->getCommandOptions(false) as $commandOption) {
+            $this->commandOptions[$commandOption->getLongName()] = $commandOption;
+
             if ($commandOption->getShortName()) {
                 $this->commandOptionsByShortName[$commandOption->getShortName()] = $commandOption;
+            }
+
+            foreach ($commandOption->getLongAliases() as $longAlias) {
+                $this->commandOptions[$longAlias] = $commandOption;
+            }
+
+            foreach ($commandOption->getShortAliases() as $shortAlias) {
+                $this->commandOptionsByShortName[$shortAlias] = $commandOption;
             }
         }
     }
@@ -292,11 +301,11 @@ class ArgsFormat
     {
         Assert::boolean($includeBase, 'The parameter $includeBase must be a boolean. Got: %s');
 
-        $commandOptions = $this->commandOptions;
+        $commandOptions = array_values($this->commandOptions);
 
         if ($includeBase && $this->baseFormat) {
             // prepend base command options
-            $commandOptions = array_replace($this->baseFormat->getCommandOptions(), $commandOptions);
+            $commandOptions = array_merge($this->baseFormat->getCommandOptions(), $commandOptions);
         }
 
         return $commandOptions;

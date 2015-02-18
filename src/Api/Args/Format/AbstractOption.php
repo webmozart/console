@@ -141,15 +141,6 @@ abstract class AbstractOption
         return $this->description;
     }
 
-    private function assertFlagsValid($flags)
-    {
-        Assert::integer($flags, 'The option flags must be an integer. Got: %s');
-
-        if (($flags & self::PREFER_SHORT_NAME) && ($flags & self::PREFER_LONG_NAME)) {
-            throw new InvalidArgumentException('The option flags PREFER_SHORT_NAME and PREFER_LONG_NAME cannot be combined.');
-        }
-    }
-
     private function assertLongNameValid($longName)
     {
         Assert::string($longName, 'The long option name must be a string. Got: %s');
@@ -161,11 +152,10 @@ abstract class AbstractOption
 
     private function assertShortNameValid($shortName, $flags)
     {
-        Assert::nullOrString($shortName, 'The short option name must be a string or null. Got: %s');
-        Assert::nullOrNotEmpty($shortName, 'The short option name must not be empty.');
-
         if (null !== $shortName) {
-            Assert::true(1 === strlen($shortName), sprintf('The short option name must be exactly one letter. Got: "%s"', $shortName));
+            Assert::string($shortName, 'The short option name must be a string or null. Got: %s');
+            Assert::notEmpty($shortName, 'The short option name must not be empty.');
+            Assert::regex($shortName, '~^[a-zA-Z]$~', 'The short option name must be exactly one letter. Got: "%s"');
         }
 
         if (null === $shortName && ($flags & self::PREFER_SHORT_NAME)) {
@@ -175,7 +165,7 @@ abstract class AbstractOption
 
     private function removeDoubleDashPrefix($string)
     {
-        if (0 === strpos($string, '--')) {
+        if ('--' === substr($string, 0, 2)) {
             $string = substr($string, 2);
         }
 
@@ -184,11 +174,20 @@ abstract class AbstractOption
 
     private function removeDashPrefix($string)
     {
-        if (0 === strpos($string, '-')) {
+        if (isset($string[0]) && '-' === $string[0]) {
             $string = substr($string, 1);
         }
 
         return $string;
+    }
+
+    private function assertFlagsValid($flags)
+    {
+        Assert::integer($flags, 'The option flags must be an integer. Got: %s');
+
+        if (($flags & self::PREFER_SHORT_NAME) && ($flags & self::PREFER_LONG_NAME)) {
+            throw new InvalidArgumentException('The option flags PREFER_SHORT_NAME and PREFER_LONG_NAME cannot be combined.');
+        }
     }
 
     private function addDefaultFlags(&$flags)

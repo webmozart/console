@@ -203,6 +203,22 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($application->hasDefaultCommands());
     }
 
+    public function testResolveCommand()
+    {
+        $args = new StringArgs('');
+        $resolver = $this->getMock('Webmozart\Console\Api\Resolver\CommandResolver');
+        $this->config->setCommandResolver($resolver);
+
+        $application = new ConsoleApplication($this->config);
+
+        $resolver->expects($this->once())
+            ->method('resolveCommand')
+            ->with($args, $application)
+            ->willReturn('RESOLVED COMMAND');
+
+        $this->assertSame('RESOLVED COMMAND', $application->resolveCommand($args));
+    }
+
     /**
      * @dataProvider getRunConfigurations
      */

@@ -40,17 +40,28 @@ class CommandName
     private $string;
 
     /**
+     * @var string[]
+     */
+    private $aliases;
+
+    /**
      * Creates a new command name.
      *
-     * @param string $string The command name.
+     * @param string   $string  The command name.
+     * @param string[] $aliases The alias names.
      */
-    public function __construct($string)
+    public function __construct($string, array $aliases = array())
     {
         Assert::string($string, 'The command name must be a string. Got: %s');
         Assert::notEmpty($string, 'The command name must not be empty.');
         Assert::regex($string, '~^[a-zA-Z0-9\-]+$~', 'The command name must contain letters, digits and hyphens only. Got: "%s"');
 
+        Assert::allString($aliases, 'The command aliases must be strings. Got: %s');
+        Assert::allNotEmpty($aliases, 'The command aliases must not be empty.');
+        Assert::allRegex($aliases, '~^[a-zA-Z0-9\-]+$~', 'The command aliases must contain letters, digits and hyphens only. Got: "%s"');
+
         $this->string = $string;
+        $this->aliases = $aliases;
     }
 
     /**
@@ -61,6 +72,29 @@ class CommandName
     public function toString()
     {
         return $this->string;
+    }
+
+    /**
+     * Returns the alias names.
+     *
+     * @return string[] The aliases of the command name.
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    /**
+     * Returns whether a string matches the command name or one of its aliases.
+     *
+     * @param string $string The string to test.
+     *
+     * @return bool Returns `true` if the given string matches the command name
+     *              or one of its aliases and `false` otherwise.
+     */
+    public function match($string)
+    {
+        return $this->string === $string || in_array($string, $this->aliases, true);
     }
 
     /**

@@ -124,10 +124,18 @@ class NamedCommand extends Command
             $flags = $config->isLongNamePreferred()
                 ? CommandOption::PREFER_LONG_NAME
                 : CommandOption::PREFER_SHORT_NAME;
-            $formatBuilder->addCommandOption(new CommandOption($config->getName(),
-                $config->getShortName(), $flags));
+
+            $formatBuilder->addCommandOption(new CommandOption(
+                $config->getName(),
+                $config->getShortName(),
+                $config->getAliases(),
+                $flags
+            ));
         } else {
-            $formatBuilder->addCommandName(new CommandName($config->getName()));
+            $formatBuilder->addCommandName(new CommandName(
+                $config->getName(),
+                $config->getAliases()
+            ));
         }
 
         $formatBuilder->addOptions($config->getOptions());

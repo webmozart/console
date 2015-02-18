@@ -49,6 +49,19 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(), $args->getArguments(false));
     }
 
+    public function testParseCommandNameAliases()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server', array('server-alias')))
+            ->addCommandName(new CommandName('add', array('add-alias')))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server-alias add-alias'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array(), $args->getArguments(false));
+    }
+
     public function testParseIgnoresMissingCommandNames()
     {
         $format = ArgsFormat::build()
@@ -126,6 +139,21 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->getFormat();
 
         $args = $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument1' => 'foo', 'argument2' => 'bar'), $args->getArguments(false));
+    }
+
+    public function testParseArgumentsIgnoresMissingCommandNameAliases()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server', array('server-alias')))
+            ->addCommandName(new CommandName('add', array('add-alias')))
+            ->addArgument(new Argument('argument1'))
+            ->addArgument(new Argument('argument2'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server-alias foo bar'), $format);
 
         $this->assertSame(array(), $args->getOptions(false));
         $this->assertSame(array('argument1' => 'foo', 'argument2' => 'bar'), $args->getArguments(false));

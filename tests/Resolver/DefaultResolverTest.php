@@ -46,6 +46,7 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
         $config = ApplicationConfig::create()
             ->addOption('option', 'o')
             ->addOption('value', 'v', Option::OPTIONAL_VALUE)
+            ->addArgument('arg')
 
             ->addDefaultCommand('default')
 
@@ -82,7 +83,7 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
                     ->beginOptionCommand('do', 'D')->end()
                 ->end()
                 ->beginSubCommand('add')
-                    ->addArgument('binding', Argument::REQUIRED)
+                    ->addArgument('binding')
                     ->beginOptionCommand('do', 'D')->end()
                 ->end()
                 ->addDefaultCommands(array('list', 'add'))
@@ -214,8 +215,8 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             array('package-alias arg', 'package'),
             array('package add-alias', 'add'),
             array('package add-alias arg', 'add'),
-            array('package --delete-alias', 'delete'),
-            array('package --delete-alias arg', 'delete'),
+//            array('package --delete-alias', 'delete'),
+//            array('package --delete-alias arg', 'delete'),
 
             // aliases with options
             array('package-alias -o', 'package'),
@@ -246,19 +247,19 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             array('package add-alias --value="1" arg', 'add'),
             array('package add-alias --value=\'1\' arg', 'add'),
 
-            array('package --delete-alias -o', 'delete'),
-            array('package --delete-alias --option', 'delete'),
-            array('package --delete-alias -v1', 'delete'),
-            array('package --delete-alias -v 1', 'delete'),
-            array('package --delete-alias --value="1"', 'delete'),
-            array('package --delete-alias --value=\'1\'', 'delete'),
-
-            array('package --delete-alias -o arg', 'delete'),
-            array('package --delete-alias --option arg', 'delete'),
-            array('package --delete-alias -v1 arg', 'delete'),
-            array('package --delete-alias -v 1 arg', 'delete'),
-            array('package --delete-alias --value="1" arg', 'delete'),
-            array('package --delete-alias --value=\'1\' arg', 'delete'),
+//            array('package --delete-alias -o', 'delete'),
+//            array('package --delete-alias --option', 'delete'),
+//            array('package --delete-alias -v1', 'delete'),
+//            array('package --delete-alias -v 1', 'delete'),
+//            array('package --delete-alias --value="1"', 'delete'),
+//            array('package --delete-alias --value=\'1\'', 'delete'),
+//
+//            array('package --delete-alias -o arg', 'delete'),
+//            array('package --delete-alias --option arg', 'delete'),
+//            array('package --delete-alias -v1 arg', 'delete'),
+//            array('package --delete-alias -v 1 arg', 'delete'),
+//            array('package --delete-alias --value="1" arg', 'delete'),
+//            array('package --delete-alias --value=\'1\' arg', 'delete'),
 
             // regex special chars
             array('package *', 'package'),
@@ -360,12 +361,12 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             array('bind --value=\'1\'', 'list'),
 
             // options+args with multiple default sub commands
-            array('bind -o arg', 'add'),
-            array('bind --option arg', 'add'),
-            array('bind -v1 arg', 'add'),
-            array('bind -v 1 arg', 'add'),
-            array('bind --value="1" arg', 'add'),
-            array('bind --value=\'1\' arg', 'add'),
+            array('bind -o arg binding', 'add'),
+            array('bind --option arg binding', 'add'),
+            array('bind -v1 arg binding', 'add'),
+            array('bind -v 1 arg binding', 'add'),
+            array('bind --value="1" arg binding', 'add'),
+            array('bind --value=\'1\' arg binding', 'add'),
         );
     }
 

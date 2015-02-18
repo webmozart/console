@@ -20,6 +20,8 @@ use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
+use Webmozart\Console\Api\Resolver\ResolvedCommand;
 
 /**
  * A console application.
@@ -119,6 +121,17 @@ interface Application
      * @see getDefaultCommands()
      */
     public function hasDefaultCommands();
+
+    /**
+     * Returns the command to execute for the given console arguments.
+     *
+     * @param RawArgs $args The console arguments.
+     *
+     * @return ResolvedCommand The command to execute.
+     *
+     * @throws CannotResolveCommandException If the command cannot be resolved.
+     */
+    public function resolveCommand(RawArgs $args);
 
     /**
      * Executes the command.

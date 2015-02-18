@@ -30,6 +30,17 @@ class CommandNameTest extends PHPUnit_Framework_TestCase
         $this->assertSame($string, $commandName->toString());
     }
 
+    /**
+     * @dataProvider getValidNames
+     */
+    public function testCreateWithAliases($string)
+    {
+        $commandName = new CommandName('cmd', array('alias', $string));
+
+        $this->assertSame('cmd', $commandName->toString());
+        $this->assertSame(array('alias', $string), $commandName->getAliases());
+    }
+
     public function testToString()
     {
         $commandName = new CommandName('cmd');
@@ -41,9 +52,18 @@ class CommandNameTest extends PHPUnit_Framework_TestCase
      * @dataProvider getInvalidNames
      * @expectedException \InvalidArgumentException
      */
-    public function testCreateFailsIfInvalid($string)
+    public function testCreateFailsIfInvalidString($string)
     {
         new CommandName($string);
+    }
+
+    /**
+     * @dataProvider getInvalidNames
+     * @expectedException \InvalidArgumentException
+     */
+    public function testCreateFailsIfInvalidAlias($string)
+    {
+        new CommandName('cmd', array($string));
     }
 
     public function getValidNames()
@@ -67,5 +87,15 @@ class CommandNameTest extends PHPUnit_Framework_TestCase
             array(1234),
             array(true),
         );
+    }
+
+    public function testMatch()
+    {
+        $commandName = new CommandName('cmd', array('alias1', 'alias2'));
+
+        $this->assertTrue($commandName->match('cmd'));
+        $this->assertTrue($commandName->match('alias1'));
+        $this->assertTrue($commandName->match('alias2'));
+        $this->assertFalse($commandName->match('foo'));
     }
 }

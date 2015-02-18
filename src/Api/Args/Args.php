@@ -12,6 +12,8 @@
 namespace Webmozart\Console\Api\Args;
 
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\CommandName;
+use Webmozart\Console\Api\Args\Format\CommandOption;
 
 /**
  * The parsed console arguments.
@@ -90,37 +92,21 @@ class Args
     /**
      * Returns the command names as array.
      *
-     * @return string[] The command names.
-     *
-     * @see CommandName
+     * @return CommandName[] The command names.
      */
     public function getCommandNames()
     {
-        $names = array();
-
-        foreach ($this->format->getCommandNames() as $commandName) {
-            $names[] = $commandName->toString();
-        }
-
-        return $names;
+        return $this->format->getCommandNames();
     }
 
     /**
      * Returns the command options as array.
      *
-     * @return string[] The command options.
-     *
-     * @see CommandOption
+     * @return CommandOption[] The command options.
      */
     public function getCommandOptions()
     {
-        $optionNames = array();
-
-        foreach ($this->format->getCommandOptions() as $commandOption) {
-            $optionNames[] = $commandOption->getLongName();
-        }
-
-        return $optionNames;
+        return $this->format->getCommandOptions();
     }
 
     /**

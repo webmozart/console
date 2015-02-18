@@ -143,7 +143,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     {
         $this->builder->addCommandOption($option = new CommandOption('option'));
 
-        $this->assertSame(array('option' => $option), $this->builder->getCommandOptions());
+        $this->assertSame(array($option), $this->builder->getCommandOptions());
     }
 
     public function testAddCommandOptionPreservesExistingOptions()
@@ -151,7 +151,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder->addCommandOption($option1 = new CommandOption('option1'));
         $this->builder->addCommandOption($option2 = new CommandOption('option2'));
 
-        $this->assertSame(array('option1' => $option1, 'option2' => $option2), $this->builder->getCommandOptions());
+        $this->assertSame(array($option1, $option2), $this->builder->getCommandOptions());
     }
 
     /**
@@ -175,6 +175,26 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
+    public function testFailIfAddingCommandOptionWithSameLongAliasAsOtherOption()
+    {
+        $this->builder->addOption(new Option('alias', 'a'));
+        $this->builder->addCommandOption(new CommandOption('option', 'b', array('alias')));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
+    public function testFailIfAddingCommandOptionWithSameLongNameAsOptionInBaseFormat()
+    {
+        $this->baseFormatBuilder->addOption(new Option('option', 'a'));
+        $this->builder = new ArgsFormatBuilder($this->baseFormatBuilder->getFormat());
+
+        $this->builder->addCommandOption(new CommandOption('option', 'b'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
     public function testFailIfAddingCommandOptionWithSameShortNameAsOtherCommandOption()
     {
         $this->builder->addCommandOption(new CommandOption('option1', 'o'));
@@ -190,6 +210,26 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder->addCommandOption(new CommandOption('option2', 'o'));
     }
 
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
+    public function testFailIfAddingCommandOptionWithSameShortAliasAsOtherOption()
+    {
+        $this->builder->addOption(new Option('option1', 'a'));
+        $this->builder->addCommandOption(new CommandOption('option2', 'o', array('a')));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
+    public function testFailIfAddingCommandOptionWithSameShortNameAsOptionInBaseFormat()
+    {
+        $this->baseFormatBuilder->addOption(new Option('option1', 'o'));
+        $this->builder = new ArgsFormatBuilder($this->baseFormatBuilder->getFormat());
+
+        $this->builder->addCommandOption(new CommandOption('option2', 'o'));
+    }
+
     public function testAddCommandOptions()
     {
         $this->builder->addCommandOption($option1 = new CommandOption('option1'));
@@ -198,7 +238,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
             $option3 = new CommandOption('option3'),
         ));
 
-        $this->assertSame(array('option1' => $option1, 'option2' => $option2, 'option3' => $option3), $this->builder->getCommandOptions());
+        $this->assertSame(array($option1, $option2, $option3), $this->builder->getCommandOptions());
     }
 
     public function testSetCommandOptions()
@@ -209,7 +249,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
             $option3 = new CommandOption('option3'),
         ));
 
-        $this->assertSame(array('option2' => $option2, 'option3' => $option3), $this->builder->getCommandOptions());
+        $this->assertSame(array($option2, $option3), $this->builder->getCommandOptions());
     }
 
     public function testGetCommandOptions()
@@ -217,7 +257,7 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder->addCommandOption($option1 = new CommandOption('option1'));
         $this->builder->addCommandOption($option2 = new CommandOption('option2'));
 
-        $this->assertSame(array('option1' => $option1, 'option2' => $option2), $this->builder->getCommandOptions());
+        $this->assertSame(array($option1, $option2), $this->builder->getCommandOptions());
     }
 
     public function testGetCommandOptionsWithBaseDefinition()
@@ -228,16 +268,8 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
         $this->builder->addCommandOption($option2 = new CommandOption('option2'));
         $this->builder->addCommandOption($option3 = new CommandOption('option3'));
 
-        $this->assertSame(array(
-            'option1' => $option1,
-            'option2' => $option2,
-            'option3' => $option3,
-        ), $this->builder->getCommandOptions());
-
-        $this->assertSame(array(
-            'option2' => $option2,
-            'option3' => $option3,
-        ), $this->builder->getCommandOptions(false));
+        $this->assertSame(array($option1, $option2, $option3), $this->builder->getCommandOptions());
+        $this->assertSame(array($option2, $option3), $this->builder->getCommandOptions(false));
     }
 
     /**
@@ -922,6 +954,26 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
      */
+    public function testFailIfAddingOptionWithSameLongNameAsCommandOptionAlias()
+    {
+        $this->builder->addCommandOption(new CommandOption('option', 'a', array('alias')));
+        $this->builder->addOption(new Option('alias', 'b'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
+    public function testFailIfAddingOptionWithSameLongNameAsOptionInBaseFormat()
+    {
+        $this->baseFormatBuilder->addOption(new Option('option', 'a'));
+        $this->builder = new ArgsFormatBuilder($this->baseFormatBuilder->getFormat());
+
+        $this->builder->addOption(new Option('option', 'b'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
     public function testFailIfAddingOptionWithSameShortNameAsOtherOption()
     {
         $this->builder->addOption(new Option('option1', 'o'));
@@ -934,6 +986,26 @@ class ArgsFormatBuilderTest extends PHPUnit_Framework_TestCase
     public function testFailIfAddingOptionWithSameShortNameAsOtherCommandOption()
     {
         $this->builder->addCommandOption(new CommandOption('option1', 'o'));
+        $this->builder->addOption(new Option('option2', 'o'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
+    public function testFailIfAddingOptionWithSameShortNameAsCommandOptionAlias()
+    {
+        $this->builder->addCommandOption(new CommandOption('option1', 'o', array('a')));
+        $this->builder->addOption(new Option('option2', 'a'));
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotAddOptionException
+     */
+    public function testFailIfAddingOptionWithSameShortNameAsOptionInBaseFormat()
+    {
+        $this->baseFormatBuilder->addOption(new Option('option1', 'o'));
+        $this->builder = new ArgsFormatBuilder($this->baseFormatBuilder->getFormat());
+
         $this->builder->addOption(new Option('option2', 'o'));
     }
 

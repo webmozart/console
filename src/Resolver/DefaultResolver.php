@@ -45,7 +45,11 @@ class DefaultResolver implements CommandResolver
 
         // Try to find a command for the passed arguments and options.
         if ($result = $this->processArguments($args, $application->getCommands(), $argumentsToTest, $optionsToTest)) {
-            return $result;
+            if (!$result->isParsable()) {
+                throw $result->getParseError();
+            }
+
+            return new ResolvedCommand($result->getCommand(), $result->getParsedArgs());
         }
 
         // If arguments were passed, we did not find the matching command.
@@ -55,7 +59,11 @@ class DefaultResolver implements CommandResolver
 
         // If no arguments were passed, run the application's default command.
         if ($result = $this->processDefaultCommands($args, $application->getDefaultCommands())) {
-            return $result;
+            if (!$result->isParsable()) {
+                throw $result->getParseError();
+            }
+
+            return new ResolvedCommand($result->getCommand(), $result->getParsedArgs());
         }
 
         // No default command is configured.
@@ -68,7 +76,7 @@ class DefaultResolver implements CommandResolver
      * @param string[]          $argumentsToTest
      * @param string[]          $optionsToTest
      *
-     * @return ResolvedCommand
+     * @return ResolveResult
      */
     private function processArguments(RawArgs $args, CommandCollection $commands, array $argumentsToTest, array $optionsToTest)
     {
@@ -97,7 +105,7 @@ class DefaultResolver implements CommandResolver
      * @param Command  $currentCommand
      * @param string[] $optionsToTest
      *
-     * @return ResolvedCommand
+     * @return ResolveResult
      */
     private function processOptions(RawArgs $args, Command $currentCommand, array $optionsToTest)
     {
@@ -118,7 +126,7 @@ class DefaultResolver implements CommandResolver
      * @param RawArgs $args
      * @param Command $currentCommand
      *
-     * @return ResolvedCommand
+     * @return ResolveResult
      */
     private function processDefaultSubCommands(RawArgs $args, Command $currentCommand)
     {
@@ -129,21 +137,21 @@ class DefaultResolver implements CommandResolver
         }
 
         // No default commands, return the current command
-        return new ResolvedCommand($currentCommand, $args);
+        return new ResolveResult($currentCommand, $args);
     }
 
     /**
      * @param RawArgs   $args
      * @param Command[] $defaultCommands
      *
-     * @return ResolvedCommand
+     * @return ResolveResult
      */
     private function processDefaultCommands(RawArgs $args, array $defaultCommands)
     {
         $firstResult = null;
 
         foreach ($defaultCommands as $defaultCommand) {
-            $resolvedCommand = new ResolvedCommand($defaultCommand, $args);
+            $resolvedCommand = new ResolveResult($defaultCommand, $args);
 
             if ($resolvedCommand->isParsable()) {
                 return $resolvedCommand;

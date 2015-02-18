@@ -83,19 +83,14 @@ class ApplicationAdapter extends Application
         /** @var ArgsAdapter $input */
         Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsAdapter');
 
-        $commandResolver = $this->adaptedApplication->getConfig()->getCommandResolver();
-        $resolvedCommand = $commandResolver->resolveCommand($input->getRawArgs(), $this->adaptedApplication);
+        $rawArgs = $input->getRawArgs();
+        $resolvedCommand = $this->adaptedApplication->resolveCommand($rawArgs);
 
-        if (!$resolvedCommand->isParsable()) {
-            throw $resolvedCommand->getParseError();
-        }
-
-        // Add parsed Args to the composite input
-        $input = new ArgsAdapter($input->getRawArgs(), $resolvedCommand->getParsedArgs());
+        // Add parsed Args to the adapter
+        $input = new ArgsAdapter($rawArgs, $resolvedCommand->getArgs());
 
         // Don't use $this->get() as get() does not work for sub-commands
         $this->currentCommand = new CommandAdapter($resolvedCommand->getCommand(), $this);
-        $this->currentCommand->setApplication($this);
 
         try {
             $result = parent::doRun($input, $output);

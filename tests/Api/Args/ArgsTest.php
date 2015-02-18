@@ -29,29 +29,29 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetCommandNames()
     {
         $format = ArgsFormat::build()
-            ->addCommandName(new CommandName('server'))
-            ->addCommandName(new CommandName('add'))
+            ->addCommandName($server = new CommandName('server'))
+            ->addCommandName($add = new CommandName('add'))
             ->addArgument(new Argument('argument'))
             ->addOption(new Option('option'))
             ->getFormat();
 
         $args = new Args($format);
 
-        $this->assertSame(array('server', 'add'), $args->getCommandNames());
+        $this->assertSame(array($server, $add), $args->getCommandNames());
     }
 
     public function testGetCommandOptions()
     {
         $format = ArgsFormat::build()
-            ->addCommandOption(new CommandOption('server'))
-            ->addCommandOption(new CommandOption('add', 'a', CommandOption::PREFER_SHORT_NAME))
+            ->addCommandOption($server = new CommandOption('server'))
+            ->addCommandOption($add = new CommandOption('add', 'a', array(), CommandOption::PREFER_SHORT_NAME))
             ->addArgument(new Argument('argument'))
             ->addOption(new Option('option'))
             ->getFormat();
 
         $args = new Args($format);
 
-        $this->assertSame(array('server', 'add'), $args->getCommandOptions());
+        $this->assertSame(array($server, $add), $args->getCommandOptions());
     }
 
     public function testGetOptionReturnsOptionValue()
