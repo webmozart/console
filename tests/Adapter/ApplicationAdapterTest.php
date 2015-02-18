@@ -14,7 +14,7 @@ namespace Webmozart\Console\Tests\Adapter;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Adapter\ApplicationAdapter;
-use Webmozart\Console\Adapter\ArgsFormatAdapter;
+use Webmozart\Console\Adapter\ArgsFormatInputDefinition;
 use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\ConsoleApplication;
@@ -47,7 +47,7 @@ class ApplicationAdapterTest extends PHPUnit_Framework_TestCase
         $this->assertSame($helperSet, $adapter->getHelperSet());
         $this->assertSame(array(80, 20), $adapter->getTerminalDimensions());
         $this->assertSame(array(), $adapter->getNamespaces());
-        $this->assertEquals(new ArgsFormatAdapter($application->getGlobalArgsFormat()), $adapter->getDefinition());
+        $this->assertEquals(new ArgsFormatInputDefinition($application->getGlobalArgsFormat()), $adapter->getDefinition());
 
         $commandAdapter = new CommandAdapter($application->getCommand('command'), $adapter);
         $commandAdapter->setApplication($adapter);

@@ -14,7 +14,7 @@ namespace Webmozart\Console\Args;
 use RuntimeException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
-use Webmozart\Console\Adapter\ArgsFormatAdapter;
+use Webmozart\Console\Adapter\ArgsFormatInputDefinition;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\ArgsParser;
 use Webmozart\Console\Api\Args\CannotParseArgsException;
@@ -47,7 +47,7 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
     {
         $this->setTokens($args->getTokens());
 
-        $formatAdapter = new ArgsFormatAdapter($format);
+        $formatAdapter = new ArgsFormatInputDefinition($format);
 
         try {
             $this->bind($formatAdapter);
@@ -90,12 +90,12 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         return $args;
     }
 
-    private function insertMissingCommandNames(ArgsFormatAdapter $formatAdapter)
+    private function insertMissingCommandNames(ArgsFormatInputDefinition $inputDefinition)
     {
         // Start with the default values of the arguments.
-        $inputArguments = $formatAdapter->getArguments();
+        $inputArguments = $inputDefinition->getArguments();
         $fixedValues = array();
-        $commandNames = $formatAdapter->getCommandNamesByArgumentName();
+        $commandNames = $inputDefinition->getCommandNamesByArgumentName();
 
         // Flatten the actual arguments, in case they contain a multi-valued
         // argument.

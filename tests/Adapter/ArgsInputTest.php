@@ -12,7 +12,7 @@
 namespace Webmozart\Console\Tests\Adapter;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\ArgsAdapter;
+use Webmozart\Console\Adapter\ArgsInput;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
@@ -24,7 +24,7 @@ use Webmozart\Console\Args\StringArgs;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ArgsAdapterTest extends PHPUnit_Framework_TestCase
+class ArgsInputTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var RawArgs
@@ -49,7 +49,7 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $input = new ArgsAdapter($this->rawArgs, $this->args);
+        $input = new ArgsInput($this->rawArgs, $this->args);
 
         $this->assertSame($this->rawArgs, $input->getRawArgs());
         $this->assertSame($this->args, $input->getArgs());
@@ -57,7 +57,7 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testCreateNoArgs()
     {
-        $input = new ArgsAdapter($this->rawArgs);
+        $input = new ArgsInput($this->rawArgs);
 
         $this->assertSame($this->rawArgs, $input->getRawArgs());
         $this->assertNull($input->getArgs());
@@ -65,21 +65,21 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testGetFirstArgument()
     {
-        $input = new ArgsAdapter(new StringArgs('one -o two --option three'));
+        $input = new ArgsInput(new StringArgs('one -o two --option three'));
 
         $this->assertSame('one', $input->getFirstArgument());
     }
 
     public function testGetNoFirstArgument()
     {
-        $input = new ArgsAdapter(new StringArgs(''));
+        $input = new ArgsInput(new StringArgs(''));
 
         $this->assertNull($input->getFirstArgument());
     }
 
     public function testHasParameterOption()
     {
-        $input = new ArgsAdapter(new StringArgs('-o --option --value=value'));
+        $input = new ArgsInput(new StringArgs('-o --option --value=value'));
 
         $this->assertTrue($input->hasParameterOption('-o'));
         $this->assertTrue($input->hasParameterOption('--option'));
@@ -89,7 +89,7 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testHasMultipleParameterOptions()
     {
-        $input = new ArgsAdapter(new StringArgs('-o --option --value=value'));
+        $input = new ArgsInput(new StringArgs('-o --option --value=value'));
 
         $this->assertTrue($input->hasParameterOption(array('-o', '--option')));
         // sufficient if any of the options exists
@@ -99,7 +99,7 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testGetParameterOption()
     {
-        $input = new ArgsAdapter(new StringArgs('-vvalue1  --value=value2 --space value3 --last'));
+        $input = new ArgsInput(new StringArgs('-vvalue1  --value=value2 --space value3 --last'));
 
         $this->assertSame('value1', $input->getParameterOption('-v'));
         $this->assertSame('value2', $input->getParameterOption('--value'));
@@ -110,8 +110,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testGetArguments()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $this->args->setArguments(array(
             'argument1' => 'value1',
@@ -127,8 +127,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testGetArgument()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $this->args->setArguments(array(
             'argument1' => 'value1',
@@ -141,8 +141,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSetArgument()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $inputArgs->setArgument('argument1', 'value1');
         $inputNoArgs->setArgument('argument1', 'value1');
@@ -153,8 +153,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testHasArgument()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $this->args->setArguments(array(
             'argument1' => 'value1',
@@ -168,8 +168,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testGetOptions()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $this->args->setOptions(array(
             'option1' => true,
@@ -185,8 +185,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testGetOption()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $this->args->setOptions(array(
             'option1' => true,
@@ -199,8 +199,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSetOption()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $inputArgs->setOption('option2', 'value1');
         $inputNoArgs->setOption('option2', 'value1');
@@ -211,8 +211,8 @@ class ArgsAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testHasOption()
     {
-        $inputArgs = new ArgsAdapter($this->rawArgs, $this->args);
-        $inputNoArgs = new ArgsAdapter($this->rawArgs);
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+        $inputNoArgs = new ArgsInput($this->rawArgs);
 
         $this->args->setOptions(array(
             'option1' => true,

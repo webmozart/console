@@ -22,7 +22,7 @@ use Webmozart\Console\IO\RawIO;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class IOAdapter implements OutputInterface
+class IOOutput implements OutputInterface
 {
     /**
      * @var IO

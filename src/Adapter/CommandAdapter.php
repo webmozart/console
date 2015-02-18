@@ -49,7 +49,7 @@ class CommandAdapter extends Command
 
         $config = $adaptedCommand->getConfig();
 
-        parent::setDefinition(new ArgsFormatAdapter($this->adaptedCommand->getArgsFormat()));
+        parent::setDefinition(new ArgsFormatInputDefinition($this->adaptedCommand->getArgsFormat()));
         parent::setApplication($application);
         parent::setDescription($config->getDescription());
         parent::setHelp($config->getHelp());
@@ -242,10 +242,10 @@ class CommandAdapter extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        /** @var ArgsAdapter $input */
-        /** @var IOAdapter $output */
-        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsAdapter');
-        Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\IOAdapter');
+        /** @var ArgsInput $input */
+        /** @var IOOutput $output */
+        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsInput');
+        Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\IOOutput');
 
         return $this->adaptedCommand->handle($input->getArgs(), $output->getIO());
     }

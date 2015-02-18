@@ -14,7 +14,7 @@ namespace Webmozart\Console\Tests\Adapter;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Adapter\ApplicationAdapter;
-use Webmozart\Console\Adapter\ArgsFormatAdapter;
+use Webmozart\Console\Adapter\ArgsFormatInputDefinition;
 use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\NamedCommand;
@@ -49,8 +49,8 @@ class CommandAdapterTest extends PHPUnit_Framework_TestCase
         $adapter = new CommandAdapter($command, $applicationAdapter);
 
         $this->assertSame('command', $adapter->getName());
-        $this->assertEquals(new ArgsFormatAdapter($command->getArgsFormat()), $adapter->getDefinition());
-        $this->assertEquals(new ArgsFormatAdapter($command->getArgsFormat()), $adapter->getNativeDefinition());
+        $this->assertEquals(new ArgsFormatInputDefinition($command->getArgsFormat()), $adapter->getDefinition());
+        $this->assertEquals(new ArgsFormatInputDefinition($command->getArgsFormat()), $adapter->getNativeDefinition());
         $this->assertSame($command, $adapter->getAdaptedCommand());
         $this->assertSame(array('alias1', 'alias2'), $adapter->getAliases());
         $this->assertSame($applicationAdapter, $adapter->getApplication());
@@ -80,8 +80,8 @@ class CommandAdapterTest extends PHPUnit_Framework_TestCase
         $adapter = new CommandAdapter($command, $applicationAdapter);
 
         $this->assertSame('unnamed1', $adapter->getName());
-        $this->assertEquals(new ArgsFormatAdapter($command->getArgsFormat()), $adapter->getDefinition());
-        $this->assertEquals(new ArgsFormatAdapter($command->getArgsFormat()), $adapter->getNativeDefinition());
+        $this->assertEquals(new ArgsFormatInputDefinition($command->getArgsFormat()), $adapter->getDefinition());
+        $this->assertEquals(new ArgsFormatInputDefinition($command->getArgsFormat()), $adapter->getNativeDefinition());
         $this->assertSame($command, $adapter->getAdaptedCommand());
         $this->assertSame(array(), $adapter->getAliases());
         $this->assertSame($applicationAdapter, $adapter->getApplication());

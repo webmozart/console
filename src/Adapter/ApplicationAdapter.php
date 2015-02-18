@@ -80,14 +80,14 @@ class ApplicationAdapter extends Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        /** @var ArgsAdapter $input */
-        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsAdapter');
+        /** @var ArgsInput $input */
+        Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsInput');
 
         $rawArgs = $input->getRawArgs();
         $resolvedCommand = $this->adaptedApplication->resolveCommand($rawArgs);
 
         // Add parsed Args to the adapter
-        $input = new ArgsAdapter($rawArgs, $resolvedCommand->getArgs());
+        $input = new ArgsInput($rawArgs, $resolvedCommand->getArgs());
 
         // Don't use $this->get() as get() does not work for sub-commands
         $this->currentCommand = new CommandAdapter($resolvedCommand->getCommand(), $this);
@@ -127,7 +127,7 @@ class ApplicationAdapter extends Application
      */
     protected function getDefaultInputDefinition()
     {
-        return new ArgsFormatAdapter($this->adaptedApplication->getGlobalArgsFormat());
+        return new ArgsFormatInputDefinition($this->adaptedApplication->getGlobalArgsFormat());
     }
 
     /**

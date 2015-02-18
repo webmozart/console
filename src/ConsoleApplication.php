@@ -12,8 +12,8 @@
 namespace Webmozart\Console;
 
 use Webmozart\Console\Adapter\ApplicationAdapter;
-use Webmozart\Console\Adapter\ArgsAdapter;
-use Webmozart\Console\Adapter\IOAdapter;
+use Webmozart\Console\Adapter\ArgsInput;
+use Webmozart\Console\Adapter\IOOutput;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
@@ -211,6 +211,6 @@ class ConsoleApplication implements Application
 
         $io = new FormattedIO($input, $output, $errorOutput, new AnsiFormatter());
 
-        return $this->applicationAdapter->run(new ArgsAdapter($args), new IOAdapter($io));
+        return $this->applicationAdapter->run(new ArgsInput($args), new IOOutput($io));
     }
 }

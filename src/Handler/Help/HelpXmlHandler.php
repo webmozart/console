@@ -14,7 +14,7 @@ namespace Webmozart\Console\Handler\Help;
 use Symfony\Component\Console\Descriptor\XmlDescriptor;
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\CommandAdapter;
-use Webmozart\Console\Adapter\IOAdapter;
+use Webmozart\Console\Adapter\IOOutput;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
@@ -32,16 +32,16 @@ class HelpXmlHandler implements CommandHandler
     public function handle(Command $command, Args $args, IO $io)
     {
         $descriptor = new XmlDescriptor();
-        $ioAdapter = new IOAdapter($io);
+        $output = new IOOutput($io);
         $application = $command->getApplication();
         $applicationAdapter = new ApplicationAdapter($application);
 
         if ($args->isArgumentSet('command')) {
             $theCommand = $application->getCommand($args->getArgument('command'));
             $commandAdapter = new CommandAdapter($theCommand, $applicationAdapter);
-            $descriptor->describe($ioAdapter, $commandAdapter);
+            $descriptor->describe($output, $commandAdapter);
         } else {
-            $descriptor->describe($ioAdapter, $applicationAdapter);
+            $descriptor->describe($output, $applicationAdapter);
         }
 
         return 0;

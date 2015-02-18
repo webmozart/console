@@ -14,7 +14,7 @@ namespace Webmozart\Console\Tests\Adapter;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Webmozart\Console\Adapter\ArgsFormatAdapter;
+use Webmozart\Console\Adapter\ArgsFormatInputDefinition;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\CommandName;
@@ -25,7 +25,7 @@ use Webmozart\Console\Api\Args\Format\Option;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
+class ArgsFormatInputDefinitionTest extends PHPUnit_Framework_TestCase
 {
     public function testAdaptCommandNames()
     {
@@ -35,7 +35,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('cmd2'))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(
             'cmd1' => new InputArgument('cmd1', InputArgument::REQUIRED),
@@ -52,7 +52,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addCommandOption(new CommandOption('add', 'a'))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(), $adapter->getArguments());
         $this->assertEquals(array(
@@ -67,7 +67,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument', Argument::OPTIONAL))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(
             'argument' => new InputArgument('argument', InputArgument::OPTIONAL),
@@ -81,7 +81,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument', Argument::OPTIONAL | Argument::MULTI_VALUED))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(
             'argument' => new InputArgument('argument', InputArgument::OPTIONAL | InputArgument::IS_ARRAY),
@@ -95,7 +95,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument', Argument::REQUIRED))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(
             'argument' => new InputArgument('argument', InputArgument::REQUIRED),
@@ -109,7 +109,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument', Argument::REQUIRED | Argument::MULTI_VALUED))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(
             'argument' => new InputArgument('argument', InputArgument::REQUIRED | InputArgument::IS_ARRAY),
@@ -123,7 +123,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument', Argument::OPTIONAL, 'The description', 'The default'))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(
             'argument' => new InputArgument('argument', InputArgument::OPTIONAL, 'The description', 'The default'),
@@ -137,7 +137,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addOption(new Option('option', null, Option::NO_VALUE))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(), $adapter->getArguments());
         $this->assertEquals(array(
@@ -151,7 +151,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addOption(new Option('option', null, Option::OPTIONAL_VALUE))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(), $adapter->getArguments());
         $this->assertEquals(array(
@@ -165,7 +165,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addOption(new Option('option', null, Option::REQUIRED_VALUE))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(), $adapter->getArguments());
         $this->assertEquals(array(
@@ -179,7 +179,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addOption(new Option('option', null, Option::REQUIRED_VALUE | Option::MULTI_VALUED))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(), $adapter->getArguments());
         $this->assertEquals(array(
@@ -193,7 +193,7 @@ class ArgsFormatAdapterTest extends PHPUnit_Framework_TestCase
             ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE, 'The description', 'The default'))
             ->getFormat();
 
-        $adapter = new ArgsFormatAdapter($argsFormat);
+        $adapter = new ArgsFormatInputDefinition($argsFormat);
 
         $this->assertEquals(array(), $adapter->getArguments());
         $this->assertEquals(array(

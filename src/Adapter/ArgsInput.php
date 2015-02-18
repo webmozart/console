@@ -22,7 +22,7 @@ use Webmozart\Console\Api\Args\RawArgs;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ArgsAdapter implements InputInterface
+class ArgsInput implements InputInterface
 {
     /**
      * @var RawArgs
