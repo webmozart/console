@@ -13,8 +13,6 @@ namespace Webmozart\Console\Api\Formatter;
 
 use LogicException;
 use OutOfBoundsException;
-use Symfony\Component\Console\Formatter\OutputFormatterStyleInterface;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * A set of styles used by the formatter.

@@ -11,9 +11,6 @@
 
 namespace Webmozart\Console\Api\IO;
 
-use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Api\Formatter\StyleSet;
-
 /**
  * The console output.
  *

@@ -13,9 +13,9 @@ namespace Webmozart\Console\Api\Config;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Assert\Assert;
+use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**

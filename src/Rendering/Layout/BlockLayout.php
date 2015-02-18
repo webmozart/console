@@ -11,8 +11,6 @@
 
 namespace Webmozart\Console\Rendering\Layout;
 
-use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
 use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;

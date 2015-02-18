@@ -12,7 +12,6 @@
 namespace Webmozart\Console\Formatter;
 
 use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Webmozart\Console\Adapter\StyleConverter;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\Formatter\Style;

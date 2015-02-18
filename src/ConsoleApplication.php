@@ -11,10 +11,9 @@
 
 namespace Webmozart\Console;
 
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\ArgsAdapter;
+use Webmozart\Console\Adapter\IOAdapter;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
@@ -24,16 +23,12 @@ use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
-use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Args\ArgvArgs;
-use Webmozart\Console\Adapter\IOAdapter;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\IO\FormattedIO;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
-use Webmozart\Console\IO\RawIO;
 
 /**
  * A console application.

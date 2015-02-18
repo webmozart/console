@@ -13,7 +13,6 @@ namespace Webmozart\Console\Api\Command;
 
 use LogicException;
 use Webmozart\Console\Api\Application\Application;
-use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\ArgsFormatBuilder;
 use Webmozart\Console\Api\Args\Format\CommandName;
 use Webmozart\Console\Api\Args\Format\CommandOption;

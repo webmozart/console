@@ -12,14 +12,9 @@
 namespace Webmozart\Console\Tests\Resolver;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Input\StringInput;
 use Webmozart\Console\Adapter\InputInterfaceAdapter;
-use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
+use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;

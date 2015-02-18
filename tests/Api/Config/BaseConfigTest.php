@@ -14,8 +14,6 @@ namespace Webmozart\Console\Tests\Api\Config;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Args\Format\Argument;
@@ -25,9 +23,9 @@ use Webmozart\Console\Api\Config\BaseConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
+use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Tests\Api\Config\Fixtures\ConcreteConfig;
 
 /**

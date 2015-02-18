@@ -15,10 +15,10 @@ use RuntimeException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Webmozart\Console\Adapter\ArgsFormatAdapter;
-use Webmozart\Console\Api\Args\CannotParseArgsException;
-use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\ArgsParser;
+use Webmozart\Console\Api\Args\CannotParseArgsException;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
 
 /**

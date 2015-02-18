@@ -18,13 +18,13 @@ use Webmozart\Console\Api\Args\Format\ArgsFormatBuilder;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\Formatter\StyleSet;
+use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Assert\Assert;
+use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\Handler\NullHandler;
-use Webmozart\Console\Formatter\DefaultStyleSet;
 
 /**
  * Implements methods shared by all configurations.

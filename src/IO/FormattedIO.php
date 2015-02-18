@@ -14,9 +14,7 @@ namespace Webmozart\Console\IO;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\Formatter\Style;
 use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
 

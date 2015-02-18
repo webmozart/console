@@ -12,12 +12,10 @@
 namespace Webmozart\Console\Tests\Rendering\Layout;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\IO\BufferedIO;
 use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Dimensions;
-use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Element\Paragraph;

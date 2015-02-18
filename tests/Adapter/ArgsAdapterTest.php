@@ -18,9 +18,7 @@ use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Args\RawArgs;
-use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Args\StringArgs;
-use Webmozart\Console\IO\Input\BufferedInput;
 
 /**
  * @since  1.0

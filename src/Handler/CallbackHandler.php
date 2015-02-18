@@ -14,7 +14,6 @@ namespace Webmozart\Console\Handler;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Handler\CommandHandler;
-use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 

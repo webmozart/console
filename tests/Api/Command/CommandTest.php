@@ -11,7 +11,6 @@
 
 namespace Webmozart\Console\Tests\Api\Command;
 
-use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Application\Application;
@@ -25,11 +24,6 @@ use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
-use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Args\StringArgs;
-use Webmozart\Console\Handler\CallbackHandler;
-use Webmozart\Console\IO\Input\BufferedInput;
 
 /**
  * @since  1.0

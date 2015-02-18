@@ -12,7 +12,6 @@
 namespace Webmozart\Console\Api\Resolver;
 
 use Webmozart\Console\Api\Args\Args;
-use Webmozart\Console\Api\Args\CannotParseArgsException;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 

@@ -11,9 +11,6 @@
 
 namespace Webmozart\Console\Rendering\Element;
 
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
 use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Renderable;

@@ -19,8 +19,8 @@ use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Args\DefaultArgsParser;
-use Webmozart\Console\Handler\NullHandler;
 use Webmozart\Console\Formatter\DefaultStyleSet;
+use Webmozart\Console\Handler\NullHandler;
 
 /**
  * @since  1.0

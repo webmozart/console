@@ -12,13 +12,11 @@
 namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\IO\BufferedIO;
+use Webmozart\Console\Rendering\Alignment\LabelAlignment;
 use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Dimensions;
-use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Rendering\Alignment\LabelAlignment;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 
 /**

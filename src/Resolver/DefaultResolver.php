@@ -11,19 +11,15 @@
 
 namespace Webmozart\Console\Resolver;
 
-use RuntimeException;
 use Webmozart\Console\Adapter\InputDefinitionAdapter;
 use Webmozart\Console\Api\Application\Application;
-use Webmozart\Console\Api\Args\CannotParseArgsException;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Args\Args;
-use Webmozart\Console\Api\Resolver\ResolvedCommand;
-use Webmozart\Console\Resolver\CommandResult;
 use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
 use Webmozart\Console\Api\Resolver\CommandResolver;
-use Webmozart\Console\Assert\Assert;
+use Webmozart\Console\Api\Resolver\ResolvedCommand;
+use Webmozart\Console\Resolver\CommandResult;
 
 /**
  * Parses the raw console arguments for the command to execute.

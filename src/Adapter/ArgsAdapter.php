@@ -15,8 +15,6 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\RawArgs;
-use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\IO;
 
 /**
  * Adapts an {@link Args} instance to Symfony's {@link InputInterface} API.

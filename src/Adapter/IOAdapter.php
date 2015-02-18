@@ -15,9 +15,6 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\IO\RawIO;
-use Webmozart\Console\Rendering\Dimensions;
-use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Api\Formatter\StyleSet;
 
 /**
  * Adapts an {@link IO} instance to Symfony's {@link OutputInterface} API.

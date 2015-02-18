@@ -13,9 +13,7 @@ namespace Webmozart\Console\Api\Handler;
 
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Api\IO\Output;
 
 /**
  * Handles a console command.
