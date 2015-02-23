@@ -292,7 +292,7 @@ abstract class Config
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
-     * @see setCallback(), getHandler()
+     * @see getHandler()
      */
     public function setHandler($handler)
     {
@@ -325,31 +325,6 @@ abstract class Config
         Assert::notEmpty($handlerMethod, 'The handler method must not be empty.');
 
         $this->handlerMethod = $handlerMethod;
-    }
-
-    /**
-     * Sets the callback to execute when a command is run.
-     *
-     * The callback receives three arguments:
-     *
-     *  * {@link Args} `$args`: The console arguments.
-     *  * {@link Input} `$input`: The standard input.
-     *  * {@link Output} `$output`: The standard output.
-     *  * {@link Output} `$errorOutput`: The error output.
-     *
-     * The callback should return 0 on success and a positive integer on error.
-     *
-     * @param callable $callback The callback to execute when the command is run.
-     *
-     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
-     *
-     * @see setHandler(), getHandler()
-     */
-    public function setCallback($callback)
-    {
-        $this->setHandler(new CallbackHandler($callback));
-
-        return $this;
     }
 
     /**

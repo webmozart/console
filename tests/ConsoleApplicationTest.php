@@ -24,6 +24,7 @@ use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
+use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\IO\Input\BufferedInput;
 use Webmozart\Console\IO\Output\BufferedOutput;
 
@@ -251,7 +252,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('list')
-                            ->setCallback($callback)
+                            ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
                 }
@@ -263,7 +264,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                     $config
                         ->addDefaultCommand('list')
                         ->beginCommand('list')
-                            ->setCallback($callback)
+                            ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
                 }
@@ -274,7 +275,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginUnnamedCommand()
-                            ->setCallback($callback)
+                            ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
                 }
@@ -286,7 +287,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                     $config
                         ->beginCommand('server')
                             ->beginSubCommand('add')
-                                ->setCallback($callback)
+                                ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()
                     ;
@@ -300,7 +301,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                         ->beginCommand('server')
                             ->addDefaultCommand('add')
                             ->beginSubCommand('add')
-                                ->setCallback($callback)
+                                ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()
                     ;
@@ -313,7 +314,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                     $config
                         ->beginCommand('server')
                             ->beginOptionCommand('add')
-                                ->setCallback($callback)
+                                ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()
                     ;
@@ -327,7 +328,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                         ->beginCommand('server')
                             ->addDefaultCommand('add')
                             ->beginOptionCommand('add')
-                                ->setCallback($callback)
+                                ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()
                     ;
@@ -340,7 +341,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                     $config
                         ->beginCommand('server')
                             ->beginUnnamedCommand()
-                                ->setCallback($callback)
+                                ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()
                     ;

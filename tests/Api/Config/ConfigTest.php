@@ -199,28 +199,6 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame('handle', $this->config->getHandlerMethod());
     }
 
-    public function testSetCallback()
-    {
-        $this->config->setCallback($callback = function () { return 'foo'; });
-
-        $command = new Command(new CommandConfig('command'));
-
-        $handler = $this->config->getHandler($command);
-
-        $this->assertEquals(new CallbackHandler($callback), $handler);
-
-        // The above test does not test whether the correct callable is passed
-        // to the handler. Test that now.
-        /*
-        $input = new InputInterfaceAdapter(new BufferedInput(''));
-        $output = new OutputInterfaceAdapter(new BufferedOutput());
-        $handler->initialize($command, $output, $output);
-
-        $this->assertInstanceOf('Webmozart\Console\Handler\CallbackHandler', $handler);
-        $this->assertSame('foo', $handler->handle($input));
-        */
-    }
-
     public function testAddDefaultCommand()
     {
         $this->config->addDefaultCommand('command1');
