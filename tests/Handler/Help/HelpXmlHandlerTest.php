@@ -71,7 +71,7 @@ class HelpXmlHandlerTest extends PHPUnit_Framework_TestCase
         $args = new Args($this->helpCommand->getArgsFormat());
         $args->setArgument('command', 'the-command');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -86,7 +86,7 @@ EOF;
     {
         $args = new Args($this->helpCommand->getArgsFormat());
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>

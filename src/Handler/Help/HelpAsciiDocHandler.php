@@ -67,7 +67,7 @@ class HelpAsciiDocHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle(Args $args, IO $io)
     {
         if ($this->processLauncher->isSupported()) {
             if (!$this->lessBinary) {

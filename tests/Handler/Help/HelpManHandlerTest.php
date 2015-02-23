@@ -113,7 +113,7 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $this->args, $this->io);
+        $status = $this->handler->handle($this->args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -135,7 +135,7 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
         $this->processLauncher->expects($this->never())
             ->method('launchProcess');
 
-        $this->handler->handle($this->command, $this->args, $this->io);
+        $this->handler->handle($this->args, $this->io, $this->command);
     }
 
     /**
@@ -150,7 +150,7 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
         $this->processLauncher->expects($this->never())
             ->method('launchProcess');
 
-        $this->handler->handle($this->command, $this->args, $this->io);
+        $this->handler->handle($this->args, $this->io, $this->command);
     }
 
     public function testHandleWithCustomManBinary()
@@ -171,7 +171,7 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->handler->setManBinary('my-man');
 
-        $status = $this->handler->handle($this->command, $this->args, $this->io);
+        $status = $this->handler->handle($this->args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }

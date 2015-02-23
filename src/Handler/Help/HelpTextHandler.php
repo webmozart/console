@@ -27,7 +27,7 @@ class HelpTextHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle(Args $args, IO $io, Command $command)
     {
         $application = $command->getApplication();
         $canvas = new Canvas($io);

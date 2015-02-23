@@ -65,7 +65,7 @@ class HelpManHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle()
     {
         if (!$this->processLauncher->isSupported()) {
             throw new RuntimeException('The ProcessLauncher must be supported for the man help to run.');

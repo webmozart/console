@@ -332,7 +332,7 @@ class Command
             ProcessTitle::setProcessTitle($processTitle);
 
             try {
-                $statusCode = $commandHandler->$handlerMethod($this, $args, $io);
+                $statusCode = $commandHandler->$handlerMethod($args, $io, $this);
             } catch (Exception $e) {
                 ProcessTitle::resetProcessTitle();
 
@@ -341,7 +341,7 @@ class Command
 
             ProcessTitle::resetProcessTitle();
         } else {
-            $statusCode = $commandHandler->$handlerMethod($this, $args, $io);
+            $statusCode = $commandHandler->$handlerMethod($args, $io, $this);
         }
 
         return $statusCode;

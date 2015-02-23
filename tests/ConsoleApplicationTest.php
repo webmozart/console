@@ -194,7 +194,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
      */
     public function testRunCommand($argString, $configCallback)
     {
-        $callback = function (Command $command, Args $args, IO $io) {
+        $callback = function (Args $args, IO $io) {
             $io->write($io->readLine());
             $io->error($io->readLine());
 

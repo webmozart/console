@@ -15,6 +15,7 @@ use Symfony\Component\Process\ExecutableFinder;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Handler\DelegatingHandler;
 use Webmozart\Console\Process\ProcessLauncher;
@@ -93,12 +94,13 @@ class HelpHandler extends DelegatingHandler
     /**
      * Callback for creating the "--ascii-doc" handler.
      *
-     * @param Command $command The handled command.
      * @param Args    $args    The console arguments.
+     * @param IO      $io      The I/O.
+     * @param Command $command The handled command.
      *
      * @return HelpAsciiDocHandler The created handler.
      */
-    public function createAsciiDocHandler(Command $command, Args $args)
+    public function createAsciiDocHandler(Args $args, IO $io, Command $command)
     {
         $path = $this->getAsciiDocPage($command->getApplication(), $args);
 
@@ -121,12 +123,13 @@ class HelpHandler extends DelegatingHandler
     /**
      * Callback for creating the "--man" handler.
      *
-     * @param Command $command The handled command.
      * @param Args    $args    The console arguments.
+     * @param IO      $io      The I/O.
+     * @param Command $command The handled command.
      *
      * @return HelpManHandler The created handler.
      */
-    public function createManHandler(Command $command, Args $args)
+    public function createManHandler(Args $args, IO $io, Command $command)
     {
         $path = $this->getManPage($command->getApplication(), $args);
 
@@ -159,12 +162,13 @@ class HelpHandler extends DelegatingHandler
     /**
      * Callback for selecting the handler that should be run.
      *
-     * @param Command $command The handled command.
      * @param Args    $args    The console arguments.
+     * @param IO      $io      The I/O.
+     * @param Command $command The handled command.
      *
      * @return string The name of the handler to run.
      */
-    public function getHandlerToRun(Command $command, Args $args)
+    public function getHandlerToRun(Args $args, IO $io, Command $command)
     {
         $rawArgs = $args->getRawArgs();
 

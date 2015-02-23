@@ -113,7 +113,7 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $this->args, $this->io);
+        $status = $this->handler->handle($this->args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -132,7 +132,7 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
         $this->processLauncher->expects($this->never())
             ->method('launchProcess');
 
-        $status = $this->handler->handle($this->command, $this->args, $this->io);
+        $status = $this->handler->handle($this->args, $this->io, $this->command);
 
         $this->assertSame("Contents of the-command.txt\n", $this->io->fetchOutput());
         $this->assertSame(0, $status);
@@ -147,7 +147,7 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
         $this->processLauncher->expects($this->never())
             ->method('launchProcess');
 
-        $status = $this->handler->handle($this->command, $this->args, $this->io);
+        $status = $this->handler->handle($this->args, $this->io, $this->command);
 
         $this->assertSame("Contents of the-command.txt\n", $this->io->fetchOutput());
         $this->assertSame(0, $status);
@@ -171,7 +171,7 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->handler->setLessBinary('my-less');
 
-        $status = $this->handler->handle($this->command, $this->args, $this->io);
+        $status = $this->handler->handle($this->args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }

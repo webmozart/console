@@ -28,7 +28,7 @@ class HelpJsonHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle(Args $args, IO $io, Command $command)
     {
         $descriptor = new JsonDescriptor();
         $output = new IOOutput($io);

@@ -34,9 +34,9 @@ class CallbackHandler
      *
      * The passed callback receives three arguments:
      *
-     *  * {@link Command} `$command`: The executed command.
      *  * {@link Args} `$args`: The console arguments.
      *  * {@link IO} `$io`: The I/O.
+     *  * {@link Command} `$command`: The executed command.
      *
      * The callable should return 0 on success and a positive integer on error.
      *
@@ -53,8 +53,8 @@ class CallbackHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle(Args $args, IO $io, Command $command)
     {
-        return call_user_func($this->callback, $command, $args, $io);
+        return call_user_func($this->callback, $args, $io, $command);
     }
 }

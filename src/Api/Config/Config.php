@@ -318,9 +318,9 @@ abstract class Config
      *
      * The method receives three arguments:
      *
-     *  * {@link Command} `$command`: The executed command.
      *  * {@link Args} `$args`: The console arguments.
      *  * {@link IO} `$io`: The I/O.
+     *  * {@link Command} `$command`: The executed command.
      *
      * @param string $handlerMethod The method name.
      *

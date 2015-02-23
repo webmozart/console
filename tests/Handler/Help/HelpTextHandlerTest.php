@@ -71,7 +71,7 @@ class HelpTextHandlerTest extends PHPUnit_Framework_TestCase
         $args = new Args($this->helpCommand->getArgsFormat());
         $args->setArgument('command', 'the-command');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 USAGE
@@ -88,7 +88,7 @@ EOF;
     {
         $args = new Args($this->helpCommand->getArgsFormat());
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 The Application version 1.2.3

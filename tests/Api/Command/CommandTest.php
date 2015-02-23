@@ -413,7 +413,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
 
         $handler->expects($this->once())
             ->method('handle')
-            ->with($command, $args, $io)
+            ->with($args, $io, $command)
             ->willReturn(123);
 
         $this->assertSame(123, $command->handle($args, $io));
@@ -432,7 +432,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
 
         $handler->expects($this->once())
             ->method('handleFoo')
-            ->with($command, $args, $io)
+            ->with($args, $io, $command)
             ->willReturn(123);
 
         $this->assertSame(123, $command->handle($args, $io));
@@ -458,7 +458,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
 
         $handler->expects($this->once())
             ->method('handle')
-            ->with($command, $parsedArgs, $io)
+            ->with($parsedArgs, $io, $command)
             ->willReturn(123);
 
         $this->assertSame(123, $command->run($rawArgs, $io));

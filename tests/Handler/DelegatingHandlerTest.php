@@ -155,13 +155,13 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
 
         $delegate->expects($this->once())
             ->method('handle')
-            ->with($this->command, $this->args, $this->io)
+            ->with($this->args, $this->io, $this->command)
             ->willReturn(123);
 
         $handler->register('handler1', $delegate);
         $handler->register('handler2', new CallbackHandler(function () {}));
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 
     public function testDelegateToSelectedHandler()
@@ -171,7 +171,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
 
         $delegate->expects($this->once())
             ->method('handle')
-            ->with($this->command, $this->args, $this->io)
+            ->with($this->args, $this->io, $this->command)
             ->willReturn(123);
 
         $handler->register('handler1', new CallbackHandler(function () {}));
@@ -179,7 +179,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
         $handler->register('handler3', new CallbackHandler(function () {}));
         $handler->selectHandler('handler2');
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 
     public function testDelegateToFirstHandlerIfSelectedHandlerUnregistered()
@@ -189,7 +189,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
 
         $delegate->expects($this->once())
             ->method('handle')
-            ->with($this->command, $this->args, $this->io)
+            ->with($this->args, $this->io, $this->command)
             ->willReturn(123);
 
         $handler->register('handler1', $delegate);
@@ -198,7 +198,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
         $handler->selectHandler('handler2');
         $handler->unregister('handler2');
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 
     public function testDelegateToHandlerCreatedByFactoryCallback()
@@ -212,11 +212,11 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
 
         $delegate->expects($this->once())
             ->method('handle')
-            ->with($this->command, $this->args, $this->io)
+            ->with($this->args, $this->io, $this->command)
             ->willReturn(123);
 
         $handler->register('handler1', new CallbackHandler(function () {}));
-        $handler->register('handler2', function ($passedCommand, $passedArgs, $passedIO) use ($delegate, $command, $args, $io) {
+        $handler->register('handler2', function ($passedArgs, $passedIO, $passedCommand) use ($delegate, $command, $args, $io) {
             PHPUnit_Framework_Assert::assertSame($command, $passedCommand);
             PHPUnit_Framework_Assert::assertSame($args, $passedArgs);
             PHPUnit_Framework_Assert::assertSame($io, $passedIO);
@@ -226,7 +226,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
         $handler->register('handler3', new CallbackHandler(function () {}));
         $handler->selectHandler('handler2');
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 
     public function testDelegateToHandlerSelectedByCallback()
@@ -240,14 +240,14 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
 
         $delegate->expects($this->once())
             ->method('handle')
-            ->with($this->command, $this->args, $this->io)
+            ->with($this->args, $this->io, $this->command)
             ->willReturn(123);
 
         $handler->register('handler1', new CallbackHandler(function () {}));
         $handler->register('handler2', $delegate);
         $handler->register('handler3', new CallbackHandler(function () {}));
 
-        $handler->selectHandler(function ($passedCommand, $passedArgs, $passedIO) use ($command, $args, $io) {
+        $handler->selectHandler(function ($passedArgs, $passedIO, $passedCommand) use ($command, $args, $io) {
             PHPUnit_Framework_Assert::assertSame($command, $passedCommand);
             PHPUnit_Framework_Assert::assertSame($args, $passedArgs);
             PHPUnit_Framework_Assert::assertSame($io, $passedIO);
@@ -255,7 +255,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
             return 'handler2';
         });
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 
     /**
@@ -266,7 +266,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
     {
         $handler = new DelegatingHandler();
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 
     /**
@@ -278,6 +278,6 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
         $handler = new DelegatingHandler();
         $handler->selectHandler(function () { return 'foobar'; });
 
-        $handler->handle($this->command, $this->args, $this->io);
+        $handler->handle($this->args, $this->io, $this->command);
     }
 }

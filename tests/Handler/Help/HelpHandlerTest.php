@@ -152,7 +152,7 @@ class HelpHandlerTest extends PHPUnit_Framework_TestCase
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 USAGE
@@ -172,7 +172,7 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 The Application version 1.2.3
@@ -195,7 +195,7 @@ EOF;
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -213,7 +213,7 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -232,7 +232,7 @@ EOF;
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertStringStartsWith('{"name":"the-command",', $this->io->fetchOutput());
         $this->assertSame(0, $status);
@@ -245,7 +245,7 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertStringStartsWith('{"commands":[{"name":"help",', $this->io->fetchOutput());
         $this->assertSame(0, $status);
@@ -275,7 +275,7 @@ EOF;
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -306,7 +306,7 @@ EOF;
 
         $this->handler->setCommandPagePrefix('prefix-');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -334,7 +334,7 @@ EOF;
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -364,7 +364,7 @@ EOF;
 
         $this->handler->setApplicationPage('custom-app');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -393,7 +393,7 @@ EOF;
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -424,7 +424,7 @@ EOF;
 
         $this->handler->setCommandPagePrefix('prefix-');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -452,7 +452,7 @@ EOF;
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -482,7 +482,7 @@ EOF;
 
         $this->handler->setApplicationPage('custom-app');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -507,7 +507,7 @@ EOF;
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -537,7 +537,7 @@ EOF;
             ->with($command, false)
             ->will($this->returnValue(123));
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -564,7 +564,7 @@ EOF;
 
         $this->handler->setApplicationPage('man-not-found');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame(123, $status);
     }
@@ -583,7 +583,7 @@ EOF;
         $this->processLauncher->expects($this->never())
             ->method('launchProcess');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertSame("Contents of the-app.txt\n", $this->io->fetchOutput());
         $this->assertSame(0, $status);
@@ -605,7 +605,7 @@ EOF;
 
         $this->handler->setApplicationPage('foobar');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $expected = <<<EOF
 The Application version 1.2.3

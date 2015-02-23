@@ -69,7 +69,7 @@ class HelpJsonHandlerTest extends PHPUnit_Framework_TestCase
         $args = new Args($this->helpCommand->getArgsFormat());
         $args->setArgument('command', 'the-command');
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertStringStartsWith('{"name":"the-command",', $this->io->fetchOutput());
         $this->assertSame(0, $status);
@@ -79,7 +79,7 @@ class HelpJsonHandlerTest extends PHPUnit_Framework_TestCase
     {
         $args = new Args($this->helpCommand->getArgsFormat());
 
-        $status = $this->handler->handle($this->command, $args, $this->io);
+        $status = $this->handler->handle($args, $this->io, $this->command);
 
         $this->assertStringStartsWith('{"commands":[{"name":"help",', $this->io->fetchOutput());
         $this->assertSame(0, $status);

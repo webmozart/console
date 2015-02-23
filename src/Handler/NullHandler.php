@@ -26,7 +26,7 @@ class NullHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle(Args $args, IO $io, Command $command)
     {
     }
 }

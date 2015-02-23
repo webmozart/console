@@ -34,8 +34,9 @@ class CallbackHandlerTest extends PHPUnit_Framework_TestCase
         $command = new Command(new CommandConfig('command'));
 
         $handler = new CallbackHandler(
-            function (Command $command, Args $passedArgs, IO $io) use ($args) {
+            function (Args $passedArgs, IO $io, Command $passedCommand) use ($args, $command) {
                 PHPUnit_Framework_Assert::assertSame($args, $passedArgs);
+                PHPUnit_Framework_Assert::assertSame($command, $passedCommand);
 
                 $io->write($io->readLine());
                 $io->error($io->readLine());
@@ -44,7 +45,7 @@ class CallbackHandlerTest extends PHPUnit_Framework_TestCase
             }
         );
 
-        $this->assertSame(123, $handler->handle($command, $args, $io));
+        $this->assertSame(123, $handler->handle($args, $io, $command));
         $this->assertSame("line1\n", $io->fetchOutput());
         $this->assertSame("line2", $io->fetchErrors());
     }

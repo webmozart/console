@@ -69,7 +69,7 @@ class DelegatingHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(Command $command, Args $args, IO $io)
+    public function handle(Args $args, IO $io, Command $command)
     {
         $handlerName = $this->selectedHandler;
 
@@ -78,7 +78,7 @@ class DelegatingHandler
         }
 
         if (is_callable($handlerName)) {
-            $handlerName = $handlerName($command, $args, $io);
+            $handlerName = $handlerName($args, $io, $command);
         }
 
         if (!isset($this->handlers[$handlerName])) {
@@ -91,10 +91,10 @@ class DelegatingHandler
         $handler = $this->handlers[$handlerName];
 
         if (is_callable($handler)) {
-            $handler = $handler($command, $args, $io);
+            $handler = $handler($args, $io, $command);
         }
 
-        return $handler->handle($command, $args, $io);
+        return $handler->handle($args, $io, $command);
     }
 
     /**
