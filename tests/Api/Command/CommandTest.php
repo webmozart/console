@@ -257,19 +257,19 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testGetDefaultCommands()
     {
         $config = new CommandConfig('command');
-        $config->addDefaultCommandConfig($subConfig1 = new SubCommandConfig());
         $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub1'));
         $config->addSubCommandConfig($subConfig3 = new SubCommandConfig('sub2'));
         $config->addOptionCommandConfig($optionConfig1 = new OptionCommandConfig('option1'));
         $config->addOptionCommandConfig($optionConfig2 = new OptionCommandConfig('option2'));
-        $config->addDefaultCommandName('sub2');
-        $config->addDefaultCommandName('option1');
+        $config->addDefaultCommand('sub2');
+        $config->addDefaultCommand($subConfig1 = new SubCommandConfig());
+        $config->addDefaultCommand('option1');
 
         $command = new Command($config, $this->application);
 
         $this->assertEquals(array(
-            new Command($subConfig1, $this->application, $command),
             new NamedCommand($subConfig3, $this->application, $command),
+            new Command($subConfig1, $this->application, $command),
             new NamedCommand($optionConfig1, $this->application, $command),
         ), $command->getDefaultCommands());
     }
@@ -277,17 +277,17 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHasDefaultCommands()
     {
         $config = new CommandConfig('command');
-        $config->addDefaultCommandConfig(new SubCommandConfig());
+        $config->addDefaultCommand(new SubCommandConfig());
         $command = new Command($config);
 
         $this->assertTrue($command->hasDefaultCommands());
     }
 
-    public function testHasDefaultCommandsIfDefaultCommandName()
+    public function testHasDefaultCommandsIfDefaultCommandNames()
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig(new SubCommandConfig('sub'));
-        $config->addDefaultCommandName('sub');
+        $config->addDefaultCommand('sub');
         $command = new Command($config);
 
         $this->assertTrue($command->hasDefaultCommands());

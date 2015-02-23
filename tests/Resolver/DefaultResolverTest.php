@@ -43,7 +43,7 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
             ->addOption('value', 'v', Option::OPTIONAL_VALUE)
             ->addArgument('arg')
 
-            ->addDefaultCommandName('default')
+            ->addDefaultCommand('default')
 
             ->beginCommand('package')
                 ->addAlias('package-alias')
@@ -65,12 +65,12 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
                 ->beginSubCommand('save')
                     ->beginOptionCommand('do', 'D')->end()
                 ->end()
-                ->addDefaultCommandName('save')
+                ->addDefaultCommand('save')
             ->end()
 
             ->beginCommand('server')
                 ->beginOptionCommand('list')->end()
-                ->addDefaultCommandName('list')
+                ->addDefaultCommand('list')
             ->end()
 
             ->beginCommand('bind')
@@ -81,7 +81,7 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
                     ->addArgument('binding')
                     ->beginOptionCommand('do', 'D')->end()
                 ->end()
-                ->addDefaultCommandNames(array('list', 'add'))
+                ->addDefaultCommands(array('list', 'add'))
             ->end()
         ;
 

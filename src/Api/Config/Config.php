@@ -17,12 +17,10 @@ use Webmozart\Console\Api\Args\ArgsParser;
 use Webmozart\Console\Api\Args\Format\ArgsFormatBuilder;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
-use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Formatter\DefaultStyleSet;
-use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\Handler\NullHandler;
 
 /**
@@ -62,11 +60,6 @@ abstract class Config
      * @var string
      */
     private $handlerMethod = 'handle';
-
-    /**
-     * @var string[]
-     */
-    private $defaultCommandNames = array();
 
     /**
      * Creates a new configuration.
@@ -343,100 +336,6 @@ abstract class Config
         $this->handlerMethod = $handlerMethod;
 
         return $this;
-    }
-
-    /**
-     * Returns the default command to run when no explicit command is requested.
-     *
-     * @return string[] The names of the default commands.
-     *
-     * @see addDefaultCommandName(), setDefaultCommandNames()
-     */
-    public function getDefaultCommandNames()
-    {
-        return $this->defaultCommandNames;
-    }
-
-    /**
-     * Adds a default command to run when no explicit command is requested.
-     *
-     * @param string $commandName The name of the default command.
-     *
-     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
-     *
-     * @see addDefaultCommandNames(), setDefaultCommandNames()
-     */
-    public function addDefaultCommandName($commandName)
-    {
-        Assert::string($commandName, 'The default command name must be a string. Got: %s');
-        Assert::notEmpty($commandName, 'The default command name must not be empty.');
-
-        $this->defaultCommandNames[] = $commandName;
-
-        return $this;
-    }
-
-    /**
-     * Adds default commands to run when no explicit command is requested.
-     *
-     * @param string[] $commandNames The names of the default commands.
-     *
-     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
-     *
-     * @see addDefaultCommandName(), setDefaultCommandNames()
-     */
-    public function addDefaultCommandNames(array $commandNames)
-    {
-        foreach ($commandNames as $commandName) {
-            $this->addDefaultCommandName($commandName);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Sets the default commands to run when no explicit command is requested.
-     *
-     * The resolver tries all default commands until a command is found that
-     * matches the passed console arguments.
-     *
-     * @param string[] $commandNames The names of the default commands.
-     *
-     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
-     *
-     * @see getDefaultCommandNames(), addDefaultCommandName()
-     */
-    public function setDefaultCommandNames(array $commandNames)
-    {
-        $this->defaultCommandNames = array();
-
-        $this->addDefaultCommandNames($commandNames);
-
-        return $this;
-    }
-
-    /**
-     * Returns whether the given command is a default command.
-     *
-     * @param string $commandName The command name.
-     *
-     * @return bool Returns `true` if the command is in the list of default
-     *              commands and `false` otherwise.
-     */
-    public function isDefaultCommandName($commandName)
-    {
-        return in_array($commandName, $this->defaultCommandNames, true);
-    }
-
-    /**
-     * Returns whether the configuration contains default commands.
-     *
-     * @return bool Returns `true` if default commands are set and `false`
-     *              otherwise.
-     */
-    public function hasDefaultCommandNames()
-    {
-        return count($this->defaultCommandNames) > 0;
     }
 
     /**

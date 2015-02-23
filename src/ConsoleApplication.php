@@ -21,6 +21,7 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
@@ -84,12 +85,12 @@ class ConsoleApplication implements Application
             }
         }
 
-        foreach ($config->getDefaultCommandConfigs() as $commandConfig) {
-            $this->defaultCommands[] = new Command($commandConfig, $this);
-        }
-
-        foreach ($config->getDefaultCommandNames() as $commandName) {
-            $this->defaultCommands[] = $this->commands->get($commandName);
+        foreach ($config->getDefaultCommands() as $nameOrConfig) {
+            if ($nameOrConfig instanceof CommandConfig) {
+                $this->defaultCommands[] = new Command($nameOrConfig, $this);
+            } else {
+                $this->defaultCommands[] = $this->commands->get($nameOrConfig);
+            }
         }
 
         $this->applicationAdapter = new ApplicationAdapter($this);

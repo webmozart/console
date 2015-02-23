@@ -106,19 +106,17 @@ class Command
             $this->addSubCommand($subConfig);
         }
 
-        foreach ($config->getOptionCommandConfigs() as $subConfig) {
-            $this->addOptionCommand($subConfig);
+        foreach ($config->getOptionCommandConfigs() as $optionConfig) {
+            $this->addOptionCommand($optionConfig);
         }
 
-        foreach ($config->getDefaultCommandConfigs() as $subConfig) {
-            $this->defaultCommands[] = new Command($subConfig, $this->application, $this);
-        }
-
-        foreach ($config->getDefaultCommandNames() as $commandName) {
-            if ($this->subCommands->contains($commandName)) {
-                $this->defaultCommands[] = $this->subCommands->get($commandName);
-            } elseif ($this->optionCommands->contains($commandName)) {
-                $this->defaultCommands[] = $this->optionCommands->get($commandName);
+        foreach ($config->getDefaultCommands() as $nameOrConfig) {
+            if ($nameOrConfig instanceof SubCommandConfig) {
+                $this->defaultCommands[] = new Command($nameOrConfig, $this->application, $this);
+            } elseif ($this->subCommands->contains($nameOrConfig)) {
+                $this->defaultCommands[] = $this->subCommands->get($nameOrConfig);
+            } elseif ($this->optionCommands->contains($nameOrConfig)) {
+                $this->defaultCommands[] = $this->optionCommands->get($nameOrConfig);
             }
         }
     }

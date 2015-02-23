@@ -134,10 +134,10 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testGetDefaultCommands()
     {
-        $this->config->addDefaultCommandConfig($config1 = CommandConfig::create()->setProcessTitle('title'));
+        $this->config->addDefaultCommand($config1 = CommandConfig::create()->setProcessTitle('title'));
         $this->config->addCommandConfig($config2 = new CommandConfig('command1'));
         $this->config->addCommandConfig($config3 = new CommandConfig('command2'));
-        $this->config->addDefaultCommandName('command2');
+        $this->config->addDefaultCommand('command2');
 
         $application = new ConsoleApplication($this->config);
 
@@ -149,17 +149,17 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testHasDefaultCommands()
     {
-        $this->config->addDefaultCommandConfig(new CommandConfig());
+        $this->config->addDefaultCommand(new CommandConfig());
 
         $application = new ConsoleApplication($this->config);
 
         $this->assertTrue($application->hasDefaultCommands());
     }
 
-    public function testHasDefaultCommandsIfDefaultCommands()
+    public function testHasDefaultCommandsIfDefaultCommandNames()
     {
         $this->config->addCommandConfig(new CommandConfig('command'));
-        $this->config->addDefaultCommandName('command');
+        $this->config->addDefaultCommand('command');
 
         $application = new ConsoleApplication($this->config);
 
@@ -233,7 +233,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 '',
                 function (ApplicationConfig $config, $callback) {
                     $config
-                        ->addDefaultCommandName('list')
+                        ->addDefaultCommand('list')
                         ->beginCommand('list')
                             ->setHandler(new CallbackHandler($callback))
                         ->end()
@@ -270,7 +270,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->addDefaultCommandName('add')
+                            ->addDefaultCommand('add')
                             ->beginSubCommand('add')
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()
@@ -297,7 +297,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->addDefaultCommandName('add')
+                            ->addDefaultCommand('add')
                             ->beginOptionCommand('add')
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()

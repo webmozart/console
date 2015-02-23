@@ -331,7 +331,7 @@ EOF;
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommandName('add')
+                ->addDefaultCommand('add')
                 ->beginSubCommand('add')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -429,7 +429,7 @@ EOF;
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommandName('add')
+                ->addDefaultCommand('add')
                 ->beginOptionCommand('add', 'a')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -498,11 +498,11 @@ EOF;
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommandName('add')
-                ->addDefaultCommandName('delete')
+                ->addDefaultCommand('add')
                 ->beginDefaultCommand()
                     ->addArgument('unnamed', Argument::REQUIRED, 'Description of "unnamed"')
                 ->end()
+                ->addDefaultCommand('delete')
                 ->beginSubCommand('add')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -518,8 +518,8 @@ EOF;
 
         $expected = <<<EOF
 USAGE
-      test-bin command <unnamed>
-  or: test-bin command [add] [<argument>]
+      test-bin command [add] [<argument>]
+  or: test-bin command <unnamed>
   or: test-bin command [--delete]
 
 COMMANDS

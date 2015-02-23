@@ -54,7 +54,7 @@ class ApplicationConfig extends Config
     /**
      * @var CommandConfig[]
      */
-    private $defaultCommandConfigs = array();
+    private $defaultCommands = array();
 
     /**
      * @var EventDispatcherInterface
@@ -549,89 +549,112 @@ class ApplicationConfig extends Config
     {
         $config = new CommandConfig(null, $this);
 
-        $this->defaultCommandConfigs[] = $config;
+        $this->defaultCommands[] = $config;
 
         return $config;
     }
 
     /**
-     * Adds configuration for a default command.
+     * Adds a default command.
      *
-     * @param CommandConfig $config The command configuration.
+     * @param string|CommandConfig $nameOrConfig The command name or configuration.
      *
      * @return static The current instance.
      *
      * @see beginDefaultCommand()
      */
-    public function addDefaultCommandConfig(CommandConfig $config)
+    public function addDefaultCommand($nameOrConfig)
     {
-        $this->defaultCommandConfigs[] = $config;
+        if ($nameOrConfig instanceof CommandConfig) {
+            $nameOrConfig->setApplicationConfig($this);
+        } else {
+            Assert::string($nameOrConfig, 'The default command must be a string or a CommandConfig instance. Got: %s');
+            Assert::notEmpty($nameOrConfig, 'The default command must not be empty.');
+        }
 
-        $config->setApplicationConfig($this);
+        $this->defaultCommands[] = $nameOrConfig;
 
         return $this;
     }
 
     /**
-     * Adds configurations for default commands.
+     * Adds default commands.
      *
-     * @param CommandConfig[] $configs The command configurations.
+     * @param string[]|CommandConfig[] $namesOrConfigs The command names or
+     *                                                 configurations.
      *
      * @return static The current instance.
      *
      * @see beginDefaultCommand()
      */
-    public function addDefaultCommandConfigs(array $configs)
+    public function addDefaultCommands(array $namesOrConfigs)
     {
-        foreach ($configs as $command) {
-            $this->addDefaultCommandConfig($command);
+        foreach ($namesOrConfigs as $nameOrConfig) {
+            $this->addDefaultCommand($nameOrConfig);
         }
 
         return $this;
     }
 
     /**
-     * Sets the default command configurations of the application.
+     * Sets the default commands of the application.
      *
-     * @param CommandConfig[] $configs The command configurations.
+     * @param string[]|CommandConfig[] $namesOrConfigs The command names or
+     *                                                 configurations.
      *
      * @return static The current instance.
      *
      * @see beginDefaultCommand()
      */
-    public function setDefaultCommandConfigs(array $configs)
+    public function setDefaultCommands(array $namesOrConfigs)
     {
-        $this->defaultCommandConfigs = array();
+        $this->defaultCommands = array();
 
-        $this->addDefaultCommandConfigs($configs);
+        $this->addDefaultCommands($namesOrConfigs);
 
         return $this;
     }
 
     /**
-     * Returns the configurations of all default commands.
+     * Returns all default commands.
      *
-     * @return CommandConfig[] The configurations of the default commands.
+     * @return string[]|CommandConfig[] The names or configurations of the
+     *                                  default commands.
      *
      * @see beginDefaultCommand()
      */
-    public function getDefaultCommandConfigs()
+    public function getDefaultCommands()
     {
-        return $this->defaultCommandConfigs;
+        return $this->defaultCommands;
     }
 
     /**
-     * Returns whether the application has any registered default command
-     * configurations.
+     * Returns whether the application has any registered default commands.
      *
-     * @return bool Returns `true` if default command configurations were added
-     *              to the application and `false` otherwise.
+     * @return bool Returns `true` if default commands were set and `false`
+     *              otherwise.
      *
      * @see beginDefaultCommand()
      */
-    public function hasDefaultCommandConfigs()
+    public function hasDefaultCommands()
     {
-        return count($this->defaultCommandConfigs) > 0;
+        return count($this->defaultCommands) > 0;
+    }
+
+    /**
+     * Returns whether the given command is a default command.
+     *
+     * @param string $commandName The command name.
+     *
+     * @return bool Returns `true` if the command is in the list of default
+     *              commands and `false` otherwise.
+     */
+    public function isDefaultCommand($commandName)
+    {
+        Assert::string($commandName, 'The command name must be a string. Got: %s');
+        Assert::notEmpty($commandName, 'The command name must not be empty.');
+
+        return in_array($commandName, $this->defaultCommands, true);
     }
 
     /**

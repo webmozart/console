@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
@@ -586,49 +587,81 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $config2 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
         $config2->setProcessTitle('title2');
 
-        $this->assertEquals(array($config1, $config2), $this->config->getDefaultCommandConfigs());
+        $this->assertEquals(array($config1, $config2), $this->config->getDefaultCommands());
     }
 
-    public function testAddDefaultCommandConfig()
+    public function testAddDefaultCommand()
     {
-        $this->config->addDefaultCommandConfig($config1 = new SubCommandConfig() );
-        $this->config->addDefaultCommandConfig($config2 = new SubCommandConfig() );
+        $this->config->addDefaultCommand($config = new SubCommandConfig());
+        $this->config->addDefaultCommand('command');
 
-        $this->assertSame(array($config1, $config2), $this->config->getDefaultCommandConfigs());
+        $this->assertSame(array($config, 'command'), $this->config->getDefaultCommands());
 
-        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
-        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
+        $this->assertSame($this->applicationConfig, $config->getApplicationConfig());
     }
 
-    public function testAddDefaultCommandConfigs()
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddDefaultCommandFailsIfNull()
     {
-        $this->config->addDefaultCommandConfig($config1 = new SubCommandConfig() );
-        $this->config->addDefaultCommandConfigs(array(
-            $config2 = new SubCommandConfig() ,
-            $config3 = new SubCommandConfig() ,
+        $this->config->addDefaultCommand(null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddDefaultCommandFailsIfEmpty()
+    {
+        $this->config->addDefaultCommand('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testAddDefaultCommandFailsIfNeitherStringNorConfig()
+    {
+        $this->config->addDefaultCommand(new stdClass());
+    }
+
+    public function testAddDefaultCommands()
+    {
+        $this->config->addDefaultCommand($config1 = new SubCommandConfig() );
+        $this->config->addDefaultCommands(array(
+            $config2 = new SubCommandConfig(),
+            'command',
         ));
 
-        $this->assertSame(array($config1, $config2, $config3), $this->config->getDefaultCommandConfigs());
+        $this->assertSame(array($config1, $config2, 'command'), $this->config->getDefaultCommands());
     }
 
-    public function testSetDefaultCommandConfigs()
+    public function testSetDefaultCommands()
     {
-        $this->config->addDefaultCommandConfig($config1 = new SubCommandConfig() );
-        $this->config->setDefaultCommandConfigs(array(
-            $config2 = new SubCommandConfig() ,
-            $config3 = new SubCommandConfig() ,
+        $this->config->addDefaultCommand($config1 = new SubCommandConfig() );
+        $this->config->setDefaultCommands(array(
+            $config2 = new SubCommandConfig(),
+            'command',
         ));
 
-        $this->assertSame(array($config2, $config3), $this->config->getDefaultCommandConfigs());
+        $this->assertSame(array($config2, 'command'), $this->config->getDefaultCommands());
     }
 
-    public function testHasDefaultCommandConfigs()
+    public function testHasDefaultCommands()
     {
-        $this->assertFalse($this->config->hasDefaultCommandConfigs());
+        $this->assertFalse($this->config->hasDefaultCommands());
 
-        $this->config->addDefaultCommandConfig(new SubCommandConfig());
+        $this->config->addDefaultCommand(new SubCommandConfig());
 
-        $this->assertTrue($this->config->hasDefaultCommandConfigs());
+        $this->assertTrue($this->config->hasDefaultCommands());
+    }
+
+    public function testIsDefaultCommand()
+    {
+        $this->assertFalse($this->config->isDefaultCommand('command'));
+
+        $this->config->addDefaultCommand('command');
+
+        $this->assertTrue($this->config->isDefaultCommand('command'));
     }
 
     public function testGetHelperSetReturnsApplicationHelperSetByDefault()
