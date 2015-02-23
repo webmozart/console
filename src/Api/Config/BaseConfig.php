@@ -19,7 +19,6 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Formatter\StyleSet;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Formatter\DefaultStyleSet;
@@ -55,9 +54,14 @@ abstract class BaseConfig
     private $argsParser;
 
     /**
-     * @var CommandHandler|callable
+     * @var object|callable
      */
     private $handler;
+
+    /**
+     * @var string
+     */
+    private $handlerMethod = 'handle';
 
     /**
      * @var string[]
@@ -251,20 +255,11 @@ abstract class BaseConfig
     /**
      * Returns the command handler to execute when a command is run.
      *
-     * You can set a command handler by:
-     *
-     *  * Configuring a handler with {@link setHandler()}.
-     *  * Passing a callable to {@link setCallback()}.
-     *  * Overriding this method and returning a custom {@link CommandHandler}.
-     *
-     * Implementing a {@link CommandHandler} is recommended if you want to test
-     * the command handler.
-     *
      * @param Command $command The command to handle.
      *
-     * @return CommandHandler The command handler.
+     * @return object The command handler.
      *
-     * @see setHandler(), setCallback()
+     * @see setHandler()
      */
     public function getHandler(Command $command)
     {
@@ -284,13 +279,16 @@ abstract class BaseConfig
      *
      * You can pass:
      *
-     *  * A {@link CommandHandler} instance.
-     *  * A callable that receives a {@link Command} and returns a
-     *    {@link CommandHandler}.
+     *  * An object with handler methods.
+     *  * A callable that receives a {@link Command} and returns an object with
+     *    handler methods.
      *
-     * @param CommandHandler|callback $handler The command handler or the
-     *                                         callable creating a new command
-     *                                         handler on demand.
+     * The name of the executed handler method can be configured with
+     * {@link setHandlerMethod()}. By default, the method `handle()` is
+     * executed.
+     *
+     * @param object|callback $handler The command handler or the callable
+     *                                 creating a new command handler on demand.
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
@@ -298,9 +296,9 @@ abstract class BaseConfig
      */
     public function setHandler($handler)
     {
-        if (!$handler instanceof CommandHandler && !is_callable($handler)) {
+        if (!is_object($handler) && !is_callable($handler)) {
             throw new InvalidArgumentException(sprintf(
-                'Expected a CommandHandler or a callable. Got: %s',
+                'Expected an object or a callable. Got: %s',
                 is_object($handler) ? get_class($handler) : gettype($handler)
             ));
         }
@@ -308,6 +306,25 @@ abstract class BaseConfig
         $this->handler = $handler;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHandlerMethod()
+    {
+        return $this->handlerMethod;
+    }
+
+    /**
+     * @param string $handlerMethod
+     */
+    public function setHandlerMethod($handlerMethod)
+    {
+        Assert::string($handlerMethod, 'The handler method must be a string. Got: %s');
+        Assert::notEmpty($handlerMethod, 'The handler method must not be empty.');
+
+        $this->handlerMethod = $handlerMethod;
     }
 
     /**
@@ -454,7 +471,7 @@ abstract class BaseConfig
      *
      * @param Command $command The command to handle.
      *
-     * @return CommandHandler The default command handler.
+     * @return object The default command handler.
      */
     protected function getDefaultHandler(Command $command)
     {

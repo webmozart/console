@@ -15,7 +15,6 @@ use InvalidArgumentException;
 use LogicException;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 
@@ -55,10 +54,10 @@ use Webmozart\Console\Assert\Assert;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class DelegatingHandler implements CommandHandler
+class DelegatingHandler
 {
     /**
-     * @var CommandHandler[]|callable[]
+     * @var object[]|callable[]
      */
     private $handlers = array();
 
@@ -101,17 +100,17 @@ class DelegatingHandler implements CommandHandler
     /**
      * Registers a command handler for the given name.
      *
-     * @param string                  $name    The handler name.
-     * @param CommandHandler|callable $handler The handler or a factory callback
-     *                                         that creates the handler.
+     * @param string          $name    The handler name.
+     * @param object|callable $handler The handler or a factory callback that
+     *                                 creates the handler.
      */
     public function register($name, $handler)
     {
         Assert::string($name, 'The handler name must be a string. Got: %s');
         Assert::notEmpty($name, 'The handler name must not be empty.');
 
-        if (!$handler instanceof CommandHandler) {
-            Assert::isCallable($handler, 'The handler must be a callable or an instance of CommandHandler. Got: %s');
+        if (!is_object($handler)) {
+            Assert::isCallable($handler, 'The handler must be a callable or an object. Got: %s');
         }
 
         $this->handlers[$name] = $handler;

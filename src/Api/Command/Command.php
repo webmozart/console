@@ -352,6 +352,7 @@ class Command
     {
         $processTitle = $this->config->getProcessTitle();
         $commandHandler = $this->config->getHandler($this);
+        $handlerMethod = $this->config->getHandlerMethod();
 
         $this->warnIfProcessTitleNotSupported($processTitle, $io);
 
@@ -359,7 +360,7 @@ class Command
             ProcessTitle::setProcessTitle($processTitle);
 
             try {
-                $statusCode = $commandHandler->handle($this, $args, $io);
+                $statusCode = $commandHandler->$handlerMethod($this, $args, $io);
             } catch (Exception $e) {
                 ProcessTitle::resetProcessTitle();
 
@@ -368,7 +369,7 @@ class Command
 
             ProcessTitle::resetProcessTitle();
         } else {
-            $statusCode = $commandHandler->handle($this, $args, $io);
+            $statusCode = $commandHandler->$handlerMethod($this, $args, $io);
         }
 
         return $statusCode;

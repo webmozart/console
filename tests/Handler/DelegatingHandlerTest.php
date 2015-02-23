@@ -95,7 +95,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
     public function testRegisterFailsIfInvalidHandler()
     {
         $handler = new DelegatingHandler();
-        $handler->register('handler', new stdClass());
+        $handler->register('handler', 1234);
     }
 
     public function testUnregister()
@@ -151,7 +151,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
     public function testDelegateToFirstHandlerByDefault()
     {
         $handler = new DelegatingHandler();
-        $delegate = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $delegate = $this->getMock('stdClass', array('handle'));
 
         $delegate->expects($this->once())
             ->method('handle')
@@ -167,7 +167,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
     public function testDelegateToSelectedHandler()
     {
         $handler = new DelegatingHandler();
-        $delegate = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $delegate = $this->getMock('stdClass', array('handle'));
 
         $delegate->expects($this->once())
             ->method('handle')
@@ -185,7 +185,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
     public function testDelegateToFirstHandlerIfSelectedHandlerUnregistered()
     {
         $handler = new DelegatingHandler();
-        $delegate = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $delegate = $this->getMock('stdClass', array('handle'));
 
         $delegate->expects($this->once())
             ->method('handle')
@@ -208,7 +208,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
         $io = $this->io;
 
         $handler = new DelegatingHandler();
-        $delegate = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $delegate = $this->getMock('stdClass', array('handle'));
 
         $delegate->expects($this->once())
             ->method('handle')
@@ -236,7 +236,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
         $io = $this->io;
 
         $handler = new DelegatingHandler();
-        $delegate = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $delegate = $this->getMock('stdClass', array('handle'));
 
         $delegate->expects($this->once())
             ->method('handle')

@@ -123,7 +123,7 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
 
     public function testSetHandler()
     {
-        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $handler = new stdClass();
 
         $this->config->setHandler($handler);
         $command = new Command(new CommandConfig('command'));
@@ -133,7 +133,7 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
 
     public function testSetHandlerToFactoryCallback()
     {
-        $handler = $this->getMock('Webmozart\Console\Api\Handler\CommandHandler');
+        $handler = new stdClass();
 
         $factory = function (Command $command) use (&$passedCommand, $handler) {
             $passedCommand = $command;
@@ -151,9 +151,9 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testSetHandlerFailsIfNeitherCommandHandlerNorCallable()
+    public function testSetHandlerFailsIfNeitherObjectNorCallable()
     {
-        $this->config->setHandler(new stdClass());
+        $this->config->setHandler(1234);
     }
 
     public function testDefaultHandler()
@@ -161,6 +161,42 @@ class BaseConfigTest extends PHPUnit_Framework_TestCase
         $command = new Command(new CommandConfig('command'));
 
         $this->assertEquals(new NullHandler(), $this->config->getHandler($command));
+    }
+
+    public function testSetHandlerMethod()
+    {
+        $this->config->setHandlerMethod('handleFoo');
+
+        $this->assertSame('handleFoo', $this->config->getHandlerMethod());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHandlerMethodFailsIfNull()
+    {
+        $this->config->setHandlerMethod(null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHandlerMethodFailsIfEmpty()
+    {
+        $this->config->setHandlerMethod('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHandlerMethodFailsIfNoString()
+    {
+        $this->config->setHandlerMethod(1234);
+    }
+
+    public function testDefaultHandlerMethod()
+    {
+        $this->assertSame('handle', $this->config->getHandlerMethod());
     }
 
     public function testSetCallback()

@@ -17,14 +17,13 @@ use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Adapter\IOOutput;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\IO\IO;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class HelpXmlHandler implements CommandHandler
+class HelpXmlHandler
 {
     /**
      * {@inheritdoc}

@@ -13,7 +13,6 @@ namespace Webmozart\Console\Handler;
 
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 
@@ -23,7 +22,7 @@ use Webmozart\Console\Assert\Assert;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CallbackHandler implements CommandHandler
+class CallbackHandler
 {
     /**
      * @var callable

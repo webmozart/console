@@ -14,7 +14,6 @@ namespace Webmozart\Console\Handler\Help;
 use Symfony\Component\Process\ExecutableFinder;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Process\ProcessLauncher;
@@ -25,7 +24,7 @@ use Webmozart\Console\Process\ProcessLauncher;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class HelpAsciiDocHandler implements CommandHandler
+class HelpAsciiDocHandler
 {
     /**
      * @var string

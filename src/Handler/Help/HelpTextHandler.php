@@ -13,7 +13,6 @@ namespace Webmozart\Console\Handler\Help;
 
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Handler\CommandHandler;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Help\ApplicationHelp;
@@ -23,7 +22,7 @@ use Webmozart\Console\Rendering\Help\CommandHelp;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class HelpTextHandler implements CommandHandler
+class HelpTextHandler
 {
     /**
      * {@inheritdoc}
