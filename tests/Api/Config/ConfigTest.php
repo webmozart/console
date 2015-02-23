@@ -126,26 +126,21 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $handler = new stdClass();
 
         $this->config->setHandler($handler);
-        $command = new Command(new CommandConfig('command'));
 
-        $this->assertSame($handler, $this->config->getHandler($command));
+        $this->assertSame($handler, $this->config->getHandler());
     }
 
     public function testSetHandlerToFactoryCallback()
     {
         $handler = new stdClass();
 
-        $factory = function (Command $command) use (&$passedCommand, $handler) {
-            $passedCommand = $command;
-
+        $factory = function () use ($handler) {
             return $handler;
         };
 
         $this->config->setHandler($factory);
-        $command = new Command(new CommandConfig('command'));
 
-        $this->assertSame($handler, $this->config->getHandler($command));
-        $this->assertSame($command, $passedCommand);
+        $this->assertSame($handler, $this->config->getHandler());
     }
 
     /**
@@ -158,9 +153,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     public function testDefaultHandler()
     {
-        $command = new Command(new CommandConfig('command'));
-
-        $this->assertEquals(new NullHandler(), $this->config->getHandler($command));
+        $this->assertEquals(new NullHandler(), $this->config->getHandler());
     }
 
     public function testSetHandlerMethod()

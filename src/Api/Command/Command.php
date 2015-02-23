@@ -351,7 +351,7 @@ class Command
     public function handle(Args $args, IO $io)
     {
         $processTitle = $this->config->getProcessTitle();
-        $commandHandler = $this->config->getHandler($this);
+        $commandHandler = $this->config->getHandler();
         $handlerMethod = $this->config->getHandlerMethod();
 
         $this->warnIfProcessTitleNotSupported($processTitle, $io);

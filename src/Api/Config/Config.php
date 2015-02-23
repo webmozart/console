@@ -255,20 +255,18 @@ abstract class Config
     /**
      * Returns the command handler to execute when a command is run.
      *
-     * @param Command $command The command to handle.
-     *
      * @return object The command handler.
      *
      * @see setHandler()
      */
-    public function getHandler(Command $command)
+    public function getHandler()
     {
         if (!$this->handler) {
-            return $this->getDefaultHandler($command);
+            return $this->getDefaultHandler();
         }
 
         if (is_callable($this->handler)) {
-            $this->handler = call_user_func($this->handler, $command);
+            $this->handler = call_user_func($this->handler);
         }
 
         return $this->handler;
@@ -309,7 +307,12 @@ abstract class Config
     }
 
     /**
-     * @return string
+     * Returns the method of the command handler that should be executed when
+     * the configured command is run.
+     *
+     * @return string The method name.
+     *
+     * @see setHandlerMethod()
      */
     public function getHandlerMethod()
     {
@@ -317,7 +320,20 @@ abstract class Config
     }
 
     /**
-     * @param string $handlerMethod
+     * Sets the method of the command handler that should be executed when the
+     * configured command is run.
+     *
+     * The method receives three arguments:
+     *
+     *  * {@link Command} `$command`: The executed command.
+     *  * {@link Args} `$args`: The console arguments.
+     *  * {@link IO} `$io`: The I/O.
+     *
+     * @param string $handlerMethod The method name.
+     *
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
+     *
+     * @see getHandlerMethod()
      */
     public function setHandlerMethod($handlerMethod)
     {
@@ -325,6 +341,8 @@ abstract class Config
         Assert::notEmpty($handlerMethod, 'The handler method must not be empty.');
 
         $this->handlerMethod = $handlerMethod;
+
+        return $this;
     }
 
     /**
@@ -444,11 +462,9 @@ abstract class Config
     /**
      * Returns the command handler to use if none is set.
      *
-     * @param Command $command The command to handle.
-     *
      * @return object The default command handler.
      */
-    protected function getDefaultHandler(Command $command)
+    protected function getDefaultHandler()
     {
         return new NullHandler();
     }

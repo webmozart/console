@@ -119,11 +119,11 @@ class SubCommandConfig extends CommandConfig
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultHandler(Command $command)
+    protected function getDefaultHandler()
     {
         return $this->parentConfig
-            ? $this->parentConfig->getHandler($command)
-            : parent::getDefaultHandler($command);
+            ? $this->parentConfig->getHandler()
+            : parent::getDefaultHandler();
     }
 
     /**

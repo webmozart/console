@@ -1010,11 +1010,11 @@ class CommandConfig extends Config
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultHandler(Command $command)
+    protected function getDefaultHandler()
     {
         return $this->applicationConfig
-            ? $this->applicationConfig->getHandler($command)
-            : parent::getDefaultHandler($command);
+            ? $this->applicationConfig->getHandler()
+            : parent::getDefaultHandler();
     }
 
     /**

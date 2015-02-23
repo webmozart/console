@@ -652,11 +652,10 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
     public function testGetHandlerReturnsApplicationHandlerByDefault()
     {
         $handler = new NullHandler();
-        $command = new Command(new CommandConfig('command'));
 
         $this->applicationConfig->setHandler($handler);
 
-        $this->assertSame($handler, $this->config->getHandler($command));
+        $this->assertSame($handler, $this->config->getHandler());
     }
 
     public function testGetArgsParserReturnsApplicationArgsParserByDefault()
