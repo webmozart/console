@@ -254,45 +254,16 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($command->hasOptionCommands());
     }
 
-    public function testGetUnnamedCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addUnnamedCommandConfig($subConfig1 = new SubCommandConfig());
-        $config->addUnnamedCommandConfig($subConfig2 = new SubCommandConfig());
-        $command = new Command($config, $this->application);
-
-        $this->assertEquals(array(
-            new Command($subConfig1, $this->application, $command),
-            new Command($subConfig2, $this->application, $command),
-        ), $command->getUnnamedCommands());
-    }
-
-    public function testHasUnnamedCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addUnnamedCommandConfig(new SubCommandConfig());
-        $command = new Command($config);
-
-        $this->assertTrue($command->hasUnnamedCommands());
-    }
-
-    public function testHasNoUnnamedCommands()
-    {
-        $command = new Command(new CommandConfig('command'));
-
-        $this->assertFalse($command->hasUnnamedCommands());
-    }
-
     public function testGetDefaultCommands()
     {
         $config = new CommandConfig('command');
-        $config->addUnnamedCommandConfig($subConfig1 = new SubCommandConfig());
+        $config->addDefaultCommandConfig($subConfig1 = new SubCommandConfig());
         $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub1'));
         $config->addSubCommandConfig($subConfig3 = new SubCommandConfig('sub2'));
         $config->addOptionCommandConfig($optionConfig1 = new OptionCommandConfig('option1'));
         $config->addOptionCommandConfig($optionConfig2 = new OptionCommandConfig('option2'));
-        $config->addDefaultCommand('sub2');
-        $config->addDefaultCommand('option1');
+        $config->addDefaultCommandName('sub2');
+        $config->addDefaultCommandName('option1');
 
         $command = new Command($config, $this->application);
 
@@ -303,20 +274,20 @@ class CommandTest extends PHPUnit_Framework_TestCase
         ), $command->getDefaultCommands());
     }
 
-    public function testHasDefaultCommandsIfUnnamed()
+    public function testHasDefaultCommands()
     {
         $config = new CommandConfig('command');
-        $config->addUnnamedCommandConfig(new SubCommandConfig());
+        $config->addDefaultCommandConfig(new SubCommandConfig());
         $command = new Command($config);
 
         $this->assertTrue($command->hasDefaultCommands());
     }
 
-    public function testHasDefaultCommandsIfDefaultCommand()
+    public function testHasDefaultCommandsIfDefaultCommandName()
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig(new SubCommandConfig('sub'));
-        $config->addDefaultCommand('sub');
+        $config->addDefaultCommandName('sub');
         $command = new Command($config);
 
         $this->assertTrue($command->hasDefaultCommands());

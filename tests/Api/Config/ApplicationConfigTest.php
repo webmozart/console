@@ -43,7 +43,7 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getVersion());
         $this->assertNull($config->getDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
-        $this->assertSame(array(), $config->getUnnamedCommandConfigs());
+        $this->assertSame(array(), $config->getDefaultCommandConfigs());
     }
 
     public function testCreateWithArguments()
@@ -63,7 +63,7 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getVersion());
         $this->assertNull($config->getDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
-        $this->assertSame(array(), $config->getUnnamedCommandConfigs());
+        $this->assertSame(array(), $config->getDefaultCommandConfigs());
     }
 
     public function testStaticCreateWithArguments()
@@ -370,55 +370,55 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->config->hasCommandConfigs());
     }
 
-    public function testBeginUnnamedCommand()
+    public function testBeginDefaultCommand()
     {
         $this->config
-            ->beginUnnamedCommand()->setProcessTitle('title1')->end()
-            ->beginUnnamedCommand()->setProcessTitle('title2')->end()
+            ->beginDefaultCommand()->setProcessTitle('title1')->end()
+            ->beginDefaultCommand()->setProcessTitle('title2')->end()
         ;
 
         $this->assertEquals(array(
             CommandConfig::create(null, $this->config)->setProcessTitle('title1'),
             CommandConfig::create(null, $this->config)->setProcessTitle('title2'),
-        ), $this->config->getUnnamedCommandConfigs());
+        ), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testAddUnnamedCommandConfig()
+    public function testAddDefaultCommandConfig()
     {
-        $this->config->addUnnamedCommandConfig($config1 = new CommandConfig());
-        $this->config->addUnnamedCommandConfig($config2 = new CommandConfig());
+        $this->config->addDefaultCommandConfig($config1 = new CommandConfig());
+        $this->config->addDefaultCommandConfig($config2 = new CommandConfig());
 
-        $this->assertSame(array($config1, $config2), $this->config->getUnnamedCommandConfigs());
+        $this->assertSame(array($config1, $config2), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testAddUnnamedCommandConfigs()
+    public function testAddDefaultCommandConfigs()
     {
-        $this->config->addUnnamedCommandConfig($config1 = new CommandConfig());
-        $this->config->addUnnamedCommandConfigs(array(
+        $this->config->addDefaultCommandConfig($config1 = new CommandConfig());
+        $this->config->addDefaultCommandConfigs(array(
             $config2 = new CommandConfig(),
             $config3 = new CommandConfig(),
         ));
 
-        $this->assertSame(array($config1, $config2, $config3), $this->config->getUnnamedCommandConfigs());
+        $this->assertSame(array($config1, $config2, $config3), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testSetUnnamedCommandConfigs()
+    public function testSetDefaultCommandConfigs()
     {
-        $this->config->addUnnamedCommandConfig($config1 = new CommandConfig());
-        $this->config->setUnnamedCommandConfigs(array(
+        $this->config->addDefaultCommandConfig($config1 = new CommandConfig());
+        $this->config->setDefaultCommandConfigs(array(
             $config2 = new CommandConfig(),
             $config3 = new CommandConfig(),
         ));
 
-        $this->assertSame(array($config2, $config3), $this->config->getUnnamedCommandConfigs());
+        $this->assertSame(array($config2, $config3), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testHasUnnamedCommandConfigs()
+    public function testHasDefaultCommandConfigs()
     {
-        $this->assertFalse($this->config->hasUnnamedCommandConfigs());
+        $this->assertFalse($this->config->hasDefaultCommandConfigs());
 
-        $this->config->addUnnamedCommandConfig($config = new CommandConfig());
+        $this->config->addDefaultCommandConfig($config = new CommandConfig());
 
-        $this->assertTrue($this->config->hasUnnamedCommandConfigs());
+        $this->assertTrue($this->config->hasDefaultCommandConfigs());
     }
 }

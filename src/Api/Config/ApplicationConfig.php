@@ -54,7 +54,7 @@ class ApplicationConfig extends Config
     /**
      * @var CommandConfig[]
      */
-    private $unnamedCommandConfigs = array();
+    private $defaultCommandConfigs = array();
 
     /**
      * @var EventDispatcherInterface
@@ -514,7 +514,7 @@ class ApplicationConfig extends Config
     }
 
     /**
-     * Starts a configuration block for an unnamed command.
+     * Starts a configuration block for a default command.
      *
      * The configuration of the command is returned by this method. You can use
      * the fluent interface to configure the command before jumping back to this
@@ -526,7 +526,7 @@ class ApplicationConfig extends Config
      *     $this
      *         ->setName('server')
      *
-     *         ->beginUnnamedCommand()
+     *         ->beginDefaultCommand()
      *             ->setDescription('List all servers')
      *             ->addOption('port', 'p', InputOption::VALUE_REQUIRED, 'Only list servers with that port')
      *         ->end()
@@ -536,7 +536,7 @@ class ApplicationConfig extends Config
      * }
      * ```
      *
-     * An unnamed command is executed if no named command is explicitly
+     * A default command is executed if no named command is explicitly
      * requested. The above command could be called with:
      *
      * ```
@@ -545,27 +545,27 @@ class ApplicationConfig extends Config
      *
      * @return CommandConfig The command configuration.
      */
-    public function beginUnnamedCommand()
+    public function beginDefaultCommand()
     {
         $config = new CommandConfig(null, $this);
 
-        $this->unnamedCommandConfigs[] = $config;
+        $this->defaultCommandConfigs[] = $config;
 
         return $config;
     }
 
     /**
-     * Adds configuration for an unnamed command.
+     * Adds configuration for a default command.
      *
      * @param CommandConfig $config The command configuration.
      *
      * @return static The current instance.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function addUnnamedCommandConfig(CommandConfig $config)
+    public function addDefaultCommandConfig(CommandConfig $config)
     {
-        $this->unnamedCommandConfigs[] = $config;
+        $this->defaultCommandConfigs[] = $config;
 
         $config->setApplicationConfig($this);
 
@@ -573,65 +573,65 @@ class ApplicationConfig extends Config
     }
 
     /**
-     * Adds configurations for unnamed commands.
+     * Adds configurations for default commands.
      *
      * @param CommandConfig[] $configs The command configurations.
      *
      * @return static The current instance.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function addUnnamedCommandConfigs(array $configs)
+    public function addDefaultCommandConfigs(array $configs)
     {
         foreach ($configs as $command) {
-            $this->addUnnamedCommandConfig($command);
+            $this->addDefaultCommandConfig($command);
         }
 
         return $this;
     }
 
     /**
-     * Sets the unnamed command configurations of the application.
+     * Sets the default command configurations of the application.
      *
      * @param CommandConfig[] $configs The command configurations.
      *
      * @return static The current instance.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function setUnnamedCommandConfigs(array $configs)
+    public function setDefaultCommandConfigs(array $configs)
     {
-        $this->unnamedCommandConfigs = array();
+        $this->defaultCommandConfigs = array();
 
-        $this->addUnnamedCommandConfigs($configs);
+        $this->addDefaultCommandConfigs($configs);
 
         return $this;
     }
 
     /**
-     * Returns the configurations of all unnamed commands.
+     * Returns the configurations of all default commands.
      *
-     * @return CommandConfig[] The configurations of the unnamed commands.
+     * @return CommandConfig[] The configurations of the default commands.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function getUnnamedCommandConfigs()
+    public function getDefaultCommandConfigs()
     {
-        return $this->unnamedCommandConfigs;
+        return $this->defaultCommandConfigs;
     }
 
     /**
-     * Returns whether the application has any registered unnamed command
+     * Returns whether the application has any registered default command
      * configurations.
      *
-     * @return bool Returns `true` if unnamed command configurations were added
+     * @return bool Returns `true` if default command configurations were added
      *              to the application and `false` otherwise.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function hasUnnamedCommandConfigs()
+    public function hasDefaultCommandConfigs()
     {
-        return count($this->unnamedCommandConfigs) > 0;
+        return count($this->defaultCommandConfigs) > 0;
     }
 
     /**

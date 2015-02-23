@@ -331,7 +331,7 @@ EOF;
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommand('add')
+                ->addDefaultCommandName('add')
                 ->beginSubCommand('add')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -429,7 +429,7 @@ EOF;
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommand('add')
+                ->addDefaultCommandName('add')
                 ->beginOptionCommand('add', 'a')
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
@@ -493,14 +493,14 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
-    public function testRenderCommandWithUnnamedCommands()
+    public function testRenderCommandWithDefaultCommands()
     {
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommand('add')
-                ->addDefaultCommand('delete')
-                ->beginUnnamedCommand()
+                ->addDefaultCommandName('add')
+                ->addDefaultCommandName('delete')
+                ->beginDefaultCommand()
                     ->addArgument('unnamed', Argument::REQUIRED, 'Description of "unnamed"')
                 ->end()
                 ->beginSubCommand('add')

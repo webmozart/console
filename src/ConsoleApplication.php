@@ -51,11 +51,6 @@ class ConsoleApplication implements Application
     /**
      * @var Command[]
      */
-    private $unnamedCommands = array();
-
-    /**
-     * @var Command[]
-     */
     private $defaultCommands = array();
 
     /**
@@ -89,11 +84,11 @@ class ConsoleApplication implements Application
             }
         }
 
-        foreach ($config->getUnnamedCommandConfigs() as $commandConfig) {
-            $this->unnamedCommands[] = $this->defaultCommands[] = new Command($commandConfig, $this);
+        foreach ($config->getDefaultCommandConfigs() as $commandConfig) {
+            $this->defaultCommands[] = new Command($commandConfig, $this);
         }
 
-        foreach ($config->getDefaultCommands() as $commandName) {
+        foreach ($config->getDefaultCommandNames() as $commandName) {
             $this->defaultCommands[] = $this->commands->get($commandName);
         }
 
@@ -146,22 +141,6 @@ class ConsoleApplication implements Application
     public function hasCommands()
     {
         return !$this->commands->isEmpty();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUnnamedCommands()
-    {
-        return $this->unnamedCommands;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasUnnamedCommands()
-    {
-        return count($this->unnamedCommands) > 0;
     }
 
     /**

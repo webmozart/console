@@ -143,7 +143,7 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
-    public function testRenderUnnamed()
+    public function testRenderNoName()
     {
         $config = ApplicationConfig::create();
 

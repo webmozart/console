@@ -132,7 +132,7 @@ class CommandConfig extends Config
     /**
      * @var SubCommandConfig[]
      */
-    private $unnamedCommandConfigs = array();
+    private $defaultCommandConfigs = array();
 
     /**
      * @var SubCommandConfig[]
@@ -865,11 +865,11 @@ class CommandConfig extends Config
     }
 
     /**
-     * Starts a configuration block for an unnamed sub-command.
+     * Starts a configuration block for a default sub-command.
      *
-     * An unnamed sub-command is executed if neither a named sub-command nor an
-     * option command is executed. For example, if the command "server" has an
-     * unnamed sub-command, that command can be called with:
+     * A default sub-command is executed if neither a named sub-command nor an
+     * option command is executed. For example, if the command "server" has a
+     * default sub-command, that command can be called with:
      *
      * ```
      * $ console server ...
@@ -886,7 +886,7 @@ class CommandConfig extends Config
      *         ->setName('server')
      *         ->setDescription('List and manage servers')
      *
-     *         ->beginUnnamedCommand()
+     *         ->beginDefaultCommand()
      *             ->setDescription('List all servers')
      *             ->addOption('port', 'p', InputOption::VALUE_REQUIRED, 'Only list servers with that port')
      *         ->end()
@@ -898,27 +898,27 @@ class CommandConfig extends Config
      *
      * @return SubCommandConfig The sub-command configuration.
      */
-    public function beginUnnamedCommand()
+    public function beginDefaultCommand()
     {
         $config = new SubCommandConfig(null, $this);
 
-        $this->unnamedCommandConfigs[] = $config;
+        $this->defaultCommandConfigs[] = $config;
 
         return $config;
     }
 
     /**
-     * Adds configuration for an unnamed sub-command.
+     * Adds configuration for a default sub-command.
      *
      * @param SubCommandConfig $config The sub-command configuration.
      *
      * @return static The current instance.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function addUnnamedCommandConfig(SubCommandConfig $config)
+    public function addDefaultCommandConfig(SubCommandConfig $config)
     {
-        $this->unnamedCommandConfigs[] = $config;
+        $this->defaultCommandConfigs[] = $config;
 
         $config->setParentConfig($this);
 
@@ -926,65 +926,65 @@ class CommandConfig extends Config
     }
 
     /**
-     * Adds unnamed sub-command configurations to the command.
+     * Adds default sub-command configurations to the command.
      *
      * @param SubCommandConfig[] $configs The sub-command configurations.
      *
      * @return static The current instance.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function addUnnamedCommandConfigs(array $configs)
+    public function addDefaultCommandConfigs(array $configs)
     {
         foreach ($configs as $command) {
-            $this->addUnnamedCommandConfig($command);
+            $this->addDefaultCommandConfig($command);
         }
 
         return $this;
     }
 
     /**
-     * Sets the unnamed sub-command configurations of the command.
+     * Sets the default sub-command configurations of the command.
      *
      * @param SubCommandConfig[] $configs The sub-command configurations.
      *
      * @return static The current instance.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function setUnnamedCommandConfigs(array $configs)
+    public function setDefaultCommandConfigs(array $configs)
     {
-        $this->unnamedCommandConfigs = array();
+        $this->defaultCommandConfigs = array();
 
-        $this->addUnnamedCommandConfigs($configs);
+        $this->addDefaultCommandConfigs($configs);
 
         return $this;
     }
 
     /**
-     * Returns the configurations of all unnamed sub-commands.
+     * Returns the configurations of all default sub-commands.
      *
-     * @return SubCommandConfig[] The configurations of the unnamed sub-commands.
+     * @return SubCommandConfig[] The configurations of the default sub-commands.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function getUnnamedCommandConfigs()
+    public function getDefaultCommandConfigs()
     {
-        return $this->unnamedCommandConfigs;
+        return $this->defaultCommandConfigs;
     }
 
     /**
-     * Returns whether the command has any registered unnamed sub-command
+     * Returns whether the command has any registered default sub-command
      * configurations.
      *
-     * @return bool Returns `true` if unnamed sun-command configurations were
+     * @return bool Returns `true` if default sun-command configurations were
      *              added to the command and `false` otherwise.
      *
-     * @see beginUnnamedCommand()
+     * @see beginDefaultCommand()
      */
-    public function hasUnnamedCommandConfigs()
+    public function hasDefaultCommandConfigs()
     {
-        return count($this->unnamedCommandConfigs) > 0;
+        return count($this->defaultCommandConfigs) > 0;
     }
 
     /**

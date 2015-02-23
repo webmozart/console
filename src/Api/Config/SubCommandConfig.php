@@ -77,7 +77,7 @@ class SubCommandConfig extends CommandConfig
      * This method is usually used together with
      * {@link CommandConfig::beginSubCommand()},
      * {@link CommandConfig::beginOptionCommand()} or
-     * {@link CommandConfig::beginUnnamedCommand()}:
+     * {@link CommandConfig::beginDefaultCommand()}:
      *
      * ```php
      * $config

@@ -60,7 +60,7 @@ class ApplicationAdapter extends Application
             $this->add(new CommandAdapter($command, $this));
         }
 
-        foreach ($application->getUnnamedCommands() as $command) {
+        foreach ($application->getDefaultCommands() as $command) {
             $this->add(new CommandAdapter($command, $this));
         }
     }

@@ -90,21 +90,6 @@ interface Application
     public function hasCommands();
 
     /**
-     * Returns all unnamed commands of the application.
-     *
-     * @return Command[] The unnamed commands.
-     */
-    public function getUnnamedCommands();
-
-    /**
-     * Returns whether the application has any unnamed sub-commands.
-     *
-     * @return bool Returns `true` if the application has unnamed sub-commands
-     *              and `false` otherwise.
-     */
-    public function hasUnnamedCommands();
-
-    /**
      * Returns the commands that should be executed if no explicit command is
      * passed.
      *

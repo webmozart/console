@@ -194,10 +194,10 @@ class ConfigTest extends PHPUnit_Framework_TestCase
 
     public function testAddDefaultCommand()
     {
-        $this->config->addDefaultCommand('command1');
-        $this->config->addDefaultCommand('command2');
+        $this->config->addDefaultCommandName('command1');
+        $this->config->addDefaultCommandName('command2');
 
-        $this->assertSame(array('command1', 'command2'), $this->config->getDefaultCommands());
+        $this->assertSame(array('command1', 'command2'), $this->config->getDefaultCommandNames());
     }
 
     /**
@@ -205,7 +205,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testAddDefaultCommandFailsIfNull()
     {
-        $this->config->addDefaultCommand(null);
+        $this->config->addDefaultCommandName(null);
     }
 
     /**
@@ -213,7 +213,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testAddDefaultCommandFailsIfEmpty()
     {
-        $this->config->addDefaultCommand('');
+        $this->config->addDefaultCommandName('');
     }
 
     /**
@@ -221,42 +221,42 @@ class ConfigTest extends PHPUnit_Framework_TestCase
      */
     public function testAddDefaultCommandFailsIfNotString()
     {
-        $this->config->addDefaultCommand(1234);
+        $this->config->addDefaultCommandName(1234);
     }
 
     public function testAddDefaultCommands()
     {
-        $this->config->addDefaultCommand('command1');
-        $this->config->addDefaultCommands(array('command2', 'command3'));
+        $this->config->addDefaultCommandName('command1');
+        $this->config->addDefaultCommandNames(array('command2', 'command3'));
 
-        $this->assertSame(array('command1', 'command2', 'command3'), $this->config->getDefaultCommands());
+        $this->assertSame(array('command1', 'command2', 'command3'), $this->config->getDefaultCommandNames());
     }
 
     public function testSetDefaultCommands()
     {
-        $this->config->addDefaultCommand('command1');
-        $this->config->setDefaultCommands(array('command2', 'command3'));
+        $this->config->addDefaultCommandName('command1');
+        $this->config->setDefaultCommandNames(array('command2', 'command3'));
 
-        $this->assertSame(array('command2', 'command3'), $this->config->getDefaultCommands());
+        $this->assertSame(array('command2', 'command3'), $this->config->getDefaultCommandNames());
     }
 
     public function testIsDefaultCommand()
     {
-        $this->assertFalse($this->config->isDefaultCommand('command'));
-        $this->assertFalse($this->config->isDefaultCommand('foobar'));
+        $this->assertFalse($this->config->isDefaultCommandName('command'));
+        $this->assertFalse($this->config->isDefaultCommandName('foobar'));
 
-        $this->config->addDefaultCommand('command');
+        $this->config->addDefaultCommandName('command');
 
-        $this->assertTrue($this->config->isDefaultCommand('command'));
-        $this->assertFalse($this->config->isDefaultCommand('foobar'));
+        $this->assertTrue($this->config->isDefaultCommandName('command'));
+        $this->assertFalse($this->config->isDefaultCommandName('foobar'));
     }
 
     public function testHasDefaultCommands()
     {
-        $this->assertFalse($this->config->hasDefaultCommands());
+        $this->assertFalse($this->config->hasDefaultCommandNames());
 
-        $this->config->addDefaultCommand('command');
+        $this->config->addDefaultCommandName('command');
 
-        $this->assertTrue($this->config->hasDefaultCommands());
+        $this->assertTrue($this->config->hasDefaultCommandNames());
     }
 }

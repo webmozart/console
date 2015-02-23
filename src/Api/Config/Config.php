@@ -66,7 +66,7 @@ abstract class Config
     /**
      * @var string[]
      */
-    private $defaultCommands = array();
+    private $defaultCommandNames = array();
 
     /**
      * Creates a new configuration.
@@ -350,11 +350,11 @@ abstract class Config
      *
      * @return string[] The names of the default commands.
      *
-     * @see addDefaultCommand(), setDefaultCommands()
+     * @see addDefaultCommandName(), setDefaultCommandNames()
      */
-    public function getDefaultCommands()
+    public function getDefaultCommandNames()
     {
-        return $this->defaultCommands;
+        return $this->defaultCommandNames;
     }
 
     /**
@@ -364,14 +364,14 @@ abstract class Config
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
-     * @see addDefaultCommands(), setDefaultCommands()
+     * @see addDefaultCommandNames(), setDefaultCommandNames()
      */
-    public function addDefaultCommand($commandName)
+    public function addDefaultCommandName($commandName)
     {
         Assert::string($commandName, 'The default command name must be a string. Got: %s');
         Assert::notEmpty($commandName, 'The default command name must not be empty.');
 
-        $this->defaultCommands[] = $commandName;
+        $this->defaultCommandNames[] = $commandName;
 
         return $this;
     }
@@ -383,12 +383,12 @@ abstract class Config
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
-     * @see addDefaultCommand(), setDefaultCommands()
+     * @see addDefaultCommandName(), setDefaultCommandNames()
      */
-    public function addDefaultCommands(array $commandNames)
+    public function addDefaultCommandNames(array $commandNames)
     {
         foreach ($commandNames as $commandName) {
-            $this->addDefaultCommand($commandName);
+            $this->addDefaultCommandName($commandName);
         }
 
         return $this;
@@ -404,13 +404,13 @@ abstract class Config
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
-     * @see getDefaultCommands(), addDefaultCommand()
+     * @see getDefaultCommandNames(), addDefaultCommandName()
      */
-    public function setDefaultCommands(array $commandNames)
+    public function setDefaultCommandNames(array $commandNames)
     {
-        $this->defaultCommands = array();
+        $this->defaultCommandNames = array();
 
-        $this->addDefaultCommands($commandNames);
+        $this->addDefaultCommandNames($commandNames);
 
         return $this;
     }
@@ -423,9 +423,9 @@ abstract class Config
      * @return bool Returns `true` if the command is in the list of default
      *              commands and `false` otherwise.
      */
-    public function isDefaultCommand($commandName)
+    public function isDefaultCommandName($commandName)
     {
-        return in_array($commandName, $this->defaultCommands, true);
+        return in_array($commandName, $this->defaultCommandNames, true);
     }
 
     /**
@@ -434,9 +434,9 @@ abstract class Config
      * @return bool Returns `true` if default commands are set and `false`
      *              otherwise.
      */
-    public function hasDefaultCommands()
+    public function hasDefaultCommandNames()
     {
-        return count($this->defaultCommands) > 0;
+        return count($this->defaultCommandNames) > 0;
     }
 
     /**

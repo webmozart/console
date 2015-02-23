@@ -132,41 +132,12 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($application->hasCommands());
     }
 
-    public function testGetUnnamedCommands()
-    {
-        $this->config->addUnnamedCommandConfig($config1 = CommandConfig::create()->setProcessTitle('title1'));
-        $this->config->addUnnamedCommandConfig($config2 = CommandConfig::create()->setProcessTitle('title2'));
-
-        $application = new ConsoleApplication($this->config);
-
-        $this->assertEquals(array(
-            new Command($config1, $application),
-            new Command($config2, $application),
-        ), $application->getUnnamedCommands());
-    }
-
-    public function testHasUnnamedCommands()
-    {
-        $this->config->addUnnamedCommandConfig(new CommandConfig());
-
-        $application = new ConsoleApplication($this->config);
-
-        $this->assertTrue($application->hasUnnamedCommands());
-    }
-
-    public function testHasNoUnnamedCommands()
-    {
-        $application = new ConsoleApplication($this->config);
-
-        $this->assertFalse($application->hasUnnamedCommands());
-    }
-
     public function testGetDefaultCommands()
     {
-        $this->config->addUnnamedCommandConfig($config1 = CommandConfig::create()->setProcessTitle('title'));
+        $this->config->addDefaultCommandConfig($config1 = CommandConfig::create()->setProcessTitle('title'));
         $this->config->addCommandConfig($config2 = new CommandConfig('command1'));
         $this->config->addCommandConfig($config3 = new CommandConfig('command2'));
-        $this->config->addDefaultCommand('command2');
+        $this->config->addDefaultCommandName('command2');
 
         $application = new ConsoleApplication($this->config);
 
@@ -176,9 +147,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         ), $application->getDefaultCommands());
     }
 
-    public function testHasDefaultCommandsIfUnnamedCommands()
+    public function testHasDefaultCommands()
     {
-        $this->config->addUnnamedCommandConfig(new CommandConfig());
+        $this->config->addDefaultCommandConfig(new CommandConfig());
 
         $application = new ConsoleApplication($this->config);
 
@@ -188,7 +159,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     public function testHasDefaultCommandsIfDefaultCommands()
     {
         $this->config->addCommandConfig(new CommandConfig('command'));
-        $this->config->addDefaultCommand('command');
+        $this->config->addDefaultCommandName('command');
 
         $application = new ConsoleApplication($this->config);
 
@@ -262,19 +233,19 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 '',
                 function (ApplicationConfig $config, $callback) {
                     $config
-                        ->addDefaultCommand('list')
+                        ->addDefaultCommandName('list')
                         ->beginCommand('list')
                             ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
                 }
             ),
-            // Unnamed command
+            // Default command
             array(
                 '',
                 function (ApplicationConfig $config, $callback) {
                     $config
-                        ->beginUnnamedCommand()
+                        ->beginDefaultCommand()
                             ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
@@ -299,7 +270,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->addDefaultCommand('add')
+                            ->addDefaultCommandName('add')
                             ->beginSubCommand('add')
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()
@@ -326,7 +297,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->addDefaultCommand('add')
+                            ->addDefaultCommandName('add')
                             ->beginOptionCommand('add')
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()
@@ -334,13 +305,13 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                     ;
                 }
             ),
-            // Unnamed sub-command
+            // Default sub-command
             array(
                 'server',
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->beginUnnamedCommand()
+                            ->beginDefaultCommand()
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()

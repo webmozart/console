@@ -83,11 +83,6 @@ class Command
     /**
      * @var Command[]
      */
-    private $unnamedCommands = array();
-
-    /**
-     * @var Command[]
-     */
     private $defaultCommands = array();
 
     /**
@@ -115,11 +110,11 @@ class Command
             $this->addOptionCommand($subConfig);
         }
 
-        foreach ($config->getUnnamedCommandConfigs() as $subConfig) {
-            $this->unnamedCommands[] = $this->defaultCommands[] = new Command($subConfig, $this->application, $this);
+        foreach ($config->getDefaultCommandConfigs() as $subConfig) {
+            $this->defaultCommands[] = new Command($subConfig, $this->application, $this);
         }
 
-        foreach ($config->getDefaultCommands() as $commandName) {
+        foreach ($config->getDefaultCommandNames() as $commandName) {
             if ($this->subCommands->contains($commandName)) {
                 $this->defaultCommands[] = $this->subCommands->get($commandName);
             } elseif ($this->optionCommands->contains($commandName)) {
@@ -264,27 +259,6 @@ class Command
     public function hasOptionCommands()
     {
         return !$this->optionCommands->isEmpty();
-    }
-
-    /**
-     * Returns all unnamed sub-commands of the command.
-     *
-     * @return Command[] The unnamed sub-commands.
-     */
-    public function getUnnamedCommands()
-    {
-        return $this->unnamedCommands;
-    }
-
-    /**
-     * Returns whether the command has any unnamed sub-commands.
-     *
-     * @return bool Returns `true` if the command has unnamed sub-commands and
-     *              `false` otherwise.
-     */
-    public function hasUnnamedCommands()
-    {
-        return count($this->unnamedCommands) > 0;
     }
 
     /**

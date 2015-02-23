@@ -574,11 +574,11 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->config->hasOptionCommandConfigs());
     }
 
-    public function testBeginUnnamedCommand()
+    public function testBeginDefaultCommand()
     {
         $this->config
-            ->beginUnnamedCommand()->setProcessTitle('title1')->end()
-            ->beginUnnamedCommand()->setProcessTitle('title2')->end()
+            ->beginDefaultCommand()->setProcessTitle('title1')->end()
+            ->beginDefaultCommand()->setProcessTitle('title2')->end()
         ;
 
         $config1 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
@@ -586,49 +586,49 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $config2 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
         $config2->setProcessTitle('title2');
 
-        $this->assertEquals(array($config1, $config2), $this->config->getUnnamedCommandConfigs());
+        $this->assertEquals(array($config1, $config2), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testAddUnnamedCommandConfig()
+    public function testAddDefaultCommandConfig()
     {
-        $this->config->addUnnamedCommandConfig($config1 = new SubCommandConfig() );
-        $this->config->addUnnamedCommandConfig($config2 = new SubCommandConfig() );
+        $this->config->addDefaultCommandConfig($config1 = new SubCommandConfig() );
+        $this->config->addDefaultCommandConfig($config2 = new SubCommandConfig() );
 
-        $this->assertSame(array($config1, $config2), $this->config->getUnnamedCommandConfigs());
+        $this->assertSame(array($config1, $config2), $this->config->getDefaultCommandConfigs());
 
         $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
         $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
     }
 
-    public function testAddUnnamedCommandConfigs()
+    public function testAddDefaultCommandConfigs()
     {
-        $this->config->addUnnamedCommandConfig($config1 = new SubCommandConfig() );
-        $this->config->addUnnamedCommandConfigs(array(
+        $this->config->addDefaultCommandConfig($config1 = new SubCommandConfig() );
+        $this->config->addDefaultCommandConfigs(array(
             $config2 = new SubCommandConfig() ,
             $config3 = new SubCommandConfig() ,
         ));
 
-        $this->assertSame(array($config1, $config2, $config3), $this->config->getUnnamedCommandConfigs());
+        $this->assertSame(array($config1, $config2, $config3), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testSetUnnamedCommandConfigs()
+    public function testSetDefaultCommandConfigs()
     {
-        $this->config->addUnnamedCommandConfig($config1 = new SubCommandConfig() );
-        $this->config->setUnnamedCommandConfigs(array(
+        $this->config->addDefaultCommandConfig($config1 = new SubCommandConfig() );
+        $this->config->setDefaultCommandConfigs(array(
             $config2 = new SubCommandConfig() ,
             $config3 = new SubCommandConfig() ,
         ));
 
-        $this->assertSame(array($config2, $config3), $this->config->getUnnamedCommandConfigs());
+        $this->assertSame(array($config2, $config3), $this->config->getDefaultCommandConfigs());
     }
 
-    public function testHasUnnamedCommandConfigs()
+    public function testHasDefaultCommandConfigs()
     {
-        $this->assertFalse($this->config->hasUnnamedCommandConfigs());
+        $this->assertFalse($this->config->hasDefaultCommandConfigs());
 
-        $this->config->addUnnamedCommandConfig(new SubCommandConfig());
+        $this->config->addDefaultCommandConfig(new SubCommandConfig());
 
-        $this->assertTrue($this->config->hasUnnamedCommandConfigs());
+        $this->assertTrue($this->config->hasDefaultCommandConfigs());
     }
 
     public function testGetHelperSetReturnsApplicationHelperSetByDefault()
