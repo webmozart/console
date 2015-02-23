@@ -33,7 +33,6 @@ class ApplicationAdapterTest extends PHPUnit_Framework_TestCase
             ->setDisplayName('Test Name')
             ->setVersion('1.2.3')
             ->setHelperSet($helperSet = new HelperSet())
-            ->setOutputDimensions(new Dimensions(80, 20))
             ->beginCommand('command')->end()
         ;
 
@@ -45,7 +44,6 @@ class ApplicationAdapterTest extends PHPUnit_Framework_TestCase
         $this->assertSame('<info>Test Name</info> version <comment>1.2.3</comment>', $adapter->getLongVersion());
         $this->assertSame('<info>Test Name</info> version <comment>1.2.3</comment>', $adapter->getHelp());
         $this->assertSame($helperSet, $adapter->getHelperSet());
-        $this->assertSame(array(80, 20), $adapter->getTerminalDimensions());
         $this->assertSame(array(), $adapter->getNamespaces());
         $this->assertEquals(new ArgsFormatInputDefinition($application->getGlobalArgsFormat()), $adapter->getDefinition());
 

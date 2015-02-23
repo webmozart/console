@@ -57,11 +57,6 @@ class ApplicationConfig extends Config
     private $unnamedCommandConfigs = array();
 
     /**
-     * @var Dimensions
-     */
-    private $outputDimensions;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
@@ -104,7 +99,6 @@ class ApplicationConfig extends Config
     {
         $this->name = $name;
         $this->version = $version;
-        $this->outputDimensions = Dimensions::forCurrentWindow();
 
         parent::__construct();
     }
@@ -323,34 +317,6 @@ class ApplicationConfig extends Config
         Assert::boolean($terminate);
 
         $this->terminateAfterRun = $terminate;
-
-        return $this;
-    }
-
-    /**
-     * Returns the dimensions of the output window.
-     *
-     * @return Dimensions The output dimensions.
-     *
-     * @see setOutputDimensions()
-     */
-    public function getOutputDimensions()
-    {
-        return $this->outputDimensions;
-    }
-
-    /**
-     * Sets the dimensions of the output window.
-     *
-     * @param Dimensions $dimensions The output dimensions.
-     *
-     * @return static The current instance.
-     *
-     * @see getOutputDimensions()
-     */
-    public function setOutputDimensions(Dimensions $dimensions)
-    {
-        $this->outputDimensions = $dimensions;
 
         return $this;
     }

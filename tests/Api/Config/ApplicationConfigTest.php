@@ -42,7 +42,6 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getDisplayName());
         $this->assertNull($config->getVersion());
         $this->assertNull($config->getDispatcher());
-        $this->assertEquals(Dimensions::forCurrentWindow(), $config->getOutputDimensions());
         $this->assertSame(array(), $config->getCommandConfigs());
         $this->assertSame(array(), $config->getUnnamedCommandConfigs());
     }
@@ -63,7 +62,6 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getDisplayName());
         $this->assertNull($config->getVersion());
         $this->assertNull($config->getDispatcher());
-        $this->assertEquals(Dimensions::forCurrentWindow(), $config->getOutputDimensions());
         $this->assertSame(array(), $config->getCommandConfigs());
         $this->assertSame(array(), $config->getUnnamedCommandConfigs());
     }
@@ -272,15 +270,6 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
     public function testSetTerminateAfterRunFailsIfNoBoolean()
     {
         $this->config->setTerminateAfterRun(1234);
-    }
-
-    public function testSetOutputDimensions()
-    {
-        $dimensions = new Dimensions(12, 34);
-
-        $this->config->setOutputDimensions($dimensions);
-
-        $this->assertSame($dimensions, $this->config->getOutputDimensions());
     }
 
     public function testSetCommandResolver()
