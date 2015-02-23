@@ -57,7 +57,7 @@ class ApplicationConfig extends Config
     private $unnamedCommandConfigs = array();
 
     /**
-     * @var \Webmozart\Console\Rendering\Dimensions
+     * @var Dimensions
      */
     private $outputDimensions;
 
@@ -330,7 +330,7 @@ class ApplicationConfig extends Config
     /**
      * Returns the dimensions of the output window.
      *
-     * @return \Webmozart\Console\Rendering\Dimensions The output dimensions.
+     * @return Dimensions The output dimensions.
      *
      * @see setOutputDimensions()
      */
@@ -342,7 +342,7 @@ class ApplicationConfig extends Config
     /**
      * Sets the dimensions of the output window.
      *
-     * @param \Webmozart\Console\Rendering\Dimensions $dimensions The output dimensions.
+     * @param Dimensions $dimensions The output dimensions.
      *
      * @return static The current instance.
      *
