@@ -31,7 +31,7 @@ use Webmozart\Console\Handler\NullHandler;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-abstract class BaseConfig
+abstract class Config
 {
     /**
      * @var ArgsFormatBuilder

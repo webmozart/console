@@ -92,7 +92,7 @@ use Webmozart\Console\Assert\Assert;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CommandConfig extends BaseConfig
+class CommandConfig extends Config
 {
     /**
      * @var string

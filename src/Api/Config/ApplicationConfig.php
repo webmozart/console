@@ -24,7 +24,7 @@ use Webmozart\Console\Resolver\DefaultResolver;
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ApplicationConfig extends BaseConfig
+class ApplicationConfig extends Config
 {
     /**
      * @var string
