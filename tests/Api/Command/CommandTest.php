@@ -133,6 +133,22 @@ class CommandTest extends PHPUnit_Framework_TestCase
         )), $command->getSubCommands());
     }
 
+    public function testIgnoreDisabledSubCommands()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig($subConfig1 = new SubCommandConfig('sub1'));
+        $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub2'));
+
+        $subConfig1->enable();
+        $subConfig2->disable();
+
+        $command = new Command($config, $this->application);
+
+        $this->assertEquals(new CommandCollection(array(
+            'sub1' => new NamedCommand($subConfig1, $this->application, $command),
+        )), $command->getSubCommands());
+    }
+
     public function testGetSubCommand()
     {
         $config = new CommandConfig('command');
@@ -191,6 +207,22 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(new CommandCollection(array(
             'option1' => new NamedCommand($optionConfig1, $this->application, $command),
             'option2' => new NamedCommand($optionConfig2, $this->application, $command),
+        )), $command->getOptionCommands());
+    }
+
+    public function testIgnoreDisabledOptionCommands()
+    {
+        $config = new CommandConfig('command');
+        $config->addOptionCommandConfig($optionConfig1 = new OptionCommandConfig('option1', 'a'));
+        $config->addOptionCommandConfig($optionConfig2 = new OptionCommandConfig('option2', 'b'));
+
+        $optionConfig1->enable();
+        $optionConfig2->disable();
+
+        $command = new Command($config, $this->application);
+
+        $this->assertEquals(new CommandCollection(array(
+            'option1' => new NamedCommand($optionConfig1, $this->application, $command),
         )), $command->getOptionCommands());
     }
 
@@ -271,6 +303,22 @@ class CommandTest extends PHPUnit_Framework_TestCase
             new NamedCommand($subConfig3, $this->application, $command),
             new Command($subConfig1, $this->application, $command),
             new NamedCommand($optionConfig1, $this->application, $command),
+        ), $command->getDefaultCommands());
+    }
+
+    public function testIgnoreDisabledDefaultCommands()
+    {
+        $config = new CommandConfig('command');
+        $config->addDefaultCommand($subConfig1 = new SubCommandConfig());
+        $config->addDefaultCommand($subConfig2 = new SubCommandConfig());
+
+        $subConfig1->setProcessTitle('title1')->enable();
+        $subConfig2->setProcessTitle('title2')->disable();
+
+        $command = new Command($config, $this->application);
+
+        $this->assertEquals(array(
+            new Command($subConfig1, $this->application, $command),
         ), $command->getDefaultCommands());
     }
 

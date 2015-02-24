@@ -87,7 +87,9 @@ class ConsoleApplication implements Application
 
         foreach ($config->getDefaultCommands() as $nameOrConfig) {
             if ($nameOrConfig instanceof CommandConfig) {
-                $this->defaultCommands[] = new Command($nameOrConfig, $this);
+                if ($nameOrConfig->isEnabled()) {
+                    $this->defaultCommands[] = new Command($nameOrConfig, $this);
+                }
             } else {
                 $this->defaultCommands[] = $this->commands->get($nameOrConfig);
             }

@@ -147,6 +147,18 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         ), $application->getDefaultCommands());
     }
 
+    public function testIgnoreDisabledDefaultCommands()
+    {
+        $this->config->addDefaultCommand($config1 = CommandConfig::create()->enable()->setProcessTitle('title'));
+        $this->config->addDefaultCommand($config2 = CommandConfig::create()->disable()->setProcessTitle('title'));
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertEquals(array(
+            new Command($config1, $application),
+        ), $application->getDefaultCommands());
+    }
+
     public function testHasDefaultCommands()
     {
         $this->config->addDefaultCommand(new CommandConfig());

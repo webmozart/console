@@ -111,13 +111,7 @@ class Command
         }
 
         foreach ($config->getDefaultCommands() as $nameOrConfig) {
-            if ($nameOrConfig instanceof SubCommandConfig) {
-                $this->defaultCommands[] = new Command($nameOrConfig, $this->application, $this);
-            } elseif ($this->subCommands->contains($nameOrConfig)) {
-                $this->defaultCommands[] = $this->subCommands->get($nameOrConfig);
-            } elseif ($this->optionCommands->contains($nameOrConfig)) {
-                $this->defaultCommands[] = $this->optionCommands->get($nameOrConfig);
-            }
+            $this->addDefaultCommand($nameOrConfig);
         }
     }
 
@@ -389,6 +383,10 @@ class Command
      */
     private function addSubCommand(SubCommandConfig $config)
     {
+        if (!$config->isEnabled()) {
+            return;
+        }
+
         $command = new NamedCommand($config, $this->application, $this);
         $name = $command->getName();
 
@@ -408,6 +406,10 @@ class Command
      */
     private function addOptionCommand(OptionCommandConfig $config)
     {
+        if (!$config->isEnabled()) {
+            return;
+        }
+
         $name = $config->getLongName();
 
         if ($this->subCommands->contains($name) || $this->optionCommands->contains($name)) {
@@ -429,6 +431,25 @@ class Command
         }
 
         $this->optionCommands->add(new NamedCommand($config, $this->application, $this));
+    }
+
+    /**
+     * Adds a default command.
+     *
+     * @param string|SubCommandConfig $nameOrConfig The command name or
+     *                                              configuration.
+     */
+    private function addDefaultCommand($nameOrConfig)
+    {
+        if ($nameOrConfig instanceof SubCommandConfig) {
+            if ($nameOrConfig->isEnabled()) {
+                $this->defaultCommands[] = new Command($nameOrConfig, $this->application, $this);
+            }
+        } elseif ($this->subCommands->contains($nameOrConfig)) {
+            $this->defaultCommands[] = $this->subCommands->get($nameOrConfig);
+        } elseif ($this->optionCommands->contains($nameOrConfig)) {
+            $this->defaultCommands[] = $this->optionCommands->get($nameOrConfig);
+        }
     }
 
     private function warnIfProcessTitleNotSupported($processTitle, IO $io)
