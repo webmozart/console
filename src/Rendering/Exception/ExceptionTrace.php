@@ -156,9 +156,9 @@ class ExceptionTrace implements Renderable
             $signature = $class.(isset($trace['type']) ? $trace['type'] : '').$trace['function'];
             $location .= ':'.(isset($trace['line']) ? $trace['line'] : 'n/a');
 
-            $io->errorLineRaw(sprintf('  %s%sat %s',
+            $io->errorRaw(sprintf("  %s%s()\n    %s\n",
                 $namespace,
-                $signature ? $io->format('<tt>'.$signature.'()</tt> ') : '',
+                $io->format('<tt>'.$signature.'</tt>'),
                 $io->format('<em>'.$location.'</em>')
             ));
         }

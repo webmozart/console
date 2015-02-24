@@ -92,8 +92,10 @@ $box
 
 
 Exception trace:
-  at src/Api/Command/NoSuchCommandException.php:36
-  Webmozart\Console\Api\Command\NoSuchCommandException::forCommandName() at tests/Rendering/Exception/ExceptionTraceTest.php
+  ()
+    src/Api/Command/NoSuchCommandException.php:36
+  Webmozart\Console\Api\Command\NoSuchCommandException::forCommandName()
+    tests/Rendering/Exception/ExceptionTraceTest.php
 EOF;
 
         $this->assertStringStartsWith($expected, $this->io->fetchErrors());
@@ -123,8 +125,10 @@ $box1
 
 
 Exception trace:
-  at src/Api/Command/NoSuchCommandException.php:36
-  Webmozart\Console\Api\Command\NoSuchCommandException::forCommandName() at tests/Rendering/Exception/ExceptionTraceTest.php
+  ()
+    src/Api/Command/NoSuchCommandException.php:36
+  Webmozart\Console\Api\Command\NoSuchCommandException::forCommandName()
+    tests/Rendering/Exception/ExceptionTraceTest.php
 EOF;
 
         $box2 = '                             '.PHP_EOL.
@@ -142,7 +146,8 @@ $box2
 
 
 Exception trace:
-  at tests/Rendering/Exception/ExceptionTraceTest.php
+  ()
+    tests/Rendering/Exception/ExceptionTraceTest.php
 EOF;
 
         $this->assertStringStartsWith($expected1, $this->io->fetchErrors());
