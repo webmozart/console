@@ -88,11 +88,11 @@ class ApplicationHelp extends AbstractHelp
         $config = $application->getConfig();
 
         if ($config->getDisplayName() && $config->getVersion()) {
-            $layout->add(new Paragraph("<info>{$config->getDisplayName()}</info> version <comment>{$config->getVersion()}</comment>"));
+            $layout->add(new Paragraph("{$config->getDisplayName()} version <em>{$config->getVersion()}</em>"));
         } elseif ($config->getDisplayName()) {
-            $layout->add(new Paragraph("<info>{$config->getDisplayName()}</info>"));
+            $layout->add(new Paragraph("{$config->getDisplayName()}"));
         } else {
-            $layout->add(new Paragraph("<info>Console Tool</info>"));
+            $layout->add(new Paragraph("Console Tool"));
         }
 
         $layout->add(new EmptyLine());
