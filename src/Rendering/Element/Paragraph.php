@@ -49,6 +49,7 @@ class Paragraph implements Renderable
     {
         $linePrefix = str_repeat(' ', $indentation);
         $textWidth = $canvas->getWidth() - 1 - $indentation;
+        // TODO replace wordwrap() by implementation that is aware of format codes
         $text = str_replace("\n", "\n".$linePrefix, wordwrap($this->text, $textWidth));
 
         $canvas->write($linePrefix.rtrim($text)."\n");

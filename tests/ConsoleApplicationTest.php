@@ -19,6 +19,7 @@ use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NamedCommand;
+use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\IO\IO;
@@ -43,7 +44,6 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     {
         $this->config = new ApplicationConfig();
         $this->config->setTerminateAfterRun(false);
-        $this->config->setCatchExceptions(false);
     }
 
     public function testCreate()
@@ -331,5 +331,49 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 }
             ),
         );
+    }
+
+    public function testPrintExceptionIfCatchingActive()
+    {
+        $this->config
+            ->beginCommand('list')
+                ->setHandler(new CallbackHandler(function () {
+                    throw NoSuchCommandException::forCommandName('foobar', 123);
+                }))
+            ->end()
+        ;
+
+        $args = new StringArgs('list');
+        $input = new BufferedInput();
+        $output = $buffer1 = new BufferedOutput();
+        $errorOutput = $buffer2 = new BufferedOutput();
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
+        $this->assertSame('', $buffer1->fetch());
+        $this->assertSame("fatal: The command \"foobar\" does not exist.\n", $buffer2->fetch());
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
+     */
+    public function testThrowExceptionIfCatchingNotActive()
+    {
+        $this->config
+            ->setCatchExceptions(false)
+            ->beginCommand('list')
+                ->setHandler(new CallbackHandler(function () {
+                    throw NoSuchCommandException::forCommandName('foobar', 123);
+                }))
+            ->end()
+        ;
+
+        $args = new StringArgs('list');
+        $input = new BufferedInput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
+        $application = new ConsoleApplication($this->config);
+
+        $application->run($args, $input, $output, $errorOutput);
     }
 }

@@ -53,6 +53,13 @@ class Dimensions
      */
     public function __construct($width, $height)
     {
+        // HHVM only accepts 32 bits integer in str_split, even when PHP_INT_MAX
+        // is a 64 bit integer.
+        // https://github.com/facebook/hhvm/issues/1327
+        if (defined('HHVM_VERSION') && $width > 1 << 31) {
+            $width = 1 << 31;
+        }
+
         $this->width = (int) $width;
         $this->height = (int) $height;
     }

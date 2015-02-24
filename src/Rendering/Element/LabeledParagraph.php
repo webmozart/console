@@ -140,6 +140,7 @@ class LabeledParagraph implements Renderable
 
         // 1 trailing space
         $textWidth = $canvas->getWidth() - 1 - $textOffset - $indentation;
+        // TODO replace wordwrap() by implementation that is aware of format codes
         $text = str_replace("\n", "\n".$linePrefix.$textPrefix, wordwrap($this->text, $textWidth));
 
         // Add the total length of the style tags ("<h>", ...)

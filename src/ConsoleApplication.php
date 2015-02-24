@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console;
 
+use Exception;
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\ArgsInput;
 use Webmozart\Console\Adapter\IOOutput;
@@ -30,6 +31,8 @@ use Webmozart\Console\IO\FormattedIO;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
+use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Rendering\Exception\ExceptionTrace;
 
 /**
  * A console application.
@@ -96,6 +99,9 @@ class ConsoleApplication implements Application
         }
 
         $this->applicationAdapter = new ApplicationAdapter($this);
+
+        // Don't catch exceptions in the adapter. We do this here.
+        $this->applicationAdapter->setCatchExceptions(false);
     }
 
     /**
@@ -193,6 +199,40 @@ class ConsoleApplication implements Application
 
         $io = new FormattedIO($input, $output, $errorOutput, new AnsiFormatter());
 
-        return $this->applicationAdapter->run(new ArgsInput($args), new IOOutput($io));
+        try {
+            return $this->applicationAdapter->run(new ArgsInput($args), new IOOutput($io));
+        } catch (Exception $e) {
+            if (!$this->config->isExceptionCaught()) {
+                throw $e;
+            }
+
+            $canvas = new Canvas($io);
+            $trace = new ExceptionTrace($e);
+            $trace->render($canvas);
+
+            return $this->exceptionToExitCode($e->getCode());
+        }
+    }
+
+    /**
+     * Converts an exception code to an exit code.
+     *
+     * @param int $code The exception code.
+     *
+     * @return int The exit code.
+     */
+    private function exceptionToExitCode($code)
+    {
+        if (!is_numeric($code)) {
+            return 1;
+        }
+
+        $code = (int) $code;
+
+        if (0 === $code) {
+            return 1;
+        }
+
+        return $code;
     }
 }
