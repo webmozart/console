@@ -187,11 +187,11 @@ class CommandHelp extends AbstractHelp
 
         if ($config instanceof OptionCommandConfig) {
             if ($config->isLongNamePreferred()) {
-                $preferredName = '--'.$config->getLongName();
-                $alternativeName = $config->getShortName() ? '-'.$config->getShortName() : null;
+                $preferredName = '--<tt>'.$config->getLongName().'</tt>';
+                $alternativeName = $config->getShortName() ? '-<tt>'.$config->getShortName().'</tt>' : null;
             } else {
-                $preferredName = '-'.$config->getShortName();
-                $alternativeName = '--'.$config->getLongName();
+                $preferredName = '-<tt>'.$config->getShortName().'</tt>';
+                $alternativeName = '--<tt>'.$config->getLongName().'</tt>';
             }
 
             $name = $preferredName;
@@ -200,7 +200,7 @@ class CommandHelp extends AbstractHelp
                 $name .= ' ('.$alternativeName.')';
             }
         } else {
-            $name = $command->getName();
+            $name = '<tt>'.$command->getName().'</tt>';
         }
 
         $layout->add(new Paragraph("<tt>$name</tt>"));
