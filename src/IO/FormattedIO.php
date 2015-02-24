@@ -59,6 +59,16 @@ class FormattedIO extends RawIO
     }
 
     /**
+     * Returns the formatter.
+     *
+     * @return Formatter The formatter.
+     */
+    public function getFormatter()
+    {
+        return $this->formatter;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function write($string, $flags = null)

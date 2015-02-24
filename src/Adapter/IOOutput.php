@@ -156,6 +156,7 @@ class IOOutput implements OutputInterface
      */
     public function getFormatter()
     {
+        return new FormatterAdapter($this->io);
     }
 
     private function doWriteLine($message, $type)
