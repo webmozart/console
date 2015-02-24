@@ -203,7 +203,7 @@ class CommandHelp extends AbstractHelp
             $name = '<tt>'.$command->getName().'</tt>';
         }
 
-        $layout->add(new Paragraph("<tt>$name</tt>"));
+        $layout->add(new Paragraph($name));
         $layout->beginBlock();
 
         if ($description) {
