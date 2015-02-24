@@ -50,6 +50,8 @@ class DefaultApplicationConfig extends ApplicationConfig
             ->addOption('no-ansi', null, Option::NO_VALUE, 'Disable ANSI output')
             ->addOption('no-interaction', 'n', Option::NO_VALUE, 'Do not ask any interactive question')
 
+            ->addDefaultCommand('help')
+
             ->beginCommand('help')
                 ->setDescription('Display the manual of a command')
                 ->addArgument('command', Argument::OPTIONAL, 'The command name')
