@@ -406,6 +406,13 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         ), $this->config->getSubCommandConfigs());
     }
 
+    public function testChangeSubCommand()
+    {
+        $this->config->addSubCommandConfig($config1 = new SubCommandConfig('command1'));
+
+        $this->assertSame($config1, $this->config->editSubCommand('command1'));
+    }
+
     public function testAddSubCommandConfig()
     {
         $this->config->addSubCommandConfig($config1 = new SubCommandConfig('command1'));
@@ -489,6 +496,13 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
             new OptionCommandConfig('command1', 'a', $this->config, $this->applicationConfig),
             new OptionCommandConfig('command2', 'b', $this->config, $this->applicationConfig),
         ), $this->config->getOptionCommandConfigs());
+    }
+
+    public function testEditOptionCommand()
+    {
+        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
+
+        $this->assertSame($config1, $this->config->editOptionCommand('command1'));
     }
 
     public function testAddOptionCommandConfig()

@@ -534,13 +534,14 @@ class CommandConfig extends Config
      * protected function configure()
      * {
      *     $this
-     *         ->setName('server')
-     *         ->setDescription('List and manage servers')
+     *         ->beginCommand('server')
+     *             ->setDescription('List and manage servers')
      *
-     *         ->beginSubCommand('add')
-     *             ->setDescription('Add a server')
-     *             ->addArgument('host', InputArgument::REQUIRED)
-     *             ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+     *             ->beginSubCommand('add')
+     *                 ->setDescription('Add a server')
+     *                 ->addArgument('host', InputArgument::REQUIRED)
+     *                 ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+     *             ->end()
      *         ->end()
      *
      *         // ...
@@ -551,6 +552,8 @@ class CommandConfig extends Config
      * @param string $name The name of the sub-command.
      *
      * @return SubCommandConfig The sub-command configuration.
+     *
+     * @see editSubCommand()
      */
     public function beginSubCommand($name)
     {
@@ -560,6 +563,40 @@ class CommandConfig extends Config
         $this->subCommandConfigs[] = $config;
 
         return $config;
+    }
+
+    /**
+     * Alias for {@link getSubCommandConfig()}.
+     *
+     * This method can be used to nicely edit a sub-command inherited from a
+     * parent configuration using the fluent API:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     parent::configure();
+     *
+     *     $this
+     *         ->editCommand('server')
+     *             ->editSubCommand('add')
+     *                 // ...
+     *             ->end()
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * @param string $name The name of the sub-command to edit.
+     *
+     * @return SubCommandConfig The sub-command configuration.
+     *
+     * @see beginSubCommand()
+     */
+    public function editSubCommand($name)
+    {
+        return $this->getSubCommandConfig($name);
     }
 
     /**
@@ -708,13 +745,14 @@ class CommandConfig extends Config
      * protected function configure()
      * {
      *     $this
-     *         ->setName('server')
-     *         ->setDescription('List and manage servers')
+     *         ->beginCommand('server')
+     *             ->setDescription('List and manage servers')
      *
-     *         ->beginOptionCommand('add', 'a')
-     *             ->setDescription('Add a server')
-     *             ->addArgument('host', InputArgument::REQUIRED)
-     *             ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+     *             ->beginOptionCommand('add', 'a')
+     *                 ->setDescription('Add a server')
+     *                 ->addArgument('host', InputArgument::REQUIRED)
+     *                 ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+     *             ->end()
      *         ->end()
      *
      *         // ...
@@ -727,7 +765,7 @@ class CommandConfig extends Config
      *
      * @return OptionCommandConfig The option command configuration.
      *
-     * @see addOptionCommandConfig(), getOptionCommandConfigs()
+     * @see editOptionCommand()
      */
     public function beginOptionCommand($name, $shortName = null)
     {
@@ -740,13 +778,47 @@ class CommandConfig extends Config
     }
 
     /**
+     * Alias for {@link getOptionCommandConfig()}.
+     *
+     * This method can be used to nicely edit an option command inherited from a
+     * parent configuration using the fluent API:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     parent::configure();
+     *
+     *     $this
+     *         ->editCommand('server')
+     *             ->editOptionCommand('add')
+     *                 // ...
+     *             ->end()
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * @param string $name The name of the option command to edit.
+     *
+     * @return OptionCommandConfig The option command configuration.
+     *
+     * @see beginOptionCommand()
+     */
+    public function editOptionCommand($name)
+    {
+        return $this->getOptionCommandConfig($name);
+    }
+
+    /**
      * Adds configuration for an option command.
      *
      * @param OptionCommandConfig $config The option command configuration.
      *
      * @return static The current instance.
      *
-     * @see beginOptionCommand(), getOptionCommandConfigs()
+     * @see beginOptionCommand()
      */
     public function addOptionCommandConfig(OptionCommandConfig $config)
     {
@@ -823,7 +895,7 @@ class CommandConfig extends Config
      * @return OptionCommandConfig[] The option command configurations indexed
      *                               by their names.
      *
-     * @see beginOptionCommand(), addOptionCommandConfig()
+     * @see beginOptionCommand()
      */
     public function getOptionCommandConfigs()
     {

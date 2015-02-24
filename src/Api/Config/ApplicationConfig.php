@@ -381,6 +381,8 @@ class ApplicationConfig extends Config
      * @param string $name The name of the command.
      *
      * @return CommandConfig The command configuration.
+     *
+     * @see editCommand()
      */
     public function beginCommand($name)
     {
@@ -390,6 +392,38 @@ class ApplicationConfig extends Config
         $this->commandConfigs[] = $commandConfig;
 
         return $commandConfig;
+    }
+
+    /**
+     * Alias for {@link getCommandConfig()}.
+     *
+     * This method can be used to nicely edit a command inherited from a
+     * parent configuration using the fluent API:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     parent::configure();
+     *
+     *     $this
+     *         ->editCommand('add')
+     *             // ...
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * @param string $name The name of the command to edit.
+     *
+     * @return CommandConfig The command configuration.
+     *
+     * @see beginCommand()
+     */
+    public function editCommand($name)
+    {
+        return $this->getCommandConfig($name);
     }
 
     /**

@@ -302,6 +302,13 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         ), $this->config->getCommandConfigs());
     }
 
+    public function testEditCommand()
+    {
+        $this->config->addCommandConfig($config1 = new CommandConfig('command1'));
+
+        $this->assertSame($config1, $this->config->editCommand('command1'));
+    }
+
     public function testAddCommandConfig()
     {
         $this->config->addCommandConfig($config1 = new CommandConfig('command1'));
