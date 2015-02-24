@@ -129,6 +129,16 @@ class SubCommandConfig extends CommandConfig
     /**
      * {@inheritdoc}
      */
+    protected function getDefaultHandlerMethod()
+    {
+        return $this->parentConfig
+            ? $this->parentConfig->getHandlerMethod()
+            : parent::getDefaultHandlerMethod();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getDefaultArgsParser()
     {
         return $this->parentConfig

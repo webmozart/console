@@ -1044,6 +1044,16 @@ class CommandConfig extends Config
     /**
      * {@inheritdoc}
      */
+    protected function getDefaultHandlerMethod()
+    {
+        return $this->applicationConfig
+            ? $this->applicationConfig->getHandlerMethod()
+            : parent::getDefaultHandlerMethod();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getDefaultArgsParser()
     {
         return $this->applicationConfig

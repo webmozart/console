@@ -691,6 +691,13 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($handler, $this->config->getHandler());
     }
 
+    public function testGetHandlerMethodReturnsApplicationHandlerByDefault()
+    {
+        $this->applicationConfig->setHandlerMethod('method');
+
+        $this->assertSame('method', $this->config->getHandlerMethod());
+    }
+
     public function testGetArgsParserReturnsApplicationArgsParserByDefault()
     {
         $parser = new DefaultArgsParser();

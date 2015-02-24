@@ -59,7 +59,7 @@ abstract class Config
     /**
      * @var string
      */
-    private $handlerMethod = 'handle';
+    private $handlerMethod;
 
     /**
      * Creates a new configuration.
@@ -309,6 +309,10 @@ abstract class Config
      */
     public function getHandlerMethod()
     {
+        if (!$this->handlerMethod) {
+            return $this->getDefaultHandlerMethod();
+        }
+
         return $this->handlerMethod;
     }
 
@@ -366,6 +370,16 @@ abstract class Config
     protected function getDefaultHandler()
     {
         return new NullHandler();
+    }
+
+    /**
+     * Returns the handler method to use if none is set.
+     *
+     * @return string The default handler method.
+     */
+    protected function getDefaultHandlerMethod()
+    {
+        return 'handle';
     }
 
     /**

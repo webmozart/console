@@ -96,6 +96,13 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($handler, $this->config->getHandler());
     }
 
+    public function testGetHandlerMethodReturnsParentHandlerByDefault()
+    {
+        $this->parentConfig->setHandlerMethod('method');
+
+        $this->assertSame('method', $this->config->getHandlerMethod());
+    }
+
     public function testGetArgsParserReturnsParentArgsParserByDefault()
     {
         $parser = new DefaultArgsParser();
