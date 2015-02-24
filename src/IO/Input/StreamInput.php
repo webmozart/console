@@ -39,7 +39,8 @@ class StreamInput implements Input
 
         $this->stream = $stream;
 
-        rewind($this->stream);
+        // Not all streams are seekable
+        @rewind($this->stream);
     }
 
     /**
