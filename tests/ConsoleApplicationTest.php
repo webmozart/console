@@ -27,6 +27,7 @@ use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\IO\Input\BufferedInput;
 use Webmozart\Console\IO\Output\BufferedOutput;
+use Webmozart\Console\IO\RawIO;
 
 /**
  * @since  1.0
@@ -43,6 +44,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     {
         $this->config = new ApplicationConfig();
         $this->config->setTerminateAfterRun(false);
+        $this->config->setIOFactory(function ($args, $input, $output, $errorOutput) {
+            return new RawIO($input, $output, $errorOutput);
+        });
     }
 
     public function testCreate()
@@ -349,6 +353,19 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 }
             ),
         );
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testFailIfNoIOFactory()
+    {
+        $this->config->setIOFactory(null);
+
+        $args = new StringArgs('');
+        $application = new ConsoleApplication($this->config);
+
+        $application->run($args);
     }
 
     public function testPrintExceptionIfCatchingActive()

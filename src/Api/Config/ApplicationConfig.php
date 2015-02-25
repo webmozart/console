@@ -72,6 +72,11 @@ class ApplicationConfig extends Config
     private $commandResolver;
 
     /**
+     * @var callable
+     */
+    private $ioFactory;
+
+    /**
      * Creates a new console application.
      *
      * @param string $name    The name of the application.
@@ -344,6 +349,44 @@ class ApplicationConfig extends Config
     public function setCommandResolver(CommandResolver $commandResolver)
     {
         $this->commandResolver = $commandResolver;
+
+        return $this;
+    }
+
+    /**
+     * Returns the callable used to create {@link IO} instances.
+     *
+     * @return callable The callable or `null` if none was set.
+     *
+     * @see setIOFactory()
+     */
+    public function getIOFactory()
+    {
+        return $this->ioFactory;
+    }
+
+    /**
+     * Sets the callable used to create {@link IO} instances.
+     *
+     * The callable receives four arguments:
+     *
+     *  * {@link RawArgs}: The raw console arguments.
+     *  * {@link Input}: The input.
+     *  * {@link Output}: The output.
+     *  * {@link Output}: The error output.
+     *
+     * The input and output instances may be `null` if none were passed to
+     * {@link Application::run()}.
+     *
+     * @param callable $ioFactory The {@link IO} factory callable.
+     *
+     * @return static The current instance.
+     */
+    public function setIOFactory($ioFactory)
+    {
+        Assert::nullOrIsCallable($ioFactory, 'The IO factory must be a callable or null. Got: %s');
+
+        $this->ioFactory = $ioFactory;
 
         return $this;
     }

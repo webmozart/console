@@ -287,6 +287,38 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($resolver, $this->config->getCommandResolver());
     }
 
+    public function testSetIOFactory()
+    {
+        $factory = function () {};
+
+        $this->config->setIOFactory($factory);
+
+        $this->assertSame($factory, $this->config->getIOFactory());
+    }
+
+    public function testSetIOFactoryNull()
+    {
+        $factory = function () {};
+
+        $this->config->setIOFactory($factory);
+        $this->config->setIOFactory(null);
+
+        $this->assertNull($this->config->getIOFactory());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetIOFactoryFailsIfNeitherCallableNorNull()
+    {
+        $this->config->setIOFactory(1234);
+    }
+
+    public function testDefaultIOFactory()
+    {
+        $this->assertNull($this->config->getIOFactory());
+    }
+
     public function testBeginCommand()
     {
         $this->config

@@ -12,6 +12,7 @@
 namespace Webmozart\Console;
 
 use Exception;
+use LogicException;
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\ArgsInput;
 use Webmozart\Console\Adapter\IOOutput;
@@ -196,19 +197,13 @@ class ConsoleApplication implements Application
             $args = new ArgvArgs();
         }
 
-        if (null === $input) {
-            $input = new StandardInput();
+        $ioFactory = $this->config->getIOFactory();
+
+        if (null === $ioFactory) {
+            throw new LogicException('The IO factory must be set.');
         }
 
-        if (null === $output) {
-            $output = new StandardOutput();
-        }
-
-        if (null === $errorOutput) {
-            $errorOutput = new ErrorOutput();
-        }
-
-        $io = new FormattedIO($input, $output, $errorOutput, new AnsiFormatter());
+        $io = $ioFactory($args, $input, $output, $errorOutput);
 
         try {
             return $this->applicationAdapter->run(new ArgsInput($args), new IOOutput($io));
