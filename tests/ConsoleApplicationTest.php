@@ -21,6 +21,8 @@ use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Event\ConsoleEvents;
+use Webmozart\Console\Api\Event\PreResolveEvent;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
@@ -245,6 +247,27 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             ->willReturn('RESOLVED COMMAND');
 
         $this->assertSame('RESOLVED COMMAND', $application->resolveCommand($args));
+    }
+
+    public function testResolveCommandDispatchesEvent()
+    {
+        $args = new StringArgs('');
+        $resolver = $this->getMock('Webmozart\Console\Api\Resolver\CommandResolver');
+        $resolvedCommand = $this->getMockBuilder('Webmozart\Console\Api\Resolver\ResolvedCommand')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->config->setCommandResolver($resolver);
+
+        $this->config->addEventListener(ConsoleEvents::PRE_RESOLVE, function (PreResolveEvent $event) use ($resolvedCommand) {
+            $event->setResolvedCommand($resolvedCommand);
+        });
+
+        $application = new ConsoleApplication($this->config);
+
+        $resolver->expects($this->never())
+            ->method('resolveCommand');
+
+        $this->assertSame($resolvedCommand, $application->resolveCommand($args));
     }
 
     /**
