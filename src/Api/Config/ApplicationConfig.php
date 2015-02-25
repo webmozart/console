@@ -11,7 +11,9 @@
 
 namespace Webmozart\Console\Api\Config;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Assert\Assert;
@@ -99,6 +101,7 @@ class ApplicationConfig extends Config
     {
         $this->name = $name;
         $this->version = $version;
+        $this->dispatcher = new EventDispatcher();
 
         parent::__construct();
     }
@@ -236,7 +239,7 @@ class ApplicationConfig extends Config
      *
      * @return EventDispatcherInterface The event dispatcher.
      */
-    public function getDispatcher()
+    public function getEventDispatcher()
     {
         return $this->dispatcher;
     }
@@ -248,9 +251,79 @@ class ApplicationConfig extends Config
      *
      * @return static The current instance.
      */
-    public function setDispatcher(EventDispatcherInterface $dispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
+
+        return $this;
+    }
+
+    /**
+     * Adds a listener for the given event name.
+     *
+     * See {@link ConsoleEvents} for the supported event names.
+     *
+     * @param string   $eventName The event to listen to.
+     * @param callable $listener  The callback to execute when the event is
+     *                            dispatched.
+     * @param int      $priority  The event priority.
+     *
+     * @return static The current instance.
+     *
+     * @see EventDispatcherInterface::addListener()
+     */
+    public function addEventListener($eventName, $listener, $priority = 0)
+    {
+        $this->dispatcher->addListener($eventName, $listener, $priority);
+
+        return $this;
+    }
+
+    /**
+     * Adds an event subscriber to the dispatcher.
+     *
+     * @param EventSubscriberInterface $subscriber The subscriber to add.
+     *
+     * @return static The current instance.
+     *
+     * @see EventDispatcherInterface::addSubscriber()
+     */
+    public function addEventSubscriber(EventSubscriberInterface $subscriber)
+    {
+        $this->dispatcher->addSubscriber($subscriber);
+
+        return $this;
+    }
+
+    /**
+     * Removes an event listener for the given event name.
+     *
+     * @param string   $eventName The event name.
+     * @param callable $listener  The callback to remove.
+     *
+     * @return static The current instance.
+     *
+     * @see EventDispatcherInterface::removeListener()
+     */
+    public function removeEventListener($eventName, $listener)
+    {
+        $this->dispatcher->removeListener($eventName, $listener);
+
+        return $this;
+    }
+
+    /**
+     * Removes an event subscriber from the dispatcher.
+     *
+     * @param EventSubscriberInterface $subscriber The subscriber to remove.
+     *
+     * @return static The current instance.
+     *
+     * @see EventDispatcherInterface::removeSubscriber()
+     */
+    public function removeEventSubscriber(EventSubscriberInterface $subscriber)
+    {
+        $this->dispatcher->removeSubscriber($subscriber);
 
         return $this;
     }

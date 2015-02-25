@@ -49,7 +49,7 @@ class ApplicationAdapter extends Application
 
         parent::__construct($config->getDisplayName(), $config->getVersion());
 
-        if ($dispatcher = $config->getDispatcher()) {
+        if ($dispatcher = $config->getEventDispatcher()) {
             $this->setDispatcher($dispatcher);
         }
 

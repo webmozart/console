@@ -20,9 +20,12 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Config\ApplicationConfig;
+use Webmozart\Console\Api\Event\ConsoleEvents;
+use Webmozart\Console\Api\Event\PreResolveEvent;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\Handler\Help\HelpHandler;
@@ -52,39 +55,8 @@ class DefaultApplicationConfig extends ApplicationConfig
                 new QuestionHelper(),
             )))
 
-            ->setIOFactory(function (RawArgs $args, Input $input = null, Output $output = null, Output $errorOutput = null) {
-                $input = $input ?: new StandardInput();
-                $output = $output ?: new StandardOutput();
-                $errorOutput = $errorOutput ?: new ErrorOutput();
-
-                if ($args->hasToken('--no-ansi')) {
-                    $formatter = new PlainFormatter();
-                } elseif ($args->hasToken('--ansi')) {
-                    $formatter = new AnsiFormatter();
-                } else {
-                    $formatter = $output->supportsAnsi() ? new AnsiFormatter() : new PlainFormatter();
-                }
-
-                $io = new FormattedIO($input, $output, $errorOutput, $formatter);
-
-                if ($args->hasToken('-vvv')) {
-                    $io->setVerbosity(IO::DEBUG);
-                } elseif ($args->hasToken('-vv')) {
-                    $io->setVerbosity(IO::VERY_VERBOSE);
-                } elseif ($args->hasToken('-v')) {
-                    $io->setVerbosity(IO::VERBOSE);
-                }
-
-                if ($args->hasToken('--quiet') || $args->hasToken('-q')) {
-                    $io->setQuiet(true);
-                }
-
-                if ($args->hasToken('--no-interaction') || $args->hasToken('-n')) {
-                    $io->setInteractive(false);
-                }
-
-                return $io;
-            })
+            ->setIOFactory(array($this, 'createIO'))
+            ->addEventListener(ConsoleEvents::PRE_RESOLVE, array($this, 'resolveHelpCommand'))
 
             ->addOption('help', 'h', Option::NO_VALUE, 'Display help about the command')
             ->addOption('quiet', 'q', Option::NO_VALUE, 'Do not output any message')
@@ -108,4 +80,51 @@ class DefaultApplicationConfig extends ApplicationConfig
         ;
     }
 
+    public function createIO(RawArgs $args, Input $input = null, Output $output = null, Output $errorOutput = null)
+    {
+        $input = $input ?: new StandardInput();
+        $output = $output ?: new StandardOutput();
+        $errorOutput = $errorOutput ?: new ErrorOutput();
+
+        if ($args->hasToken('--no-ansi')) {
+            $formatter = new PlainFormatter();
+        } elseif ($args->hasToken('--ansi')) {
+            $formatter = new AnsiFormatter();
+        } else {
+            $formatter = $output->supportsAnsi() ? new AnsiFormatter() : new PlainFormatter();
+        }
+
+        $io = new FormattedIO($input, $output, $errorOutput, $formatter);
+
+        if ($args->hasToken('-vvv')) {
+            $io->setVerbosity(IO::DEBUG);
+        } elseif ($args->hasToken('-vv')) {
+            $io->setVerbosity(IO::VERY_VERBOSE);
+        } elseif ($args->hasToken('-v')) {
+            $io->setVerbosity(IO::VERBOSE);
+        }
+
+        if ($args->hasToken('--quiet') || $args->hasToken('-q')) {
+            $io->setQuiet(true);
+        }
+
+        if ($args->hasToken('--no-interaction') || $args->hasToken('-n')) {
+            $io->setInteractive(false);
+        }
+
+        return $io;
+    }
+
+    public function resolveHelpCommand(PreResolveEvent $event)
+    {
+        $args = $event->getRawArgs();
+
+        if ($args->hasToken('-h') || $args->hasToken('--help')) {
+            $command = $event->getApplication()->getCommand('help');
+            $parsedArgs = $command->parseArgs($args);
+
+            $event->setResolvedCommand(new ResolvedCommand($command, $parsedArgs));
+            $event->stopPropagation();
+        }
+    }
 }

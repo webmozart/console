@@ -13,6 +13,7 @@ namespace Webmozart\Console;
 
 use Exception;
 use LogicException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\ArgsInput;
 use Webmozart\Console\Adapter\IOOutput;
@@ -24,14 +25,11 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Event\ConsoleEvents;
+use Webmozart\Console\Api\Event\PreResolveEvent;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
-use Webmozart\Console\Formatter\AnsiFormatter;
-use Webmozart\Console\IO\FormattedIO;
-use Webmozart\Console\IO\Input\StandardInput;
-use Webmozart\Console\IO\Output\ErrorOutput;
-use Webmozart\Console\IO\Output\StandardOutput;
 use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Exception\ExceptionTrace;
 
@@ -74,6 +72,11 @@ class ConsoleApplication implements Application
     private $applicationAdapter;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * Creates a new console application.
      *
      * @param ApplicationConfig $config The application configuration.
@@ -81,6 +84,7 @@ class ConsoleApplication implements Application
     public function __construct(ApplicationConfig $config)
     {
         $this->config = $config;
+        $this->dispatcher = $config->getEventDispatcher();
         $this->commands = new CommandCollection();
         $this->namedCommands = new CommandCollection();
         $this->defaultCommands = new CommandCollection();
@@ -185,6 +189,15 @@ class ConsoleApplication implements Application
      */
     public function resolveCommand(RawArgs $args)
     {
+        if ($this->dispatcher->hasListeners(ConsoleEvents::PRE_RESOLVE)) {
+            $event = new PreResolveEvent($args, $this);
+            $this->dispatcher->dispatch(ConsoleEvents::PRE_RESOLVE, $event);
+
+            if ($resolvedCommand = $event->getResolvedCommand()) {
+                return $resolvedCommand;
+            }
+        }
+
         return $this->config->getCommandResolver()->resolveCommand($args, $this);
     }
 

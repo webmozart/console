@@ -12,11 +12,9 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
-use stdClass;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -42,7 +40,7 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getName());
         $this->assertNull($config->getDisplayName());
         $this->assertNull($config->getVersion());
-        $this->assertNull($config->getDispatcher());
+        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventDispatcherInterface', $config->getEventDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
     }
 
@@ -61,7 +59,7 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getName());
         $this->assertNull($config->getDisplayName());
         $this->assertNull($config->getVersion());
-        $this->assertNull($config->getDispatcher());
+        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventDispatcherInterface', $config->getEventDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
     }
 
@@ -212,13 +210,65 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config->setHelp(1234);
     }
 
-    public function testSetDispatcher()
+    public function testSetEventDispatcher()
     {
         $dispatcher = new EventDispatcher();
 
-        $this->config->setDispatcher($dispatcher);
+        $this->config->setEventDispatcher($dispatcher);
 
-        $this->assertSame($dispatcher, $this->config->getDispatcher());
+        $this->assertSame($dispatcher, $this->config->getEventDispatcher());
+    }
+
+    public function testAddEventListener()
+    {
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $listener = function () {};
+
+        $dispatcher->expects($this->once())
+            ->method('addListener')
+            ->with('event-name', $listener, 123);
+
+        $this->config->setEventDispatcher($dispatcher);
+        $this->config->addEventListener('event-name', $listener, 123);
+    }
+
+    public function testAddEventSubscriber()
+    {
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $subscriber = $this->getMock('Symfony\Component\EventDispatcher\EventSubscriberInterface');
+
+        $dispatcher->expects($this->once())
+            ->method('addSubscriber')
+            ->with($subscriber);
+
+        $this->config->setEventDispatcher($dispatcher);
+        $this->config->addEventSubscriber($subscriber);
+    }
+
+    public function testRemoveEventListener()
+    {
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $listener = function () {};
+
+        $dispatcher->expects($this->once())
+            ->method('removeListener')
+            ->with('event-name', $listener);
+
+        $this->config->setEventDispatcher($dispatcher);
+        $this->config->removeEventListener('event-name', $listener);
+    }
+
+    public function testRemoveEventSubscriber()
+    {
+        $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $subscriber = $this->getMock('Symfony\Component\EventDispatcher\EventSubscriberInterface');
+
+        $dispatcher->expects($this->once())
+            ->method('removeSubscriber')
+            ->with($subscriber);
+
+        $this->config->setEventDispatcher($dispatcher);
+        $this->config->removeEventSubscriber($subscriber);
     }
 
     public function testSetCatchExceptions()
