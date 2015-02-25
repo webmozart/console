@@ -86,7 +86,7 @@ abstract class AbstractHelp implements Renderable
         $defaultValue = $argument->getDefaultValue();
 
         if (null !== $defaultValue && (!is_array($defaultValue) || count($defaultValue))) {
-            $description .= sprintf('<h> (default: %s)</h>', $this->formatValue($defaultValue));
+            $description .= sprintf(' <b>(default: %s)</b>', $this->formatValue($defaultValue));
         }
 
         $layout->add(new LabeledParagraph($name, $description));
@@ -156,11 +156,11 @@ abstract class AbstractHelp implements Renderable
         }
 
         if ($option->acceptsValue() && null !== $defaultValue && (!is_array($defaultValue) || count($defaultValue))) {
-            $description .= sprintf(' (default: %s)', $this->formatValue($defaultValue));
+            $description .= sprintf(' <b>(default: %s)</b>', $this->formatValue($defaultValue));
         }
 
         if ($option->isMultiValued()) {
-            $description .= ' (multiple values allowed)';
+            $description .= ' <b>(multiple values allowed)</b>';
         }
 
         $layout->add(new LabeledParagraph($name, $description));
