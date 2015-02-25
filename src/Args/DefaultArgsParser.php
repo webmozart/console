@@ -58,6 +58,12 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         // Prevent failing validation if not all command names are given
         $this->insertMissingCommandNames($formatAdapter);
 
+        try {
+            $this->validate();
+        } catch (RuntimeException $e) {
+            throw new CannotParseArgsException($e->getMessage());
+        }
+
         return $this->createArgs($format, $args);
     }
 

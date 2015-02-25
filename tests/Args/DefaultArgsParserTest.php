@@ -189,7 +189,11 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
     }
 
-    public function testParseIgnoresMissingRequiredArgument()
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Not enough arguments.
+     */
+    public function testParseFailsIfMissingRequiredArgument()
     {
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
@@ -198,13 +202,14 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument2', Argument::REQUIRED))
             ->getFormat();
 
-        $args = $this->parser->parseArgs(new StringArgs('server --add foo'), $format);
-
-        $this->assertSame(array(), $args->getOptions(false));
-        $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
+        $this->parser->parseArgs(new StringArgs('server --add foo'), $format);
     }
 
-    public function testParseIgnoresMissingRequiredArgumentWithMissingCommandNames()
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Not enough arguments.
+     */
+    public function testParseFailsIfMissingRequiredArgumentWithMissingCommandNames()
     {
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
@@ -213,13 +218,14 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument2', Argument::REQUIRED))
             ->getFormat();
 
-        $args = $this->parser->parseArgs(new StringArgs('server foo'), $format);
-
-        $this->assertSame(array(), $args->getOptions(false));
-        $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
+        $this->parser->parseArgs(new StringArgs('server foo'), $format);
     }
 
-    public function testParseIgnoresMissingRequiredArgumentWithMissingCommandOptions()
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage Not enough arguments.
+     */
+    public function testParseFailsIfMissingRequiredArgumentWithMissingCommandOptions()
     {
         $format = ArgsFormat::build()
             ->addCommandName(new CommandName('server'))
