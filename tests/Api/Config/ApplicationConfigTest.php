@@ -40,7 +40,7 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getName());
         $this->assertNull($config->getDisplayName());
         $this->assertNull($config->getVersion());
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventDispatcherInterface', $config->getEventDispatcher());
+        $this->assertNull($config->getEventDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
     }
 
@@ -59,7 +59,7 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getName());
         $this->assertNull($config->getDisplayName());
         $this->assertNull($config->getVersion());
-        $this->assertInstanceOf('Symfony\Component\EventDispatcher\EventDispatcherInterface', $config->getEventDispatcher());
+        $this->assertNull($config->getEventDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
     }
 

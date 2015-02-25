@@ -189,7 +189,7 @@ class ConsoleApplication implements Application
      */
     public function resolveCommand(RawArgs $args)
     {
-        if ($this->dispatcher->hasListeners(ConsoleEvents::PRE_RESOLVE)) {
+        if ($this->dispatcher && $this->dispatcher->hasListeners(ConsoleEvents::PRE_RESOLVE)) {
             $event = new PreResolveEvent($args, $this);
             $this->dispatcher->dispatch(ConsoleEvents::PRE_RESOLVE, $event);
 

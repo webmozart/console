@@ -13,6 +13,7 @@ namespace Webmozart\Console\Api\Command;
 
 use Exception;
 use LogicException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\CannotParseArgsException;
@@ -21,6 +22,8 @@ use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
+use Webmozart\Console\Api\Event\ConsoleEvents;
+use Webmozart\Console\Api\Event\PreHandleEvent;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Util\ProcessTitle;
 
@@ -101,6 +104,11 @@ class Command
     private $defaultSubCommands;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * Creates a new command.
      *
      * @param CommandConfig $config        The command configuration.
@@ -125,6 +133,7 @@ class Command
         $this->namedSubCommands = new CommandCollection();
         $this->defaultSubCommands = new CommandCollection();
         $this->argsFormat = $config->buildArgsFormat($this->getBaseFormat());
+        $this->dispatcher = $application ? $application->getConfig()->getEventDispatcher() : null;
 
         foreach ($config->getSubCommandConfigs() as $subConfig) {
             $this->addSubCommand($subConfig);
@@ -352,8 +361,6 @@ class Command
     public function handle(Args $args, IO $io)
     {
         $processTitle = $this->config->getProcessTitle();
-        $commandHandler = $this->config->getHandler();
-        $handlerMethod = $this->config->getHandlerMethod();
 
         $this->warnIfProcessTitleNotSupported($processTitle, $io);
 
@@ -361,7 +368,7 @@ class Command
             ProcessTitle::setProcessTitle($processTitle);
 
             try {
-                $statusCode = $commandHandler->$handlerMethod($args, $io, $this);
+                $statusCode = $this->doHandle($args, $io);
             } catch (Exception $e) {
                 ProcessTitle::resetProcessTitle();
 
@@ -370,7 +377,7 @@ class Command
 
             ProcessTitle::resetProcessTitle();
         } else {
-            $statusCode = $commandHandler->$handlerMethod($args, $io, $this);
+            $statusCode = $this->doHandle($args, $io);
         }
 
         return $statusCode;
@@ -461,5 +468,23 @@ class Command
                 }
             }
         }
+    }
+
+    private function doHandle(Args $args, IO $io)
+    {
+        if ($this->dispatcher && $this->dispatcher->hasListeners(ConsoleEvents::PRE_HANDLE)) {
+            $event = new PreHandleEvent($args, $io, $this);
+            $this->dispatcher->dispatch(ConsoleEvents::PRE_HANDLE, $event);
+
+            if ($event->isHandled()) {
+                return $event->getStatusCode();
+            }
+        }
+
+        $commandHandler = $this->config->getHandler();
+        $handlerMethod = $this->config->getHandlerMethod();
+        $statusCode = $commandHandler->$handlerMethod($args, $io, $this);
+
+        return (int) $statusCode;
     }
 }

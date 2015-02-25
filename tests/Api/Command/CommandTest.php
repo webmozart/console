@@ -20,9 +20,12 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
+use Webmozart\Console\Api\Event\ConsoleEvents;
+use Webmozart\Console\Api\Event\PreHandleEvent;
 
 /**
  * @since  1.0
@@ -38,6 +41,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->application = $this->getMock('Webmozart\Console\Api\Application\Application');
+        $this->application->expects($this->any())
+            ->method('getConfig')
+            ->willReturn(new ApplicationConfig());
     }
 
     public function testCreate()
@@ -426,6 +432,27 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertSame(123, $command->handle($args, $io));
     }
 
+    public function testHandleDispatchesEvent()
+    {
+        $args = new Args(new ArgsFormat());
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $handler = $this->getMock('stdClass', array('handle'));
+
+        $this->application->getConfig()->addEventListener(ConsoleEvents::PRE_HANDLE, function (PreHandleEvent $event) {
+            $event->setHandled(true);
+            $event->setStatusCode(123);
+        });
+
+        $config = new CommandConfig('command');
+        $config->setHandler($handler);
+        $command = new Command($config, $this->application);
+
+        $handler->expects($this->never())
+            ->method('handle');
+
+        $this->assertSame(123, $command->handle($args, $io));
+    }
+
     public function testHandleWithCustomHandlerMethod()
     {
         $args = new Args(new ArgsFormat());
@@ -443,6 +470,24 @@ class CommandTest extends PHPUnit_Framework_TestCase
             ->willReturn(123);
 
         $this->assertSame(123, $command->handle($args, $io));
+    }
+
+    public function testHandleConvertsEmptyResultToZero()
+    {
+        $args = new Args(new ArgsFormat());
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $handler = $this->getMock('stdClass', array('handle'));
+
+        $config = new CommandConfig('command');
+        $config->setHandler($handler);
+        $command = new Command($config);
+
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($args, $io, $command)
+            ->willReturn(null);
+
+        $this->assertSame(0, $command->handle($args, $io));
     }
 
     public function testRun()

@@ -100,7 +100,6 @@ class ApplicationConfig extends Config
     {
         $this->name = $name;
         $this->version = $version;
-        $this->dispatcher = new EventDispatcher();
 
         parent::__construct();
     }
@@ -250,7 +249,7 @@ class ApplicationConfig extends Config
      *
      * @return static The current instance.
      */
-    public function setEventDispatcher(EventDispatcherInterface $dispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher = null)
     {
         $this->dispatcher = $dispatcher;
 
@@ -273,6 +272,10 @@ class ApplicationConfig extends Config
      */
     public function addEventListener($eventName, $listener, $priority = 0)
     {
+        if (!$this->dispatcher) {
+            $this->dispatcher = new EventDispatcher();
+        }
+
         $this->dispatcher->addListener($eventName, $listener, $priority);
 
         return $this;
@@ -289,6 +292,10 @@ class ApplicationConfig extends Config
      */
     public function addEventSubscriber(EventSubscriberInterface $subscriber)
     {
+        if (!$this->dispatcher) {
+            $this->dispatcher = new EventDispatcher();
+        }
+
         $this->dispatcher->addSubscriber($subscriber);
 
         return $this;
@@ -306,6 +313,10 @@ class ApplicationConfig extends Config
      */
     public function removeEventListener($eventName, $listener)
     {
+        if (!$this->dispatcher) {
+            $this->dispatcher = new EventDispatcher();
+        }
+
         $this->dispatcher->removeListener($eventName, $listener);
 
         return $this;
@@ -322,6 +333,10 @@ class ApplicationConfig extends Config
      */
     public function removeEventSubscriber(EventSubscriberInterface $subscriber)
     {
+        if (!$this->dispatcher) {
+            $this->dispatcher = new EventDispatcher();
+        }
+
         $this->dispatcher->removeSubscriber($subscriber);
 
         return $this;

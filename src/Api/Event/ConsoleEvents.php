@@ -26,6 +26,8 @@ final class ConsoleEvents
      */
     const PRE_RESOLVE = 'pre-resolve';
 
+    const PRE_HANDLE = 'pre-handle';
+
     /**
      * May not be instantiated.
      */
