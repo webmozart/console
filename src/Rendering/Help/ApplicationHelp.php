@@ -19,6 +19,7 @@ use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Element\Paragraph;
+use Webmozart\Console\Rendering\Element\NameVersion;
 use Webmozart\Console\Rendering\Layout\BlockLayout;
 
 /**
@@ -85,16 +86,7 @@ class ApplicationHelp extends AbstractHelp
      */
     protected function renderName(BlockLayout $layout, Application $application)
     {
-        $config = $application->getConfig();
-
-        if ($config->getDisplayName() && $config->getVersion()) {
-            $layout->add(new Paragraph("{$config->getDisplayName()} version <em>{$config->getVersion()}</em>"));
-        } elseif ($config->getDisplayName()) {
-            $layout->add(new Paragraph("{$config->getDisplayName()}"));
-        } else {
-            $layout->add(new Paragraph("Console Tool"));
-        }
-
+        $layout->add(new NameVersion($application->getConfig()));
         $layout->add(new EmptyLine());
     }
 

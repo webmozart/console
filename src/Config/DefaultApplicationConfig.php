@@ -21,6 +21,7 @@ use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Event\ConsoleEvents;
+use Webmozart\Console\Api\Event\PreHandleEvent;
 use Webmozart\Console\Api\Event\PreResolveEvent;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
@@ -33,6 +34,8 @@ use Webmozart\Console\IO\FormattedIO;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
+use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Rendering\Element\NameVersion;
 
 /**
  * The default application configuration.
@@ -57,6 +60,7 @@ class DefaultApplicationConfig extends ApplicationConfig
 
             ->setIOFactory(array($this, 'createIO'))
             ->addEventListener(ConsoleEvents::PRE_RESOLVE, array($this, 'resolveHelpCommand'))
+            ->addEventListener(ConsoleEvents::PRE_HANDLE, array($this, 'printVersion'))
 
             ->addOption('help', 'h', Option::NO_VALUE, 'Display help about the command')
             ->addOption('quiet', 'q', Option::NO_VALUE, 'Do not output any message')
@@ -125,6 +129,18 @@ class DefaultApplicationConfig extends ApplicationConfig
 
             $event->setResolvedCommand(new ResolvedCommand($command, $parsedArgs));
             $event->stopPropagation();
+        }
+    }
+
+    public function printVersion(PreHandleEvent $event)
+    {
+        if ($event->getArgs()->isOptionSet('version')) {
+            $canvas = new Canvas($event->getIO());
+            $version = new NameVersion($event->getCommand()->getApplication()->getConfig());
+            $version->render($canvas);
+            $canvas->flush();
+
+            $event->setHandled(true);
         }
     }
 }

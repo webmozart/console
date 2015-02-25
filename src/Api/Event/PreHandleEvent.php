@@ -78,7 +78,7 @@ class PreHandleEvent extends Event
      *
      * @return IO The I/O.
      */
-    public function getIo()
+    public function getIO()
     {
         return $this->io;
     }

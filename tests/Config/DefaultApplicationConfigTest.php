@@ -435,4 +435,36 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @dataProvider getVersionArgs
+     */
+    public function testPrintVersion($args)
+    {
+        $this->config
+            ->setDisplayName('The Application')
+            ->setVersion('1.2.3')
+            ->beginCommand('command')->end()
+        ;
+
+        $application = new ConsoleApplication($this->config);
+        $input = new BufferedInput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
+
+        $status = $application->run($args, $input, $output, $errorOutput);
+
+        $this->assertSame(0, $status);
+        $this->assertSame("The Application version 1.2.3\n", $output->fetch());
+        $this->assertSame('', $errorOutput->fetch());
+    }
+
+    public function getVersionArgs()
+    {
+        return array(
+            array(new StringArgs('-V')),
+            array(new StringArgs('--version')),
+            array(new StringArgs('command -V')),
+            array(new StringArgs('command --version')),
+        );
+    }
 }
