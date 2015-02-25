@@ -13,7 +13,6 @@ namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
-use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;

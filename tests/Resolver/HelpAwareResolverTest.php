@@ -19,7 +19,6 @@ use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Resolver\HelpAwareResolver;
-use Webmozart\Console\Resolver\ResolveResult;
 
 /**
  * @since  1.0

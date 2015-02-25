@@ -13,9 +13,6 @@ namespace Webmozart\Console\Handler\Help;
 
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
-use Webmozart\Console\Api\Args\Args;
-use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Process\ProcessLauncher;
 

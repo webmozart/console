@@ -18,7 +18,6 @@ use Webmozart\Console\Adapter\ArgsFormatInputDefinition;
 use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\ConsoleApplication;
-use Webmozart\Console\Rendering\Dimensions;
 
 /**
  * @since  1.0

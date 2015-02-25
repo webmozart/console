@@ -13,7 +13,6 @@ namespace Webmozart\Console\Tests\Handler;
 
 use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
-use stdClass;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;

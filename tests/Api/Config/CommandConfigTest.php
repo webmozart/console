@@ -12,13 +12,11 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
-use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\CommandName;
 use Webmozart\Console\Api\Args\Format\Option;
-use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
