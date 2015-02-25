@@ -67,11 +67,6 @@ class ConsoleApplication implements Application
     private $globalArgsFormat;
 
     /**
-     * @var ApplicationAdapter
-     */
-    private $applicationAdapter;
-
-    /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
@@ -97,11 +92,6 @@ class ConsoleApplication implements Application
         foreach ($config->getCommandConfigs() as $commandConfig) {
             $this->addCommand($commandConfig);
         }
-
-        $this->applicationAdapter = new ApplicationAdapter($this);
-
-        // Don't catch exceptions in the adapter. We do this here.
-        $this->applicationAdapter->setCatchExceptions(false);
     }
 
     /**
@@ -219,7 +209,11 @@ class ConsoleApplication implements Application
         $io = $ioFactory($args, $input, $output, $errorOutput);
 
         try {
-            return $this->applicationAdapter->run(new ArgsInput($args), new IOOutput($io));
+            $resolvedCommand = $this->resolveCommand($args);
+            $command = $resolvedCommand->getCommand();
+            $parsedArgs = $resolvedCommand->getArgs();
+
+            return $command->handle($parsedArgs, $io);
         } catch (Exception $e) {
             if (!$this->config->isExceptionCaught()) {
                 throw $e;
