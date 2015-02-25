@@ -16,6 +16,7 @@ use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
+use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Api\Resolver\ResolvedCommand;
@@ -35,12 +36,13 @@ class DefaultResolver implements CommandResolver
     public function resolveCommand(RawArgs $args, Application $application)
     {
         $tokens = $args->getTokens();
+        $namedCommands = $application->getNamedCommands();
 
         $argumentsToTest = $this->getArgumentsToTest($tokens);
         $optionsToTest = $this->getOptionsToTest($tokens);
 
         // Try to find a command for the passed arguments and options.
-        if ($result = $this->processArguments($args, $application->getCommands(), $argumentsToTest, $optionsToTest)) {
+        if ($result = $this->processArguments($args, $namedCommands, $argumentsToTest, $optionsToTest)) {
             if (!$result->isParsable()) {
                 throw $result->getParseError();
             }
@@ -50,7 +52,7 @@ class DefaultResolver implements CommandResolver
 
         // If arguments were passed, we did not find the matching command.
         if ($argumentsToTest) {
-            throw CannotResolveCommandException::nameNotFound(reset($argumentsToTest), $application->getCommands());
+            throw CannotResolveCommandException::nameNotFound(reset($argumentsToTest), $namedCommands);
         }
 
         // If no arguments were passed, run the application's default command.
@@ -68,25 +70,31 @@ class DefaultResolver implements CommandResolver
 
     /**
      * @param RawArgs           $args
-     * @param CommandCollection $commands
+     * @param CommandCollection $namedCommands
      * @param string[]          $argumentsToTest
      * @param string[]          $optionsToTest
      *
      * @return ResolveResult
      */
-    private function processArguments(RawArgs $args, CommandCollection $commands, array $argumentsToTest, array $optionsToTest)
+    private function processArguments(RawArgs $args, CommandCollection $namedCommands, array $argumentsToTest, array $optionsToTest)
     {
         $currentCommand = null;
 
         // Parse the arguments for command names until we fail to find a
         // matching command
         foreach ($argumentsToTest as $name) {
-            if (!$commands->contains($name)) {
+            if (!$namedCommands->contains($name)) {
                 break;
             }
 
-            $currentCommand = $commands->get($name);
-            $commands = $currentCommand->getSubCommands();
+            $nextCommand = $namedCommands->get($name);
+
+            if ($nextCommand->getConfig() instanceof OptionCommandConfig) {
+                break;
+            }
+
+            $currentCommand = $nextCommand;
+            $namedCommands = $currentCommand->getNamedSubCommands();
         }
 
         if (!$currentCommand) {
@@ -106,13 +114,19 @@ class DefaultResolver implements CommandResolver
     private function processOptions(RawArgs $args, Command $currentCommand, array $optionsToTest)
     {
         foreach ($optionsToTest as $option) {
-            $commands = $currentCommand->getOptionCommands();
+            $commands = $currentCommand->getNamedSubCommands();
 
             if (!$commands->contains($option)) {
                 continue;
             }
 
-            $currentCommand = $commands->get($option);
+            $nextCommand = $commands->get($option);
+
+            if (!$nextCommand->getConfig() instanceof OptionCommandConfig) {
+                break;
+            }
+
+            $currentCommand = $nextCommand;
         }
 
         return $this->processDefaultSubCommands($args, $currentCommand);
@@ -126,9 +140,7 @@ class DefaultResolver implements CommandResolver
      */
     private function processDefaultSubCommands(RawArgs $args, Command $currentCommand)
     {
-        $defaultCommands = $currentCommand->getDefaultCommands();
-
-        if ($result = $this->processDefaultCommands($args, $defaultCommands)) {
+        if ($result = $this->processDefaultCommands($args, $currentCommand->getDefaultSubCommands())) {
             return $result;
         }
 
@@ -137,12 +149,12 @@ class DefaultResolver implements CommandResolver
     }
 
     /**
-     * @param RawArgs   $args
-     * @param Command[] $defaultCommands
+     * @param RawArgs           $args
+     * @param CommandCollection $defaultCommands
      *
      * @return ResolveResult
      */
-    private function processDefaultCommands(RawArgs $args, array $defaultCommands)
+    private function processDefaultCommands(RawArgs $args, CommandCollection $defaultCommands)
     {
         $firstResult = null;
 

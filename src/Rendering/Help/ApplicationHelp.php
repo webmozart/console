@@ -14,8 +14,8 @@ namespace Webmozart\Console\Rendering\Help;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Element\Paragraph;
@@ -50,7 +50,7 @@ class ApplicationHelp extends AbstractHelp
     protected function renderHelp(BlockLayout $layout)
     {
         $help = $this->application->getConfig()->getHelp();
-        $commands = $this->application->getCommands();
+        $commands = $this->application->getNamedCommands();
         $globalArgsFormat = $this->application->getGlobalArgsFormat();
 
         $argsFormat = ArgsFormat::build()
@@ -129,6 +129,9 @@ class ApplicationHelp extends AbstractHelp
         $layout->add(new Paragraph('<h>AVAILABLE COMMANDS</h>'));
         $layout->beginBlock();
 
+        $commands = $commands->toArray();
+        ksort($commands);
+
         foreach ($commands as $command) {
             $this->renderCommand($layout, $command);
         }
@@ -140,10 +143,10 @@ class ApplicationHelp extends AbstractHelp
     /**
      * Renders a command in the "Commands" section.
      *
-     * @param BlockLayout  $layout  The layout.
-     * @param NamedCommand $command The command to describe.
+     * @param BlockLayout $layout  The layout.
+     * @param Command     $command The command to describe.
      */
-    protected function renderCommand(BlockLayout $layout, NamedCommand $command)
+    protected function renderCommand(BlockLayout $layout, Command $command)
     {
         $description = $command->getConfig()->getDescription();
         $name = '<em>'.$command->getName().'</em>';

@@ -14,6 +14,10 @@ namespace Webmozart\Console\Tests\Api\Config;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\CommandName;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
@@ -58,7 +62,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(), $config->getArguments());
         $this->assertSame(array(), $config->getOptions());
         $this->assertSame(array(), $config->getSubCommandConfigs());
-        $this->assertSame(array(), $config->getOptionCommandConfigs());
     }
 
     public function testCreateWithArguments()
@@ -82,7 +85,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame(array(), $config->getArguments());
         $this->assertSame(array(), $config->getOptions());
         $this->assertSame(array(), $config->getSubCommandConfigs());
-        $this->assertSame(array(), $config->getOptionCommandConfigs());
     }
 
     public function testStaticCreateWithName()
@@ -495,187 +497,14 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(
             new OptionCommandConfig('command1', 'a', $this->config, $this->applicationConfig),
             new OptionCommandConfig('command2', 'b', $this->config, $this->applicationConfig),
-        ), $this->config->getOptionCommandConfigs());
+        ), $this->config->getSubCommandConfigs());
     }
 
     public function testEditOptionCommand()
     {
-        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
+        $this->config->addSubCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
 
         $this->assertSame($config1, $this->config->editOptionCommand('command1'));
-    }
-
-    public function testAddOptionCommandConfig()
-    {
-        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
-        $this->config->addOptionCommandConfig($config2 = new OptionCommandConfig('command2', 'b'));
-
-        $this->assertSame(array($config1, $config2), $this->config->getOptionCommandConfigs());
-
-        $this->assertSame($this->applicationConfig, $config1->getApplicationConfig());
-        $this->assertSame($this->applicationConfig, $config2->getApplicationConfig());
-    }
-
-    public function testAddOptionCommandConfigs()
-    {
-        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
-        $this->config->addOptionCommandConfigs(array(
-            $config2 = new OptionCommandConfig('command2', 'b'),
-            $config3 = new OptionCommandConfig('command3', 'c'),
-        ));
-
-        $this->assertSame(array($config1, $config2, $config3), $this->config->getOptionCommandConfigs());
-    }
-
-    public function testSetOptionCommandConfigs()
-    {
-        $this->config->addOptionCommandConfig($config1 = new OptionCommandConfig('command1', 'a'));
-        $this->config->setOptionCommandConfigs(array(
-            $config2 = new OptionCommandConfig('command2', 'b'),
-            $config3 = new OptionCommandConfig('command3', 'c'),
-        ));
-
-        $this->assertSame(array($config2, $config3), $this->config->getOptionCommandConfigs());
-    }
-
-    public function testGetOptionCommandConfig()
-    {
-        $this->config->addOptionCommandConfig($config = new OptionCommandConfig());
-
-        $config->setName('command');
-
-        $this->assertSame($config, $this->config->getOptionCommandConfig('command'));
-
-        $config->setShortName('c');
-
-        $this->assertSame($config, $this->config->getOptionCommandConfig('c'));
-    }
-
-    /**
-     * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
-     */
-    public function testGetOptionCommandConfigFailsIfCommandNotFound()
-    {
-        $this->config->getOptionCommandConfig('command');
-    }
-
-    public function testHasOptionCommandConfig()
-    {
-        $this->config->addOptionCommandConfig($config = new OptionCommandConfig());
-
-        $this->assertFalse($this->config->hasOptionCommandConfig('command'));
-        $this->assertFalse($this->config->hasOptionCommandConfig('c'));
-        $this->assertFalse($this->config->hasOptionCommandConfig('foobar'));
-
-        $config->setName('command');
-
-        $this->assertTrue($this->config->hasOptionCommandConfig('command'));
-        $this->assertFalse($this->config->hasOptionCommandConfig('c'));
-        $this->assertFalse($this->config->hasOptionCommandConfig('foobar'));
-
-        $config->setShortName('c');
-
-        $this->assertTrue($this->config->hasOptionCommandConfig('command'));
-        $this->assertTrue($this->config->hasOptionCommandConfig('c'));
-        $this->assertFalse($this->config->hasOptionCommandConfig('foobar'));
-    }
-
-    public function testHasOptionCommandConfigs()
-    {
-        $this->assertFalse($this->config->hasOptionCommandConfigs());
-
-        $this->config->addOptionCommandConfig($config = new OptionCommandConfig());
-
-        $this->assertTrue($this->config->hasOptionCommandConfigs());
-    }
-
-    public function testBeginDefaultCommand()
-    {
-        $this->config
-            ->beginDefaultCommand()->setProcessTitle('title1')->end()
-            ->beginDefaultCommand()->setProcessTitle('title2')->end()
-        ;
-
-        $config1 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
-        $config1->setProcessTitle('title1');
-        $config2 = new SubCommandConfig(null, $this->config, $this->applicationConfig);
-        $config2->setProcessTitle('title2');
-
-        $this->assertEquals(array($config1, $config2), $this->config->getDefaultCommands());
-    }
-
-    public function testAddDefaultCommand()
-    {
-        $this->config->addDefaultCommand($config = new SubCommandConfig());
-        $this->config->addDefaultCommand('command');
-
-        $this->assertSame(array($config, 'command'), $this->config->getDefaultCommands());
-
-        $this->assertSame($this->applicationConfig, $config->getApplicationConfig());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDefaultCommandFailsIfNull()
-    {
-        $this->config->addDefaultCommand(null);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDefaultCommandFailsIfEmpty()
-    {
-        $this->config->addDefaultCommand('');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDefaultCommandFailsIfNeitherStringNorConfig()
-    {
-        $this->config->addDefaultCommand(new stdClass());
-    }
-
-    public function testAddDefaultCommands()
-    {
-        $this->config->addDefaultCommand($config1 = new SubCommandConfig() );
-        $this->config->addDefaultCommands(array(
-            $config2 = new SubCommandConfig(),
-            'command',
-        ));
-
-        $this->assertSame(array($config1, $config2, 'command'), $this->config->getDefaultCommands());
-    }
-
-    public function testSetDefaultCommands()
-    {
-        $this->config->addDefaultCommand($config1 = new SubCommandConfig() );
-        $this->config->setDefaultCommands(array(
-            $config2 = new SubCommandConfig(),
-            'command',
-        ));
-
-        $this->assertSame(array($config2, 'command'), $this->config->getDefaultCommands());
-    }
-
-    public function testHasDefaultCommands()
-    {
-        $this->assertFalse($this->config->hasDefaultCommands());
-
-        $this->config->addDefaultCommand(new SubCommandConfig());
-
-        $this->assertTrue($this->config->hasDefaultCommands());
-    }
-
-    public function testIsDefaultCommand()
-    {
-        $this->assertFalse($this->config->isDefaultCommand('command'));
-
-        $this->config->addDefaultCommand('command');
-
-        $this->assertTrue($this->config->isDefaultCommand('command'));
     }
 
     public function testGetHelperSetReturnsApplicationHelperSetByDefault()
@@ -719,5 +548,74 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->applicationConfig->setArgsParser($parser);
 
         $this->assertSame($parser, $this->config->getArgsParser());
+    }
+
+    public function testMarkDefault()
+    {
+        $this->assertFalse($this->config->isDefault());
+        $this->assertFalse($this->config->isAnonymous());
+
+        $this->config->markDefault();
+
+        $this->assertTrue($this->config->isDefault());
+        $this->assertFalse($this->config->isAnonymous());
+    }
+
+    public function testMarkAnonymous()
+    {
+        $this->assertFalse($this->config->isDefault());
+        $this->assertFalse($this->config->isAnonymous());
+
+        $this->config->markAnonymous();
+
+        $this->assertTrue($this->config->isDefault());
+        $this->assertTrue($this->config->isAnonymous());
+    }
+
+    public function testMarkNoDefault()
+    {
+        $this->config->markAnonymous();
+
+        $this->assertTrue($this->config->isDefault());
+        $this->assertTrue($this->config->isAnonymous());
+
+        $this->config->markNoDefault();
+
+        $this->assertFalse($this->config->isDefault());
+        $this->assertFalse($this->config->isAnonymous());
+    }
+
+    public function testBuildNamedArgsFormat()
+    {
+        $baseFormat = new ArgsFormat();
+        $this->config->setName('command');
+        $this->config->setAliases(array('alias1', 'alias2'));
+        $this->config->addOption('option');
+        $this->config->addArgument('argument');
+
+        $expected = ArgsFormat::build($baseFormat)
+            ->addCommandName(new CommandName('command', array('alias1', 'alias2')))
+            ->addArgument(new Argument('argument'))
+            ->addOption(new Option('option'))
+            ->getFormat();
+
+        $this->assertEquals($expected, $this->config->buildArgsFormat($baseFormat));
+    }
+
+    public function testBuildAnonymousArgsFormat()
+    {
+        $baseFormat = new ArgsFormat();
+        $this->config->setName('command');
+        $this->config->setAliases(array('alias1', 'alias2'));
+        $this->config->addOption('option');
+        $this->config->addArgument('argument');
+        $this->config->markAnonymous();
+
+        $expected = ArgsFormat::build($baseFormat)
+            ->addArgument(new Argument('argument'))
+            ->addOption(new Option('option'))
+            ->getFormat();
+
+        $this->assertEquals($expected, $this->config->buildArgsFormat($baseFormat));
     }
 }

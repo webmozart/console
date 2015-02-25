@@ -89,6 +89,41 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
+    public function testSortCommands()
+    {
+        $config = ApplicationConfig::create()
+            ->setName('test-bin')
+            ->setDisplayName('The Application')
+            ->beginCommand('command3')->end()
+            ->beginCommand('command1')->end()
+            ->beginCommand('command2')->end()
+        ;
+
+        $application = new ConsoleApplication($config);
+        $help = new ApplicationHelp($application);
+        $help->render($this->canvas);
+
+        $expected = <<<EOF
+The Application
+
+USAGE
+  test-bin <command> [<arg1>] ... [<argN>]
+
+ARGUMENTS
+  <command>  The command to execute
+  <arg>      The arguments of the command
+
+AVAILABLE COMMANDS
+  command1
+  command2
+  command3
+
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
+
     public function testRenderVersion()
     {
         $config = ApplicationConfig::create()

@@ -12,6 +12,8 @@
 namespace Webmozart\Console\Api\Config;
 
 use LogicException;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\CommandOption;
 use Webmozart\Console\Assert\Assert;
 
 /**
@@ -211,4 +213,31 @@ class OptionCommandConfig extends SubCommandConfig
     {
         return !$this->isLongNamePreferred();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildArgsFormat(ArgsFormat $baseFormat = null)
+    {
+        $formatBuilder = ArgsFormat::build($baseFormat);
+
+        if (!$this->isAnonymous()) {
+            $flags = $this->isLongNamePreferred()
+                ? CommandOption::PREFER_LONG_NAME
+                : CommandOption::PREFER_SHORT_NAME;
+
+            $formatBuilder->addCommandOption(new CommandOption(
+                $this->getName(),
+                $this->getShortName(),
+                $this->getAliases(),
+                $flags
+            ));
+        }
+
+        $formatBuilder->addOptions($this->getOptions());
+        $formatBuilder->addArguments($this->getArguments());
+
+        return $formatBuilder->getFormat();
+    }
+
 }

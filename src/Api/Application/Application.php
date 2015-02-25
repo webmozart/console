@@ -15,7 +15,6 @@ use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\IO\Input;
@@ -50,7 +49,7 @@ interface Application
      *
      * @param string $name The name of the command.
      *
-     * @return NamedCommand The command.
+     * @return Command The command.
      *
      * @throws NoSuchCommandException If the command is not found.
      *
@@ -90,10 +89,27 @@ interface Application
     public function hasCommands();
 
     /**
+     * Returns the commands that are not anonymous.
+     *
+     * @return CommandCollection The named commands.
+     */
+    public function getNamedCommands();
+
+    /**
+     * Returns whether the application has any commands that are not anonymous.
+     *
+     * @return bool Returns `true` if the application has named commands and
+     *              `false` otherwise.
+     *
+     * @see getNamedCommands()
+     */
+    public function hasNamedCommands();
+
+    /**
      * Returns the commands that should be executed if no explicit command is
      * passed.
      *
-     * @return Command[] The default commands.
+     * @return CommandCollection The default commands.
      */
     public function getDefaultCommands();
 

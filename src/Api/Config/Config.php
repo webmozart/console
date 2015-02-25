@@ -93,10 +93,10 @@ abstract class Config
      *
      * @param string $name        The argument name.
      * @param int    $flags       A bitwise combination of the flag constants in
-     *                            the {@link InputArgument} class.
+     *                            the {@link Argument} class.
      * @param string $description A one-line description of the argument.
      * @param mixed  $default     The default value. Must be `null` if the
-     *                            flags contain {@link InputArgument::REQUIRED}.
+     *                            flags contain {@link Argument::REQUIRED}.
      *
      * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
      *
@@ -131,10 +131,10 @@ abstract class Config
      * @param string $longName    The long option name.
      * @param string $shortName   The short option name. Can be `null`.
      * @param int    $flags       A bitwise combination of the flag constants in
-     *                            the {@link InputOption} class.
+     *                            the {@link Option} class.
      * @param string $description A one-line description of the option.
      * @param mixed  $default     The default value. Must be `null` if the
-     *                            flags contain {@link InputOption::VALUE_REQUIRED}.
+     *                            flags contain {@link Option::REQUIRED_VALUE}.
      * @param string $valueName   The name of the value to be used in usage
      *                            examples of the option.
      *

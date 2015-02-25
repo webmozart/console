@@ -14,7 +14,7 @@ namespace Webmozart\Console\Tests\Handler\Help;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Args;
-use Webmozart\Console\Api\Command\NamedCommand;
+use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Config\DefaultApplicationConfig;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Handler\Help\HelpXmlHandler;
@@ -32,12 +32,12 @@ class HelpXmlHandlerTest extends PHPUnit_Framework_TestCase
     private $application;
 
     /**
-     * @var NamedCommand
+     * @var Command
      */
     private $command;
 
     /**
-     * @var NamedCommand
+     * @var Command
      */
     private $helpCommand;
 

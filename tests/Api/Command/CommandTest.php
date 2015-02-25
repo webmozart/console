@@ -20,7 +20,6 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
@@ -59,6 +58,13 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($argsFormat->hasArgument('argument'));
         $this->assertCount(1, $argsFormat->getOptions());
         $this->assertTrue($argsFormat->hasOption('option'));
+    }
+    /**
+     * @expectedException \LogicException
+     */
+    public function testCreateFailsIfNoName()
+    {
+        new Command(new CommandConfig());
     }
 
     public function testInheritApplicationArgsFormat()
@@ -124,12 +130,12 @@ class CommandTest extends PHPUnit_Framework_TestCase
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig($subConfig1 = new SubCommandConfig('sub1'));
-        $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub2'));
+        $config->addSubCommandConfig($subConfig2 = new OptionCommandConfig('sub2'));
         $command = new Command($config, $this->application);
 
         $this->assertEquals(new CommandCollection(array(
-            'sub1' => new NamedCommand($subConfig1, $this->application, $command),
-            'sub2' => new NamedCommand($subConfig2, $this->application, $command),
+            'sub1' => new Command($subConfig1, $this->application, $command),
+            'sub2' => new Command($subConfig2, $this->application, $command),
         )), $command->getSubCommands());
     }
 
@@ -137,7 +143,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig($subConfig1 = new SubCommandConfig('sub1'));
-        $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub2'));
+        $config->addSubCommandConfig($subConfig2 = new OptionCommandConfig('sub2'));
 
         $subConfig1->enable();
         $subConfig2->disable();
@@ -145,7 +151,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $command = new Command($config, $this->application);
 
         $this->assertEquals(new CommandCollection(array(
-            'sub1' => new NamedCommand($subConfig1, $this->application, $command),
+            'sub1' => new Command($subConfig1, $this->application, $command),
         )), $command->getSubCommands());
     }
 
@@ -155,9 +161,20 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $config->addSubCommandConfig($subConfig = new SubCommandConfig('sub'));
         $command = new Command($config, $this->application);
 
-        $subCommand = new NamedCommand($subConfig, $this->application, $command);
+        $subCommand = new Command($subConfig, $this->application, $command);
 
         $this->assertEquals($subCommand, $command->getSubCommand('sub'));
+    }
+
+    public function testGetSubCommandByShortName()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig($subConfig = new OptionCommandConfig('sub', 's'));
+        $command = new Command($config, $this->application);
+
+        $subCommand = new Command($subConfig, $this->application, $command);
+
+        $this->assertEquals($subCommand, $command->getSubCommand('s'));
     }
 
     /**
@@ -197,161 +214,103 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($command->hasSubCommands());
     }
 
-    public function testGetOptionCommands()
+    public function testGetNamedSubCommands()
     {
         $config = new CommandConfig('command');
-        $config->addOptionCommandConfig($optionConfig1 = new OptionCommandConfig('option1', 'a'));
-        $config->addOptionCommandConfig($optionConfig2 = new OptionCommandConfig('option2', 'b'));
-        $command = new Command($config, $this->application);
+        $config->addSubCommandConfig($subConfig1 = new SubCommandConfig('sub1'));
+        $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub2'));
+        $config->addSubCommandConfig($subConfig3 = new SubCommandConfig('sub3'));
+
+        $subConfig2->markAnonymous();
+        $subConfig3->markDefault();
+
+        $command = new Command($config);
 
         $this->assertEquals(new CommandCollection(array(
-            'option1' => new NamedCommand($optionConfig1, $this->application, $command),
-            'option2' => new NamedCommand($optionConfig2, $this->application, $command),
-        )), $command->getOptionCommands());
+            new Command($subConfig1, null, $command),
+            new Command($subConfig3, null, $command),
+        )), $command->getNamedSubCommands());
     }
 
-    public function testIgnoreDisabledOptionCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addOptionCommandConfig($optionConfig1 = new OptionCommandConfig('option1', 'a'));
-        $config->addOptionCommandConfig($optionConfig2 = new OptionCommandConfig('option2', 'b'));
-
-        $optionConfig1->enable();
-        $optionConfig2->disable();
-
-        $command = new Command($config, $this->application);
-
-        $this->assertEquals(new CommandCollection(array(
-            'option1' => new NamedCommand($optionConfig1, $this->application, $command),
-        )), $command->getOptionCommands());
-    }
-
-    public function testGetOptionCommandByLongName()
-    {
-        $config = new CommandConfig('command');
-        $config->addOptionCommandConfig($optionConfig = new OptionCommandConfig('option', 'o'));
-        $command = new Command($config, $this->application);
-
-        $optionCommand = new NamedCommand($optionConfig, $this->application, $command);
-
-        $this->assertEquals($optionCommand, $command->getOptionCommand('option'));
-    }
-
-    public function testGetOptionCommandByShortName()
-    {
-        $config = new CommandConfig('command');
-        $config->addOptionCommandConfig($optionConfig = new OptionCommandConfig('option', 'o'));
-        $command = new Command($config, $this->application);
-
-        $optionCommand = new NamedCommand($optionConfig, $this->application, $command);
-
-        $this->assertEquals($optionCommand, $command->getOptionCommand('o'));
-    }
-
-    /**
-     * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
-     * @expectedExceptionMessage foobar
-     */
-    public function testGetOptionCommandFailsIfNotFound()
-    {
-        $command = new Command(new CommandConfig('command'));
-
-        $command->getOptionCommand('foobar');
-    }
-
-    public function testHasOptionCommand()
-    {
-        $config = new CommandConfig('command');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option', 'o'));
-        $command = new Command($config);
-
-        $this->assertTrue($command->hasOptionCommand('option'));
-        $this->assertTrue($command->hasOptionCommand('o'));
-        $this->assertFalse($command->hasOptionCommand('foobar'));
-    }
-
-    public function testHasOptionCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option'));
-        $command = new Command($config);
-
-        $this->assertTrue($command->hasOptionCommands());
-    }
-
-    public function testHasNoOptionCommands()
-    {
-        $command = new Command(new CommandConfig('command'));
-
-        $this->assertFalse($command->hasOptionCommands());
-    }
-
-    public function testGetDefaultCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub1'));
-        $config->addSubCommandConfig($subConfig3 = new SubCommandConfig('sub2'));
-        $config->addOptionCommandConfig($optionConfig1 = new OptionCommandConfig('option1'));
-        $config->addOptionCommandConfig($optionConfig2 = new OptionCommandConfig('option2'));
-        $config->addDefaultCommand('sub2');
-        $config->addDefaultCommand($subConfig1 = new SubCommandConfig());
-        $config->addDefaultCommand('option1');
-
-        $command = new Command($config, $this->application);
-
-        $this->assertEquals(array(
-            new NamedCommand($subConfig3, $this->application, $command),
-            new Command($subConfig1, $this->application, $command),
-            new NamedCommand($optionConfig1, $this->application, $command),
-        ), $command->getDefaultCommands());
-    }
-
-    public function testIgnoreDisabledDefaultCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addDefaultCommand($subConfig1 = new SubCommandConfig());
-        $config->addDefaultCommand($subConfig2 = new SubCommandConfig());
-
-        $subConfig1->setProcessTitle('title1')->enable();
-        $subConfig2->setProcessTitle('title2')->disable();
-
-        $command = new Command($config, $this->application);
-
-        $this->assertEquals(array(
-            new Command($subConfig1, $this->application, $command),
-        ), $command->getDefaultCommands());
-    }
-
-    public function testHasDefaultCommands()
-    {
-        $config = new CommandConfig('command');
-        $config->addDefaultCommand(new SubCommandConfig());
-        $command = new Command($config);
-
-        $this->assertTrue($command->hasDefaultCommands());
-    }
-
-    public function testHasDefaultCommandsIfDefaultCommandNames()
+    public function testHasNamedSubCommands()
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig(new SubCommandConfig('sub'));
-        $config->addDefaultCommand('sub');
+
         $command = new Command($config);
 
-        $this->assertTrue($command->hasDefaultCommands());
+        $this->assertTrue($command->hasNamedSubCommands());
     }
 
-    public function testHasNoDefaultCommands()
+    public function testHasNoNamedSubCommands()
     {
-        $command = new Command(new CommandConfig('command'));
+        $config = new CommandConfig('command');
+        $subConfig = new SubCommandConfig('sub');
+        $subConfig->markAnonymous();
 
-        $this->assertFalse($command->hasDefaultCommands());
+        $config->addSubCommandConfig($subConfig);
+
+        $command = new Command($config);
+
+        $this->assertFalse($command->hasNamedSubCommands());
+    }
+
+    public function testGetDefaultSubCommands()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig($subConfig1 = new SubCommandConfig('sub1'));
+        $config->addSubCommandConfig($subConfig2 = new SubCommandConfig('sub2'));
+        $config->addSubCommandConfig($subConfig3 = new SubCommandConfig('sub3'));
+
+        $subConfig1->markDefault();
+        $subConfig3->markDefault();
+
+        $command = new Command($config);
+
+        $this->assertEquals(new CommandCollection(array(
+            new Command($subConfig1, null, $command),
+            new Command($subConfig3, null, $command),
+        )), $command->getDefaultSubCommands());
+    }
+
+    public function testHasDefaultSubCommands()
+    {
+        $config = new CommandConfig('command');
+        $subConfig = new SubCommandConfig('sub');
+        $subConfig->markDefault();
+
+        $config->addSubCommandConfig($subConfig);
+
+        $command = new Command($config);
+
+        $this->assertTrue($command->hasDefaultSubCommands());
+    }
+
+    public function testHasNoDefaultSubCommands()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig(new SubCommandConfig('sub'));
+
+        $command = new Command($config);
+
+        $this->assertFalse($command->hasDefaultSubCommands());
     }
 
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfSubCommandSameNameAsOtherSubCommand()
+    public function testFailIfNoSubCommandName()
+    {
+        $config = new CommandConfig('command');
+        $config->addSubCommandConfig(new SubCommandConfig());
+
+        new Command($config);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
+     */
+    public function testFailIfSubCommandSameNameAsOtherSubCommand()
     {
         $config = new CommandConfig('command');
         $config->addSubCommandConfig(new SubCommandConfig('sub'));
@@ -363,10 +322,10 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfSubCommandSameNameAsOptionCommandLong()
+    public function testFailIfSubCommandSameNameAsOptionCommandLong()
     {
         $config = new CommandConfig('command');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option', 'o'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option', 'o'));
         $config->addSubCommandConfig(new SubCommandConfig('option'));
 
         new Command($config);
@@ -375,10 +334,10 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfSubCommandSameNameAsOptionCommandShort()
+    public function testFailIfSubCommandSameNameAsOptionCommandShort()
     {
         $config = new CommandConfig('command');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option', 'o'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option', 'o'));
         $config->addSubCommandConfig(new SubCommandConfig('o'));
 
         new Command($config);
@@ -387,11 +346,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfOptionCommandSameNameAsOptionCommandLong()
+    public function testFailIfOptionCommandSameNameAsOptionCommandLong()
     {
         $config = new CommandConfig('command');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option', 'o'));
-        $config->addOptionCommandConfig(new OptionCommandConfig('option'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option', 'o'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option'));
 
         new Command($config);
     }
@@ -399,11 +358,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfOptionCommandSameNameAsOptionCommandShort()
+    public function testFailIfOptionCommandSameNameAsOptionCommandShort()
     {
         $config = new CommandConfig('command');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option1', 'o'));
-        $config->addOptionCommandConfig(new OptionCommandConfig('option2', 'o'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option1', 'o'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option2', 'o'));
 
         new Command($config);
     }
@@ -411,11 +370,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfOptionCommandSameNameAsOptionLong()
+    public function testFailIfOptionCommandSameNameAsOptionLong()
     {
         $config = new CommandConfig('command');
         $config->addOption('option');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option'));
 
         new Command($config);
     }
@@ -423,11 +382,11 @@ class CommandTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */
-    public function testFailsIfOptionCommandSameNameAsOptionShort()
+    public function testFailIfOptionCommandSameNameAsOptionShort()
     {
         $config = new CommandConfig('command');
         $config->addOption('option1', 'o');
-        $config->addOptionCommandConfig(new OptionCommandConfig('option2', 'o'));
+        $config->addSubCommandConfig(new OptionCommandConfig('option2', 'o'));
 
         new Command($config);
     }

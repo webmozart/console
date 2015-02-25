@@ -11,8 +11,6 @@
 
 namespace Webmozart\Console\Api\Config;
 
-use Webmozart\Console\Api\Command\Command;
-
 /**
  * The configuration of an console sub-command.
  *

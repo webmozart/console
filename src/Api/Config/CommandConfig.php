@@ -11,7 +11,8 @@
 
 namespace Webmozart\Console\Api\Config;
 
-use Webmozart\Console\Api\Command\Command;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\CommandName;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Assert\Assert;
 
@@ -30,8 +31,8 @@ use Webmozart\Console\Assert\Assert;
  *
  *        ->beginSubCommand('add')
  *            ->setDescription('Add a new server')
- *            ->addArgument('host', InputArgument::REQUIRED)
- *            ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+ *            ->addArgument('host', Argument::REQUIRED)
+ *            ->addOption('port', 'p', Option::VALUE_OPTIONAL, null, 80)
  *        ->end()
  *
  *        // ...
@@ -51,8 +52,8 @@ use Webmozart\Console\Assert\Assert;
  *
  *                ->beginSubCommand('add')
  *                    ->setDescription('Add a new server')
- *                    ->addArgument('host', InputArgument::REQUIRED)
- *                    ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+ *                    ->addArgument('host', Argument::REQUIRED)
+ *                    ->addOption('port', 'p', Option::VALUE_OPTIONAL, null, 80)
  *                ->end()
  *
  *                // ...
@@ -130,19 +131,19 @@ class CommandConfig extends Config
     private $processTitle;
 
     /**
-     * @var SubCommandConfig[]
+     * @var bool
      */
-    private $defaultCommands = array();
+    private $default = false;
+
+    /**
+     * @var bool
+     */
+    private $anonymous = false;
 
     /**
      * @var SubCommandConfig[]
      */
     private $subCommandConfigs = array();
-
-    /**
-     * @var OptionCommandConfig[]
-     */
-    private $optionCommandConfigs = array();
 
     /**
      * Creates a new configuration.
@@ -516,6 +517,149 @@ class CommandConfig extends Config
     }
 
     /**
+     * Marks the command as default command.
+     *
+     * The names of default commands can be omitted when calling the command.
+     * For example, the following command can be called in two ways:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     $this
+     *         ->beginCommand('add')
+     *             ->markDefault()
+     *             ->addArgument('host', Argument::REQUIRED)
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * The first way is to call the command regularly. The second way is to
+     * omit the name of the command:
+     *
+     * ```php
+     * $ ./console add localhost
+     * $ ./console localhost
+     * ```
+     *
+     * @return static The current instance.
+     *
+     * @see markAnonymous(), markNoDefault()
+     */
+    public function markDefault()
+    {
+        $this->default = true;
+        $this->anonymous = false;
+
+        return $this;
+    }
+
+    /**
+     * Marks the command as anonymous command.
+     *
+     * Anonymous commands cannot be called by name:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     $this
+     *         ->beginCommand('add')
+     *             ->markAnonymous()
+     *             ->addArgument('host', Argument::REQUIRED)
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * The name "add" is given to the command only to access the command later
+     * on. Since the command is anonymous, the name cannot be passed when
+     * when calling the command:
+     *
+     * ```php
+     * $ ./console add localhost
+     * ```
+     *
+     * Instead, the command should be called without name:
+     *
+     * ```php
+     * $ ./console localhost
+     * ```
+     *
+     * @return static The current instance.
+     *
+     * @see markDefault(), markNoDefault()
+     */
+    public function markAnonymous()
+    {
+        $this->default = true;
+        $this->anonymous = true;
+
+        return $this;
+    }
+
+    /**
+     * Marks the command as neither anonymous nor default.
+     *
+     * @return static The current instance.
+     *
+     * @see markDefault(), markAnonymous()
+     */
+    public function markNoDefault()
+    {
+        $this->default = false;
+        $this->anonymous = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the command is a default command.
+     *
+     * @return bool Returns `true` if either {@link markDefault()} or
+     *              {@link markAnonymous()} was called and `false` otherwise.
+     */
+    public function isDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * Returns whether the command is anonymous.
+     *
+     * @return bool Returns `true` if {@link markAnonymous()} was called and
+     *              `false` otherwise.
+     */
+    public function isAnonymous()
+    {
+        return $this->anonymous;
+    }
+
+    /**
+     * Builds an {@link ArgsFormat} instance with the given base format.
+     *
+     * @param ArgsFormat $baseFormat The base format.
+     *
+     * @return ArgsFormat The built format for the console arguments.
+     */
+    public function buildArgsFormat(ArgsFormat $baseFormat = null)
+    {
+        $formatBuilder = ArgsFormat::build($baseFormat);
+
+        if (!$this->anonymous) {
+            $formatBuilder->addCommandName(new CommandName($this->name, $this->aliases));
+        }
+
+        $formatBuilder->addOptions($this->getOptions());
+        $formatBuilder->addArguments($this->getArguments());
+
+        return $formatBuilder->getFormat();
+    }
+
+    /**
      * Starts a configuration block for a sub-command.
      *
      * A sub-command is executed if the name of the command is passed after the
@@ -539,8 +683,8 @@ class CommandConfig extends Config
      *
      *             ->beginSubCommand('add')
      *                 ->setDescription('Add a server')
-     *                 ->addArgument('host', InputArgument::REQUIRED)
-     *                 ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
+     *                 ->addArgument('host', Argument::REQUIRED)
+     *                 ->addOption('port', 'p', Option::VALUE_OPTIONAL, null, 80)
      *             ->end()
      *         ->end()
      *
@@ -595,6 +739,94 @@ class CommandConfig extends Config
      * @see beginSubCommand()
      */
     public function editSubCommand($name)
+    {
+        return $this->getSubCommandConfig($name);
+    }
+
+    /**
+     * Starts a configuration block for an option command.
+     *
+     * An option command is executed if the corresponding option is passed after
+     * the command name. For example, if the command "server" has an option
+     * command named "--add" with the short name "-a", that command can be
+     * called with:
+     *
+     * ```
+     * $ console server --add ...
+     * $ console server -a ...
+     * ```
+     *
+     * The configuration of the option command is returned by this method.
+     * You can use the fluent interface to configure the option command
+     * before jumping back to this configuration with
+     * {@link SubCommandConfig::end()}:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     $this
+     *         ->beginCommand('server')
+     *             ->setDescription('List and manage servers')
+     *
+     *             ->beginOptionCommand('add', 'a')
+     *                 ->setDescription('Add a server')
+     *                 ->addArgument('host', Argument::REQUIRED)
+     *                 ->addOption('port', 'p', Option::VALUE_OPTIONAL, null, 80)
+     *             ->end()
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * @param string $name      The name of the option command.
+     * @param string $shortName The short name of the option command.
+     *
+     * @return OptionCommandConfig The option command configuration.
+     *
+     * @see editOptionCommand()
+     */
+    public function beginOptionCommand($name, $shortName = null)
+    {
+        $config = new OptionCommandConfig($name, $shortName, $this);
+
+        // The name is dynamic, so don't store by name
+        $this->subCommandConfigs[] = $config;
+
+        return $config;
+    }
+
+    /**
+     * Alias for {@link getSubCommandConfig()}.
+     *
+     * This method can be used to nicely edit an option command inherited from a
+     * parent configuration using the fluent API:
+     *
+     * ```php
+     * protected function configure()
+     * {
+     *     parent::configure();
+     *
+     *     $this
+     *         ->editCommand('server')
+     *             ->editOptionCommand('add')
+     *                 // ...
+     *             ->end()
+     *         ->end()
+     *
+     *         // ...
+     *     ;
+     * }
+     * ```
+     *
+     * @param string $name The name of the option command to edit.
+     *
+     * @return OptionCommandConfig The option command configuration.
+     *
+     * @see beginOptionCommand()
+     */
+    public function editOptionCommand($name)
     {
         return $this->getSubCommandConfig($name);
     }
@@ -721,366 +953,6 @@ class CommandConfig extends Config
     public function hasSubCommandConfigs()
     {
         return count($this->subCommandConfigs) > 0;
-    }
-
-    /**
-     * Starts a configuration block for an option command.
-     *
-     * An option command is executed if the corresponding option is passed after
-     * the command name. For example, if the command "server" has an option
-     * command named "--add" with the short name "-a", that command can be
-     * called with:
-     *
-     * ```
-     * $ console server --add ...
-     * $ console server -a ...
-     * ```
-     *
-     * The configuration of the option command is returned by this method.
-     * You can use the fluent interface to configure the option command
-     * before jumping back to this configuration with
-     * {@link SubCommandConfig::end()}:
-     *
-     * ```php
-     * protected function configure()
-     * {
-     *     $this
-     *         ->beginCommand('server')
-     *             ->setDescription('List and manage servers')
-     *
-     *             ->beginOptionCommand('add', 'a')
-     *                 ->setDescription('Add a server')
-     *                 ->addArgument('host', InputArgument::REQUIRED)
-     *                 ->addOption('port', 'p', InputOption::VALUE_OPTIONAL, null, 80)
-     *             ->end()
-     *         ->end()
-     *
-     *         // ...
-     *     ;
-     * }
-     * ```
-     *
-     * @param string $name      The name of the option command.
-     * @param string $shortName The short name of the option command.
-     *
-     * @return OptionCommandConfig The option command configuration.
-     *
-     * @see editOptionCommand()
-     */
-    public function beginOptionCommand($name, $shortName = null)
-    {
-        $config = new OptionCommandConfig($name, $shortName, $this);
-
-        // The name is dynamic, so don't store by name
-        $this->optionCommandConfigs[] = $config;
-
-        return $config;
-    }
-
-    /**
-     * Alias for {@link getOptionCommandConfig()}.
-     *
-     * This method can be used to nicely edit an option command inherited from a
-     * parent configuration using the fluent API:
-     *
-     * ```php
-     * protected function configure()
-     * {
-     *     parent::configure();
-     *
-     *     $this
-     *         ->editCommand('server')
-     *             ->editOptionCommand('add')
-     *                 // ...
-     *             ->end()
-     *         ->end()
-     *
-     *         // ...
-     *     ;
-     * }
-     * ```
-     *
-     * @param string $name The name of the option command to edit.
-     *
-     * @return OptionCommandConfig The option command configuration.
-     *
-     * @see beginOptionCommand()
-     */
-    public function editOptionCommand($name)
-    {
-        return $this->getOptionCommandConfig($name);
-    }
-
-    /**
-     * Adds configuration for an option command.
-     *
-     * @param OptionCommandConfig $config The option command configuration.
-     *
-     * @return static The current instance.
-     *
-     * @see beginOptionCommand()
-     */
-    public function addOptionCommandConfig(OptionCommandConfig $config)
-    {
-        // The name is dynamic, so don't store by name
-        $this->optionCommandConfigs[] = $config;
-
-        $config->setParentConfig($this);
-
-        return $this;
-    }
-
-    /**
-     * Adds option command configurations to the command.
-     *
-     * @param OptionCommandConfig[] $configs The option command configurations.
-     *
-     * @return static The current instance.
-     *
-     * @see beginOptionCommand()
-     */
-    public function addOptionCommandConfigs(array $configs)
-    {
-        foreach ($configs as $command) {
-            $this->addOptionCommandConfig($command);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Sets the option command configurations of the command.
-     *
-     * @param OptionCommandConfig[] $configs The option command configurations.
-     *
-     * @return static The current instance.
-     *
-     * @see beginOptionCommand()
-     */
-    public function setOptionCommandConfigs(array $configs)
-    {
-        $this->optionCommandConfigs = array();
-
-        $this->addOptionCommandConfigs($configs);
-
-        return $this;
-    }
-
-    /**
-     * Returns the option command configuration for a given name.
-     *
-     * @param string $name The long or short name of the option command.
-     *
-     * @return OptionCommandConfig The option command configuration.
-     *
-     * @throws NoSuchCommandException If the option command configuration is not
-     *                                found.
-     *
-     * @see beginOptionCommand()
-     */
-    public function getOptionCommandConfig($name)
-    {
-        foreach ($this->optionCommandConfigs as $commandConfig) {
-            if ($name === $commandConfig->getLongName() || $name === $commandConfig->getShortName()) {
-                return $commandConfig;
-            }
-        }
-
-        throw NoSuchCommandException::forCommandName($name);
-    }
-
-    /**
-     * Returns the configurations of all option commands.
-     *
-     * @return OptionCommandConfig[] The option command configurations indexed
-     *                               by their names.
-     *
-     * @see beginOptionCommand()
-     */
-    public function getOptionCommandConfigs()
-    {
-        return $this->optionCommandConfigs;
-    }
-
-    /**
-     * Returns whether the command has a option command with a given name.
-     *
-     * @param string $name The long or short name of the option command.
-     *
-     * @return bool Returns `true` if the option command configuration with the
-     *              given name exists and `false` otherwise.
-     *
-     * @see beginOptionCommand()
-     */
-    public function hasOptionCommandConfig($name)
-    {
-        foreach ($this->optionCommandConfigs as $commandConfig) {
-            if ($name === $commandConfig->getLongName() || $name === $commandConfig->getShortName()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns whether the command has any registered option command configurations.
-     *
-     * @return bool Returns `true` if option command configurations were added to
-     *              the command and `false` otherwise.
-     *
-     * @see beginOptionCommand()
-     */
-    public function hasOptionCommandConfigs()
-    {
-        return count($this->optionCommandConfigs) > 0;
-    }
-
-    /**
-     * Starts a configuration block for a default sub-command.
-     *
-     * A default sub-command is executed if neither a named sub-command nor an
-     * option command is executed. For example, if the command "server" has a
-     * default sub-command, that command can be called with:
-     *
-     * ```
-     * $ console server ...
-     * ```
-     *
-     * The configuration of the sub-command is returned by this method. You can
-     * use the fluent interface to configure the sub-command before jumping back
-     * to this configuration with {@link SubCommandConfig::end()}:
-     *
-     * ```php
-     * protected function configure()
-     * {
-     *     $this
-     *         ->setName('server')
-     *         ->setDescription('List and manage servers')
-     *
-     *         ->beginDefaultCommand()
-     *             ->setDescription('List all servers')
-     *             ->addOption('port', 'p', InputOption::VALUE_REQUIRED, 'Only list servers with that port')
-     *         ->end()
-     *
-     *         // ...
-     *     ;
-     * }
-     * ```
-     *
-     * @return SubCommandConfig The sub-command configuration.
-     */
-    public function beginDefaultCommand()
-    {
-        $config = new SubCommandConfig(null, $this);
-
-        $this->defaultCommands[] = $config;
-
-        return $config;
-    }
-
-    /**
-     * Adds configuration for a default sub-command.
-     *
-     * @param string|SubCommandConfig $nameOrConfig The default command name or
-     *                                              configuration.
-     *
-     * @return static The current instance.
-     *
-     * @see beginDefaultCommand()
-     */
-    public function addDefaultCommand($nameOrConfig)
-    {
-        if ($nameOrConfig instanceof SubCommandConfig) {
-            $nameOrConfig->setParentConfig($this);
-        } else {
-            Assert::string($nameOrConfig, 'The default command must be a string or a SubCommandConfig instance. Got: %s');
-            Assert::notEmpty($nameOrConfig, 'The default command must not be empty.');
-        }
-
-        $this->defaultCommands[] = $nameOrConfig;
-
-        return $this;
-    }
-
-    /**
-     * Adds default sub-command configurations to the command.
-     *
-     * @param string[]|SubCommandConfig[] $namesOrConfigs The command names or
-     *                                                    configurations.
-     *
-     * @return static The current instance.
-     *
-     * @see beginDefaultCommand()
-     */
-    public function addDefaultCommands(array $namesOrConfigs)
-    {
-        foreach ($namesOrConfigs as $nameOrConfig) {
-            $this->addDefaultCommand($nameOrConfig);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Sets the default sub-commands of the command.
-     *
-     * @param string[]|SubCommandConfig[] $namesOrConfigs The command names or
-     *                                                    configurations.
-     *
-     * @return static The current instance.
-     *
-     * @see beginDefaultCommand()
-     */
-    public function setDefaultCommands(array $namesOrConfigs)
-    {
-        $this->defaultCommands = array();
-
-        $this->addDefaultCommands($namesOrConfigs);
-
-        return $this;
-    }
-
-    /**
-     * Returns the configurations of all default sub-commands.
-     *
-     * @return SubCommandConfig[] The configurations of the default sub-commands.
-     *
-     * @see beginDefaultCommand()
-     */
-    public function getDefaultCommands()
-    {
-        return $this->defaultCommands;
-    }
-
-    /**
-     * Returns whether the command has any registered default sub-command
-     * configurations.
-     *
-     * @return bool Returns `true` if default sun-command configurations were
-     *              added to the command and `false` otherwise.
-     *
-     * @see beginDefaultCommand()
-     */
-    public function hasDefaultCommands()
-    {
-        return count($this->defaultCommands) > 0;
-    }
-
-    /**
-     * Returns whether the given command is a default command.
-     *
-     * @param string $commandName The command name.
-     *
-     * @return bool Returns `true` if the command is in the list of default
-     *              commands and `false` otherwise.
-     */
-    public function isDefaultCommand($commandName)
-    {
-        Assert::string($commandName, 'The command name must be a string. Got: %s');
-        Assert::notEmpty($commandName, 'The command name must not be empty.');
-
-        return in_array($commandName, $this->defaultCommands, true);
     }
 
     /**

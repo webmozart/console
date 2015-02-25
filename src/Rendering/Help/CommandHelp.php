@@ -15,7 +15,6 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\Paragraph;
@@ -51,8 +50,7 @@ class CommandHelp extends AbstractHelp
     {
         $help = $this->command->getConfig()->getHelp();
         $argsFormat = $this->command->getArgsFormat();
-        $subCommands = $this->command->getSubCommands();
-        $optCommands = $this->command->getOptionCommands();
+        $subCommands = $this->command->getNamedSubCommands();
 
         $this->renderUsage($layout, $this->command);
 
@@ -60,8 +58,8 @@ class CommandHelp extends AbstractHelp
             $this->renderArguments($layout, $argsFormat->getArguments());
         }
 
-        if (!$subCommands->isEmpty() || !$optCommands->isEmpty()) {
-            $this->renderSubCommands($layout, $subCommands, $optCommands);
+        if (!$subCommands->isEmpty()) {
+            $this->renderSubCommands($layout, $subCommands);
         }
 
         if ($argsFormat->hasOptions(false)) {
@@ -88,15 +86,15 @@ class CommandHelp extends AbstractHelp
         $formatsToPrint = array();
 
         // Start with the default commands
-        if ($command->hasDefaultCommands()) {
+        if ($command->hasDefaultSubCommands()) {
             // If the command has default commands, print them
-            foreach ($command->getDefaultCommands() as $subCommand) {
-                if ($subCommand instanceof NamedCommand) {
-                    // true: wrap the sub-command name in "[" "]"
-                    $formatsToPrint[$subCommand->getName()] = array($subCommand->getArgsFormat(), true);
-                } else {
-                    $formatsToPrint[] = array($subCommand->getArgsFormat(), false);
-                }
+            foreach ($command->getDefaultSubCommands() as $subCommand) {
+                // The name of the sub command is only optional (i.e. printed
+                // wrapped in brackets: "[sub]") if the command is not
+                // anonymous
+                $nameOptional = !$subCommand->getConfig()->isAnonymous();
+
+                $formatsToPrint[] = array($subCommand->getArgsFormat(), $nameOptional);
             }
         } else {
             // Otherwise print the command's usage itself
@@ -106,14 +104,8 @@ class CommandHelp extends AbstractHelp
         // Add remaining sub-commands
         foreach ($command->getSubCommands() as $subCommand) {
             // Don't duplicate default commands
-            if (!isset($formatsToPrint[$subCommand->getName()])) {
+            if (!$subCommand->getConfig()->isDefault()) {
                 $formatsToPrint[$subCommand->getName()] = array($subCommand->getArgsFormat(), false);
-            }
-        }
-        foreach ($command->getOptionCommands() as $optionCommand) {
-            // Don't duplicate default commands
-            if (!isset($formatsToPrint[$optionCommand->getName()])) {
-                $formatsToPrint[$optionCommand->getName()] = array($optionCommand->getArgsFormat(), false);
             }
         }
 
@@ -128,7 +120,7 @@ class CommandHelp extends AbstractHelp
             $prefix = 'or: ';
         }
 
-        if ($command instanceof NamedCommand && $command->hasAliases()) {
+        if ($command->hasAliases()) {
             $layout->add(new EmptyLine());
             $this->renderAliases($layout, $command->getAliases());
         }
@@ -151,21 +143,19 @@ class CommandHelp extends AbstractHelp
     /**
      * Renders the "Commands" section.
      *
-     * @param BlockLayout       $layout         The layout.
-     * @param CommandCollection $subCommands    The sub-commands to render.
-     * @param CommandCollection $optionCommands The option commands to render.
+     * @param BlockLayout       $layout      The layout.
+     * @param CommandCollection $subCommands The sub-commands to render.
      */
-    protected function renderSubCommands(BlockLayout $layout, CommandCollection $subCommands, CommandCollection $optionCommands)
+    protected function renderSubCommands(BlockLayout $layout, CommandCollection $subCommands)
     {
         $layout->add(new Paragraph('<h>COMMANDS</h>'));
         $layout->beginBlock();
 
+        $subCommands = $subCommands->toArray();
+        ksort($subCommands);
+
         foreach ($subCommands as $subCommand) {
             $this->renderSubCommand($layout, $subCommand);
-        }
-
-        foreach ($optionCommands as $optionCommand) {
-            $this->renderSubCommand($layout, $optionCommand);
         }
 
         $layout->endBlock();
@@ -174,16 +164,16 @@ class CommandHelp extends AbstractHelp
     /**
      * Renders a sub-command in the "Commands" section.
      *
-     * @param BlockLayout  $layout  The layout.
-     * @param NamedCommand $command The command to render.
+     * @param BlockLayout $layout  The layout.
+     * @param Command     $command The command to render.
      */
-    protected function renderSubCommand(BlockLayout $layout, NamedCommand $command)
+    protected function renderSubCommand(BlockLayout $layout, Command $command)
     {
         $config = $command->getConfig();
         $description = $config->getDescription();
         $help = $config->getHelp();
-        $inputArgs = $command->getArgsFormat()->getArguments(false);
-        $inputOpts = $command->getArgsFormat()->getOptions(false);
+        $arguments = $command->getArgsFormat()->getArguments(false);
+        $options = $command->getArgsFormat()->getOptions(false);
 
         if ($config instanceof OptionCommandConfig) {
             if ($config->isLongNamePreferred()) {
@@ -214,12 +204,16 @@ class CommandHelp extends AbstractHelp
             $this->renderSubCommandHelp($layout, $help);
         }
 
-        if ($inputArgs) {
-            $this->renderSubCommandArguments($layout, $inputArgs);
+        if ($arguments) {
+            $this->renderSubCommandArguments($layout, $arguments);
         }
 
-        if ($inputOpts) {
-            $this->renderSubCommandOptions($layout, $inputOpts);
+        if ($options) {
+            $this->renderSubCommandOptions($layout, $options);
+        }
+
+        if (!$description && !$help && !$arguments && !$options) {
+            $layout->add(new EmptyLine());
         }
 
         $layout->endBlock();

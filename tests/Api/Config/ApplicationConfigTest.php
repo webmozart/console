@@ -44,7 +44,6 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getVersion());
         $this->assertNull($config->getDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
-        $this->assertSame(array(), $config->getDefaultCommands());
     }
 
     public function testCreateWithArguments()
@@ -64,7 +63,6 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($config->getVersion());
         $this->assertNull($config->getDispatcher());
         $this->assertSame(array(), $config->getCommandConfigs());
-        $this->assertSame(array(), $config->getDefaultCommands());
     }
 
     public function testStaticCreateWithArguments()
@@ -376,90 +374,5 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config->addCommandConfig($config = new CommandConfig());
 
         $this->assertTrue($this->config->hasCommandConfigs());
-    }
-
-    public function testBeginDefaultCommand()
-    {
-        $this->config
-            ->beginDefaultCommand()->setProcessTitle('title1')->end()
-            ->beginDefaultCommand()->setProcessTitle('title2')->end()
-        ;
-
-        $this->assertEquals(array(
-            CommandConfig::create(null, $this->config)->setProcessTitle('title1'),
-            CommandConfig::create(null, $this->config)->setProcessTitle('title2'),
-        ), $this->config->getDefaultCommands());
-    }
-
-    public function testAddDefaultCommand()
-    {
-        $this->config->addDefaultCommand($config = new CommandConfig());
-        $this->config->addDefaultCommand('command');
-
-        $this->assertSame(array($config, 'command'), $this->config->getDefaultCommands());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDefaultCommandFailsIfNull()
-    {
-        $this->config->addDefaultCommand(null);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDefaultCommandFailsIfEmpty()
-    {
-        $this->config->addDefaultCommand('');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testAddDefaultCommandFailsIfNeitherStringNorConfig()
-    {
-        $this->config->addDefaultCommand(new stdClass());
-    }
-
-    public function testAddDefaultCommands()
-    {
-        $this->config->addDefaultCommand($config1 = new CommandConfig());
-        $this->config->addDefaultCommands(array(
-            $config2 = new CommandConfig(),
-            'command',
-        ));
-
-        $this->assertSame(array($config1, $config2, 'command'), $this->config->getDefaultCommands());
-    }
-
-    public function testSetDefaultCommands()
-    {
-        $this->config->addDefaultCommand($config1 = new CommandConfig());
-        $this->config->setDefaultCommands(array(
-            $config2 = new CommandConfig(),
-            'command',
-        ));
-
-        $this->assertSame(array($config2, 'command'), $this->config->getDefaultCommands());
-    }
-
-    public function testHasDefaultCommands()
-    {
-        $this->assertFalse($this->config->hasDefaultCommands());
-
-        $this->config->addDefaultCommand($config = new CommandConfig());
-
-        $this->assertTrue($this->config->hasDefaultCommands());
-    }
-
-    public function testIsDefaultCommand()
-    {
-        $this->assertFalse($this->config->isDefaultCommand('command'));
-
-        $this->config->addDefaultCommand('command');
-
-        $this->assertTrue($this->config->isDefaultCommand('command'));
     }
 }

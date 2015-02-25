@@ -17,7 +17,6 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Assert\Assert;
 
 /**
@@ -41,7 +40,7 @@ class CommandAdapter extends Command
      */
     public function __construct(\Webmozart\Console\Api\Command\Command $adaptedCommand, Application $application)
     {
-        parent::setName($this->createName($adaptedCommand, $application));
+        parent::setName($adaptedCommand->getName());
 
         parent::__construct();
 
@@ -53,10 +52,7 @@ class CommandAdapter extends Command
         parent::setApplication($application);
         parent::setDescription($config->getDescription());
         parent::setHelp($config->getHelp());
-
-        if ($adaptedCommand instanceof NamedCommand) {
-            parent::setAliases($adaptedCommand->getAliases());
-        }
+        parent::setAliases($adaptedCommand->getAliases());
 
         if ($helperSet = $config->getHelperSet()) {
             parent::setHelperSet($helperSet);
@@ -248,20 +244,5 @@ class CommandAdapter extends Command
         Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\IOOutput');
 
         return $this->adaptedCommand->handle($input->getArgs(), $output->getIO());
-    }
-
-    private function createName(\Webmozart\Console\Api\Command\Command $command, Application $application)
-    {
-        if ($command instanceof NamedCommand) {
-            return $command->getName();
-        }
-
-        $i = 1;
-
-        while ($application->has('unnamed'.$i)) {
-            ++$i;
-        }
-
-        return 'unnamed'.$i;
     }
 }

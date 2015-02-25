@@ -33,6 +33,11 @@ class CannotAddCommandException extends RuntimeException
     const OPTION_EXISTS = 2;
 
     /**
+     * Code: The command name is empty.
+     */
+    const NAME_EMPTY = 3;
+
+    /**
      * Creates an exception for the code {@link NAME_EXISTS}.
      *
      * @param string    $name  The command name.
@@ -63,5 +68,17 @@ class CannotAddCommandException extends RuntimeException
             strlen($name) > 1 ? '--' : '-',
             $name
         ), self::OPTION_EXISTS, $cause);
+    }
+
+    /**
+     * Creates an exception for the code {@link NAME_EMPTY}.
+     *
+     * @param Exception $cause The exception that caused this exception.
+     *
+     * @return static The created exception.
+     */
+    public static function nameEmpty(Exception $cause = null)
+    {
+        return new static('The command name must be set.', self::NAME_EMPTY, $cause);
     }
 }

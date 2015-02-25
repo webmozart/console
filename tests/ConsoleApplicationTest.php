@@ -18,7 +18,6 @@ use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
@@ -69,8 +68,8 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $application = new ConsoleApplication($this->config);
 
         $this->assertEquals(new CommandCollection(array(
-            new NamedCommand($config1, $application),
-            new NamedCommand($config2, $application),
+            new Command($config1, $application),
+            new Command($config2, $application),
         )), $application->getCommands());
     }
 
@@ -82,7 +81,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $application = new ConsoleApplication($this->config);
 
         $this->assertEquals(new CommandCollection(array(
-            new NamedCommand($enabled, $application),
+            new Command($enabled, $application),
         )), $application->getCommands());
     }
 
@@ -92,7 +91,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
 
-        $this->assertEquals(new NamedCommand($config, $application), $application->getCommand('command'));
+        $this->assertEquals(new Command($config, $application), $application->getCommand('command'));
     }
 
     /**
@@ -132,46 +131,67 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($application->hasCommands());
     }
 
-    public function testGetDefaultCommands()
+    public function testGetNamedCommands()
     {
-        $this->config->addDefaultCommand($config1 = CommandConfig::create()->setProcessTitle('title'));
-        $this->config->addCommandConfig($config2 = new CommandConfig('command1'));
-        $this->config->addCommandConfig($config3 = new CommandConfig('command2'));
-        $this->config->addDefaultCommand('command2');
+        $this->config->addCommandConfig($config1 = new CommandConfig('command1'));
+        $this->config->addCommandConfig($config2 = new CommandConfig('command2'));
+        $this->config->addCommandConfig($config3 = new CommandConfig('command3'));
+
+        $config2->markAnonymous();
+        $config3->markDefault();
 
         $application = new ConsoleApplication($this->config);
 
-        $this->assertEquals(array(
+        $this->assertEquals(new CommandCollection(array(
             new Command($config1, $application),
-            new NamedCommand($config3, $application),
-        ), $application->getDefaultCommands());
+            new Command($config3, $application),
+        )), $application->getNamedCommands());
     }
 
-    public function testIgnoreDisabledDefaultCommands()
+    public function testHasNamedCommands()
     {
-        $this->config->addDefaultCommand($config1 = CommandConfig::create()->enable()->setProcessTitle('title'));
-        $this->config->addDefaultCommand($config2 = CommandConfig::create()->disable()->setProcessTitle('title'));
+        $this->config->addCommandConfig(new CommandConfig('command'));
 
         $application = new ConsoleApplication($this->config);
 
-        $this->assertEquals(array(
+        $this->assertTrue($application->hasNamedCommands());
+    }
+
+    public function testHasNoNamedCommands()
+    {
+        $config = new CommandConfig('command');
+        $config->markAnonymous();
+
+        $this->config->addCommandConfig($config);
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertFalse($application->hasNamedCommands());
+    }
+
+    public function testGetDefaultCommands()
+    {
+        $this->config->addCommandConfig($config1 = new CommandConfig('command1'));
+        $this->config->addCommandConfig($config2 = new CommandConfig('command2'));
+        $this->config->addCommandConfig($config3 = new CommandConfig('command3'));
+
+        $config1->markDefault();
+        $config3->markDefault();
+
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertEquals(new CommandCollection(array(
             new Command($config1, $application),
-        ), $application->getDefaultCommands());
+            new Command($config3, $application),
+        )), $application->getDefaultCommands());
     }
 
     public function testHasDefaultCommands()
     {
-        $this->config->addDefaultCommand(new CommandConfig());
+        $config = new CommandConfig('command');
+        $config->markDefault();
 
-        $application = new ConsoleApplication($this->config);
-
-        $this->assertTrue($application->hasDefaultCommands());
-    }
-
-    public function testHasDefaultCommandsIfDefaultCommandNames()
-    {
-        $this->config->addCommandConfig(new CommandConfig('command'));
-        $this->config->addDefaultCommand('command');
+        $this->config->addCommandConfig($config);
 
         $application = new ConsoleApplication($this->config);
 
@@ -180,9 +200,31 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testHasNoDefaultCommands()
     {
+        $this->config->addCommandConfig(new CommandConfig('command'));
+
         $application = new ConsoleApplication($this->config);
 
         $this->assertFalse($application->hasDefaultCommands());
+    }
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
+     */
+    public function testFailIfNoCommandName()
+    {
+        $this->config->addCommandConfig(new CommandConfig());
+
+        new ConsoleApplication($this->config);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
+     */
+    public function testFailIfDuplicateCommandName()
+    {
+        $this->config->addCommandConfig(new CommandConfig('command'));
+        $this->config->addCommandConfig(new CommandConfig('command'));
+
+        new ConsoleApplication($this->config);
     }
 
     public function testResolveCommand()
@@ -245,19 +287,8 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 '',
                 function (ApplicationConfig $config, $callback) {
                     $config
-                        ->addDefaultCommand('list')
                         ->beginCommand('list')
-                            ->setHandler(new CallbackHandler($callback))
-                        ->end()
-                    ;
-                }
-            ),
-            // Default command
-            array(
-                '',
-                function (ApplicationConfig $config, $callback) {
-                    $config
-                        ->beginDefaultCommand()
+                            ->markDefault()
                             ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
@@ -269,20 +300,6 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->beginSubCommand('add')
-                                ->setHandler(new CallbackHandler($callback))
-                            ->end()
-                        ->end()
-                    ;
-                }
-            ),
-            // Default sub-command
-            array(
-                'server',
-                function (ApplicationConfig $config, $callback) {
-                    $config
-                        ->beginCommand('server')
-                            ->addDefaultCommand('add')
                             ->beginSubCommand('add')
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()
@@ -303,27 +320,28 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                     ;
                 }
             ),
-            // Default option command
-            array(
-                'server',
-                function (ApplicationConfig $config, $callback) {
-                    $config
-                        ->beginCommand('server')
-                            ->addDefaultCommand('add')
-                            ->beginOptionCommand('add')
-                                ->setHandler(new CallbackHandler($callback))
-                            ->end()
-                        ->end()
-                    ;
-                }
-            ),
             // Default sub-command
             array(
                 'server',
                 function (ApplicationConfig $config, $callback) {
                     $config
                         ->beginCommand('server')
-                            ->beginDefaultCommand()
+                            ->beginSubCommand('add')
+                                ->markDefault()
+                                ->setHandler(new CallbackHandler($callback))
+                            ->end()
+                        ->end()
+                    ;
+                }
+            ),
+            // Default option command
+            array(
+                'server',
+                function (ApplicationConfig $config, $callback) {
+                    $config
+                        ->beginCommand('server')
+                            ->beginOptionCommand('add')
+                                ->markDefault()
                                 ->setHandler(new CallbackHandler($callback))
                             ->end()
                         ->end()

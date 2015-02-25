@@ -59,10 +59,6 @@ class ApplicationAdapter extends Application
         foreach ($application->getCommands() as $command) {
             $this->add(new CommandAdapter($command, $this));
         }
-
-        foreach ($application->getDefaultCommands() as $command) {
-            $this->add(new CommandAdapter($command, $this));
-        }
     }
 
     /**

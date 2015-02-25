@@ -17,7 +17,6 @@ use Webmozart\Console\Adapter\ApplicationAdapter;
 use Webmozart\Console\Adapter\ArgsFormatInputDefinition;
 use Webmozart\Console\Adapter\CommandAdapter;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\ConsoleApplication;
@@ -28,7 +27,7 @@ use Webmozart\Console\ConsoleApplication;
  */
 class CommandAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreateNamed()
+    public function testCreate()
     {
         $config = CommandConfig::create()
             ->setName('command')
@@ -45,7 +44,7 @@ class CommandAdapterTest extends PHPUnit_Framework_TestCase
         $application = new ConsoleApplication($applicationConfig);
         $applicationAdapter = new ApplicationAdapter($application);
 
-        $command = new NamedCommand($config, $application);
+        $command = new Command($config, $application);
         $adapter = new CommandAdapter($command, $applicationAdapter);
 
         $this->assertSame('command', $adapter->getName());
@@ -59,37 +58,6 @@ class CommandAdapterTest extends PHPUnit_Framework_TestCase
         $this->assertSame('The help for command', $adapter->getProcessedHelp());
         $this->assertSame($helperSet, $adapter->getHelperSet());
         $this->assertSame('command [-o|--option] cmd1 [argument]', $adapter->getSynopsis());
-        $this->assertTrue($adapter->isEnabled());
-    }
-
-    public function testCreateUnnamed()
-    {
-        $config = CommandConfig::create()
-            ->setDescription('Description of the command')
-            ->setHelp('The help for %command.name%')
-            ->addArgument('argument')
-            ->addOption('option', 'o')
-            ->setHelperSet($helperSet = new HelperSet())
-        ;
-
-        $applicationConfig = new ApplicationConfig();
-        $application = new ConsoleApplication($applicationConfig);
-        $applicationAdapter = new ApplicationAdapter($application);
-
-        $command = new Command($config, $application);
-        $adapter = new CommandAdapter($command, $applicationAdapter);
-
-        $this->assertSame('unnamed1', $adapter->getName());
-        $this->assertEquals(new ArgsFormatInputDefinition($command->getArgsFormat()), $adapter->getDefinition());
-        $this->assertEquals(new ArgsFormatInputDefinition($command->getArgsFormat()), $adapter->getNativeDefinition());
-        $this->assertSame($command, $adapter->getAdaptedCommand());
-        $this->assertSame(array(), $adapter->getAliases());
-        $this->assertSame($applicationAdapter, $adapter->getApplication());
-        $this->assertSame('Description of the command', $adapter->getDescription());
-        $this->assertSame('The help for %command.name%', $adapter->getHelp());
-        $this->assertSame('The help for unnamed1', $adapter->getProcessedHelp());
-        $this->assertSame($helperSet, $adapter->getHelperSet());
-        $this->assertSame('unnamed1 [-o|--option] [argument]', $adapter->getSynopsis());
         $this->assertTrue($adapter->isEnabled());
     }
 

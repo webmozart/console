@@ -45,7 +45,7 @@ class DelegatingHandlerTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->command = new Command(new CommandConfig());
+        $this->command = new Command(new CommandConfig('command'));
         $this->args = new Args(new ArgsFormat());
         $this->io = new BufferedIO();
     }

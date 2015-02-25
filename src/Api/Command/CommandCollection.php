@@ -26,7 +26,7 @@ use LogicException;
 class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
-     * @var NamedCommand[]
+     * @var Command[]
      */
     private $commands = array();
 
@@ -43,8 +43,8 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Creates a new command collection.
      *
-     * @param NamedCommand[] $commands The commands to initially add to the
-     *                                 collection.
+     * @param Command[] $commands The commands to initially add to the
+     *                            collection.
      */
     public function __construct(array $commands = array())
     {
@@ -57,11 +57,11 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * If a command exists with the same name in the collection, that command
      * is overwritten.
      *
-     * @param NamedCommand $command The command to add.
+     * @param Command $command The command to add.
      *
      * @see merge(), replace()
      */
-    public function add(NamedCommand $command)
+    public function add(Command $command)
     {
         $name = $command->getName();
 
@@ -75,7 +75,6 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
             $this->aliasIndex[$alias] = $name;
         }
 
-        ksort($this->commands);
         ksort($this->aliasIndex);
     }
 
@@ -85,7 +84,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * Existing commands are preserved. Commands with the same names as the
      * passed commands are overwritten.
      *
-     * @param NamedCommand[] $commands The commands to add.
+     * @param Command[] $commands The commands to add.
      *
      * @see add(), replace()
      */
@@ -101,7 +100,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      *
      * Existing commands are replaced.
      *
-     * @param NamedCommand[] $commands The commands to set.
+     * @param Command[] $commands The commands to set.
      *
      * @see add(), merge()
      */
@@ -116,7 +115,7 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name of the command.
      *
-     * @return NamedCommand The command.
+     * @return Command The command.
      *
      * @throws NoSuchCommandException If no command with that name exists in the
      *                                collection.
@@ -212,14 +211,30 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
      * Returns the contents of the collection as array.
      *
      * The commands in the collection are returned indexed by their names. The
-     * result is sorted alphabetically by the command names.
+     * result is sorted in the order in which the commands were added to the
+     * collection.
      *
-     * @return NamedCommand[] The commands indexed and sorted by their names in
-     *                        ascending order.
+     * @return Command[] The commands indexed by their names.
      */
     public function toArray()
     {
         return $this->commands;
+    }
+
+    public function filterDefault()
+    {
+    }
+
+    public function filterNonDefault()
+    {
+    }
+
+    public function filterAnonymous()
+    {
+    }
+
+    public function filterNonAnonymous()
+    {
     }
 
     /**
@@ -238,8 +253,9 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
 
         if ($includeAliases) {
             $names = array_merge($names, array_keys($this->aliasIndex));
-            sort($names);
         }
+
+        sort($names);
 
         return $names;
     }

@@ -15,7 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Process\ExecutableFinder;
 use Webmozart\Console\Api\Application\Application;
-use Webmozart\Console\Api\Command\NamedCommand;
+use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\Config\DefaultApplicationConfig;
 use Webmozart\Console\ConsoleApplication;
@@ -45,12 +45,12 @@ class HelpHandlerTest extends PHPUnit_Framework_TestCase
     private $application;
 
     /**
-     * @var NamedCommand
+     * @var Command
      */
     private $command;
 
     /**
-     * @var NamedCommand
+     * @var Command
      */
     private $helpCommand;
 

@@ -12,8 +12,8 @@
 namespace Webmozart\Console\Tests\Util;
 
 use PHPUnit_Framework_TestCase;
+use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Util\SimilarCommandName;
 
@@ -29,15 +29,13 @@ class SimilarCommandNameTest extends PHPUnit_Framework_TestCase
     public function testFindSimilarNames($input, array $suggestions)
     {
         $commands = new CommandCollection(array(
-            new NamedCommand(
-                CommandConfig::create('package')
-                    ->addAlias('package-alias')
+            new Command(
+                CommandConfig::create('package')->addAlias('package-alias')
             ),
-            new NamedCommand(
-                CommandConfig::create('pack')
-                    ->addAlias('pack-alias')
+            new Command(
+                CommandConfig::create('pack')->addAlias('pack-alias')
             ),
-            new NamedCommand(CommandConfig::create('pack')),
+            new Command(CommandConfig::create('pack')),
         ));
 
         $this->assertSame($suggestions, SimilarCommandName::find($input, $commands));

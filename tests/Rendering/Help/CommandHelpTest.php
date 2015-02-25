@@ -326,13 +326,47 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
+    public function testSortSubCommands()
+    {
+        $config = ApplicationConfig::create()
+            ->setName('test-bin')
+            ->beginCommand('command')
+                ->beginSubCommand('sub3')->end()
+                ->beginSubCommand('sub1')->end()
+                ->beginSubCommand('sub2')->end()
+            ->end();
+
+        $application = new ConsoleApplication($config);
+        $help = new CommandHelp($application->getCommand('command'));
+        $help->render($this->canvas);
+
+        $expected = <<<EOF
+USAGE
+      test-bin command
+  or: test-bin command sub3
+  or: test-bin command sub1
+  or: test-bin command sub2
+
+COMMANDS
+  sub1
+
+  sub2
+
+  sub3
+
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
+
     public function testRenderCommandWithDefaultSubCommand()
     {
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommand('add')
                 ->beginSubCommand('add')
+                    ->markDefault()
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
                 ->end()
@@ -356,6 +390,40 @@ COMMANDS
 
     <argument>  Description of "argument"
 
+  delete
+    Description of "delete"
+
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
+
+    public function testRenderCommandWithAnonymousSubCommand()
+    {
+        $config = ApplicationConfig::create()
+            ->setName('test-bin')
+            ->beginCommand('command')
+                ->beginSubCommand('add')
+                    ->markAnonymous()
+                    ->setDescription('Description of "add"')
+                    ->addArgument('argument', 0, 'Description of "argument"')
+                ->end()
+                ->beginSubCommand('delete')
+                    ->setDescription('Description of "delete"')
+                ->end()
+            ->end();
+
+        $application = new ConsoleApplication($config);
+        $help = new CommandHelp($application->getCommand('command'));
+        $help->render($this->canvas);
+
+        $expected = <<<EOF
+USAGE
+      test-bin command [<argument>]
+  or: test-bin command delete
+
+COMMANDS
   delete
     Description of "delete"
 
@@ -429,8 +497,8 @@ EOF;
         $config = ApplicationConfig::create()
             ->setName('test-bin')
             ->beginCommand('command')
-                ->addDefaultCommand('add')
                 ->beginOptionCommand('add', 'a')
+                    ->markDefault()
                     ->setDescription('Description of "add"')
                     ->addArgument('argument', 0, 'Description of "argument"')
                 ->end()
@@ -463,6 +531,40 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
+    public function testRenderCommandWithAnonymousOptionCommand()
+    {
+        $config = ApplicationConfig::create()
+            ->setName('test-bin')
+            ->beginCommand('command')
+                ->beginOptionCommand('add', 'a')
+                    ->markAnonymous()
+                    ->setDescription('Description of "add"')
+                    ->addArgument('argument', 0, 'Description of "argument"')
+                ->end()
+                ->beginOptionCommand('delete')
+                    ->setDescription('Description of "delete"')
+                ->end()
+            ->end();
+
+        $application = new ConsoleApplication($config);
+        $help = new CommandHelp($application->getCommand('command'));
+        $help->render($this->canvas);
+
+        $expected = <<<EOF
+USAGE
+      test-bin command [<argument>]
+  or: test-bin command --delete
+
+COMMANDS
+  --delete
+    Description of "delete"
+
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
+
     public function testRenderOptionCommandWithPreferredLongName()
     {
         $config = ApplicationConfig::create()
@@ -486,50 +588,6 @@ USAGE
 COMMANDS
   --add (-a)
     Description of "add"
-
-
-EOF;
-
-        $this->assertSame($expected, $this->io->fetchOutput());
-    }
-
-    public function testRenderCommandWithDefaultCommands()
-    {
-        $config = ApplicationConfig::create()
-            ->setName('test-bin')
-            ->beginCommand('command')
-                ->addDefaultCommand('add')
-                ->beginDefaultCommand()
-                    ->addArgument('unnamed', Argument::REQUIRED, 'Description of "unnamed"')
-                ->end()
-                ->addDefaultCommand('delete')
-                ->beginSubCommand('add')
-                    ->setDescription('Description of "add"')
-                    ->addArgument('argument', 0, 'Description of "argument"')
-                ->end()
-                ->beginOptionCommand('delete')
-                    ->setDescription('Description of "delete"')
-                ->end()
-            ->end();
-
-        $application = new ConsoleApplication($config);
-        $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
-
-        $expected = <<<EOF
-USAGE
-      test-bin command [add] [<argument>]
-  or: test-bin command <unnamed>
-  or: test-bin command [--delete]
-
-COMMANDS
-  add
-    Description of "add"
-
-    <argument>  Description of "argument"
-
-  --delete
-    Description of "delete"
 
 
 EOF;

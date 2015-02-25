@@ -12,6 +12,10 @@
 namespace Webmozart\Console\Tests\Api\Config;
 
 use PHPUnit_Framework_TestCase;
+use Webmozart\Console\Api\Args\Format\ArgsFormat;
+use Webmozart\Console\Api\Args\Format\Argument;
+use Webmozart\Console\Api\Args\Format\CommandOption;
+use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
@@ -184,5 +188,41 @@ class OptionCommandConfigTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->config->isLongNamePreferred());
         $this->assertFalse($this->config->isShortNamePreferred());
+    }
+
+    public function testBuildNamedArgsFormat()
+    {
+        $baseFormat = new ArgsFormat();
+        $this->config->setName('command');
+        $this->config->setShortName('c');
+        $this->config->setAliases(array('alias1', 'alias2'));
+        $this->config->addOption('option');
+        $this->config->addArgument('argument');
+
+        $expected = ArgsFormat::build($baseFormat)
+            ->addCommandOption(new CommandOption('command', 'c', array('alias1', 'alias2')))
+            ->addArgument(new Argument('argument'))
+            ->addOption(new Option('option'))
+            ->getFormat();
+
+        $this->assertEquals($expected, $this->config->buildArgsFormat($baseFormat));
+    }
+
+    public function testBuildAnonymousArgsFormat()
+    {
+        $baseFormat = new ArgsFormat();
+        $this->config->setName('command');
+        $this->config->setShortName('c');
+        $this->config->setAliases(array('alias1', 'alias2'));
+        $this->config->addOption('option');
+        $this->config->addArgument('argument');
+        $this->config->markAnonymous();
+
+        $expected = ArgsFormat::build($baseFormat)
+            ->addArgument(new Argument('argument'))
+            ->addOption(new Option('option'))
+            ->getFormat();
+
+        $this->assertEquals($expected, $this->config->buildArgsFormat($baseFormat));
     }
 }

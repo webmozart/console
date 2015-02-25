@@ -17,7 +17,6 @@ use Symfony\Component\Process\ExecutableFinder;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Command\Command;
-use Webmozart\Console\Api\Command\NamedCommand;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Handler\Help\HelpManHandler;
 use Webmozart\Console\IO\BufferedIO;
@@ -35,7 +34,7 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
     private $path;
 
     /**
-     * @var NamedCommand
+     * @var Command
      */
     private $command;
 
@@ -67,7 +66,7 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->path = __DIR__.'/Fixtures/man/the-command.1';
-        $this->command = new Command(new CommandConfig());
+        $this->command = new Command(new CommandConfig('command'));
         $this->args = new Args(new ArgsFormat());
         $this->io = new BufferedIO();
         $this->executableFinder = $this->getMockBuilder('Symfony\Component\Process\ExecutableFinder')

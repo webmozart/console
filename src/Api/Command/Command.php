@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Api\Command;
 
 use Exception;
+use LogicException;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\CannotParseArgsException;
@@ -46,10 +47,24 @@ use Webmozart\Console\Util\ProcessTitle;
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
- * @see    NamedCommand
  */
 class Command
 {
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $shortName;
+
+    /**
+     * @var string[]
+     */
+    private $aliases = array();
+
     /**
      * @var CommandConfig
      */
@@ -78,12 +93,12 @@ class Command
     /**
      * @var CommandCollection
      */
-    private $optionCommands;
+    private $namedSubCommands;
 
     /**
-     * @var Command[]
+     * @var CommandCollection
      */
-    private $defaultCommands = array();
+    private $defaultSubCommands;
 
     /**
      * Creates a new command.
@@ -91,28 +106,74 @@ class Command
      * @param CommandConfig $config        The command configuration.
      * @param Application   $application   The console application.
      * @param Command       $parentCommand The parent command.
+     *
+     * @throws LogicException If the name of the command configuration is not set.
      */
     public function __construct(CommandConfig $config, Application $application = null, Command $parentCommand = null)
     {
+        if (!$config->getName()) {
+            throw new LogicException('The name of the command config must be set.');
+        }
+
+        $this->name = $config->getName();
+        $this->shortName = $config instanceof OptionCommandConfig ? $config->getShortName() : null;
+        $this->aliases = $config->getAliases();
         $this->config = $config;
         $this->application = $application;
         $this->parentCommand = $parentCommand;
         $this->subCommands = new CommandCollection();
-        $this->optionCommands = new CommandCollection();
-
-        $this->argsFormat = $this->buildFormat();
+        $this->namedSubCommands = new CommandCollection();
+        $this->defaultSubCommands = new CommandCollection();
+        $this->argsFormat = $config->buildArgsFormat($this->getBaseFormat());
 
         foreach ($config->getSubCommandConfigs() as $subConfig) {
             $this->addSubCommand($subConfig);
         }
+    }
 
-        foreach ($config->getOptionCommandConfigs() as $optionConfig) {
-            $this->addOptionCommand($optionConfig);
-        }
+    /**
+     * Returns the name of the command.
+     *
+     * @return string The name of the command.
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-        foreach ($config->getDefaultCommands() as $nameOrConfig) {
-            $this->addDefaultCommand($nameOrConfig);
-        }
+    /**
+     * Returns the short name of the command.
+     *
+     * This method only returns a value if an {@link OptionCommandConfig} was
+     * passed to the constructor. Otherwise this method returns `null`.
+     *
+     * @return string|null The short name or `null` if the command is not an
+     *                     option command.
+     */
+    public function getShortName()
+    {
+        return $this->shortName;
+    }
+
+    /**
+     * Returns the alias names of the command.
+     *
+     * @return string[] An array of alias names of the command.
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    /**
+     * Returns whether the command has aliases.
+     *
+     * @return bool Returns `true` if the command has aliases and `false`
+     *              otherwise.
+     */
+    public function hasAliases()
+    {
+        return count($this->aliases) > 0;
     }
 
     /**
@@ -205,63 +266,37 @@ class Command
     }
 
     /**
-     * Returns all option commands of the command.
+     * Returns all sub-commands that are not anonymous.
      *
-     * @return CommandCollection The option commands.
+     * @return CommandCollection The named commands.
      */
-    public function getOptionCommands()
+    public function getNamedSubCommands()
     {
-        return $this->optionCommands;
+        return $this->namedSubCommands;
     }
 
     /**
-     * Returns the option command with a specific name.
+     * Returns whether the command has any commands that are not anonymous.
      *
-     * @param string $name The name of the option command.
-     *
-     * @return Command The option command.
-     *
-     * @throws NoSuchCommandException If the option command with the given name
-     *                                does not exist.
-     */
-    public function getOptionCommand($name)
-    {
-        return $this->optionCommands->get($name);
-    }
-
-    /**
-     * Returns whether an option command with the given name exists.
-     *
-     * @param string $name The name of the option command.
-     *
-     * @return bool Returns `true` if an option command with that name exists
-     *              and `false` otherwise.
-     */
-    public function hasOptionCommand($name)
-    {
-        return $this->optionCommands->contains($name);
-    }
-
-    /**
-     * Returns whether the command has any option commands.
-     *
-     * @return bool Returns `true` if the command has option commands and
+     * @return bool Returns `true` if the command has named commands and
      *              `false` otherwise.
+     *
+     * @see getNamedSubCommands()
      */
-    public function hasOptionCommands()
+    public function hasNamedSubCommands()
     {
-        return !$this->optionCommands->isEmpty();
+        return count($this->namedSubCommands) > 0;
     }
 
     /**
      * Returns the commands that should be executed if no explicit command is
      * passed.
      *
-     * @return Command[] The default commands.
+     * @return CommandCollection The default commands.
      */
-    public function getDefaultCommands()
+    public function getDefaultSubCommands()
     {
-        return $this->defaultCommands;
+        return $this->defaultSubCommands;
     }
 
     /**
@@ -270,11 +305,11 @@ class Command
      * @return bool Returns `true` if the command has default commands and
      *              `false` otherwise.
      *
-     * @see getDefaultCommands()
+     * @see getDefaultSubCommands()
      */
-    public function hasDefaultCommands()
+    public function hasDefaultSubCommands()
     {
-        return count($this->defaultCommands) > 0;
+        return count($this->defaultSubCommands) > 0;
     }
 
     /**
@@ -342,26 +377,13 @@ class Command
     }
 
     /**
-     * Creates the arguments format of the command.
-     *
-     * @return ArgsFormat The created format for the console arguments.
-     */
-    protected function buildFormat()
-    {
-        return ArgsFormat::build($this->getBaseFormat())
-            ->addOptions($this->config->getOptions())
-            ->addArguments($this->config->getArguments())
-            ->getFormat();
-    }
-
-    /**
      * Returns the inherited arguments format of the command.
      *
      * @return ArgsFormat The inherited format.
      *
-     * @see buildFormat()
+     * @see CommandConfig::buildArgsFormat()
      */
-    protected function getBaseFormat()
+    private function getBaseFormat()
     {
         if ($this->parentCommand) {
             return $this->parentCommand->getArgsFormat();
@@ -387,68 +409,18 @@ class Command
             return;
         }
 
-        $command = new NamedCommand($config, $this->application, $this);
-        $name = $command->getName();
+        $this->validateSubCommandName($config);
 
-        if ($this->subCommands->contains($name)) {
-            throw CannotAddCommandException::nameExists($name);
-        }
+        $command = new Command($config, $this->application, $this);
 
         $this->subCommands->add($command);
-    }
 
-    /**
-     * Adds an option command.
-     *
-     * @param OptionCommandConfig $config The option command configuration.
-     *
-     * @throws CannotAddCommandException If the command cannot be added.
-     */
-    private function addOptionCommand(OptionCommandConfig $config)
-    {
-        if (!$config->isEnabled()) {
-            return;
+        if ($config->isDefault()) {
+            $this->defaultSubCommands->add($command);
         }
 
-        $name = $config->getLongName();
-
-        if ($this->subCommands->contains($name) || $this->optionCommands->contains($name)) {
-            throw CannotAddCommandException::nameExists($name);
-        }
-
-        if ($this->argsFormat->hasOption($name)) {
-            throw CannotAddCommandException::optionExists($name);
-        }
-
-        if ($shortName = $config->getShortName()) {
-            if ($this->subCommands->contains($shortName) || $this->optionCommands->contains($shortName)) {
-                throw CannotAddCommandException::nameExists($name);
-            }
-
-            if ($this->argsFormat->hasOption($shortName)) {
-                throw CannotAddCommandException::optionExists($shortName);
-            }
-        }
-
-        $this->optionCommands->add(new NamedCommand($config, $this->application, $this));
-    }
-
-    /**
-     * Adds a default command.
-     *
-     * @param string|SubCommandConfig $nameOrConfig The command name or
-     *                                              configuration.
-     */
-    private function addDefaultCommand($nameOrConfig)
-    {
-        if ($nameOrConfig instanceof SubCommandConfig) {
-            if ($nameOrConfig->isEnabled()) {
-                $this->defaultCommands[] = new Command($nameOrConfig, $this->application, $this);
-            }
-        } elseif ($this->subCommands->contains($nameOrConfig)) {
-            $this->defaultCommands[] = $this->subCommands->get($nameOrConfig);
-        } elseif ($this->optionCommands->contains($nameOrConfig)) {
-            $this->defaultCommands[] = $this->optionCommands->get($nameOrConfig);
+        if (!$config->isAnonymous()) {
+            $this->namedSubCommands->add($command);
         }
     }
 
@@ -456,9 +428,38 @@ class Command
     {
         if ($processTitle && !ProcessTitle::isSupported()) {
             $io->errorLine(
-                '<comment>Install the proctitle PECL to be able to change the process title.</comment>',
+                '<warn>Notice: Install the proctitle PECL to be able to change the process title.</warn>',
                 IO::VERY_VERBOSE
             );
+        }
+    }
+
+    private function validateSubCommandName(SubCommandConfig $config)
+    {
+        $name = $config->getName();
+
+        if (!$name) {
+            throw CannotAddCommandException::nameEmpty();
+        }
+
+        if ($this->subCommands->contains($name)) {
+            throw CannotAddCommandException::nameExists($name);
+        }
+
+        if ($config instanceof OptionCommandConfig) {
+            if ($this->argsFormat->hasOption($name)) {
+                throw CannotAddCommandException::optionExists($name);
+            }
+
+            if ($shortName = $config->getShortName()) {
+                if ($this->subCommands->contains($shortName)) {
+                    throw CannotAddCommandException::nameExists($name);
+                }
+
+                if ($this->argsFormat->hasOption($shortName)) {
+                    throw CannotAddCommandException::optionExists($shortName);
+                }
+            }
         }
     }
 }
