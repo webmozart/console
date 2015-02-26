@@ -412,6 +412,45 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $this->assertSame("fatal: The command \"foobar\" does not exist.\n", $buffer2->fetch());
     }
 
+    public function testNormalizeNegativeExceptionCodeToOne()
+    {
+        $this->config
+            ->beginCommand('list')
+                ->setHandler(new CallbackHandler(function () {
+                    throw NoSuchCommandException::forCommandName('foobar', -1);
+                }))
+            ->end()
+        ;
+
+        $args = new StringArgs('list');
+        $input = new BufferedInput();
+        $output = $buffer1 = new BufferedOutput();
+        $errorOutput = $buffer2 = new BufferedOutput();
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertSame(1, $application->run($args, $input, $output, $errorOutput));
+    }
+
+    public function testNormalizeLargeExceptionCodeTo255()
+    {
+        $this->config
+            ->beginCommand('list')
+                ->setHandler(new CallbackHandler(function () {
+                    throw NoSuchCommandException::forCommandName('foobar', 256);
+                }))
+            ->end()
+        ;
+
+        $args = new StringArgs('list');
+        $input = new BufferedInput();
+        $output = $buffer1 = new BufferedOutput();
+        $errorOutput = $buffer2 = new BufferedOutput();
+        $application = new ConsoleApplication($this->config);
+
+        // 255 is the highest supported exit status of a process
+        $this->assertSame(255, $application->run($args, $input, $output, $errorOutput));
+    }
+
     /**
      * @expectedException \Webmozart\Console\Api\Command\NoSuchCommandException
      */
@@ -433,5 +472,14 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $application = new ConsoleApplication($this->config);
 
         $application->run($args, $input, $output, $errorOutput);
+    }
+
+    public function testTerminateAfterRun()
+    {
+        exec('/usr/bin/env php '.__DIR__.'/Fixtures/terminate-after-run.php', $output, $status);
+
+        echo implode("\n", $output);
+
+        $this->assertSame(123, $status);
     }
 }

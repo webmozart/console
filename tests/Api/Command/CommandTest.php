@@ -472,7 +472,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertSame(123, $command->handle($args, $io));
     }
 
-    public function testHandleConvertsEmptyResultToZero()
+    public function testHandleConvertsEmptyStatusCodeToZero()
     {
         $args = new Args(new ArgsFormat());
         $io = $this->getMock('Webmozart\Console\Api\IO\IO');
@@ -488,6 +488,61 @@ class CommandTest extends PHPUnit_Framework_TestCase
             ->willReturn(null);
 
         $this->assertSame(0, $command->handle($args, $io));
+    }
+
+    public function testHandleNormalizesNegativeStatusCodeToOne()
+    {
+        $args = new Args(new ArgsFormat());
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $handler = $this->getMock('stdClass', array('handle'));
+
+        $config = new CommandConfig('command');
+        $config->setHandler($handler);
+        $command = new Command($config);
+
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($args, $io, $command)
+            ->willReturn(-1);
+
+        // Negative status codes are not supported
+        $this->assertSame(1, $command->handle($args, $io));
+    }
+
+    public function testHandleNormalizesNonNumericStatusCodeToOne()
+    {
+        $args = new Args(new ArgsFormat());
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $handler = $this->getMock('stdClass', array('handle'));
+
+        $config = new CommandConfig('command');
+        $config->setHandler($handler);
+        $command = new Command($config);
+
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($args, $io, $command)
+            ->willReturn('foobar');
+
+        $this->assertSame(1, $command->handle($args, $io));
+    }
+
+    public function testHandleNormalizesLargeStatusCodeToOne()
+    {
+        $args = new Args(new ArgsFormat());
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $handler = $this->getMock('stdClass', array('handle'));
+
+        $config = new CommandConfig('command');
+        $config->setHandler($handler);
+        $command = new Command($config);
+
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($args, $io, $command)
+            ->willReturn(256);
+
+        $this->assertSame(255, $command->handle($args, $io));
     }
 
     public function testRun()

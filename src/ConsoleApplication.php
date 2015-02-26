@@ -213,7 +213,7 @@ class ConsoleApplication implements Application
             $command = $resolvedCommand->getCommand();
             $parsedArgs = $resolvedCommand->getArgs();
 
-            return $command->handle($parsedArgs, $io);
+            $statusCode = $command->handle($parsedArgs, $io);
         } catch (Exception $e) {
             if (!$this->config->isExceptionCaught()) {
                 throw $e;
@@ -223,8 +223,14 @@ class ConsoleApplication implements Application
             $trace = new ExceptionTrace($e);
             $trace->render($canvas);
 
-            return $this->exceptionToExitCode($e->getCode());
+            $statusCode = $this->exceptionToExitCode($e->getCode());
         }
+
+        if ($this->config->isTerminatedAfterRun()) {
+            exit($statusCode);
+        }
+
+        return $statusCode;
     }
 
     /**
@@ -240,13 +246,7 @@ class ConsoleApplication implements Application
             return 1;
         }
 
-        $code = (int) $code;
-
-        if (0 === $code) {
-            return 1;
-        }
-
-        return $code;
+        return min(max((int) $code, 1), 255);
     }
 
     private function addCommand(CommandConfig $config)

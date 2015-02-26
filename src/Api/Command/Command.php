@@ -380,7 +380,14 @@ class Command
             $statusCode = $this->doHandle($args, $io);
         }
 
-        return $statusCode;
+        // Any empty value is considered a success
+        if (!$statusCode) {
+            return 0;
+        }
+
+        // Anything else is normalized to a valid error status code
+        // (i.e. one of [1, 255])
+        return min(max((int) $statusCode, 1), 255);
     }
 
     /**
@@ -483,8 +490,7 @@ class Command
 
         $commandHandler = $this->config->getHandler();
         $handlerMethod = $this->config->getHandlerMethod();
-        $statusCode = $commandHandler->$handlerMethod($args, $io, $this);
 
-        return (int) $statusCode;
+        return $commandHandler->$handlerMethod($args, $io, $this);
     }
 }
