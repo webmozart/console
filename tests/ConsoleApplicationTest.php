@@ -412,7 +412,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
-        $this->assertSame("Debug: on\nOutput\n", $output->fetch());
+        $this->assertSame("Debug Mode\nOutput\n", $output->fetch());
         $this->assertSame('', $errorOutput->fetch());
     }
 

@@ -212,7 +212,7 @@ class ConsoleApplication implements Application
         $io = $ioFactory($args, $input, $output, $errorOutput);
 
         if ($this->config->isDebug()) {
-            $io->writeLineRaw($io->format('Debug: on', Style::noTag()->bgCyan()->fgBlack()));
+            $io->writeLineRaw($io->format('Debug Mode', Style::noTag()->bgCyan()->fgBlack()));
         }
 
         try {
