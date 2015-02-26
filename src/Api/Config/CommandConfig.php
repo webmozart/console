@@ -113,12 +113,12 @@ class CommandConfig extends Config
     /**
      * @var string
      */
-    private $description;
+    private $summary;
 
     /**
      * @var string
      */
-    private $help;
+    private $description;
 
     /**
      * @var bool
@@ -327,7 +327,53 @@ class CommandConfig extends Config
     }
 
     /**
+     * Returns the summary of the command.
+     *
+     * @return string The summary of the command.
+     *
+     * @see setSummary()
+     */
+    public function getSummary()
+    {
+        return $this->summary;
+    }
+
+    /**
+     * Sets the summary of the command.
+     *
+     * The summary is a short one-liner that describes the command in the
+     * command listing. The summary should be written in imperative form rather
+     * than in summary form. So:
+     *
+     * > List the contents of a directory.
+     *
+     * should be preferred over
+     *
+     * > Lists the contents of a directory.
+     *
+     * @param string $summary The summary.
+     *
+     * @return static The current instance.
+     *
+     * @see getSummary()
+     */
+    public function setSummary($summary)
+    {
+        if (null !== $summary) {
+            Assert::string($summary, 'The command summary must be a string or null. Got: %s');
+            Assert::notEmpty($summary, 'The command summary must not be empty.');
+        }
+
+        $this->summary = $summary;
+
+        return $this;
+    }
+
+    /**
      * Returns the description of the command.
+     *
+     * The description provides additional information about a command that is
+     * displayed in the help.
      *
      * @return string The description of the command.
      *
@@ -341,17 +387,10 @@ class CommandConfig extends Config
     /**
      * Sets the description of the command.
      *
-     * The description is a short one-liner that describes the command in the
-     * command listing. The description should be written in imperative form
-     * rather than in descriptive form. So:
+     * The description provides additional information about a command that is
+     * displayed in the help.
      *
-     * > List the contents of a directory.
-     *
-     * should be preferred over
-     *
-     * > Lists the contents of a directory.
-     *
-     * @param string $description The description.
+     * @param string $description The description of the command.
      *
      * @return static The current instance.
      *
@@ -365,45 +404,6 @@ class CommandConfig extends Config
         }
 
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * Returns the help text of the command.
-     *
-     * The help text provides additional information about a command that is
-     * displayed in the help view.
-     *
-     * @return string The help text of the command.
-     *
-     * @see setHelp()
-     */
-    public function getHelp()
-    {
-        return $this->help;
-    }
-
-    /**
-     * Sets the help text of the command.
-     *
-     * The help text provides additional information about a command that is
-     * displayed in the help view.
-     *
-     * @param string $help The help text of the command.
-     *
-     * @return static The current instance.
-     *
-     * @see getHelp()
-     */
-    public function setHelp($help)
-    {
-        if (null !== $help) {
-            Assert::string($help, 'The help text must be a string or null. Got: %s');
-            Assert::notEmpty($help, 'The help text must not be empty.');
-        }
-
-        $this->help = $help;
 
         return $this;
     }

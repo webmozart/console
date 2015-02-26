@@ -51,13 +51,13 @@ class ApplicationHelpTest extends PHPUnit_Framework_TestCase
             ->addArgument('global-argument', 0, 'Description of "global-argument"')
             ->addOption('global-option', null, 0, 'Description of "global-option"')
             ->beginCommand('command1')
-                ->setDescription('Description of "command1"')
+                ->setSummary('Summary of "command1"')
             ->end()
             ->beginCommand('command2')
-                ->setDescription('Description of "command2"')
+                ->setSummary('Summary of "command2"')
             ->end()
             ->beginCommand('longer-command3')
-                ->setDescription('Description of "longer-command3"')
+                ->setSummary('Summary of "longer-command3"')
             ->end()
         ;
 
@@ -79,9 +79,9 @@ GLOBAL OPTIONS
   --global-option  Description of "global-option"
 
 AVAILABLE COMMANDS
-  command1         Description of "command1"
-  command2         Description of "command2"
-  longer-command3  Description of "longer-command3"
+  command1         Summary of "command1"
+  command2         Summary of "command2"
+  longer-command3  Summary of "longer-command3"
 
 
 EOF;
@@ -263,7 +263,7 @@ EOF;
     public function testRenderDescription()
     {
         $config = ApplicationConfig::create()
-            ->setHelp('The help')
+            ->setDescription('The help')
         ;
 
         $application = new ConsoleApplication($config);

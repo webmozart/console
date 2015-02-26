@@ -395,7 +395,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     {
         $this->config
             ->setDebug(true)
-            
+
             ->beginCommand('list')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
                     $io->writeLine('Output');

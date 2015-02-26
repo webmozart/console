@@ -56,8 +56,8 @@ class CommandHelpTest extends PHPUnit_Framework_TestCase
             ->addArgument('global-argument', 0, 'Description of "global-argument"')
             ->addOption('global-option', null, 0, 'Description of "global-option"')
             ->beginCommand('command')
+                ->setSummary('Summary of "command"')
                 ->setDescription('Description of "command"')
-                ->setHelp('Help of "command"')
                 ->addAlias('command-alias')
                 ->addArgument('argument', 0, 'Description of "argument"')
                 ->addOption('option', null, 0, 'Description of "option"')
@@ -84,7 +84,7 @@ GLOBAL OPTIONS
   --global-option    Description of "global-option"
 
 DESCRIPTION
-  Help of "command"
+  Description of "command"
 
 
 EOF;
