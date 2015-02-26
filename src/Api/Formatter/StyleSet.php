@@ -82,6 +82,18 @@ class StyleSet
     }
 
     /**
+     * Removes a style.
+     *
+     * This method does nothing if the tag does not exist.
+     *
+     * @param string $tag The tag of the style.
+     */
+    public function remove($tag)
+    {
+        unset($this->styles[$tag]);
+    }
+
+    /**
      * Clears the contents of the style set.
      */
     public function clear()

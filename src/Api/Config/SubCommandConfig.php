@@ -107,16 +107,6 @@ class SubCommandConfig extends CommandConfig
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultStyleSet()
-    {
-        return $this->parentConfig
-            ? $this->parentConfig->getStyleSet()
-            : parent::getDefaultStyleSet();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultHandler()
     {
         return $this->parentConfig

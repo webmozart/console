@@ -14,14 +14,10 @@ namespace Webmozart\Console\Tests\Api\Config;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Symfony\Component\Console\Helper\HelperSet;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\Config;
-use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
-use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Handler\NullHandler;
 use Webmozart\Console\Tests\Api\Config\Fixtures\ConcreteConfig;
 
@@ -84,22 +80,6 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $helperSet = new HelperSet();
 
         $this->assertEquals($helperSet, $this->config->getHelperSet());
-    }
-
-    public function testSetStyleSet()
-    {
-        $styleSet = new StyleSet();
-
-        $this->config->setStyleSet($styleSet);
-
-        $this->assertSame($styleSet, $this->config->getStyleSet());
-    }
-
-    public function testDefaultStyleSet()
-    {
-        $styleSet = new DefaultStyleSet();
-
-        $this->assertEquals($styleSet, $this->config->getStyleSet());
     }
 
     public function testSetArgsParser()

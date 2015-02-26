@@ -62,7 +62,7 @@ abstract class AbstractHelp implements Renderable
      */
     protected function renderArguments(BlockLayout $layout, array $arguments)
     {
-        $layout->add(new Paragraph('<h>ARGUMENTS</h>'));
+        $layout->add(new Paragraph('<b>ARGUMENTS</b>'));
         $layout->beginBlock();
 
         foreach ($arguments as $argument) {
@@ -100,7 +100,7 @@ abstract class AbstractHelp implements Renderable
      */
     protected function renderOptions(BlockLayout $layout, array $options)
     {
-        $layout->add(new Paragraph('<h>OPTIONS</h>'));
+        $layout->add(new Paragraph('<b>OPTIONS</b>'));
         $layout->beginBlock();
 
         foreach ($options as $option) {
@@ -119,7 +119,7 @@ abstract class AbstractHelp implements Renderable
      */
     protected function renderGlobalOptions(BlockLayout $layout, array $options)
     {
-        $layout->add(new Paragraph('<h>GLOBAL OPTIONS</h>'));
+        $layout->add(new Paragraph('<b>GLOBAL OPTIONS</b>'));
         $layout->beginBlock();
 
         foreach ($options as $option) {
@@ -183,10 +183,10 @@ abstract class AbstractHelp implements Renderable
         $nameParts = array();
         $argumentParts = array();
 
-        $nameParts[] = '<tt>'.($appName ?: 'console').'</tt>';
+        $nameParts[] = '<u>'.($appName ?: 'console').'</u>';
 
         foreach ($argsFormat->getCommandNames() as $commandName) {
-            $nameParts[] = '<tt>'.$commandName->toString().'</tt>';
+            $nameParts[] = '<u>'.$commandName->toString().'</u>';
         }
 
         foreach ($argsFormat->getCommandOptions() as $commandOption) {

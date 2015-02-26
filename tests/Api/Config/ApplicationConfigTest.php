@@ -15,6 +15,9 @@ use PHPUnit_Framework_TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Formatter\Style;
+use Webmozart\Console\Api\Formatter\StyleSet;
+use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -376,6 +379,62 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->config->isDebug());
         $this->config->setDebug(false);
         $this->assertFalse($this->config->isDebug());
+    }
+
+    public function testSetStyleSet()
+    {
+        $styleSet = new StyleSet();
+
+        $this->config->setStyleSet($styleSet);
+
+        $this->assertSame($styleSet, $this->config->getStyleSet());
+    }
+
+    public function testDefaultStyleSet()
+    {
+        $styleSet = new DefaultStyleSet();
+
+        $this->assertEquals($styleSet, $this->config->getStyleSet());
+    }
+
+    public function testAddStyle()
+    {
+        $style = Style::tag('custom');
+
+        $this->config->addStyle($style);
+
+        $styleSet = new DefaultStyleSet();
+        $styleSet->add($style);
+
+        $this->assertEquals($styleSet, $this->config->getStyleSet());
+    }
+
+    public function testAddStyles()
+    {
+        $style1 = Style::tag('custom1');
+        $style2 = Style::tag('custom2');
+
+        $this->config->addStyles(array($style1, $style2));
+
+        $styleSet = new DefaultStyleSet();
+        $styleSet->add($style1);
+        $styleSet->add($style2);
+
+        $this->assertEquals($styleSet, $this->config->getStyleSet());
+    }
+
+    public function testRemoveStyle()
+    {
+        $style1 = Style::tag('custom1');
+        $style2 = Style::tag('custom2');
+
+        $this->config->addStyles(array($style1, $style2));
+        $this->config->removeStyle('custom1');
+
+        $styleSet = new DefaultStyleSet();
+        $styleSet->add($style2);
+
+        $this->assertEquals($styleSet, $this->config->getStyleSet());
     }
 
     public function testBeginCommand()

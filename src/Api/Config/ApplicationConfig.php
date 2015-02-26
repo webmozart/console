@@ -15,8 +15,11 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
+use Webmozart\Console\Api\Formatter\Style;
+use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Api\Resolver\CommandResolver;
 use Webmozart\Console\Assert\Assert;
+use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
@@ -81,6 +84,11 @@ class ApplicationConfig extends Config
      * @var bool
      */
     private $debug = false;
+
+    /**
+     * @var StyleSet
+     */
+    private $styleSet;
 
     /**
      * Creates a new console application.
@@ -513,6 +521,96 @@ class ApplicationConfig extends Config
         Assert::boolean($debug);
 
         $this->debug = $debug;
+
+        return $this;
+    }
+
+    /**
+     * Returns the configured style set.
+     *
+     * @return StyleSet The style set.
+     *
+     * @see setStyleSet()
+     */
+    public function getStyleSet()
+    {
+        if (!$this->styleSet) {
+            $this->styleSet = new DefaultStyleSet();
+        }
+
+        return $this->styleSet;
+    }
+
+    /**
+     * Sets the used style set.
+     *
+     * @param StyleSet $styleSet The style set to use.
+     *
+     * @return static The current instance.
+     *
+     * @see getStyleSet()
+     */
+    public function setStyleSet(StyleSet $styleSet)
+    {
+        $this->styleSet = $styleSet;
+
+        return $this;
+    }
+
+    /**
+     * Adds a style to the style set.
+     *
+     * @param Style $style The style to add.
+     *
+     * @return static The current instance.
+     *
+     * @see StyleSet::add()
+     */
+    public function addStyle(Style $style)
+    {
+        if (!$this->styleSet) {
+            $this->styleSet = new DefaultStyleSet();
+        }
+
+        $this->styleSet->add($style);
+
+        return $this;
+    }
+
+    /**
+     * Adds multiple styles to the style set.
+     *
+     * @param Style[] $styles The styles to add.
+     *
+     * @return static The current instance.
+     *
+     * @see StyleSet::merge()
+     */
+    public function addStyles(array $styles)
+    {
+        if (!$this->styleSet) {
+            $this->styleSet = new DefaultStyleSet();
+        }
+
+        $this->styleSet->merge($styles);
+
+        return $this;
+    }
+
+    /**
+     * Removes a style from the style set.
+     *
+     * @param string $tag The tag of the style to remove.
+     *
+     * @return static The current instance.
+     *
+     * @see StyleSet::remove()
+     */
+    public function removeStyle($tag)
+    {
+        if ($this->styleSet) {
+            $this->styleSet->remove($tag);
+        }
 
         return $this;
     }

@@ -143,7 +143,7 @@ class LabeledParagraph implements Renderable
         // TODO replace wordwrap() by implementation that is aware of format codes
         $text = str_replace("\n", "\n".$linePrefix.$textPrefix, wordwrap($this->text, $textWidth));
 
-        // Add the total length of the style tags ("<h>", ...)
+        // Add the total length of the style tags ("<b>", ...)
         $labelWidth = $textOffset + $styleTagLength;
 
         $canvas->write(rtrim(sprintf(

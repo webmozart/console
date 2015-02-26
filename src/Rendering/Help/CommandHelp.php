@@ -112,7 +112,7 @@ class CommandHelp extends AbstractHelp
         $appName = $command->getApplication()->getConfig()->getName();
         $prefix = count($formatsToPrint) > 1 ? '    ' : '';
 
-        $layout->add(new Paragraph('<h>USAGE</h>'));
+        $layout->add(new Paragraph('<b>USAGE</b>'));
         $layout->beginBlock();
 
         foreach ($formatsToPrint as $vars) {
@@ -148,7 +148,7 @@ class CommandHelp extends AbstractHelp
      */
     protected function renderSubCommands(BlockLayout $layout, CommandCollection $subCommands)
     {
-        $layout->add(new Paragraph('<h>COMMANDS</h>'));
+        $layout->add(new Paragraph('<b>COMMANDS</b>'));
         $layout->beginBlock();
 
         $subCommands = $subCommands->toArray();
@@ -177,11 +177,11 @@ class CommandHelp extends AbstractHelp
 
         if ($config instanceof OptionCommandConfig) {
             if ($config->isLongNamePreferred()) {
-                $preferredName = '--<tt>'.$config->getLongName().'</tt>';
-                $alternativeName = $config->getShortName() ? '-<tt>'.$config->getShortName().'</tt>' : null;
+                $preferredName = '--<u>'.$config->getLongName().'</u>';
+                $alternativeName = $config->getShortName() ? '-<u>'.$config->getShortName().'</u>' : null;
             } else {
-                $preferredName = '-<tt>'.$config->getShortName().'</tt>';
-                $alternativeName = '--<tt>'.$config->getLongName().'</tt>';
+                $preferredName = '-<u>'.$config->getShortName().'</u>';
+                $alternativeName = '--<u>'.$config->getLongName().'</u>';
             }
 
             $name = $preferredName;
@@ -190,7 +190,7 @@ class CommandHelp extends AbstractHelp
                 $name .= ' ('.$alternativeName.')';
             }
         } else {
-            $name = '<tt>'.$command->getName().'</tt>';
+            $name = '<u>'.$command->getName().'</u>';
         }
 
         $layout->add(new Paragraph($name));
@@ -282,7 +282,7 @@ class CommandHelp extends AbstractHelp
     protected function renderDescription(BlockLayout $layout, $help)
     {
         $layout
-            ->add(new Paragraph('<h>DESCRIPTION</h>'))
+            ->add(new Paragraph('<b>DESCRIPTION</b>'))
             ->beginBlock()
             ->add(new Paragraph($help))
             ->endBlock()

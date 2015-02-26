@@ -968,16 +968,6 @@ class CommandConfig extends Config
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultStyleSet()
-    {
-        return $this->applicationConfig
-            ? $this->applicationConfig->getStyleSet()
-            : parent::getDefaultStyleSet();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getDefaultHandler()
     {
         return $this->applicationConfig

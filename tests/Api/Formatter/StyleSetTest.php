@@ -55,6 +55,26 @@ class StyleSetTest extends PHPUnit_Framework_TestCase
         $styleSet->add(Style::noTag());
     }
 
+    public function testRemove()
+    {
+        $styleSet = new StyleSet();
+        $styleSet->add($style1 = Style::tag('style1')->fgBlue());
+        $styleSet->add($style2 = Style::tag('style2')->bgMagenta());
+        $styleSet->remove('style1');
+
+        $this->assertSame(array(
+            'style2' => $style2,
+        ), $styleSet->toArray());
+    }
+
+    public function testRemoveIgnoresNonExistingTag()
+    {
+        $styleSet = new StyleSet();
+        $styleSet->remove('style');
+
+        $this->assertSame(array(), $styleSet->toArray());
+    }
+
     public function testMerge()
     {
         $styleSet = new StyleSet();

@@ -22,7 +22,6 @@ use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\OptionCommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Args\DefaultArgsParser;
-use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Handler\NullHandler;
 
 /**
@@ -512,15 +511,6 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->applicationConfig->setHelperSet($helperSet);
 
         $this->assertSame($helperSet, $this->config->getHelperSet());
-    }
-
-    public function testGetStyleSetReturnsApplicationStyleSetByDefault()
-    {
-        $styleSet = new DefaultStyleSet();
-
-        $this->applicationConfig->setStyleSet($styleSet);
-
-        $this->assertSame($styleSet, $this->config->getStyleSet());
     }
 
     public function testGetHandlerReturnsApplicationHandlerByDefault()

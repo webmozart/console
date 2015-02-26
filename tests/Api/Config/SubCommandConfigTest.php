@@ -17,7 +17,6 @@ use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Config\SubCommandConfig;
 use Webmozart\Console\Args\DefaultArgsParser;
-use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Handler\NullHandler;
 
 /**
@@ -75,15 +74,6 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
         $this->parentConfig->setHelperSet($helperSet);
 
         $this->assertSame($helperSet, $this->config->getHelperSet());
-    }
-
-    public function testGetStyleSetReturnsParentStyleSetByDefault()
-    {
-        $styleSet = new DefaultStyleSet();
-
-        $this->parentConfig->setStyleSet($styleSet);
-
-        $this->assertSame($styleSet, $this->config->getStyleSet());
     }
 
     public function testGetHandlerReturnsParentHandlerByDefault()

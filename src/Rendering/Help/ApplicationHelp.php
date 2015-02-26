@@ -101,7 +101,7 @@ class ApplicationHelp extends AbstractHelp
     {
         $appName = $application->getConfig()->getName();
 
-        $layout->add(new Paragraph("<h>USAGE</h>"));
+        $layout->add(new Paragraph("<b>USAGE</b>"));
         $layout->beginBlock();
 
         $this->renderSynopsis($layout, $argsFormat, $appName);
@@ -118,7 +118,7 @@ class ApplicationHelp extends AbstractHelp
      */
     protected function renderCommands(BlockLayout $layout, CommandCollection $commands)
     {
-        $layout->add(new Paragraph('<h>AVAILABLE COMMANDS</h>'));
+        $layout->add(new Paragraph('<b>AVAILABLE COMMANDS</b>'));
         $layout->beginBlock();
 
         $commands = $commands->toArray();
@@ -155,7 +155,7 @@ class ApplicationHelp extends AbstractHelp
     protected function renderDescription(BlockLayout $layout, $help)
     {
         $layout
-            ->add(new Paragraph('<h>DESCRIPTION</h>'))
+            ->add(new Paragraph('<b>DESCRIPTION</b>'))
             ->beginBlock()
                 ->add(new Paragraph($help))
             ->endBlock()

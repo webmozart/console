@@ -17,10 +17,8 @@ use Webmozart\Console\Api\Args\ArgsParser;
 use Webmozart\Console\Api\Args\Format\ArgsFormatBuilder;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
-use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Args\DefaultArgsParser;
 use Webmozart\Console\Assert\Assert;
-use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Handler\NullHandler;
 
 /**
@@ -40,11 +38,6 @@ abstract class Config
      * @var HelperSet
      */
     private $helperSet;
-
-    /**
-     * @var StyleSet
-     */
-    private $styleSet;
 
     /**
      * @var ArgsParser
@@ -182,38 +175,6 @@ abstract class Config
     public function setHelperSet(HelperSet $helperSet)
     {
         $this->helperSet = $helperSet;
-
-        return $this;
-    }
-
-    /**
-     * Returns the configured style set.
-     *
-     * @return StyleSet The style set.
-     *
-     * @see setStyleSet()
-     */
-    public function getStyleSet()
-    {
-        if (!$this->styleSet) {
-            return $this->getDefaultStyleSet();
-        }
-
-        return $this->styleSet;
-    }
-
-    /**
-     * Sets the used style set.
-     *
-     * @param StyleSet $styleSet The style set to use.
-     *
-     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
-     *
-     * @see getStyleSet()
-     */
-    public function setStyleSet(StyleSet $styleSet)
-    {
-        $this->styleSet = $styleSet;
 
         return $this;
     }
@@ -411,16 +372,6 @@ abstract class Config
     protected function getDefaultHelperSet()
     {
         return new HelperSet();
-    }
-
-    /**
-     * Returns the style set to use if none is set.
-     *
-     * @return DefaultStyleSet The default style set.
-     */
-    protected function getDefaultStyleSet()
-    {
-        return new DefaultStyleSet();
     }
 
     /**

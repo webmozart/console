@@ -158,7 +158,7 @@ class ExceptionTrace implements Renderable
 
             $io->errorRaw(sprintf("  %s%s()\n    %s\n",
                 $namespace,
-                $io->format('<tt>'.$signature.'</tt>'),
+                $io->format('<u>'.$signature.'</u>'),
                 $io->format('<em>'.$location.'</em>')
             ));
         }

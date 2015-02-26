@@ -25,18 +25,17 @@ class DefaultStyleSet extends StyleSet
     public function __construct()
     {
         $this->replace(array(
-            // Symfony default styles
-            Style::tag('error')->fgWhite()->bgRed(),
-            Style::tag('info')->fgGreen(),
-            Style::tag('comment')->fgYellow(),
-            Style::tag('question')->fgBlack()->bgCyan(),
-
-            // More default styles
-            Style::tag('h')->bold(),
+            // Default styles
             Style::tag('b')->bold(),
+            Style::tag('u')->underlined(),
             Style::tag('em')->fgCyan(),
-            Style::tag('tt')->underlined(),
+            Style::tag('error')->fgWhite()->bgRed(),
             Style::tag('warn')->fgBlack()->bgYellow(),
+
+            // Adapted Symfony default styles
+            Style::tag('info')->fgCyan(),
+            Style::tag('comment')->fgCyan(),
+            Style::tag('question')->fgBlack()->bgCyan(),
         ));
     }
 }
