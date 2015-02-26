@@ -15,6 +15,8 @@ use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\RawArgs;
+use Webmozart\Console\Api\Formatter\Style;
+use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\Config\DefaultApplicationConfig;
@@ -496,5 +498,33 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
             array(new StringArgs('command -V')),
             array(new StringArgs('command --version')),
         );
+    }
+
+    public function testUseConfiguredStyleSet()
+    {
+        $styleSet = new StyleSet();
+        $styleSet->add(Style::tag('custom'));
+
+        $this->config
+            ->setStyleSet($styleSet)
+
+            ->beginCommand('command')
+                ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
+                    PHPUnit_Framework_Assert::assertSame('text', $io->removeFormat('<custom>text</custom>'));
+
+                    return 123;
+                }))
+            ->end()
+        ;
+
+        $application = new ConsoleApplication($this->config);
+        $args = new StringArgs('command');
+        $input = new BufferedInput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
+
+        $status = $application->run($args, $input, $output, $errorOutput);
+
+        $this->assertSame(123, $status);
     }
 }

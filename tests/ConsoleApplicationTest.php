@@ -46,7 +46,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     {
         $this->config = new ApplicationConfig();
         $this->config->setTerminateAfterRun(false);
-        $this->config->setIOFactory(function ($args, $input, $output, $errorOutput) {
+        $this->config->setIOFactory(function ($application, $args, $input, $output, $errorOutput) {
             return new RawIO($input, $output, $errorOutput);
         });
     }
@@ -395,7 +395,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     {
         $this->config
             ->setDebug(true)
-            
+
             ->beginCommand('list')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
                     $io->writeLine('Output');

@@ -16,6 +16,7 @@ use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Args\RawArgs;
@@ -84,18 +85,19 @@ class DefaultApplicationConfig extends ApplicationConfig
         ;
     }
 
-    public function createIO(RawArgs $args, Input $input = null, Output $output = null, Output $errorOutput = null)
+    public function createIO(Application $application, RawArgs $args, Input $input = null, Output $output = null, Output $errorOutput = null)
     {
         $input = $input ?: new StandardInput();
         $output = $output ?: new StandardOutput();
         $errorOutput = $errorOutput ?: new ErrorOutput();
+        $styleSet = $application->getConfig()->getStyleSet();
 
         if ($args->hasToken('--no-ansi')) {
-            $formatter = new PlainFormatter();
+            $formatter = new PlainFormatter($styleSet);
         } elseif ($args->hasToken('--ansi')) {
-            $formatter = new AnsiFormatter();
+            $formatter = new AnsiFormatter($styleSet);
         } else {
-            $formatter = $output->supportsAnsi() ? new AnsiFormatter() : new PlainFormatter();
+            $formatter = $output->supportsAnsi() ? new AnsiFormatter($styleSet) : new PlainFormatter($styleSet);
         }
 
         $io = new FormattedIO($input, $output, $errorOutput, $formatter);
