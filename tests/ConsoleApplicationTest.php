@@ -286,13 +286,13 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $args = new StringArgs($argString);
         $input = new BufferedInput("line1\nline2");
-        $output = $buffer1 = new BufferedOutput();
-        $errorOutput = $buffer2 = new BufferedOutput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
-        $this->assertSame("line1\n", $buffer1->fetch());
-        $this->assertSame("line2", $buffer2->fetch());
+        $this->assertSame("line1\n", $output->fetch());
+        $this->assertSame("line2", $errorOutput->fetch());
     }
 
     public function getRunConfigurations()
@@ -391,6 +391,31 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $application->run($args);
     }
 
+    public function testPrintDebugIfInDebugMode()
+    {
+        $this->config
+            ->setDebug(true)
+            
+            ->beginCommand('list')
+                ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
+                    $io->writeLine('Output');
+
+                    return 123;
+                }))
+            ->end()
+        ;
+
+        $args = new StringArgs('list');
+        $input = new BufferedInput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
+        $application = new ConsoleApplication($this->config);
+
+        $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
+        $this->assertSame("Debug: on\nOutput\n", $output->fetch());
+        $this->assertSame('', $errorOutput->fetch());
+    }
+
     public function testPrintExceptionIfCatchingActive()
     {
         $this->config
@@ -403,13 +428,13 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $args = new StringArgs('list');
         $input = new BufferedInput();
-        $output = $buffer1 = new BufferedOutput();
-        $errorOutput = $buffer2 = new BufferedOutput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
-        $this->assertSame('', $buffer1->fetch());
-        $this->assertSame("fatal: The command \"foobar\" does not exist.\n", $buffer2->fetch());
+        $this->assertSame('', $output->fetch());
+        $this->assertSame("fatal: The command \"foobar\" does not exist.\n", $errorOutput->fetch());
     }
 
     public function testNormalizeNegativeExceptionCodeToOne()
@@ -424,8 +449,8 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $args = new StringArgs('list');
         $input = new BufferedInput();
-        $output = $buffer1 = new BufferedOutput();
-        $errorOutput = $buffer2 = new BufferedOutput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(1, $application->run($args, $input, $output, $errorOutput));
@@ -443,8 +468,8 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $args = new StringArgs('list');
         $input = new BufferedInput();
-        $output = $buffer1 = new BufferedOutput();
-        $errorOutput = $buffer2 = new BufferedOutput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
         $application = new ConsoleApplication($this->config);
 
         // 255 is the highest supported exit status of a process

@@ -27,7 +27,9 @@ use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreResolveEvent;
+use Webmozart\Console\Api\Formatter\Style;
 use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
 use Webmozart\Console\Rendering\Canvas;
@@ -206,7 +208,12 @@ class ConsoleApplication implements Application
             throw new LogicException('The IO factory must be set.');
         }
 
+        /** @var IO $io */
         $io = $ioFactory($args, $input, $output, $errorOutput);
+
+        if ($this->config->isDebug()) {
+            $io->writeLineRaw($io->format('Debug: on', Style::noTag()->bgCyan()->fgBlack()));
+        }
 
         try {
             $resolvedCommand = $this->resolveCommand($args);

@@ -38,6 +38,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->config = new DefaultApplicationConfig();
+        $this->config->setCatchExceptions(false);
         $this->config->setTerminateAfterRun(false);
     }
 
@@ -362,6 +363,33 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command -vvv');
+        $input = new BufferedInput();
+        $output = new BufferedOutput();
+        $errorOutput = new BufferedOutput();
+
+        $status = $application->run($args, $input, $output, $errorOutput);
+
+        $this->assertSame(123, $status);
+    }
+
+    public function testSetVerbosityDebugIfInDebugMode()
+    {
+        $this->config
+            ->setDebug(true)
+
+            ->beginCommand('command')
+                ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
+                    PHPUnit_Framework_Assert::assertTrue($io->isVerbose());
+                    PHPUnit_Framework_Assert::assertTrue($io->isVeryVerbose());
+                    PHPUnit_Framework_Assert::assertTrue($io->isDebug());
+
+                    return 123;
+                }))
+            ->end()
+        ;
+
+        $application = new ConsoleApplication($this->config);
+        $args = new StringArgs('command');
         $input = new BufferedInput();
         $output = new BufferedOutput();
         $errorOutput = new BufferedOutput();

@@ -78,6 +78,11 @@ class ApplicationConfig extends Config
     private $ioFactory;
 
     /**
+     * @var bool
+     */
+    private $debug = false;
+
+    /**
      * Creates a new console application.
      *
      * @param string $name    The name of the application.
@@ -474,6 +479,40 @@ class ApplicationConfig extends Config
         Assert::nullOrIsCallable($ioFactory, 'The IO factory must be a callable or null. Got: %s');
 
         $this->ioFactory = $ioFactory;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether the application is in debug mode.
+     *
+     * In debug mode, the verbosity is always {@link IO::DEBUG}.
+     *
+     * @return boolean Returns `true` if the application is in debug mode.
+     *
+     * @see setDebug()
+     */
+    public function isDebug()
+    {
+        return $this->debug;
+    }
+
+    /**
+     * Sets whether the application is in debug mode.
+     *
+     * In debug mode, the verbosity is always {@link IO::DEBUG}.
+     *
+     * @param boolean $debug Set to `true` to activate the debug mode.
+     *
+     * @return static The current instance.
+     *
+     * @see isDebug()
+     */
+    public function setDebug($debug)
+    {
+        Assert::boolean($debug);
+
+        $this->debug = $debug;
 
         return $this;
     }

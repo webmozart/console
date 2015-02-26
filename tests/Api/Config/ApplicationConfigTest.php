@@ -369,6 +369,15 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->config->getIOFactory());
     }
 
+    public function testSetDebug()
+    {
+        $this->assertFalse($this->config->isDebug());
+        $this->config->setDebug(true);
+        $this->assertTrue($this->config->isDebug());
+        $this->config->setDebug(false);
+        $this->assertFalse($this->config->isDebug());
+    }
+
     public function testBeginCommand()
     {
         $this->config

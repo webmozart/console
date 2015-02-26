@@ -100,7 +100,7 @@ class DefaultApplicationConfig extends ApplicationConfig
 
         $io = new FormattedIO($input, $output, $errorOutput, $formatter);
 
-        if ($args->hasToken('-vvv')) {
+        if ($args->hasToken('-vvv') || $this->isDebug()) {
             $io->setVerbosity(IO::DEBUG);
         } elseif ($args->hasToken('-vv')) {
             $io->setVerbosity(IO::VERY_VERBOSE);
