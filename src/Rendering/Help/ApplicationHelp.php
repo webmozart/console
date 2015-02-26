@@ -50,7 +50,7 @@ class ApplicationHelp extends AbstractHelp
      */
     protected function renderHelp(BlockLayout $layout)
     {
-        $description = $this->application->getConfig()->getDescription();
+        $help = $this->application->getConfig()->getHelp();
         $commands = $this->application->getNamedCommands();
         $globalArgsFormat = $this->application->getGlobalArgsFormat();
 
@@ -73,8 +73,8 @@ class ApplicationHelp extends AbstractHelp
             $this->renderCommands($layout, $commands);
         }
 
-        if ($description) {
-            $this->renderDescription($layout, $description);
+        if ($help) {
+            $this->renderDescription($layout, $help);
         }
     }
 
@@ -140,24 +140,24 @@ class ApplicationHelp extends AbstractHelp
      */
     protected function renderCommand(BlockLayout $layout, Command $command)
     {
-        $summary = $command->getConfig()->getSummary();
+        $description = $command->getConfig()->getDescription();
         $name = '<em>'.$command->getName().'</em>';
 
-        $layout->add(new LabeledParagraph($name, $summary));
+        $layout->add(new LabeledParagraph($name, $description));
     }
 
     /**
      * Renders the "Description" section.
      *
-     * @param BlockLayout $layout      The layout.
-     * @param string      $description The description.
+     * @param BlockLayout $layout The layout.
+     * @param string      $help   The help text.
      */
-    protected function renderDescription(BlockLayout $layout, $description)
+    protected function renderDescription(BlockLayout $layout, $help)
     {
         $layout
             ->add(new Paragraph('<h>DESCRIPTION</h>'))
             ->beginBlock()
-                ->add(new Paragraph($description))
+                ->add(new Paragraph($help))
             ->endBlock()
             ->add(new EmptyLine())
         ;

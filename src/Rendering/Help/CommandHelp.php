@@ -48,7 +48,7 @@ class CommandHelp extends AbstractHelp
      */
     protected function renderHelp(BlockLayout $layout)
     {
-        $description = $this->command->getConfig()->getDescription();
+        $help = $this->command->getConfig()->getHelp();
         $argsFormat = $this->command->getArgsFormat();
         $subCommands = $this->command->getNamedSubCommands();
 
@@ -70,8 +70,8 @@ class CommandHelp extends AbstractHelp
             $this->renderGlobalOptions($layout, $argsFormat->getBaseFormat()->getOptions());
         }
 
-        if ($description) {
-            $this->renderDescription($layout, $description);
+        if ($help) {
+            $this->renderDescription($layout, $help);
         }
     }
 
@@ -171,6 +171,7 @@ class CommandHelp extends AbstractHelp
     {
         $config = $command->getConfig();
         $description = $config->getDescription();
+        $help = $config->getHelp();
         $arguments = $command->getArgsFormat()->getArguments(false);
         $options = $command->getArgsFormat()->getOptions(false);
 
@@ -199,6 +200,10 @@ class CommandHelp extends AbstractHelp
             $this->renderSubCommandDescription($layout, $description);
         }
 
+        if ($help) {
+            $this->renderSubCommandHelp($layout, $help);
+        }
+
         if ($arguments) {
             $this->renderSubCommandArguments($layout, $arguments);
         }
@@ -207,7 +212,7 @@ class CommandHelp extends AbstractHelp
             $this->renderSubCommandOptions($layout, $options);
         }
 
-        if (!$description && !$arguments && !$options) {
+        if (!$description && !$help && !$arguments && !$options) {
             $layout->add(new EmptyLine());
         }
 
@@ -215,7 +220,7 @@ class CommandHelp extends AbstractHelp
     }
 
     /**
-     * Renders the description text of a sub-command.
+     * Renders the description of a sub-command.
      *
      * @param BlockLayout $layout      The layout.
      * @param string      $description The description.
@@ -223,6 +228,18 @@ class CommandHelp extends AbstractHelp
     protected function renderSubCommandDescription(BlockLayout $layout, $description)
     {
         $layout->add(new Paragraph($description));
+        $layout->add(new EmptyLine());
+    }
+
+    /**
+     * Renders the help text of a sub-command.
+     *
+     * @param BlockLayout $layout The layout.
+     * @param string      $help   The help text.
+     */
+    protected function renderSubCommandHelp(BlockLayout $layout, $help)
+    {
+        $layout->add(new Paragraph($help));
         $layout->add(new EmptyLine());
     }
 
@@ -259,15 +276,15 @@ class CommandHelp extends AbstractHelp
     /**
      * Renders the "Description" section.
      *
-     * @param BlockLayout $layout      The layout.
-     * @param string      $description The description.
+     * @param BlockLayout $layout The layout.
+     * @param string      $help   The help text.
      */
-    protected function renderDescription(BlockLayout $layout, $description)
+    protected function renderDescription(BlockLayout $layout, $help)
     {
         $layout
             ->add(new Paragraph('<h>DESCRIPTION</h>'))
             ->beginBlock()
-            ->add(new Paragraph($description))
+            ->add(new Paragraph($help))
             ->endBlock()
             ->add(new EmptyLine())
         ;

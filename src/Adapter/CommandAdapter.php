@@ -50,8 +50,8 @@ class CommandAdapter extends Command
 
         parent::setDefinition(new ArgsFormatInputDefinition($this->adaptedCommand->getArgsFormat()));
         parent::setApplication($application);
-        parent::setDescription($config->getSummary());
-        parent::setHelp($config->getDescription());
+        parent::setDescription($config->getDescription());
+        parent::setHelp($config->getHelp());
         parent::setAliases($adaptedCommand->getAliases());
 
         if ($helperSet = $config->getHelperSet()) {

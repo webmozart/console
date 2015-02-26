@@ -52,8 +52,8 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $config = new CommandConfig();
 
         $this->assertNull($config->getName());
-        $this->assertNull($config->getSummary());
         $this->assertNull($config->getDescription());
+        $this->assertNull($config->getHelp());
         $this->assertNull($config->getProcessTitle());
         $this->assertNull($config->getApplicationConfig());
         $this->assertSame(array(), $config->getAliases());
@@ -75,8 +75,8 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $config = CommandConfig::create();
 
         $this->assertNull($config->getName());
-        $this->assertNull($config->getSummary());
         $this->assertNull($config->getDescription());
+        $this->assertNull($config->getHelp());
         $this->assertNull($config->getProcessTitle());
         $this->assertNull($config->getApplicationConfig());
         $this->assertSame(array(), $config->getAliases());
@@ -146,41 +146,11 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame('changed', $this->config->getName());
     }
 
-    public function testSetSummary()
-    {
-        $this->config->setSummary('summary');
-
-        $this->assertSame('summary', $this->config->getSummary());
-    }
-
-    public function testSetSummaryNull()
-    {
-        $this->config->setSummary(null);
-
-        $this->assertNull($this->config->getSummary());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetSummaryFailsIfEmpty()
-    {
-        $this->config->setSummary('');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetSummaryFailsIfNotString()
-    {
-        $this->config->setSummary(1234);
-    }
-
     public function testSetDescription()
     {
-        $this->config->setDescription('description');
+        $this->config->setDescription('Description');
 
-        $this->assertSame('description', $this->config->getDescription());
+        $this->assertSame('Description', $this->config->getDescription());
     }
 
     public function testSetDescriptionNull()
@@ -204,6 +174,36 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
     public function testSetDescriptionFailsIfNotString()
     {
         $this->config->setDescription(1234);
+    }
+
+    public function testSetHelp()
+    {
+        $this->config->setHelp('Help');
+
+        $this->assertSame('Help', $this->config->getHelp());
+    }
+
+    public function testSetHelpNull()
+    {
+        $this->config->setHelp(null);
+
+        $this->assertNull($this->config->getHelp());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHelpFailsIfEmpty()
+    {
+        $this->config->setHelp('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHelpFailsIfNotString()
+    {
+        $this->config->setHelp(1234);
     }
 
     public function testDisable()

@@ -179,35 +179,35 @@ class ApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config->setVersion(1234);
     }
 
-    public function testSetDescription()
+    public function testSetHelp()
     {
-        $this->config->setDescription('description');
+        $this->config->setHelp('help');
 
-        $this->assertSame('description', $this->config->getDescription());
+        $this->assertSame('help', $this->config->getHelp());
     }
 
-    public function testSetDescriptionNull()
+    public function testSetHelpNull()
     {
-        $this->config->setDescription('description');
-        $this->config->setDescription(null);
+        $this->config->setHelp('help');
+        $this->config->setHelp(null);
 
-        $this->assertNull($this->config->getDescription());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testSetDescriptionFailsIfEmpty()
-    {
-        $this->config->setDescription('');
+        $this->assertNull($this->config->getHelp());
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testSetDescriptionFailsIfNoString()
+    public function testSetHelpFailsIfEmpty()
     {
-        $this->config->setDescription(1234);
+        $this->config->setHelp('');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetHelpFailsIfNoString()
+    {
+        $this->config->setHelp(1234);
     }
 
     public function testSetEventDispatcher()

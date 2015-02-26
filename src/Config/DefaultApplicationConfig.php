@@ -72,7 +72,7 @@ class DefaultApplicationConfig extends ApplicationConfig
 
             ->beginCommand('help')
                 ->markDefault()
-                ->setSummary('Display the manual of a command')
+                ->setDescription('Display the manual of a command')
                 ->addArgument('command', Argument::OPTIONAL, 'The command name')
                 ->addOption('man', 'm', Option::NO_VALUE, 'Output the help as man page')
                 ->addOption('ascii-doc', null, Option::NO_VALUE, 'Output the help as AsciiDoc document')

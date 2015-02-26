@@ -45,7 +45,7 @@ class ApplicationConfig extends Config
     /**
      * @var string
      */
-    private $description;
+    private $help;
 
     /**
      * @var CommandConfig[]
@@ -209,36 +209,30 @@ class ApplicationConfig extends Config
     }
 
     /**
-     * Returns the description of the application.
+     * Returns the help text of the application.
      *
-     * The description provides additional information about the application
-     * that is displayed in the help.
-     *
-     * @return string The description.
+     * @return string The help text.
      */
-    public function getDescription()
+    public function getHelp()
     {
-        return $this->description;
+        return $this->help;
     }
 
     /**
-     * Sets the description of the application.
+     * Sets the help text of the application.
      *
-     * The description provides additional information about the application
-     * that is displayed in the help.
-     *
-     * @param string $description The description.
+     * @param string $help The help text.
      *
      * @return static The current instance.
      */
-    public function setDescription($description)
+    public function setHelp($help)
     {
-        if (null !== $description) {
-            Assert::string($description, 'The application description must be a string. Got: %s');
-            Assert::notEmpty($description, 'The application description must not be empty.');
+        if (null !== $help) {
+            Assert::string($help, 'The help text must be a string. Got: %s');
+            Assert::notEmpty($help, 'The help text must not be empty.');
         }
 
-        $this->description = $description;
+        $this->help = $help;
 
         return $this;
     }
