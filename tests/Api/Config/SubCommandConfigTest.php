@@ -110,4 +110,15 @@ class SubCommandConfigTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($parser, $this->config->getArgsParser());
     }
+
+    public function testLenientArgsParsingDefaultsToParentValue()
+    {
+        $this->parentConfig->enableLenientArgsParsing();
+
+        $this->assertTrue($this->config->isLenientArgsParsingEnabled());
+
+        $this->parentConfig->disableLenientArgsParsing();
+
+        $this->assertFalse($this->config->isLenientArgsParsingEnabled());
+    }
 }

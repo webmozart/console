@@ -67,6 +67,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
             array(new StringArgs('help')),
             array(new StringArgs('-h')),
             array(new StringArgs('--help')),
+            array(new StringArgs('--help --foo')),
         );
     }
 
@@ -103,6 +104,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
             array(new StringArgs('command --help')),
             array(new StringArgs('-h command')),
             array(new StringArgs('--help command')),
+            array(new StringArgs('--help command --foo')),
         );
     }
 

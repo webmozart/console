@@ -43,7 +43,7 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
     /**
      * {@inheritdoc}
      */
-    public function parseArgs(RawArgs $args, ArgsFormat $format)
+    public function parseArgs(RawArgs $args, ArgsFormat $format, $lenient = false)
     {
         $this->setTokens($args->getTokens());
 
@@ -52,16 +52,20 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         try {
             $this->bind($formatAdapter);
         } catch (RuntimeException $e) {
-            throw new CannotParseArgsException($e->getMessage());
+            if (!$lenient) {
+                throw new CannotParseArgsException($e->getMessage());
+            }
         }
 
         // Prevent failing validation if not all command names are given
-        $this->insertMissingCommandNames($formatAdapter);
+        $this->insertMissingCommandNames($formatAdapter, $lenient);
 
         try {
             $this->validate();
         } catch (RuntimeException $e) {
-            throw new CannotParseArgsException($e->getMessage());
+            if (!$lenient) {
+                throw new CannotParseArgsException($e->getMessage());
+            }
         }
 
         return $this->createArgs($format, $args);
@@ -96,7 +100,7 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         return $args;
     }
 
-    private function insertMissingCommandNames(ArgsFormatInputDefinition $inputDefinition)
+    private function insertMissingCommandNames(ArgsFormatInputDefinition $inputDefinition, $lenient = false)
     {
         // Start with the default values of the arguments.
         $inputArguments = $inputDefinition->getArguments();
@@ -123,13 +127,13 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         //
         // fixed: [ cmd1: remote, cmd2: add ]
 
-        $this->copyArgumentValues($commandNames, $inputArguments, $fixedValues);
+        $this->copyArgumentValues($commandNames, $inputArguments, $fixedValues, $lenient);
 
         // Copy the remaining actual values. The result is:
         //
         // fixed: [ cmd1: remote, cmd2: add, name: origin, target: foo/bar ]
 
-        $this->copyArgumentValues($actualValues, $inputArguments, $fixedValues);
+        $this->copyArgumentValues($actualValues, $inputArguments, $fixedValues, $lenient);
 
         // Overwrite all current arguments with the fixed values
         foreach ($fixedValues as $name => $value) {
@@ -160,7 +164,7 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
         }
     }
 
-    private function copyArgumentValues(array &$actualValues, array &$inputArguments, array &$fixedValues)
+    private function copyArgumentValues(array &$actualValues, array &$inputArguments, array &$fixedValues, $lenient = false)
     {
         // The starting point are two arrays of arguments with the array
         // pointers set:
@@ -193,6 +197,10 @@ class DefaultArgsParser extends ArgvInput implements ArgsParser
 
         while (null !== key($actualValues)) {
             if (null === key($inputArguments)) {
+                if ($lenient) {
+                    return;
+                }
+
                 throw new CannotParseArgsException('Too many arguments.');
             }
 

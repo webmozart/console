@@ -24,12 +24,15 @@ interface ArgsParser
     /**
      * Parses the raw console arguments and returns the parsed arguments.
      *
-     * @param RawArgs    $args   The raw console arguments.
-     * @param ArgsFormat $format The argument format.
+     * @param RawArgs    $args    The raw console arguments.
+     * @param ArgsFormat $format  The argument format.
+     * @param bool       $lenient Whether the parser should ignore parse errors.
+     *                            If `true`, the parser will not throw any
+     *                            exceptions when parse errors occur.
      *
      * @return Args The parsed console arguments.
      *
      * @throws CannotParseArgsException If the arguments cannot be parsed.
      */
-    public function parseArgs(RawArgs $args, ArgsFormat $format);
+    public function parseArgs(RawArgs $args, ArgsFormat $format, $lenient = false);
 }

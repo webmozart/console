@@ -143,4 +143,14 @@ class SubCommandConfig extends CommandConfig
             ? $this->parentConfig->getArgsParser()
             : parent::getDefaultArgsParser();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultLenientArgsParsing()
+    {
+        return $this->parentConfig
+            ? $this->parentConfig->isLenientArgsParsingEnabled()
+            : parent::getDefaultLenientArgsParsing();
+    }
 }

@@ -548,6 +548,17 @@ class CommandConfigTest extends PHPUnit_Framework_TestCase
         $this->assertSame($parser, $this->config->getArgsParser());
     }
 
+    public function testLenientArgsParsingDefaultsToApplicationValue()
+    {
+        $this->applicationConfig->enableLenientArgsParsing();
+
+        $this->assertTrue($this->config->isLenientArgsParsingEnabled());
+
+        $this->applicationConfig->disableLenientArgsParsing();
+
+        $this->assertFalse($this->config->isLenientArgsParsingEnabled());
+    }
+
     public function testMarkDefault()
     {
         $this->assertFalse($this->config->isDefault());

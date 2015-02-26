@@ -118,6 +118,15 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($parser, $this->config->getArgsParser());
     }
 
+    public function testLenientArgsParsing()
+    {
+        $this->assertFalse($this->config->isLenientArgsParsingEnabled());
+        $this->config->enableLenientArgsParsing();
+        $this->assertTrue($this->config->isLenientArgsParsingEnabled());
+        $this->config->disableLenientArgsParsing();
+        $this->assertFalse($this->config->isLenientArgsParsingEnabled());
+    }
+
     public function testSetHandler()
     {
         $handler = new stdClass();

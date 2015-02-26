@@ -125,7 +125,9 @@ class DefaultApplicationConfig extends ApplicationConfig
 
         if ($args->hasToken('-h') || $args->hasToken('--help')) {
             $command = $event->getApplication()->getCommand('help');
-            $parsedArgs = $command->parseArgs($args);
+
+            // Enable lenient args parsing
+            $parsedArgs = $command->parseArgs($args, true);
 
             $event->setResolvedCommand(new ResolvedCommand($command, $parsedArgs));
             $event->stopPropagation();

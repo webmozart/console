@@ -52,6 +52,11 @@ abstract class Config
     private $argsParser;
 
     /**
+     * @var bool
+     */
+    private $lenientArgsParsing;
+
+    /**
      * @var object|callable
      */
     private $handler;
@@ -246,6 +251,62 @@ abstract class Config
     }
 
     /**
+     * Returns whether lenient argument parsing is enabled.
+     *
+     * When lenient argument parsing is enabled, the argument parser will not
+     * fail if the console arguments contain invalid or missing arguments.
+     *
+     * @return boolean Returns `true` if lenient parsing is enabled and `false`
+     *                 otherwise.
+     */
+    public function isLenientArgsParsingEnabled()
+    {
+        if (null === $this->lenientArgsParsing) {
+            return $this->getDefaultLenientArgsParsing();
+        }
+
+        return $this->lenientArgsParsing;
+    }
+
+    /**
+     * Enables lenient argument parsing.
+     *
+     * When lenient argument parsing is enabled, the argument parser will not
+     * fail if the console arguments contain invalid or missing arguments.
+     *
+     * Lenient argument parsing is disabled by default.
+     *
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
+     *
+     * @see disableLenientArgsParsing()
+     */
+    public function enableLenientArgsParsing()
+    {
+        $this->lenientArgsParsing = true;
+
+        return $this;
+    }
+
+    /**
+     * Disables lenient argument parsing.
+     *
+     * When lenient argument parsing is enabled, the argument parser will not
+     * fail if the console arguments contain invalid or missing arguments.
+     *
+     * Lenient argument parsing is disabled by default.
+     *
+     * @return ApplicationConfig|CommandConfig|SubCommandConfig|OptionCommandConfig The current instance.
+     *
+     * @see enableLenientArgsParsing()
+     */
+    public function disableLenientArgsParsing()
+    {
+        $this->lenientArgsParsing = false;
+
+        return $this;
+    }
+
+    /**
      * Returns the command handler to execute when a command is run.
      *
      * @return object The command handler.
@@ -390,6 +451,16 @@ abstract class Config
     protected function getDefaultArgsParser()
     {
         return new DefaultArgsParser();
+    }
+
+    /**
+     * Returns whether the arguments parsing handles errors gracefully.
+     *
+     * @return bool The default value for lenient args parsing.
+     */
+    protected function getDefaultLenientArgsParsing()
+    {
+        return false;
     }
 
     /**

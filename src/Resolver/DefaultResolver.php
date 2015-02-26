@@ -41,11 +41,7 @@ class DefaultResolver implements CommandResolver
 
         // Try to find a command for the passed arguments and options.
         if ($result = $this->processArguments($args, $namedCommands, $argumentsToTest, $optionsToTest)) {
-            if (!$result->isParsable()) {
-                throw $result->getParseError();
-            }
-
-            return new ResolvedCommand($result->getCommand(), $result->getParsedArgs());
+            return $this->createResolvedCommand($result);
         }
 
         // If arguments were passed, we did not find the matching command.
@@ -55,11 +51,7 @@ class DefaultResolver implements CommandResolver
 
         // If no arguments were passed, run the application's default command.
         if ($result = $this->processDefaultCommands($args, $application->getDefaultCommands())) {
-            if (!$result->isParsable()) {
-                throw $result->getParseError();
-            }
-
-            return new ResolvedCommand($result->getCommand(), $result->getParsedArgs());
+            return $this->createResolvedCommand($result);
         }
 
         // No default command is configured.
@@ -230,5 +222,14 @@ class DefaultResolver implements CommandResolver
         }
 
         return $optionsToTest;
+    }
+
+    private function createResolvedCommand(ResolveResult $result)
+    {
+        if (!$result->isParsable()) {
+            throw $result->getParseError();
+        }
+
+        return new ResolvedCommand($result->getCommand(), $result->getParsedArgs());
     }
 }

@@ -1004,4 +1004,14 @@ class CommandConfig extends Config
             ? $this->applicationConfig->getArgsParser()
             : parent::getDefaultArgsParser();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultLenientArgsParsing()
+    {
+        return $this->applicationConfig
+            ? $this->applicationConfig->isLenientArgsParsingEnabled()
+            : parent::getDefaultLenientArgsParsing();
+    }
 }

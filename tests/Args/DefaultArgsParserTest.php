@@ -205,6 +205,21 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $this->parser->parseArgs(new StringArgs('server --add foo'), $format);
     }
 
+    public function testParseDoesNotFailIfMissingRequiredArgumentAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument1', Argument::REQUIRED))
+            ->addArgument(new Argument('argument2', Argument::REQUIRED))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server --add foo'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
+    }
+
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
      * @expectedExceptionMessage Not enough arguments.
@@ -219,6 +234,21 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->getFormat();
 
         $this->parser->parseArgs(new StringArgs('server foo'), $format);
+    }
+
+    public function testParseDoesNotFailIfMissingRequiredArgumentWithMissingCommandNamesAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandName(new CommandName('add'))
+            ->addArgument(new Argument('argument1', Argument::REQUIRED))
+            ->addArgument(new Argument('argument2', Argument::REQUIRED))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server foo'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
     }
 
     /**
@@ -237,6 +267,21 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $this->parser->parseArgs(new StringArgs('server foo'), $format);
     }
 
+    public function testParseDoesNotFailIfMissingRequiredArgumentWithMissingCommandOptionsAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument1', Argument::REQUIRED))
+            ->addArgument(new Argument('argument2', Argument::REQUIRED))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server foo'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
+    }
+
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
      * @expectedExceptionMessage Too many arguments
@@ -249,10 +294,21 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->addArgument(new Argument('argument'))
             ->getFormat();
 
-        $args = $this->parser->parseArgs(new StringArgs('server --add foo bar'), $format);
+        $this->parser->parseArgs(new StringArgs('server --add foo bar'), $format);
+    }
+
+    public function testParseDoesNotFailIfTooManyArgumentsAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server --add foo bar'), $format, true);
 
         $this->assertSame(array(), $args->getOptions(false));
-        $this->assertSame(array('argument1' => 'foo'), $args->getArguments(false));
+        $this->assertSame(array('argument' => 'foo'), $args->getArguments(false));
     }
 
     /**
@@ -270,6 +326,20 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
         $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
     }
 
+    public function testParseDoesNotFailIfTooManyArgumentsMissingCommandNamesAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandName(new CommandName('add'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server foo bar'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument' => 'foo'), $args->getArguments(false));
+    }
+
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
      * @expectedExceptionMessage Too many arguments
@@ -283,6 +353,20 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->getFormat();
 
         $this->parser->parseArgs(new StringArgs('server foo bar'), $format);
+    }
+
+    public function testParseDoesNotFailIfTooManyArgumentsMissingCommandOptionsAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server foo bar'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument' => 'foo'), $args->getArguments(false));
     }
 
     public function testParseMultiValuedArgument()
@@ -439,6 +523,48 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
             ->getFormat();
 
         $this->parser->parseArgs(new StringArgs('server --add -o'), $format);
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     * @expectedExceptionMessage The "--foo" option does not exist
+     */
+    public function testParseOptionFailsIfInvalidOption()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->getFormat();
+
+        $this->parser->parseArgs(new StringArgs('server --add --foo'), $format);
+    }
+
+    public function testParseOptionStopsParsingIfInvalidOptionAndLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server --add --foo bar'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array(), $args->getArguments(false));
+    }
+
+    public function testParseOptionParsesUpToInvalidOptionIfLenient()
+    {
+        $format = ArgsFormat::build()
+            ->addCommandName(new CommandName('server'))
+            ->addCommandOption(new CommandOption('add', 'a'))
+            ->addArgument(new Argument('argument'))
+            ->getFormat();
+
+        $args = $this->parser->parseArgs(new StringArgs('server --add bar --foo'), $format, true);
+
+        $this->assertSame(array(), $args->getOptions(false));
+        $this->assertSame(array('argument' => 'bar'), $args->getArguments(false));
     }
 
     public function testParseSetsRawArgs()

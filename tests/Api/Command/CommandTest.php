@@ -557,10 +557,39 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $config->setArgsParser($parser);
         $config->setHandler($handler);
         $command = new Command($config);
+        $format = $command->getArgsFormat();
 
         $parser->expects($this->once())
             ->method('parseArgs')
-            ->with($this->identicalTo($rawArgs))
+            ->with($this->identicalTo($rawArgs), $this->identicalTo($format), false)
+            ->willReturn($parsedArgs);
+
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($parsedArgs, $io, $command)
+            ->willReturn(123);
+
+        $this->assertSame(123, $command->run($rawArgs, $io));
+    }
+
+    public function testRunWithLenientArgsParsing()
+    {
+        $rawArgs = $this->getMock('Webmozart\Console\Api\Args\RawArgs');
+        $parsedArgs = new Args(new ArgsFormat());
+        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $parser = $this->getMock('Webmozart\Console\Api\Args\ArgsParser');
+        $handler = $this->getMock('stdClass', array('handle'));
+
+        $config = new CommandConfig('command');
+        $config->setArgsParser($parser);
+        $config->setHandler($handler);
+        $config->enableLenientArgsParsing();
+        $command = new Command($config);
+        $format = $command->getArgsFormat();
+
+        $parser->expects($this->once())
+            ->method('parseArgs')
+            ->with($this->identicalTo($rawArgs), $this->identicalTo($format), true)
             ->willReturn($parsedArgs);
 
         $handler->expects($this->once())

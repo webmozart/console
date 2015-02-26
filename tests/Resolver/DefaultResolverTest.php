@@ -13,6 +13,7 @@ namespace Webmozart\Console\Tests\Resolver;
 
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Adapter\InputInterfaceAdapter;
+use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
@@ -382,5 +383,33 @@ class DefaultResolverTest extends PHPUnit_Framework_TestCase
         } catch (CannotResolveCommandException $e) {
             $this->assertRegExp('~Did you mean one of these\?\s+package\s+pack~', $e->getMessage());
         }
+    }
+
+    /**
+     * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
+     */
+    public function testRethrowParseError()
+    {
+        $this->resolver->resolveCommand(new StringArgs('bind --foo'), self::$application);
+    }
+
+    public function testDoNotRethrowParseErrorIfLenient()
+    {
+        $config = ApplicationConfig::create()
+            ->beginCommand('package')
+                ->enableLenientArgsParsing()
+            ->end()
+        ;
+
+        $application = new ConsoleApplication($config);
+        $command = $application->getCommand('package');
+
+        $rawArgs = new StringArgs('package --foo');
+        $resolvedCommand = $this->resolver->resolveCommand($rawArgs, $application, true);
+
+        $args = new Args($command->getArgsFormat(), $rawArgs);
+
+        $this->assertSame($command, $resolvedCommand->getCommand());
+        $this->assertEquals($args, $resolvedCommand->getArgs());
     }
 }
