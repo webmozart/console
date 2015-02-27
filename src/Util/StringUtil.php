@@ -12,12 +12,13 @@
 namespace Webmozart\Console\Util;
 
 use Webmozart\Console\Api\Args\Format\InvalidValueException;
+use Webmozart\Console\Api\Formatter\Formatter;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ValueParser
+class StringUtil
 {
     public static function parseString($value, $nullable = true)
     {
@@ -103,6 +104,59 @@ class ValueParser
             'The value "%s" cannot be parsed as float.',
             $value
         ));
+    }
+
+    public static function getLength($string, Formatter $formatter = null)
+    {
+        if ($formatter) {
+            $string = $formatter->removeFormat($string);
+        }
+
+        if (!function_exists('mb_strwidth')) {
+            return strlen($string);
+        }
+
+        if (false === $encoding = mb_detect_encoding($string)) {
+            return strlen($string);
+        }
+
+        return mb_strwidth($string, $encoding);
+    }
+
+    public static function getMaxWordLength($string, Formatter $formatter = null)
+    {
+        if ($formatter) {
+            $string = $formatter->removeFormat($string);
+        }
+
+        $maxLength = 0;
+        $words = preg_split('/\s+/', $string);
+
+        foreach ($words as $word) {
+            // No need to pass the formatter because the tags are already
+            // removed
+            $maxLength = max($maxLength, self::getLength($word));
+        }
+
+        return $maxLength;
+    }
+
+    public static function getMaxLineLength($string, Formatter $formatter = null)
+    {
+        if ($formatter) {
+            $string = $formatter->removeFormat($string);
+        }
+
+        $maxLength = 0;
+        $lines = explode("\n", $string);
+
+        foreach ($lines as $word) {
+            // No need to pass the formatter because the tags are already
+            // removed
+            $maxLength = max($maxLength, self::getLength($word));
+        }
+
+        return $maxLength;
     }
 
     private function __construct()

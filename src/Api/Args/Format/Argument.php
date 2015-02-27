@@ -13,7 +13,7 @@ namespace Webmozart\Console\Api\Args\Format;
 
 use InvalidArgumentException;
 use Webmozart\Console\Assert\Assert;
-use Webmozart\Console\Util\ValueParser;
+use Webmozart\Console\Util\StringUtil;
 
 /**
  * An input argument.
@@ -257,18 +257,18 @@ class Argument
         $nullable = !($this->flags & self::NOT_NULL);
 
         if ($this->flags & self::BOOLEAN) {
-            return ValueParser::parseBoolean($value, $nullable);
+            return StringUtil::parseBoolean($value, $nullable);
         }
 
         if ($this->flags & self::INTEGER) {
-            return ValueParser::parseInteger($value, $nullable);
+            return StringUtil::parseInteger($value, $nullable);
         }
 
         if ($this->flags & self::FLOAT) {
-            return ValueParser::parseFloat($value, $nullable);
+            return StringUtil::parseFloat($value, $nullable);
         }
 
-        return ValueParser::parseString($value, $nullable);
+        return StringUtil::parseString($value, $nullable);
     }
 
     /**

@@ -12,20 +12,20 @@
 namespace Webmozart\Console\Tests\Util;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Util\ValueParser;
+use Webmozart\Console\Util\StringUtil;
 
 /**
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ValueParserTest extends PHPUnit_Framework_TestCase
+class StringUtilTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider getParseStringTests
      */
     public function testParseString($input, $output, $nullable = true)
     {
-        $this->assertSame($output, ValueParser::parseString($input, $nullable));
+        $this->assertSame($output, StringUtil::parseString($input, $nullable));
     }
 
     public function getParseStringTests()
@@ -59,7 +59,7 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseBoolean($input, $output, $nullable = true)
     {
-        $this->assertSame($output, ValueParser::parseBoolean($input, $nullable));
+        $this->assertSame($output, StringUtil::parseBoolean($input, $nullable));
     }
 
     public function getValidParseBooleanTests()
@@ -89,7 +89,7 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseBooleanFailsIfInvalid($input, $nullable = true)
     {
-        ValueParser::parseBoolean($input, $nullable);
+        StringUtil::parseBoolean($input, $nullable);
     }
 
     public function getInvalidParseBooleanTests()
@@ -108,7 +108,7 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseInteger($input, $output, $nullable = true)
     {
-        $this->assertSame($output, ValueParser::parseInteger($input, $nullable));
+        $this->assertSame($output, StringUtil::parseInteger($input, $nullable));
     }
 
     public function getValidParseIntegerTests()
@@ -133,7 +133,7 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseIntegerFailsIfInvalid($input, $nullable = true)
     {
-        ValueParser::parseInteger($input, $nullable);
+        StringUtil::parseInteger($input, $nullable);
     }
 
     public function getInvalidParseIntegerTests()
@@ -157,7 +157,7 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseFloat($input, $output, $nullable = true)
     {
-        $this->assertSame($output, ValueParser::parseFloat($input, $nullable));
+        $this->assertSame($output, StringUtil::parseFloat($input, $nullable));
     }
 
     public function getValidParseFloatTests()
@@ -182,7 +182,7 @@ class ValueParserTest extends PHPUnit_Framework_TestCase
      */
     public function testParseFloatFailsIfInvalid($input, $nullable = true)
     {
-        ValueParser::parseFloat($input, $nullable);
+        StringUtil::parseFloat($input, $nullable);
     }
 
     public function getInvalidParseFloatTests()
