@@ -168,12 +168,18 @@ class CellWrapper
         $i = 0;
         $rowWidth = 0;
 
-        while (isset($this->cells[$i]) && $rowWidth <= $maxTotalWidth) {
+        while (isset($this->cells[$i])) {
             $rowWidth += StringUtil::getLength($this->cells[$i]);
+
+            if ($rowWidth > $maxTotalWidth) {
+                // Return previous number of columns
+                return $i;
+            }
+
             ++$i;
         }
 
-        return max(1, $i - 1);
+        return $i;
     }
 
     /**

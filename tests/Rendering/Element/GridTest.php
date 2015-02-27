@@ -299,4 +299,23 @@ EOF;
 
         $this->assertSame($expected, $this->io->fetchOutput());
     }
+
+    public function testRenderAllCellsInOneLine()
+    {
+        $grid = new Grid(GridStyle::asciiBorder());
+        $grid->addCells(array(
+            '99921-58-10-7', 'Divine Comedy', 'Dante Alighieri',
+        ));
+
+        $grid->render($this->canvas);
+
+        $expected = <<<EOF
++---------------+---------------+-----------------+
+| 99921-58-10-7 | Divine Comedy | Dante Alighieri |
++---------------+---------------+-----------------+
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
 }
