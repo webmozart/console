@@ -17,7 +17,10 @@ use Webmozart\Console\Api\Args\RawArgs;
 use Webmozart\Console\Api\Resolver\ResolvedCommand;
 
 /**
- * The event dispatched for {@link ConsoleEvents::PRE_RESOLVE}.
+ * Dispatched before the console arguments are resolved to a command.
+ *
+ * Add a listener for this event to customize the command used for the given
+ * console arguments.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>

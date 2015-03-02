@@ -20,13 +20,25 @@ namespace Webmozart\Console\Api\Event;
 final class ConsoleEvents
 {
     /**
-     * Executed with a {@link PreResolveEvent} before the command is resolved
-     * for the given console arguments. Add a listener to resolve to a custom
-     * command.
+     * Dispatched before console arguments are resolved to a command.
+     *
+     * @see PreResolveEvent
      */
     const PRE_RESOLVE = 'pre-resolve';
 
+    /**
+     * Dispatched before a command is handled.
+     *
+     * @see PreHandleEvent
+     */
     const PRE_HANDLE = 'pre-handle';
+
+    /**
+     * Dispatched after building the configuration.
+     *
+     * @see ConfigEvent
+     */
+    const CONFIG = 'config';
 
     /**
      * May not be instantiated.

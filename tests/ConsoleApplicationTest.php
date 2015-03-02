@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\Tests;
 
+use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
@@ -21,6 +22,7 @@ use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Event\ConfigEvent;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreResolveEvent;
 use Webmozart\Console\Api\IO\IO;
@@ -506,5 +508,22 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         echo implode("\n", $output);
 
         $this->assertSame(123, $status);
+    }
+
+    public function testDispatchConfigEvent()
+    {
+        $config = $this->config;
+        $dispatched = false;
+
+        $this->config->addEventListener(ConsoleEvents::CONFIG, function (ConfigEvent $event) use ($config, &$dispatched) {
+            PHPUnit_Framework_Assert::assertSame($config, $event->getConfig());
+            $dispatched = true;
+        });
+
+        $this->assertFalse($dispatched);
+
+        new ConsoleApplication($this->config);
+
+        $this->assertTrue($dispatched);
     }
 }

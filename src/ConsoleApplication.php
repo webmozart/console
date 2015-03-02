@@ -25,6 +25,7 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Config\CommandConfig;
+use Webmozart\Console\Api\Event\ConfigEvent;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreResolveEvent;
 use Webmozart\Console\Api\Formatter\Style;
@@ -80,6 +81,12 @@ class ConsoleApplication implements Application
      */
     public function __construct(ApplicationConfig $config)
     {
+        $dispatcher = $config->getEventDispatcher();
+
+        if ($dispatcher && $dispatcher->hasListeners(ConsoleEvents::CONFIG)) {
+            $dispatcher->dispatch(ConsoleEvents::CONFIG, new ConfigEvent($config));
+        }
+
         $this->config = $config;
         $this->dispatcher = $config->getEventDispatcher();
         $this->commands = new CommandCollection();

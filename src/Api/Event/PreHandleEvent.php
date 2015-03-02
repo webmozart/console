@@ -17,7 +17,10 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\IO\IO;
 
 /**
- * The event dispatched for {@link ConsoleEvents::PRE_HANDLE}.
+ * Dispatched before a command is handled.
+ *
+ * Add a listener for this event to execute custom logic before or instead of
+ * the default handler.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
