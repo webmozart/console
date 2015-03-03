@@ -14,8 +14,8 @@ namespace Webmozart\Console\Handler\Help;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Rendering\Help\ApplicationHelp;
-use Webmozart\Console\Rendering\Help\CommandHelp;
+use Webmozart\Console\UI\Help\ApplicationHelp;
+use Webmozart\Console\UI\Help\CommandHelp;
 
 /**
  * @since  1.0

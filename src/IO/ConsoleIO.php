@@ -19,7 +19,7 @@ use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
-use Webmozart\Console\Rendering\Rectangle;
+use Webmozart\Console\UI\Rectangle;
 
 /**
  * An I/O that reads from/prints to the console.

@@ -30,7 +30,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
-use Webmozart\Console\Rendering\Exception\ExceptionTrace;
+use Webmozart\Console\UI\Component\ExceptionTrace;
 
 /**
  * A console application.

@@ -12,7 +12,7 @@
 namespace Webmozart\Console\Api\IO;
 
 use Webmozart\Console\Api\Formatter\Formatter;
-use Webmozart\Console\Rendering\Rectangle;
+use Webmozart\Console\UI\Rectangle;
 
 /**
  * Provides methods to access the console input and output.

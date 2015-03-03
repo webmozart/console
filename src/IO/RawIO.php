@@ -16,7 +16,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Assert\Assert;
-use Webmozart\Console\Rendering\Rectangle;
+use Webmozart\Console\UI\Rectangle;
 
 /**
  * An unformatted I/O.

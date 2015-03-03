@@ -17,7 +17,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
-use Webmozart\Console\Rendering\Rectangle;
+use Webmozart\Console\UI\Rectangle;
 
 /**
  * A formatted I/O.

@@ -35,7 +35,7 @@ use Webmozart\Console\IO\ConsoleIO;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
-use Webmozart\Console\Rendering\Element\NameVersion;
+use Webmozart\Console\UI\Component\NameVersion;
 
 /**
  * The default application configuration.
