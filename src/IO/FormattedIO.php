@@ -17,6 +17,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
+use Webmozart\Console\Rendering\Rectangle;
 
 /**
  * A formatted I/O.
@@ -48,10 +49,11 @@ class FormattedIO extends RawIO
      * @param Output    $output      The output.
      * @param Output    $errorOutput The error output.
      * @param Formatter $formatter   The formatter.
+     * @param Rectangle $dimensions  The terminal dimensions.
      */
-    public function __construct(Input $input, Output $output, Output $errorOutput, Formatter $formatter = null)
+    public function __construct(Input $input, Output $output, Output $errorOutput, Formatter $formatter = null, Rectangle $dimensions = null)
     {
-        parent::__construct($input, $output, $errorOutput);
+        parent::__construct($input, $output, $errorOutput, $dimensions);
 
         $this->formatter = $formatter ?: new PlainFormatter();
         $this->formatOutput = $output->supportsAnsi() || !($this->formatter instanceof AnsiFormatter);

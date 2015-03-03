@@ -13,8 +13,6 @@ namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\Alignment;
 use Webmozart\Console\Rendering\Element\Grid;
 use Webmozart\Console\Rendering\Element\GridStyle;
@@ -30,16 +28,9 @@ class GridTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRenderAsciiBorder()
@@ -52,7 +43,7 @@ class GridTest extends PHPUnit_Framework_TestCase
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +------------------+-----------------+---------------------+-----------------+
@@ -80,7 +71,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 ┌──────────────────┬─────────────────┬─────────────────────┬─────────────────┐
@@ -108,7 +99,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 99921-58-10-7   Divine Comedy   Dante Alighieri 9971-5-0210-0 A Tale of Two
@@ -134,7 +125,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +-----------------+-------------+-----------------+---------------+------------+
@@ -164,7 +155,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +---------------+--------------------------+------------------+
@@ -192,7 +183,7 @@ EOF;
             '<b>80-902734-1-6</b>', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +------------------+-----------------+---------------------+-----------------+
@@ -220,7 +211,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas, 4);
+        $grid->render($this->io, 4);
 
         $expected = <<<EOF
     +---------------+-----------------+---------------------+-----------------+
@@ -251,7 +242,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +------------------+-----------------+---------------------+-----------------+
@@ -282,7 +273,7 @@ EOF;
             '80-902734-1-6', 'And Then There Were None', 'Agatha Christie',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +------------------+-----------------+---------------------+-----------------+
@@ -307,7 +298,7 @@ EOF;
             '99921-58-10-7', 'Divine Comedy', 'Dante Alighieri',
         ));
 
-        $grid->render($this->canvas);
+        $grid->render($this->io);
 
         $expected = <<<EOF
 +---------------+---------------+-----------------+

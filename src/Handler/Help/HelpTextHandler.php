@@ -14,7 +14,6 @@ namespace Webmozart\Console\Handler\Help;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Help\ApplicationHelp;
 use Webmozart\Console\Rendering\Help\CommandHelp;
 
@@ -30,7 +29,6 @@ class HelpTextHandler
     public function handle(Args $args, IO $io, Command $command)
     {
         $application = $command->getApplication();
-        $canvas = new Canvas($io);
 
         if ($args->isArgumentSet('command')) {
             $theCommand = $application->getCommand($args->getArgument('command'));
@@ -39,8 +37,7 @@ class HelpTextHandler
             $usage = new ApplicationHelp($application);
         }
 
-        $usage->render($canvas);
-        $canvas->flush();
+        $usage->render($io);
 
         return 0;
     }

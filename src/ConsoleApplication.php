@@ -14,9 +14,6 @@ namespace Webmozart\Console;
 use Exception;
 use LogicException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Webmozart\Console\Adapter\ApplicationAdapter;
-use Webmozart\Console\Adapter\ArgsInput;
-use Webmozart\Console\Adapter\IOOutput;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
@@ -33,7 +30,6 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
-use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Exception\ExceptionTrace;
 
 /**
@@ -233,9 +229,8 @@ class ConsoleApplication implements Application
                 throw $e;
             }
 
-            $canvas = new Canvas($io);
             $trace = new ExceptionTrace($e);
-            $trace->render($canvas);
+            $trace->render($io);
 
             $statusCode = $this->exceptionToExitCode($e->getCode());
         }

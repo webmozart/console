@@ -11,8 +11,8 @@
 
 namespace Webmozart\Console\Rendering\Element;
 
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
-use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Renderable;
 
 /**
@@ -125,13 +125,13 @@ class LabeledParagraph implements Renderable
     /**
      * Renders the paragraph.
      *
-     * @param Canvas $canvas      The canvas.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
         $linePrefix = str_repeat(' ', $indentation);
-        $visibleLabel = $canvas->getIO()->removeFormat($this->label);
+        $visibleLabel = $io->removeFormat($this->label);
         $styleTagLength = strlen($this->label) - strlen($visibleLabel);
 
         $textOffset = $this->aligned && $this->alignment ? $this->alignment->getTextOffset() - $indentation : 0;
@@ -139,14 +139,14 @@ class LabeledParagraph implements Renderable
         $textPrefix = str_repeat(' ', $textOffset);
 
         // 1 trailing space
-        $textWidth = $canvas->getWidth() - 1 - $textOffset - $indentation;
+        $textWidth = $io->getTerminalDimensions()->getWidth() - 1 - $textOffset - $indentation;
         // TODO replace wordwrap() by implementation that is aware of format codes
         $text = str_replace("\n", "\n".$linePrefix.$textPrefix, wordwrap($this->text, $textWidth));
 
         // Add the total length of the style tags ("<b>", ...)
         $labelWidth = $textOffset + $styleTagLength;
 
-        $canvas->write(rtrim(sprintf(
+        $io->write(rtrim(sprintf(
             "%s%-${labelWidth}s%s",
             $linePrefix,
             $this->label,

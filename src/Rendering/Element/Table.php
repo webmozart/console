@@ -14,7 +14,6 @@ namespace Webmozart\Console\Rendering\Element;
 use LogicException;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Renderable;
 use Webmozart\Console\Util\StringUtil;
 
@@ -187,13 +186,12 @@ class Table implements Renderable
     /**
      * Renders the table.
      *
-     * @param Canvas $canvas      The canvas to render the table on.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
-        $io = $canvas->getIO();
-        $screenWidth = $canvas->getDimensions()->getWidth();
+        $screenWidth = $io->getTerminalDimensions()->getWidth();
         $excessColumnWidth = max(
             StringUtil::getLength(sprintf($this->style->getHeaderCellFormat(), ''), $io),
             StringUtil::getLength(sprintf($this->style->getCellFormat(), ''), $io)

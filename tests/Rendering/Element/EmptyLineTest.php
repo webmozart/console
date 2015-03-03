@@ -12,10 +12,7 @@
 namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 
 /**
@@ -29,22 +26,15 @@ class EmptyLineTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
     {
         $line = new EmptyLine();
-        $line->render($this->canvas);
+        $line->render($this->io);
 
         $this->assertSame("\n", $this->io->fetchOutput());
     }
@@ -52,7 +42,7 @@ class EmptyLineTest extends PHPUnit_Framework_TestCase
     public function testRenderIgnoresIndentation()
     {
         $line = new EmptyLine();
-        $line->render($this->canvas, 10);
+        $line->render($this->io, 10);
 
         $this->assertSame("\n", $this->io->fetchOutput());
     }

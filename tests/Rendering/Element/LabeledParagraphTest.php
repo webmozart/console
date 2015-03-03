@@ -12,11 +12,8 @@
 namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\IO\BufferedIO;
 use Webmozart\Console\Rendering\Alignment\LabelAlignment;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 
 /**
@@ -32,22 +29,16 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
 
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
     {
         $para = new LabeledParagraph('Label', 'Text');
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $this->assertSame("Label  Text\n", $this->io->fetchOutput());
     }
@@ -55,7 +46,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
     public function testRenderWithTrailingNewline()
     {
         $para = new LabeledParagraph('Label', "Text\n");
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $this->assertSame("Label  Text\n", $this->io->fetchOutput());
     }
@@ -63,7 +54,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
     public function testRenderWithIndentation()
     {
         $para = new LabeledParagraph('Label', 'Text');
-        $para->render($this->canvas, 4);
+        $para->render($this->io, 4);
 
         $this->assertSame("    Label  Text\n", $this->io->fetchOutput());
     }
@@ -71,7 +62,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
     public function testRenderWithLabelDistance()
     {
         $para = new LabeledParagraph('Label', 'Text', 1);
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $this->assertSame("Label Text\n", $this->io->fetchOutput());
     }
@@ -79,7 +70,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
     public function testRenderWithoutText()
     {
         $para = new LabeledParagraph('Label', '');
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $this->assertSame("Label\n", $this->io->fetchOutput());
     }
@@ -91,7 +82,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
 
         $para = new LabeledParagraph('Label', 'Text');
         $para->setAlignment($alignment);
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $this->assertSame("Label     Text\n", $this->io->fetchOutput());
     }
@@ -103,7 +94,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
 
         $para = new LabeledParagraph('Label', 'Text');
         $para->setAlignment($alignment);
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $this->assertSame("Label  Text\n", $this->io->fetchOutput());
     }
@@ -111,7 +102,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
     public function testRenderWrapsText()
     {
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM);
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $expected = <<<EOF
 Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
@@ -125,7 +116,7 @@ EOF;
     public function testRenderWithIndentationWrapsText()
     {
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM);
-        $para->render($this->canvas, 4);
+        $para->render($this->io, 4);
 
         $expected = <<<EOF
     Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
@@ -139,7 +130,7 @@ EOF;
     public function testRenderWithLabelDistanceWrapsText()
     {
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM, 6);
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $expected = <<<EOF
 Label      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam

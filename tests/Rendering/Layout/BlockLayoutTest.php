@@ -12,10 +12,7 @@
 namespace Webmozart\Console\Tests\Rendering\Layout;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Element\Paragraph;
@@ -34,16 +31,9 @@ class BlockLayoutTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
@@ -67,7 +57,7 @@ class BlockLayoutTest extends PHPUnit_Framework_TestCase
             ->endBlock()
         ;
 
-        $layout->render($this->canvas);
+        $layout->render($this->io);
 
         $expected = <<<EOF
 HEADING 1
@@ -112,7 +102,7 @@ EOF;
             ->endBlock()
         ;
 
-        $layout->render($this->canvas, 4);
+        $layout->render($this->io, 4);
 
         $expected = <<<EOF
     HEADING 1

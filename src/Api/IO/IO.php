@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Api\IO;
 
 use Webmozart\Console\Api\Formatter\Formatter;
+use Webmozart\Console\Rendering\Rectangle;
 
 /**
  * Provides methods to access the console input and output.
@@ -221,4 +222,11 @@ interface IO extends Formatter
      *              otherwise.
      */
     public function isQuiet();
+
+    /**
+     * Returns the dimensions of the terminal.
+     *
+     * @return Rectangle The terminal dimensions.
+     */
+    public function getTerminalDimensions();
 }

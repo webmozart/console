@@ -13,8 +13,6 @@ namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\Alignment;
 use Webmozart\Console\Rendering\Element\Table;
 use Webmozart\Console\Rendering\Element\TableStyle;
@@ -30,16 +28,9 @@ class TableTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRenderAsciiBorder()
@@ -53,7 +44,7 @@ class TableTest extends PHPUnit_Framework_TestCase
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+--------------------------+------------------+
@@ -81,7 +72,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 ┌───────────────┬──────────────────────────┬──────────────────┐
@@ -109,7 +100,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 ISBN          Title                    Author
@@ -139,7 +130,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+--------------------------+------------------+
@@ -167,7 +158,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+------------------------------------+-------------------------+
@@ -197,7 +188,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+-----------------------------+-------------------------+
@@ -228,7 +219,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+------------------------------------+-------------------------+
@@ -260,7 +251,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+----------------------------------+-------------------------+
@@ -290,7 +281,7 @@ EOF;
             array('80-902734-1-6', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas, 4);
+        $table->render($this->io, 4);
 
         $expected = <<<EOF
     +---------------+-----------------------------+-------------------------+
@@ -321,7 +312,7 @@ EOF;
             array('<b>80-902734-1-6</b>', 'And Then There Were None', 'Agatha Christie'),
         ));
 
-        $table->render($this->canvas);
+        $table->render($this->io);
 
         $expected = <<<EOF
 +---------------+--------------------------+------------------+

@@ -12,7 +12,7 @@
 namespace Webmozart\Console\Rendering\Element;
 
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Rendering\Renderable;
 
 /**
@@ -38,10 +38,10 @@ class NameVersion implements Renderable
     /**
      * Renders the name and version.
      *
-     * @param Canvas $canvas      The canvas to render the object on.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
         if ($this->config->getDisplayName() && $this->config->getVersion()) {
             $paragraph = new Paragraph("{$this->config->getDisplayName()} version <em>{$this->config->getVersion()}</em>");
@@ -51,6 +51,6 @@ class NameVersion implements Renderable
             $paragraph = new Paragraph("Console Tool");
         }
 
-        $paragraph->render($canvas, $indentation);
+        $paragraph->render($io, $indentation);
     }
 }

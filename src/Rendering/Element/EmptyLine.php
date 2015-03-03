@@ -11,7 +11,7 @@
 
 namespace Webmozart\Console\Rendering\Element;
 
-use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Rendering\Renderable;
 
 /**
@@ -27,12 +27,12 @@ class EmptyLine implements Renderable
     /**
      * Renders the empty line.
      *
-     * @param Canvas $canvas      The canvas.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
         // Indentation is ignored for empty lines
-        $canvas->write("\n");
+        $io->write("\n");
     }
 }

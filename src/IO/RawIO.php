@@ -16,6 +16,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Assert\Assert;
+use Webmozart\Console\Rendering\Rectangle;
 
 /**
  * An unformatted I/O.
@@ -56,17 +57,24 @@ class RawIO implements IO
     private $verbosity = 0;
 
     /**
+     * @var Rectangle
+     */
+    private $terminalDimensions;
+
+    /**
      * Creates the I/O.
      *
-     * @param Input  $input       The input.
-     * @param Output $output      The output.
-     * @param Output $errorOutput The error output.
+     * @param Input     $input       The input.
+     * @param Output    $output      The output.
+     * @param Output    $errorOutput The error output.
+     * @param Rectangle $dimensions  The dimensions of the terminal.
      */
-    public function __construct(Input $input, Output $output, Output $errorOutput)
+    public function __construct(Input $input, Output $output, Output $errorOutput, Rectangle $dimensions = null)
     {
         $this->input = $input;
         $this->output = $output;
         $this->errorOutput = $errorOutput;
+        $this->terminalDimensions = $dimensions;
     }
 
     /**
@@ -318,6 +326,28 @@ class RawIO implements IO
     }
 
     /**
+     * Sets the dimensions of the terminal.
+     *
+     * @param Rectangle $dimensions The terminal dimensions.
+     */
+    public function setTerminalDimensions(Rectangle $dimensions)
+    {
+        $this->terminalDimensions = $dimensions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTerminalDimensions()
+    {
+        if (!$this->terminalDimensions) {
+            $this->terminalDimensions = $this->getDefaultTerminalDimensions();
+        }
+
+        return $this->terminalDimensions;
+    }
+
+    /**
      * Returns whether an output may be written for the given flags.
      *
      * @param int $flags The flags.
@@ -344,5 +374,15 @@ class RawIO implements IO
         }
 
         return true;
+    }
+
+    /**
+     * Returns the default terminal dimensions.
+     *
+     * @return Rectangle The terminal dimensions.
+     */
+    protected function getDefaultTerminalDimensions()
+    {
+        return new Rectangle(80, 20);
     }
 }

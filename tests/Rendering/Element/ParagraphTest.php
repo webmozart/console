@@ -12,10 +12,7 @@
 namespace Webmozart\Console\Tests\Rendering\Element;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\OutputInterfaceAdapter;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Element\Paragraph;
 
 /**
@@ -31,22 +28,15 @@ class ParagraphTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
     {
         $para = new Paragraph(self::LOREM_IPSUM);
-        $para->render($this->canvas);
+        $para->render($this->io);
 
         $expected = <<<EOF
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
@@ -60,7 +50,7 @@ EOF;
     public function testRenderWithIndentation()
     {
         $para = new Paragraph(self::LOREM_IPSUM);
-        $para->render($this->canvas, 6);
+        $para->render($this->io, 6);
 
         $expected = <<<EOF
       Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy

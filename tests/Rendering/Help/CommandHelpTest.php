@@ -17,8 +17,6 @@ use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Help\CommandHelp;
 
 /**
@@ -37,16 +35,9 @@ class CommandHelpTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
     }
 
     public function testRender()
@@ -65,7 +56,7 @@ class CommandHelpTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -102,7 +93,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -127,7 +118,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -152,7 +143,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -177,7 +168,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -202,7 +193,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -227,7 +218,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -252,7 +243,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -289,7 +280,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -338,7 +329,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -377,7 +368,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -416,7 +407,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -455,7 +446,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -509,7 +500,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -548,7 +539,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE
@@ -578,7 +569,7 @@ EOF;
 
         $application = new ConsoleApplication($config);
         $help = new CommandHelp($application->getCommand('command'));
-        $help->render($this->canvas);
+        $help->render($this->io);
 
         $expected = <<<EOF
 USAGE

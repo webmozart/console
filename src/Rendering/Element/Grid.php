@@ -13,7 +13,6 @@ namespace Webmozart\Console\Rendering\Element;
 
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Renderable;
 use Webmozart\Console\Util\StringUtil;
 
@@ -170,13 +169,12 @@ class Grid implements Renderable
     /**
      * Renders the grid.
      *
-     * @param Canvas $canvas      The canvas to render the grid on.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
-        $io = $canvas->getIO();
-        $screenWidth = $canvas->getDimensions()->getWidth();
+        $screenWidth = $io->getTerminalDimensions()->getWidth();
         $excessColumnWidth = StringUtil::getLength(sprintf($this->style->getCellFormat(), ''), $io);
 
         $wrapper = $this->getCellWrapper($io, $screenWidth, $excessColumnWidth, $indentation);

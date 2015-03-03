@@ -14,6 +14,7 @@ namespace Webmozart\Console\IO;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\IO\Input\BufferedInput;
 use Webmozart\Console\IO\Output\BufferedOutput;
+use Webmozart\Console\Rendering\Rectangle;
 
 /**
  * An I/O that reads from and writes to a buffer.
@@ -41,10 +42,11 @@ class BufferedIO extends FormattedIO
     /**
      * Creates the I/O.
      *
-     * @param string    $inputData The data to return from the input.
-     * @param Formatter $formatter The formatter to use.
+     * @param string    $inputData  The data to return from the input.
+     * @param Formatter $formatter  The formatter to use.
+     * @param Rectangle $dimensions The terminal dimensions.
      */
-    public function __construct($inputData = '', Formatter $formatter = null)
+    public function __construct($inputData = '', Formatter $formatter = null, Rectangle $dimensions = null)
     {
         $this->input = new BufferedInput($inputData);
         $this->output = new BufferedOutput();

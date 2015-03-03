@@ -14,7 +14,7 @@ namespace Webmozart\Console\Rendering\Help;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
-use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
 use Webmozart\Console\Rendering\Element\Paragraph;
@@ -32,16 +32,16 @@ abstract class AbstractHelp implements Renderable
     /**
      * Renders the usage.
      *
-     * @param Canvas $canvas      The canvas.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
         $layout = new BlockLayout();
 
         $this->renderHelp($layout);
 
-        $layout->render($canvas, $indentation);
+        $layout->render($io, $indentation);
     }
 
     /**

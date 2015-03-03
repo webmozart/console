@@ -178,7 +178,8 @@ EOF;
 The Application version 1.2.3
 
 USAGE
-  the-app [-h] [-q] [-v [<level>]] [-V] [--ansi] [--no-ansi] [-n] <command> [<arg1>] ... [<argN>]
+  the-app [-h] [-q] [-v [<level>]] [-V] [--ansi] [--no-ansi] [-n] <command>
+          [<arg1>] ... [<argN>]
 
 ARGUMENTS
 EOF;

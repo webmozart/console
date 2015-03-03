@@ -11,15 +11,13 @@
 
 namespace Webmozart\Console\Rendering;
 
-use Symfony\Component\Console\Application;
-
 /**
- * A (width, height) tuple.
+ * A rectangle.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class Dimensions
+class Rectangle
 {
     /**
      * @var int
@@ -32,20 +30,6 @@ class Dimensions
     private $height;
 
     /**
-     * Returns the dimensions of the current terminal window.
-     *
-     * @return Dimensions The dimensions.
-     */
-    public static function forCurrentWindow()
-    {
-        $application = new Application();
-
-        list ($width, $height) = $application->getTerminalDimensions();
-
-        return new static($width ?: 80, $height ?: 20);
-    }
-
-    /**
      * Creates dimensions with the given width and height.
      *
      * @param int $width  The width as number of printable characters.
@@ -53,13 +37,6 @@ class Dimensions
      */
     public function __construct($width, $height)
     {
-        // HHVM only accepts 32 bits integer in str_split, even when PHP_INT_MAX
-        // is a 64 bit integer.
-        // https://github.com/facebook/hhvm/issues/1327
-        if (defined('HHVM_VERSION') && $width > 1 << 31) {
-            $width = 1 << 31;
-        }
-
         $this->width = (int) $width;
         $this->height = (int) $height;
     }

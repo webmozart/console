@@ -18,8 +18,8 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Rendering\Element\EmptyLine;
 use Webmozart\Console\Rendering\Element\LabeledParagraph;
-use Webmozart\Console\Rendering\Element\Paragraph;
 use Webmozart\Console\Rendering\Element\NameVersion;
+use Webmozart\Console\Rendering\Element\Paragraph;
 use Webmozart\Console\Rendering\Layout\BlockLayout;
 
 /**

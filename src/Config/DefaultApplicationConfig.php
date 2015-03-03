@@ -31,11 +31,10 @@ use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\Handler\Help\HelpHandler;
-use Webmozart\Console\IO\FormattedIO;
+use Webmozart\Console\IO\ConsoleIO;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
-use Webmozart\Console\Rendering\Canvas;
 use Webmozart\Console\Rendering\Element\NameVersion;
 
 /**
@@ -100,7 +99,7 @@ class DefaultApplicationConfig extends ApplicationConfig
             $formatter = $output->supportsAnsi() ? new AnsiFormatter($styleSet) : new PlainFormatter($styleSet);
         }
 
-        $io = new FormattedIO($input, $output, $errorOutput, $formatter);
+        $io = new ConsoleIO($input, $output, $errorOutput, $formatter);
 
         if ($args->hasToken('-vvv') || $this->isDebug()) {
             $io->setVerbosity(IO::DEBUG);
@@ -139,10 +138,8 @@ class DefaultApplicationConfig extends ApplicationConfig
     public function printVersion(PreHandleEvent $event)
     {
         if ($event->getArgs()->isOptionSet('version')) {
-            $canvas = new Canvas($event->getIO());
             $version = new NameVersion($event->getCommand()->getApplication()->getConfig());
-            $version->render($canvas);
-            $canvas->flush();
+            $version->render($event->getIO());
 
             $event->setHandled(true);
         }

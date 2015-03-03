@@ -16,8 +16,6 @@ use RuntimeException;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\IO\BufferedIO;
-use Webmozart\Console\Rendering\Canvas;
-use Webmozart\Console\Rendering\Dimensions;
 use Webmozart\Console\Rendering\Exception\ExceptionTrace;
 
 /**
@@ -31,18 +29,11 @@ class ExceptionTraceTest extends PHPUnit_Framework_TestCase
      */
     private $io;
 
-    /**
-     * @var Canvas
-     */
-    private $canvas;
-
     private $previousWd;
 
     protected function setUp()
     {
         $this->io = new BufferedIO();
-        $this->canvas = new Canvas($this->io, new Dimensions(80, 20));
-        $this->canvas->setFlushOnWrite(true);
         $this->previousWd = getcwd();
 
         // Switch to root directory to fix the output of the relative file paths
@@ -60,7 +51,7 @@ class ExceptionTraceTest extends PHPUnit_Framework_TestCase
 
         $exception = NoSuchCommandException::forCommandName('foobar');
         $trace = new ExceptionTrace($exception);
-        $trace->render($this->canvas);
+        $trace->render($this->io);
 
         $expected = <<<EOF
 fatal: The command "foobar" does not exist.
@@ -77,7 +68,7 @@ EOF;
         $cause = new RuntimeException('The message of the cause.');
         $exception = NoSuchCommandException::forCommandName('foobar', 0, $cause);
         $trace = new ExceptionTrace($exception);
-        $trace->render($this->canvas);
+        $trace->render($this->io);
 
         // Prevent trimming of trailing spaces in the box
         $box = '                                                          '.PHP_EOL.
@@ -110,7 +101,7 @@ EOF;
         $cause = new RuntimeException('The message of the cause.');
         $exception = NoSuchCommandException::forCommandName('foobar', 0, $cause);
         $trace = new ExceptionTrace($exception);
-        $trace->render($this->canvas);
+        $trace->render($this->io);
 
         // Prevent trimming of trailing spaces in the box
         $box1 = '                                                          '.PHP_EOL.

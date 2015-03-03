@@ -11,8 +11,10 @@
 
 namespace Webmozart\Console\Rendering;
 
+use Webmozart\Console\Api\IO\IO;
+
 /**
- * An object that can be rendered on a canvas.
+ * An object that can be printed on the I/O.
  *
  * @since  1.0
  * @author Bernhard Schussek <bschussek@gmail.com>
@@ -22,8 +24,8 @@ interface Renderable
     /**
      * Renders the object.
      *
-     * @param Canvas $canvas      The canvas to render the object on.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0);
+    public function render(IO $io, $indentation = 0);
 }

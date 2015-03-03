@@ -12,7 +12,7 @@
 namespace Webmozart\Console\Rendering\Exception;
 
 use Exception;
-use Webmozart\Console\Rendering\Canvas;
+use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Rendering\Renderable;
 
 /**
@@ -41,13 +41,11 @@ class ExceptionTrace implements Renderable
     /**
      * Renders the exception trace.
      *
-     * @param Canvas $canvas      The canvas to render the trace on.
-     * @param int    $indentation The number of spaces to indent.
+     * @param IO  $io          The I/O.
+     * @param int $indentation The number of spaces to indent.
      */
-    public function render(Canvas $canvas, $indentation = 0)
+    public function render(IO $io, $indentation = 0)
     {
-        $io = $canvas->getIO();
-
         if (!$io->isVerbose()) {
             $io->errorLine('fatal: '.$this->exception->getMessage());
 
@@ -56,27 +54,26 @@ class ExceptionTrace implements Renderable
 
         $exception = $this->exception;
 
-        $this->renderException($canvas, $exception);
+        $this->renderException($io, $exception);
 
         if ($io->isVeryVerbose()) {
             while ($exception = $exception->getPrevious()) {
                 $io->errorLine('Caused by:');
 
-                $this->renderException($canvas, $exception);
+                $this->renderException($io, $exception);
             }
         }
     }
 
-    private function renderException(Canvas $canvas, Exception $exception)
+    private function renderException(IO $io, Exception $exception)
     {
-        $this->printBox($canvas, $exception);
-        $this->printTrace($canvas, $exception);
+        $this->printBox($io, $exception);
+        $this->printTrace($io, $exception);
     }
 
-    private function printBox(Canvas $canvas, Exception $exception)
+    private function printBox(IO $io, Exception $exception)
     {
-        $io = $canvas->getIO();
-        $screenWidth = $canvas->getWidth() - 1;
+        $screenWidth = $io->getTerminalDimensions()->getWidth() - 1;
         $boxWidth = 0;
 
         $boxLines = array_merge(
@@ -106,9 +103,8 @@ class ExceptionTrace implements Renderable
         $io->errorLine('');
     }
 
-    private function printTrace(Canvas $canvas, Exception $exception)
+    private function printTrace(IO $io, Exception $exception)
     {
-        $io = $canvas->getIO();
         $traces = $exception->getTrace();
         $cwd = getcwd().'/';
         $cwdLength = strlen($cwd);
