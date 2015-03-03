@@ -84,12 +84,17 @@ $box
 
 Exception trace:
   ()
-    src/Api/Command/NoSuchCommandException.php:36
+    src/Api/Command/NoSuchCommandException.php:??
   Webmozart\Console\Api\Command\NoSuchCommandException::forCommandName()
-    tests/Rendering/Exception/ExceptionTraceTest.php
+    tests/UI/Component/ExceptionTraceTest.php
 EOF;
 
-        $this->assertStringStartsWith($expected, $this->io->fetchErrors());
+        $actual = $this->io->fetchErrors();
+
+        // Normalize line numbers across PHP and HHVM
+        $actual = preg_replace('~(NoSuchCommandException.php:)\d+~', '$1??', $actual);
+
+        $this->assertSame($expected, substr($actual, 0, strlen($expected)));
         $this->assertNotContains('The message of the cause.', $this->io->fetchErrors());
         $this->assertStringEndsWith("\n\n", $this->io->fetchErrors());
     }
@@ -117,9 +122,9 @@ $box1
 
 Exception trace:
   ()
-    src/Api/Command/NoSuchCommandException.php:36
+    src/Api/Command/NoSuchCommandException.php:??
   Webmozart\Console\Api\Command\NoSuchCommandException::forCommandName()
-    tests/Rendering/Exception/ExceptionTraceTest.php
+    tests/UI/Component/ExceptionTraceTest.php
 EOF;
 
         $box2 = '                             '.PHP_EOL.
@@ -138,12 +143,17 @@ $box2
 
 Exception trace:
   ()
-    tests/Rendering/Exception/ExceptionTraceTest.php
+    tests/UI/Component/ExceptionTraceTest.php
 EOF;
 
-        $this->assertStringStartsWith($expected1, $this->io->fetchErrors());
-        $this->assertContains($expected2, $this->io->fetchErrors());
-        $this->assertStringEndsWith("\n\n", $this->io->fetchErrors());
+        $actual = $this->io->fetchErrors();
+
+        // Normalize line numbers across PHP and HHVM
+        $actual = preg_replace('~(NoSuchCommandException.php:)\d+~', '$1??', $actual);
+
+        $this->assertSame($expected1, substr($actual, 0, strlen($expected1)));
+        $this->assertContains($expected2, $actual);
+        $this->assertStringEndsWith("\n\n", $actual);
     }
 
 }
