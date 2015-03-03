@@ -78,7 +78,7 @@ class DelegatingHandler
         }
 
         if (is_callable($handlerName)) {
-            $handlerName = $handlerName($args, $io, $command);
+            $handlerName = call_user_func($handlerName, $args, $io, $command);
         }
 
         if (!isset($this->handlers[$handlerName])) {
@@ -91,7 +91,7 @@ class DelegatingHandler
         $handler = $this->handlers[$handlerName];
 
         if (is_callable($handler)) {
-            $handler = $handler($args, $io, $command);
+            $handler = call_user_func($handler, $args, $io, $command);
         }
 
         return $handler->handle($args, $io, $command);

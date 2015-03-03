@@ -216,7 +216,7 @@ class ConsoleApplication implements Application
         }
 
         /** @var IO $io */
-        $io = $ioFactory($this, $args, $input, $output, $errorOutput);
+        $io = call_user_func($ioFactory, $this, $args, $input, $output, $errorOutput);
 
         if ($this->config->isDebug()) {
             $io->writeLineRaw($io->format('Debug Mode', Style::noTag()->bgCyan()->fgBlack()));
