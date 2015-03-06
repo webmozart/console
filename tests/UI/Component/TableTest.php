@@ -61,6 +61,14 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
+    public function testRenderEmpty()
+    {
+        $table = new Table(TableStyle::asciiBorder());
+        $table->render($this->io);
+
+        $this->assertSame('', $this->io->fetchOutput());
+    }
+
     public function testRenderSolidBorder()
     {
         $table = new Table(TableStyle::solidBorder());

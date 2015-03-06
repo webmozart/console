@@ -61,6 +61,15 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
+    public function testRenderEmpty()
+    {
+        $grid = new Grid(GridStyle::asciiBorder());
+
+        $grid->render($this->io);
+
+        $this->assertSame('', $this->io->fetchOutput());
+    }
+
     public function testRenderSolidBorder()
     {
         $grid = new Grid(GridStyle::solidBorder());

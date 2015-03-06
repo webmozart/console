@@ -175,6 +175,11 @@ class Grid implements Component
      */
     public function render(IO $io, $indentation = 0)
     {
+        // Is the grid empty?
+        if (!$this->cells) {
+            return;
+        }
+
         $screenWidth = $io->getTerminalDimensions()->getWidth();
         $excessColumnWidth = StringUtil::getLength(sprintf($this->style->getCellFormat(), ''), $io);
 

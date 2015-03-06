@@ -192,6 +192,11 @@ class Table implements Component
      */
     public function render(IO $io, $indentation = 0)
     {
+        // Is the table empty?
+        if (!$this->rows) {
+            return;
+        }
+
         $screenWidth = $io->getTerminalDimensions()->getWidth();
         $excessColumnWidth = max(
             StringUtil::getLength(sprintf($this->style->getHeaderCellFormat(), ''), $io),
