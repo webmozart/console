@@ -11,11 +11,11 @@
 
 namespace Webmozart\Console\IO;
 
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Formatter\Style;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\UI\Rectangle;
 
 /**

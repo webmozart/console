@@ -11,11 +11,11 @@
 
 namespace Webmozart\Console\Api\Args\Format;
 
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Args\CannotAddArgumentException;
 use Webmozart\Console\Api\Args\CannotAddOptionException;
 use Webmozart\Console\Api\Args\NoSuchArgumentException;
 use Webmozart\Console\Api\Args\NoSuchOptionException;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * A builder for {@link ArgsFormat} instances.

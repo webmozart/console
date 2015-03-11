@@ -15,7 +15,7 @@ use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozart\Console\Assert\Assert;
+use Webmozart\Assert\Assert;
 
 /**
  * Adapts an `Application` instance of this package to Symfony's

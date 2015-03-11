@@ -12,7 +12,7 @@
 namespace Webmozart\Console\Api\Args\Format;
 
 use InvalidArgumentException;
-use Webmozart\Console\Assert\Assert;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Util\StringUtil;
 
 /**

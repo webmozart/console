@@ -12,11 +12,11 @@
 namespace Webmozart\Console\Handler\Help;
 
 use Symfony\Component\Process\ExecutableFinder;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Handler\DelegatingHandler;
 use Webmozart\Console\Process\ProcessLauncher;
 

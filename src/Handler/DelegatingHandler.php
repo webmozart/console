@@ -13,10 +13,10 @@ namespace Webmozart\Console\Handler;
 
 use InvalidArgumentException;
 use LogicException;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * Delegates command handling to one of a list of registered handlers.

@@ -12,9 +12,9 @@
 namespace Webmozart\Console\Api\Args\Format;
 
 use InvalidArgumentException;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Args\NoSuchArgumentException;
 use Webmozart\Console\Api\Args\NoSuchOptionException;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * The format used to parse a {@link RawArgs} instance.

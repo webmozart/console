@@ -11,8 +11,8 @@
 
 namespace Webmozart\Console\UI\Style;
 
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Formatter\Style;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * Defines the style of a {@link Grid}.

@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\IO\Output;
 
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\IO\IOException;
 use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * An output that writes to a stream.
@@ -35,7 +35,7 @@ class StreamOutput implements Output
      */
     public function __construct($stream)
     {
-        Assert::stream($stream);
+        Assert::resource($stream, 'stream');
 
         $this->stream = $stream;
     }

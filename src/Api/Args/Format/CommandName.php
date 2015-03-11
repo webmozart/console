@@ -11,7 +11,7 @@
 
 namespace Webmozart\Console\Api\Args\Format;
 
-use Webmozart\Console\Assert\Assert;
+use Webmozart\Assert\Assert;
 
 /**
  * A command name in the console arguments.

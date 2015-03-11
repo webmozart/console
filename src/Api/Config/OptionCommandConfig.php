@@ -12,9 +12,9 @@
 namespace Webmozart\Console\Api\Config;
 
 use LogicException;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\CommandOption;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * The configuration of an option command.

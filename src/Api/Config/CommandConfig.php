@@ -11,10 +11,10 @@
 
 namespace Webmozart\Console\Api\Config;
 
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\CommandName;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * The configuration of a console command.

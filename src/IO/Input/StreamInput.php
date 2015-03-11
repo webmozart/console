@@ -11,9 +11,9 @@
 
 namespace Webmozart\Console\IO\Input;
 
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IOException;
-use Webmozart\Console\Assert\Assert;
 
 /**
  * An input that reads from a stream.
@@ -35,7 +35,7 @@ class StreamInput implements Input
      */
     public function __construct($stream)
     {
-        Assert::stream($stream);
+        Assert::resource($stream, 'stream');
 
         $this->stream = $stream;
 

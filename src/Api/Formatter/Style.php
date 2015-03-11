@@ -11,7 +11,7 @@
 
 namespace Webmozart\Console\Api\Formatter;
 
-use Webmozart\Console\Assert\Assert;
+use Webmozart\Assert\Assert;
 
 /**
  * A formatter style.

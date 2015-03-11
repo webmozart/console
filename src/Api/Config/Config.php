@@ -13,12 +13,12 @@ namespace Webmozart\Console\Api\Config;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Helper\HelperSet;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Args\ArgsParser;
 use Webmozart\Console\Api\Args\Format\ArgsFormatBuilder;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Args\DefaultArgsParser;
-use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Handler\NullHandler;
 
 /**

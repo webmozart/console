@@ -14,11 +14,11 @@ namespace Webmozart\Console\Api\Config;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Formatter\Style;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Api\Resolver\CommandResolver;
-use Webmozart\Console\Assert\Assert;
 use Webmozart\Console\Formatter\DefaultStyleSet;
 use Webmozart\Console\Resolver\DefaultResolver;
 
