@@ -51,13 +51,6 @@ class DefaultApplicationConfig extends ApplicationConfig
     protected function configure()
     {
         $this
-            ->setHelperSet(new HelperSet(array(
-                new FormatterHelper(),
-                new DebugFormatterHelper(),
-                new ProcessHelper(),
-                new QuestionHelper(),
-            )))
-
             ->setIOFactory(array($this, 'createIO'))
             ->addEventListener(ConsoleEvents::PRE_RESOLVE, array($this, 'resolveHelpCommand'))
             ->addEventListener(ConsoleEvents::PRE_HANDLE, array($this, 'printVersion'))
