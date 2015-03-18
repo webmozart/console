@@ -309,6 +309,46 @@ EOF;
         $this->assertSame($expected, $this->io->fetchOutput());
     }
 
+    public function testRenderUnwrappableAndVeryLong()
+    {
+        $table = new Table(TableStyle::asciiBorder());
+        $table->setHeaderRow(array('ISBN', 'Title', 'Author'));
+        $table->addRows(array(
+            array('99921-58', 'DivineComedyDivineDivine', 'Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante Alighieri Dante'),
+            array('9971-5', 'ATaleofTwoCitiesCities', 'Charles Dickens Charles Dickens Charles Dickens Charles Dickens Charles Dickens Charles Dickens Charles Dickens'),
+            array('960-425', 'TheLordoftheRingsRings', 'J. R. R. Tolkien J. R. R. Tolkien J. R. R. Tolkien J. R. R. Tolkien J. R. R. Tolkien'),
+            array('80-9027', 'AndThenThereWereNoneNone', 'Agatha Christie'),
+        ));
+
+        $table->render($this->io, 0);
+
+        $expected = <<<EOF
++----------+--------------------------+---------------------------------------+
+| ISBN     | Title                    | Author                                |
++----------+--------------------------+---------------------------------------+
+| 99921-58 | DivineComedyDivineDivine | Dante Alighieri Dante Alighieri Dante |
+|          |                          | Alighieri Dante Alighieri Dante       |
+|          |                          | Alighieri Dante Alighieri Dante       |
+|          |                          | Alighieri Dante Alighieri Dante       |
+|          |                          | Alighieri Dante Alighieri Dante       |
+|          |                          | Alighieri Dante Alighieri Dante       |
+|          |                          | Alighieri Dante Alighieri Dante       |
+|          |                          | Alighieri Dante                       |
+| 9971-5   | ATaleofTwoCitiesCities   | Charles Dickens Charles Dickens       |
+|          |                          | Charles Dickens Charles Dickens       |
+|          |                          | Charles Dickens Charles Dickens       |
+|          |                          | Charles Dickens                       |
+| 960-425  | TheLordoftheRingsRings   | J. R. R. Tolkien J. R. R. Tolkien J.  |
+|          |                          | R. R. Tolkien J. R. R. Tolkien J. R.  |
+|          |                          | R. Tolkien                            |
+| 80-9027  | AndThenThereWereNoneNone | Agatha Christie                       |
++----------+--------------------------+---------------------------------------+
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
+
     public function testRenderFormattedCells()
     {
         $table = new Table(TableStyle::asciiBorder());

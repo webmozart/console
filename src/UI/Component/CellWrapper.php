@@ -305,48 +305,56 @@ class CellWrapper
 
     private function wrapColumns(Formatter $formatter)
     {
-        // Columns that are longer than the evenly distributed column lengths
-        // need to be wrapped
-        $threshold = $this->maxTotalWidth / $this->nbColumns;
+        $availableWidth = $this->maxTotalWidth;
+        $longColumnLengths = $this->columnLengths;
+
+        // Filter "short" column, i.e. columns that are not wrapped
+        // We distribute the available screen width by the number of columns
+        // and decide that all columns that are shorter than their share are
+        // "short".
+        // This process is repeated until no more "short" columns are found.
+        do {
+            $threshold = $availableWidth / count($longColumnLengths);
+            $repeat = false;
+
+            foreach ($longColumnLengths as $col => $length) {
+                if ($length <= $threshold) {
+                    $availableWidth -= $length;
+                    unset($longColumnLengths[$col]);
+                    $repeat = true;
+                }
+            }
+        } while ($repeat);
 
         // Calculate actual and available width
         $actualWidth = 0;
-        $availableWidth = $this->maxTotalWidth;
         $lastAdaptedCol = 0;
 
-        // "Long" columns, i.e. columns that may be wrapped, are added to the
-        // actual width
-        // "Short" columns, i.e. columns that may not be wrapped, are subtracted
-        // from the available width
-        foreach ($this->columnLengths as $col => $length) {
-            if ($length > $threshold) {
-                $actualWidth += $length;
-                $lastAdaptedCol = $col;
-            } else {
-                $availableWidth -= $length;
-            }
+        // "Long" columns, i.e. columns that need to be wrapped, are added to
+        // the actual width
+        foreach ($longColumnLengths as $col => $length) {
+            $actualWidth += $length;
+            $lastAdaptedCol = $col;
         }
 
         // Fit columns into available width
-        foreach ($this->columnLengths as $col => $length) {
-            if ($length > $threshold) {
-                // Keep ratios of column lengths and distribute them among the
-                // available width
-                $this->columnLengths[$col] = round(($length / $actualWidth) * $availableWidth);
+        foreach ($longColumnLengths as $col => $length) {
+            // Keep ratios of column lengths and distribute them among the
+            // available width
+            $this->columnLengths[$col] = round(($length / $actualWidth) * $availableWidth);
 
-                if ($col === $lastAdaptedCol) {
-                    // Fix rounding errors
-                    $this->columnLengths[$col] += $this->maxTotalWidth - array_sum($this->columnLengths);
-                }
-
-                $this->wrapColumn($col, $this->columnLengths[$col], $formatter);
-
-                // Recalculate the column length based on the actual wrapped length
-                $this->refreshColumnLength($col);
-
-                // Recalculate the actual width based on the changed length.
-                $actualWidth = $actualWidth - $length + $this->columnLengths[$col];
+            if ($col === $lastAdaptedCol) {
+                // Fix rounding errors
+                $this->columnLengths[$col] += $this->maxTotalWidth - array_sum($this->columnLengths);
             }
+
+            $this->wrapColumn($col, $this->columnLengths[$col], $formatter);
+
+            // Recalculate the column length based on the actual wrapped length
+            $this->refreshColumnLength($col);
+
+            // Recalculate the actual width based on the changed length.
+            $actualWidth = $actualWidth - $length + $this->columnLengths[$col];
         }
 
         $this->totalWidth = array_sum($this->columnLengths);
