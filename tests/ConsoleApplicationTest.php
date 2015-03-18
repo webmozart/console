@@ -393,31 +393,6 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $application->run($args);
     }
 
-    public function testPrintDebugIfInDebugMode()
-    {
-        $this->config
-            ->setDebug(true)
-
-            ->beginCommand('list')
-                ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    $io->writeLine('Output');
-
-                    return 123;
-                }))
-            ->end()
-        ;
-
-        $args = new StringArgs('list');
-        $input = new BufferedInput();
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
-        $application = new ConsoleApplication($this->config);
-
-        $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
-        $this->assertSame("Debug Mode\nOutput\n", $output->fetch());
-        $this->assertSame('', $errorOutput->fetch());
-    }
-
     public function testPrintExceptionIfCatchingActive()
     {
         $this->config
