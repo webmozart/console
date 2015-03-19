@@ -12,8 +12,21 @@ Latest release: [1.0.0-beta](https://packagist.org/packages/webmozart/console#1.
 
 PHP >= 5.3.9
 
-A usable and easily testable console toolkit built on the shoulders of the
-[Symfony Console component].
+A usable, beautiful and easily testable console toolkit written in PHP.
+
+Goals
+-----
+
+The goal of this package is:
+
+* to build PHP applications similar to the "git" command
+* with a minimum amount of code
+* that are testable
+* robust
+* and beautiful.
+
+None of the existing console libraries matched these requirements, so I
+refactored the [Symfony Console component] into what you can see here.
 
 Installation
 ------------
