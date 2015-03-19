@@ -208,16 +208,16 @@ commit3
 The second argument of the `addArgument()` method accepts a bitwise combination 
 of different flags:
 
-Constant                | Description
------------------------ | ------------------------------------------------------
-Argument::OPTIONAL      | The argument is optional. If you don't pass a default value, the default value is `null`.
-Argument::REQUIRED      | The argument must be passed when calling the command.
-Argument::MULTI_VALUED  | The argument may be passed multiple times. The command handler receives an array of all passed values.
-Argument::STRING        | The argument is parsed as string (the default).
-Argument::BOOLEAN       | The argument is parsed as boolean.
-Argument::INTEGER       | The argument is parsed as integer.
-Argument::FLOAT         | The argument is parsed as float.
-Argument::NULLABLE      | Convert "null" to `null`.
+Constant                  | Description
+------------------------- | ------------------------------------------------------
+`Argument::OPTIONAL`      | The argument is optional. If you don't pass a default value, the default value is `null`.
+`Argument::REQUIRED`      | The argument must be passed when calling the command.
+`Argument::MULTI_VALUED`  | The argument may be passed multiple times. The command handler receives an array of all passed values.
+`Argument::STRING`        | The argument is parsed as string (the default).
+`Argument::BOOLEAN`       | The argument is parsed as boolean.
+`Argument::INTEGER`       | The argument is parsed as integer.
+`Argument::FLOAT`         | The argument is parsed as float.
+`Argument::NULLABLE`      | Convert "null" to `null`.
 
 Options
 -------
@@ -316,19 +316,19 @@ $ bin/git log -m 10
 Like for arguments, options support a bitwise combination of different flags
 that control how the option is processed:
 
-Constant                    | Description
---------------------------- | ------------------------------------------------------
-Option::NO_VALUE            | The option accepts no value. Used for simple on/off settings.
-Option::OPTIONAL_VALUE      | The option accepts a value, but the value is option.
-Option::REQUIRED_VALUE      | The option value needs to be set when passing the option.
-Option::MULTI_VALUED        | The option may be passed multiple times. The command handler receives an array of all passed values.
-Option::STRING              | The option is parsed as string (the default).
-Option::BOOLEAN             | The option is parsed as boolean.
-Option::INTEGER             | The option is parsed as integer.
-Option::FLOAT               | The option is parsed as float.
-Option::NULLABLE            | Convert "null" to `null`.
-Option::PREFER_LONG_NAME    | The help lists the long form (`--max`) as suggested way of passing the option (the default). 
-Option::PREFER_SHORT_NAME   | The help lists the short form (`-m`) as suggested way of passing the option.
+Constant                      | Description
+----------------------------- | ------------------------------------------------------
+`Option::NO_VALUE`            | The option accepts no value. Used for simple on/off settings.
+`Option::OPTIONAL_VALUE`      | The option accepts a value, but the value is option.
+`Option::REQUIRED_VALUE`      | The option value needs to be set when passing the option.
+`Option::MULTI_VALUED`        | The option may be passed multiple times. The command handler receives an array of all passed values.
+`Option::STRING`              | The option is parsed as string (the default).
+`Option::BOOLEAN`             | The option is parsed as boolean.
+`Option::INTEGER`             | The option is parsed as integer.
+`Option::FLOAT`               | The option is parsed as float.
+`Option::NULLABLE`            | Convert "null" to `null`.
+`Option::PREFER_LONG_NAME`    | The help lists the long form (`--max`) as suggested way of passing the option (the default). 
+`Option::PREFER_SHORT_NAME`   | The help lists the short form (`-m`) as suggested way of passing the option.
  
 Dependencies
 ------------
