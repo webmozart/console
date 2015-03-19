@@ -1,6 +1,6 @@
 {
     "name": "webmozart/console",
-    "description": "A Git-like extension of symfony/console with a testable architecture.",
+    "description": "A usable, beautiful and easily testable console toolkit written in PHP.",
     "license": "MIT",
     "authors": [
         {
