@@ -14,8 +14,8 @@ PHP >= 5.3.9
 
 A usable, beautiful and easily testable console toolkit written in PHP.
 
-Goals
------
+Goal
+----
 
 The goal of this package is:
 
