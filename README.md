@@ -423,7 +423,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
 Now, the `LogCommandHandler` and its dependencies are only created when "log"
 command is executed.
 
-Sub Commands
+Sub-Commands
 ------------
 
 The "log" command was a very simple example, but many real-world use cases are
@@ -472,9 +472,9 @@ class GitApplicationConfig extends DefaultApplicationConfig
 ```
 
 Like regular commands, sub-commands accept options, arguments and command
-handlers. However, instead of creating *one command handler per sub-command*, it
-is often more convenient to create a single handler with *one method per
-sub-command*. The handler method can be selected with `setHandlerMethod()`.
+handlers. However, instead of creating *one command handler* per sub-command, it
+is often more convenient to create a single handler with *one method* per
+sub-command. The handler method can be selected with `setHandlerMethod()`.
 
 The basic implementation of our `RemoteCommandHandler` is very similar to the
 command handler of the "log" command:
