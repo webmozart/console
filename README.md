@@ -8,7 +8,7 @@ Webmozart Console
 [![Total Downloads](https://poser.pugx.org/webmozart/console/downloads.svg)](https://packagist.org/packages/webmozart/console)
 [![Dependency Status](https://www.versioneye.com/php/webmozart:console/1.0.0/badge.svg)](https://www.versioneye.com/php/webmozart:console/1.0.0)
 
-Latest release: none
+Latest release: [1.0.0-beta](https://packagist.org/packages/webmozart/console#1.0.0-beta)
 
 PHP >= 5.3.9
 
@@ -21,7 +21,7 @@ Installation
 Use [Composer] to install the package:
 
 ```
-$ composer require webmozart/console@dev
+$ composer require webmozart/console:~1.0@beta
 ```
 
 Basic Configuration
