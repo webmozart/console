@@ -50,6 +50,8 @@ class GitApplicationConfig extends DefaultApplicationConfig
 {
     protected function configure()
     {
+        parent::configure();
+        
         $this
             ->setName('git')
             ->setVersion('1.0.0')
