@@ -368,8 +368,8 @@ class OptionTest extends PHPUnit_Framework_TestCase
             array(0, 'string', 'string'),
             array(0, '1', '1'),
             array(0, '1.23', '1.23'),
-            array(0, 'null', null),
-            array(Option::NOT_NULL, 'null', 'null'),
+            array(0, 'null', 'null'),
+            array(Option::NULLABLE, 'null', null),
             array(0, 'true', 'true'),
             array(0, 'false', 'false'),
 
@@ -377,24 +377,24 @@ class OptionTest extends PHPUnit_Framework_TestCase
             array(Option::STRING, 'string', 'string'),
             array(Option::STRING, '1', '1'),
             array(Option::STRING, '1.23', '1.23'),
-            array(Option::STRING, 'null', null),
-            array(Option::STRING | Option::NOT_NULL, 'null', 'null'),
+            array(Option::STRING, 'null', 'null'),
+            array(Option::STRING | Option::NULLABLE, 'null', null),
             array(Option::STRING, 'true', 'true'),
             array(Option::STRING, 'false', 'false'),
 
             array(Option::BOOLEAN, 'true', true),
             array(Option::BOOLEAN, 'false', false),
-            array(Option::BOOLEAN, 'null', null),
+            array(Option::BOOLEAN | Option::NULLABLE, 'null', null),
 
             array(Option::INTEGER, '1', 1),
             array(Option::INTEGER, '1.23', 1),
             array(Option::INTEGER, '0', 0),
-            array(Option::INTEGER, 'null', null),
+            array(Option::INTEGER | Option::NULLABLE, 'null', null),
 
             array(Option::FLOAT, '1', 1.0),
             array(Option::FLOAT, '1.23', 1.23),
             array(Option::FLOAT, '0', 0.0),
-            array(Option::FLOAT, 'null', null),
+            array(Option::FLOAT | Option::NULLABLE, 'null', null),
         );
     }
 
@@ -412,9 +412,9 @@ class OptionTest extends PHPUnit_Framework_TestCase
     public function getInvalidParseValueTests()
     {
         return array(
-            array(Option::BOOLEAN | Option::NOT_NULL, 'null'),
-            array(Option::INTEGER | Option::NOT_NULL, 'null'),
-            array(Option::FLOAT | Option::NOT_NULL, 'null'),
+            array(Option::BOOLEAN, 'null'),
+            array(Option::INTEGER, 'null'),
+            array(Option::FLOAT, 'null'),
         );
     }
 }

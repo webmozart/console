@@ -107,7 +107,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionPrefersSetNullOverDefaultValue()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE, null, 'default'))
+            ->addOption(new Option('option', 'o', Option::OPTIONAL_VALUE | Option::NULLABLE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -224,7 +224,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetOptionsPrefersSetNullOverDefaultValue()
     {
         $format = ArgsFormat::build()
-            ->addOption(new Option('option', null, Option::OPTIONAL_VALUE, null, 'default'))
+            ->addOption(new Option('option', null, Option::OPTIONAL_VALUE | Option::NULLABLE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
