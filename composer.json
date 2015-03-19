@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.3.9",
-        "webmozart/assert": "~1.0@dev",
+        "webmozart/assert": "~1.0@beta",
         "symfony/console": "~2.5",
         "symfony/process": "~2.5",
         "symfony/event-dispatcher": "~2.5"
