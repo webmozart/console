@@ -694,7 +694,7 @@ Contribute
 Contributions to are very welcome!
 
 * Report any bugs or issues you find on the [issue tracker].
-* You can grab the source code at Puli’s [Git repository].
+* You can grab the source code at the package’s [Git repository].
 
 Support
 -------
