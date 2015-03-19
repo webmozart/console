@@ -96,9 +96,9 @@ class Argument
     const FLOAT = 128;
 
     /**
-     * Flag: The value "null" must not be parsed as `null`.
+     * Flag: The value "null" should be parsed as `null`.
      */
-    const NOT_NULL = 256;
+    const NULLABLE = 256;
 
     /**
      * @var string
@@ -243,8 +243,8 @@ class Argument
      *
      * Pass one of the flags {@link STRING}, {@link BOOLEAN}, {@link INTEGER}
      * and {@link FLOAT} to the constructor to configure the result of this
-     * method. You can optionally combine the flags with {@link NOT_NULL} to
-     * disallow `null` values.
+     * method. You can optionally combine the flags with {@link NULLABLE} to
+     * support the conversion of "null" to `null`.
      *
      * @param mixed $value The value to parse.
      *
@@ -254,7 +254,7 @@ class Argument
      */
     public function parseValue($value)
     {
-        $nullable = !($this->flags & self::NOT_NULL);
+        $nullable = ($this->flags & self::NULLABLE);
 
         if ($this->flags & self::BOOLEAN) {
             return StringUtil::parseBoolean($value, $nullable);

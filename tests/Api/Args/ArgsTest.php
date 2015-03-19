@@ -447,7 +447,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetArgumentPrefersSetNullOverDefaultValue()
     {
         $format = ArgsFormat::build()
-            ->addArgument(new Argument('argument', 0, null, 'default'))
+            ->addArgument(new Argument('argument', Argument::NULLABLE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);
@@ -535,7 +535,7 @@ class ArgsTest extends PHPUnit_Framework_TestCase
     public function testGetArgumentsPrefersSetNullOverDefaultValue()
     {
         $format = ArgsFormat::build()
-            ->addArgument(new Argument('argument', 0, null, 'default'))
+            ->addArgument(new Argument('argument', Argument::NULLABLE, null, 'default'))
             ->getFormat();
 
         $args = new Args($format);

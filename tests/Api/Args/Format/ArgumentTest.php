@@ -250,8 +250,8 @@ class ArgumentTest extends PHPUnit_Framework_TestCase
             array(0, 'string', 'string'),
             array(0, '1', '1'),
             array(0, '1.23', '1.23'),
-            array(0, 'null', null),
-            array(Argument::NOT_NULL, 'null', 'null'),
+            array(0, 'null', 'null'),
+            array(Argument::NULLABLE, 'null', null),
             array(0, 'true', 'true'),
             array(0, 'false', 'false'),
 
@@ -259,24 +259,24 @@ class ArgumentTest extends PHPUnit_Framework_TestCase
             array(Argument::STRING, 'string', 'string'),
             array(Argument::STRING, '1', '1'),
             array(Argument::STRING, '1.23', '1.23'),
-            array(Argument::STRING, 'null', null),
-            array(Argument::STRING | Argument::NOT_NULL, 'null', 'null'),
+            array(Argument::STRING, 'null', 'null'),
+            array(Argument::STRING | Argument::NULLABLE, 'null', null),
             array(Argument::STRING, 'true', 'true'),
             array(Argument::STRING, 'false', 'false'),
 
             array(Argument::BOOLEAN, 'true', true),
             array(Argument::BOOLEAN, 'false', false),
-            array(Argument::BOOLEAN, 'null', null),
+            array(Argument::BOOLEAN | Argument::NULLABLE, 'null', null),
 
             array(Argument::INTEGER, '1', 1),
             array(Argument::INTEGER, '1.23', 1),
             array(Argument::INTEGER, '0', 0),
-            array(Argument::INTEGER, 'null', null),
+            array(Argument::INTEGER | Argument::NULLABLE, 'null', null),
 
             array(Argument::FLOAT, '1', 1.0),
             array(Argument::FLOAT, '1.23', 1.23),
             array(Argument::FLOAT, '0', 0.0),
-            array(Argument::FLOAT, 'null', null),
+            array(Argument::FLOAT | Argument::NULLABLE, 'null', null),
         );
     }
 
@@ -294,9 +294,9 @@ class ArgumentTest extends PHPUnit_Framework_TestCase
     public function getInvalidParseValueTests()
     {
         return array(
-            array(Argument::BOOLEAN | Argument::NOT_NULL, 'null'),
-            array(Argument::INTEGER | Argument::NOT_NULL, 'null'),
-            array(Argument::FLOAT | Argument::NOT_NULL, 'null'),
+            array(Argument::BOOLEAN, 'null'),
+            array(Argument::INTEGER, 'null'),
+            array(Argument::FLOAT, 'null'),
         );
     }
 }
