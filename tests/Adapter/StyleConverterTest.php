@@ -114,7 +114,7 @@ class StyleConverterTest extends PHPUnit_Framework_TestCase
                 new OutputFormatterStyle(null, null, array('underscore')),
             ),
             array(
-                Style::noTag()->reversed(),
+                Style::noTag()->inverse(),
                 new OutputFormatterStyle(null, null, array('reverse')),
             ),
             array(
@@ -122,11 +122,11 @@ class StyleConverterTest extends PHPUnit_Framework_TestCase
                 new OutputFormatterStyle(null, null, array('blink')),
             ),
             array(
-                Style::noTag()->concealed(),
+                Style::noTag()->hidden(),
                 new OutputFormatterStyle(null, null, array('conceal')),
             ),
             array(
-                Style::noTag()->fgWhite()->bgBlack()->bold()->concealed(),
+                Style::noTag()->fgWhite()->bgBlack()->bold()->hidden(),
                 new OutputFormatterStyle('white', 'black', array('bold', 'conceal')),
             ),
         );

@@ -30,8 +30,8 @@ class StyleTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($style->isBold());
         $this->assertFalse($style->isUnderlined());
         $this->assertFalse($style->isBlinking());
-        $this->assertFalse($style->isConcealed());
-        $this->assertFalse($style->isReversed());
+        $this->assertFalse($style->isHidden());
+        $this->assertFalse($style->isInverse());
     }
 
     public function testBlack()
@@ -175,31 +175,31 @@ class StyleTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($style->isBlinking());
     }
 
-    public function testReversed()
+    public function testInverse()
     {
-        $style = Style::noTag()->reversed();
+        $style = Style::noTag()->inverse();
 
-        $this->assertTrue($style->isReversed());
+        $this->assertTrue($style->isInverse());
     }
 
-    public function testNotReversed()
+    public function testNotInverse()
     {
-        $style = Style::noTag()->reversed()->notReversed();
+        $style = Style::noTag()->inverse()->notInverse();
 
-        $this->assertFalse($style->isReversed());
+        $this->assertFalse($style->isInverse());
     }
 
-    public function testConcealed()
+    public function testHidden()
     {
-        $style = Style::noTag()->concealed();
+        $style = Style::noTag()->hidden();
 
-        $this->assertTrue($style->isConcealed());
+        $this->assertTrue($style->isHidden());
     }
 
-    public function testNotConcealed()
+    public function testNotHidden()
     {
-        $style = Style::noTag()->concealed()->notConcealed();
+        $style = Style::noTag()->hidden()->notHidden();
 
-        $this->assertFalse($style->isConcealed());
+        $this->assertFalse($style->isHidden());
     }
 }

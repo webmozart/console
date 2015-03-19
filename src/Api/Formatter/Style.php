@@ -108,12 +108,12 @@ class Style
     /**
      * @var bool
      */
-    private $reversed = false;
+    private $inverse = false;
 
     /**
      * @var bool
      */
-    private $concealed = false;
+    private $hidden = false;
 
     /**
      * Creates a style with the given tag name.
@@ -472,49 +472,49 @@ class Style
     }
 
     /**
-     * Enables reversed text.
+     * Enables inverse colors.
      *
      * @return static The current instance.
      */
-    public function reversed()
+    public function inverse()
     {
-        $this->reversed = true;
+        $this->inverse = true;
 
         return $this;
     }
 
     /**
-     * Disables reversed text.
+     * Disables inverse colors.
      *
      * @return static The current instance.
      */
-    public function notReversed()
+    public function notInverse()
     {
-        $this->reversed = false;
+        $this->inverse = false;
 
         return $this;
     }
 
     /**
-     * Enables concealed text.
+     * Hides the text.
      *
      * @return static The current instance.
      */
-    public function concealed()
+    public function hidden()
     {
-        $this->concealed = true;
+        $this->hidden = true;
 
         return $this;
     }
 
     /**
-     * Disables concealed text.
+     * Does not hide the text.
      *
      * @return static The current instance.
      */
-    public function notConcealed()
+    public function notHidden()
     {
-        $this->concealed = false;
+        $this->hidden = false;
 
         return $this;
     }
@@ -590,9 +590,9 @@ class Style
      * @return bool Returns `true` if text is formatted reversed and `false`
      *              otherwise.
      */
-    public function isReversed()
+    public function isInverse()
     {
-        return $this->reversed;
+        return $this->inverse;
     }
 
     /**
@@ -601,8 +601,8 @@ class Style
      * @return bool Returns `true` if text is formatted concealed and `false`
      *              otherwise.
      */
-    public function isConcealed()
+    public function isHidden()
     {
-        return $this->concealed;
+        return $this->hidden;
     }
 }

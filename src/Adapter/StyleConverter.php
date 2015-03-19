@@ -45,11 +45,11 @@ class StyleConverter
             $options[] = 'underscore';
         }
 
-        if ($style->isReversed()) {
+        if ($style->isInverse()) {
             $options[] = 'reverse';
         }
 
-        if ($style->isConcealed()) {
+        if ($style->isHidden()) {
             $options[] = 'conceal';
         }
 
