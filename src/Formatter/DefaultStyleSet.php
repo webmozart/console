@@ -28,7 +28,8 @@ class DefaultStyleSet extends StyleSet
             // Default styles
             Style::tag('b')->bold(),
             Style::tag('u')->underlined(),
-            Style::tag('em')->fgCyan(),
+            Style::tag('c1')->fgCyan(),
+            Style::tag('c2')->fgYellow(),
             Style::tag('error')->fgWhite()->bgRed(),
             Style::tag('warn')->fgBlack()->bgYellow(),
 

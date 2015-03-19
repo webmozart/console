@@ -155,7 +155,7 @@ class ExceptionTrace implements Component
             $io->errorRaw(sprintf("  %s%s()\n    %s\n",
                 $namespace,
                 $io->format('<u>'.$signature.'</u>'),
-                $io->format('<em>'.$location.'</em>')
+                $io->format('<c1>'.$location.'</c1>')
             ));
         }
 

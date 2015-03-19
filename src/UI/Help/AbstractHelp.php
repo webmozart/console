@@ -82,7 +82,7 @@ abstract class AbstractHelp implements Component
     protected function renderArgument(BlockLayout $layout, Argument $argument)
     {
         $description = $argument->getDescription();
-        $name = '<em><'.$argument->getName().'></em>';
+        $name = '<c1><'.$argument->getName().'></c1>';
         $defaultValue = $argument->getDefaultValue();
 
         if (null !== $defaultValue && (!is_array($defaultValue) || count($defaultValue))) {
@@ -149,7 +149,7 @@ abstract class AbstractHelp implements Component
             $alternativeName = '--'.$option->getLongName();
         }
 
-        $name = '<em>'.$preferredName.'</em>';
+        $name = '<c1>'.$preferredName.'</c1>';
 
         if ($alternativeName) {
             $name .= sprintf(' (%s)', $alternativeName);

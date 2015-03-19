@@ -44,7 +44,7 @@ class NameVersion implements Component
     public function render(IO $io, $indentation = 0)
     {
         if ($this->config->getDisplayName() && $this->config->getVersion()) {
-            $paragraph = new Paragraph("{$this->config->getDisplayName()} version <em>{$this->config->getVersion()}</em>");
+            $paragraph = new Paragraph("{$this->config->getDisplayName()} version <c1>{$this->config->getVersion()}</c1>");
         } elseif ($this->config->getDisplayName()) {
             $paragraph = new Paragraph("{$this->config->getDisplayName()}");
         } else {

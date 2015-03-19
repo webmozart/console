@@ -141,7 +141,7 @@ class ApplicationHelp extends AbstractHelp
     protected function renderCommand(BlockLayout $layout, Command $command)
     {
         $description = $command->getConfig()->getDescription();
-        $name = '<em>'.$command->getName().'</em>';
+        $name = '<c1>'.$command->getName().'</c1>';
 
         $layout->add(new LabeledParagraph($name, $description));
     }
