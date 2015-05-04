@@ -60,4 +60,21 @@ EOF;
 
         $this->assertSame($expected, $this->io->fetchOutput());
     }
+
+    public function testSkipIndentationForEmptyLines()
+    {
+        $para = new Paragraph(self::LOREM_IPSUM."\n\n".self::LOREM_IPSUM);
+        $para->render($this->io, 6);
+
+        $expected = <<<EOF
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+      eirmod tempor invidunt
+
+      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+      eirmod tempor invidunt
+
+EOF;
+
+        $this->assertSame($expected, $this->io->fetchOutput());
+    }
 }

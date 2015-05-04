@@ -50,7 +50,7 @@ class Paragraph implements Component
         $linePrefix = str_repeat(' ', $indentation);
         $textWidth = $io->getTerminalDimensions()->getWidth() - 1 - $indentation;
         // TODO replace wordwrap() by implementation that is aware of format codes
-        $text = str_replace("\n", "\n".$linePrefix, wordwrap($this->text, $textWidth));
+        $text = preg_replace("~\n(?!\n)~", "\n".$linePrefix, wordwrap($this->text, $textWidth));
 
         $io->write($linePrefix.rtrim($text)."\n");
     }
