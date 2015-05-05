@@ -111,7 +111,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
             ->beginCommand('log')
                 ->setDescription('Show the latest commits')
                 ->setHandler(new LogCommandHandler())
-            ->endCommand()
+            ->end()
         ;
     }
 }
