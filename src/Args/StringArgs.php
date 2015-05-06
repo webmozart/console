@@ -41,6 +41,14 @@ class StringArgs implements RawArgs
     /**
      * {@inheritdoc}
      */
+    public function getScriptName()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasToken($token)
     {
         return in_array($token, $this->tokens);
@@ -57,7 +65,7 @@ class StringArgs implements RawArgs
     /**
      * {@inheritdoc}
      */
-    public function toString()
+    public function toString($scriptName = true)
     {
         return implode(' ', $this->tokens);
     }

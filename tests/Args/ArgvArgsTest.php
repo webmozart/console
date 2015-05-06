@@ -26,6 +26,7 @@ class ArgvArgsTest extends PHPUnit_Framework_TestCase
 
         $args = new ArgvArgs();
 
+        $this->assertSame('console' , $args->getScriptName());
         $this->assertSame(array('server', 'add', '--port', '80', 'localhost'), $args->getTokens());
     }
 
@@ -33,9 +34,18 @@ class ArgvArgsTest extends PHPUnit_Framework_TestCase
     {
         $_SERVER['argv'] = array('console', 'server', 'add', 'localhost');
 
-        $args = new ArgvArgs(array('console', 'server', 'add', '--port', '80', 'localhost'));
+        $args = new ArgvArgs(array('other', 'server', 'add', '--port', '80', 'localhost'));
 
+        $this->assertSame('other' , $args->getScriptName());
         $this->assertSame(array('server', 'add', '--port', '80', 'localhost'), $args->getTokens());
+    }
+
+    public function testCreateNoArgs()
+    {
+        $args = new ArgvArgs(array());
+
+        $this->assertNull($args->getScriptName());
+        $this->assertSame(array(), $args->getTokens());
     }
 
     public function testHasToken()
@@ -53,6 +63,8 @@ class ArgvArgsTest extends PHPUnit_Framework_TestCase
     {
         $args = new ArgvArgs(array('console', 'server', 'add', '--port', '80', 'localhost'));
 
-        $this->assertSame('server add --port 80 localhost', $args->toString());
+        $this->assertSame('console server add --port 80 localhost', $args->toString());
+        $this->assertSame('console server add --port 80 localhost', $args->toString(true));
+        $this->assertSame('server add --port 80 localhost', $args->toString(false));
     }
 }

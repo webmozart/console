@@ -22,6 +22,11 @@ use Webmozart\Console\Api\Args\RawArgs;
 class ArgvArgs implements RawArgs
 {
     /**
+     * @var string
+     */
+    private $scriptName;
+
+    /**
      * @var string[]
      */
     private $tokens;
@@ -38,10 +43,16 @@ class ArgvArgs implements RawArgs
             $argv = $_SERVER['argv'];
         }
 
-        // Remove the application name from the tokens
-        array_shift($argv);
-
+        $this->scriptName = array_shift($argv);
         $this->tokens = $argv;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScriptName()
+    {
+        return $this->scriptName;
     }
 
     /**
@@ -63,8 +74,14 @@ class ArgvArgs implements RawArgs
     /**
      * {@inheritdoc}
      */
-    public function toString()
+    public function toString($scriptName = true)
     {
-        return implode(' ', $this->tokens);
+        $string = implode(' ', $this->tokens);
+
+        if ($scriptName) {
+            $string = ltrim($this->scriptName.' ').$string;
+        }
+
+        return $string;
     }
 }

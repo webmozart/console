@@ -90,6 +90,17 @@ class Args
     }
 
     /**
+     * Returns the PHP script as it was called on the console.
+     *
+     * @return string|null The script name or null if no script name is
+     *                     available.
+     */
+    public function getScriptName()
+    {
+        return $this->rawArgs ? $this->rawArgs->getScriptName() : null;
+    }
+
+    /**
      * Returns the command names as array.
      *
      * @return CommandName[] The command names.

@@ -54,6 +54,14 @@ namespace Webmozart\Console\Api\Args;
 interface RawArgs
 {
     /**
+     * Returns the PHP script as it was called on the console.
+     *
+     * @return string|null The script name or null if no script name is
+     *                     available.
+     */
+    public function getScriptName();
+
+    /**
      * Returns the tokens of the console arguments.
      *
      * @return string[] The argument tokens.
@@ -73,7 +81,9 @@ interface RawArgs
     /**
      * Returns the console arguments as string.
      *
+     * @param bool $scriptName Whether to include the script name in the output.
+     *
      * @return string The arguments as string.
      */
-    public function toString();
+    public function toString($scriptName = true);
 }
