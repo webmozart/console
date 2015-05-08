@@ -16,6 +16,7 @@ use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Formatter\AnsiFormatter;
+use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\IO\Input\StandardInput;
 use Webmozart\Console\IO\Output\ErrorOutput;
 use Webmozart\Console\IO\Output\StandardOutput;
@@ -43,7 +44,7 @@ class ConsoleIO extends FormattedIO
         $input = $input ?: new StandardInput();
         $output = $output ?: new StandardOutput();
         $errorOutput = $errorOutput ?: new ErrorOutput();
-        $formatter = $formatter ?: new AnsiFormatter();
+        $formatter = $formatter ?: ($output->supportsAnsi() ? new AnsiFormatter() : new PlainFormatter());
 
         parent::__construct($input, $output, $errorOutput, $formatter, $dimensions);
     }

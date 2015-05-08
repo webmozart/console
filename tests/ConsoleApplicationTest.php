@@ -47,6 +47,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->config = new ApplicationConfig();
+        $this->config->setCatchExceptions(false);
         $this->config->setTerminateAfterRun(false);
         $this->config->setIOFactory(function ($application, $args, $input, $output, $errorOutput) {
             return new RawIO($input, $output, $errorOutput);
@@ -396,6 +397,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     public function testPrintExceptionIfCatchingActive()
     {
         $this->config
+            ->setCatchExceptions(true)
             ->beginCommand('list')
                 ->setHandler(new CallbackHandler(function () {
                     throw NoSuchCommandException::forCommandName('foobar', 123);
@@ -417,6 +419,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     public function testNormalizeNegativeExceptionCodeToOne()
     {
         $this->config
+            ->setCatchExceptions(true)
             ->beginCommand('list')
                 ->setHandler(new CallbackHandler(function () {
                     throw NoSuchCommandException::forCommandName('foobar', -1);
@@ -436,6 +439,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
     public function testNormalizeLargeExceptionCodeTo255()
     {
         $this->config
+            ->setCatchExceptions(true)
             ->beginCommand('list')
                 ->setHandler(new CallbackHandler(function () {
                     throw NoSuchCommandException::forCommandName('foobar', 256);

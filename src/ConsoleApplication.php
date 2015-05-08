@@ -30,6 +30,7 @@ use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\ArgvArgs;
+use Webmozart\Console\IO\ConsoleIO;
 use Webmozart\Console\UI\Component\ExceptionTrace;
 
 /**
@@ -71,31 +72,52 @@ class ConsoleApplication implements Application
     private $dispatcher;
 
     /**
+     * @var ConsoleIO
+     */
+    private $preliminaryIo;
+
+    /**
      * Creates a new console application.
      *
      * @param ApplicationConfig $config The application configuration.
      */
     public function __construct(ApplicationConfig $config)
     {
-        $dispatcher = $config->getEventDispatcher();
+        $this->preliminaryIo = new ConsoleIO();
 
-        if ($dispatcher && $dispatcher->hasListeners(ConsoleEvents::CONFIG)) {
-            $dispatcher->dispatch(ConsoleEvents::CONFIG, new ConfigEvent($config));
-        }
+        try {
+            $dispatcher = $config->getEventDispatcher();
 
-        $this->config = $config;
-        $this->dispatcher = $config->getEventDispatcher();
-        $this->commands = new CommandCollection();
-        $this->namedCommands = new CommandCollection();
-        $this->defaultCommands = new CommandCollection();
+            if ($dispatcher && $dispatcher->hasListeners(ConsoleEvents::CONFIG)) {
+                $dispatcher->dispatch(ConsoleEvents::CONFIG,
+                    new ConfigEvent($config));
+            }
 
-        $this->globalArgsFormat = new ArgsFormat(array_merge(
-            $config->getOptions(),
-            $config->getArguments()
-        ));
+            $this->config = $config;
+            $this->dispatcher = $config->getEventDispatcher();
+            $this->commands = new CommandCollection();
+            $this->namedCommands = new CommandCollection();
+            $this->defaultCommands = new CommandCollection();
 
-        foreach ($config->getCommandConfigs() as $commandConfig) {
-            $this->addCommand($commandConfig);
+            $this->globalArgsFormat = new ArgsFormat(array_merge(
+                $config->getOptions(),
+                $config->getArguments()
+            ));
+
+            foreach ($config->getCommandConfigs() as $commandConfig) {
+                $this->addCommand($commandConfig);
+            }
+        } catch (Exception $e) {
+            if (!$config->isExceptionCaught()) {
+                throw $e;
+            }
+
+            // Render the trace to the preliminary IO
+            $trace = new ExceptionTrace($e);
+            $trace->render($this->preliminaryIo);
+
+            // Ignore isTerminatedAfterRun() setting. This is a fatal error.
+            exit($this->exceptionToExitCode($e->getCode()));
         }
     }
 
@@ -201,20 +223,23 @@ class ConsoleApplication implements Application
      */
     public function run(RawArgs $args = null, Input $input = null, Output $output = null, Output $errorOutput = null)
     {
-        if (null === $args) {
-            $args = new ArgvArgs();
-        }
-
-        $ioFactory = $this->config->getIOFactory();
-
-        if (null === $ioFactory) {
-            throw new LogicException('The IO factory must be set.');
-        }
-
-        /** @var IO $io */
-        $io = call_user_func($ioFactory, $this, $args, $input, $output, $errorOutput);
+        // Render errors to the preliminary IO until the final IO is created
+        $io = $this->preliminaryIo;
 
         try {
+            if (null === $args) {
+                $args = new ArgvArgs();
+            }
+
+            $ioFactory = $this->config->getIOFactory();
+
+            if (null === $ioFactory) {
+                throw new LogicException('The IO factory must be set.');
+            }
+
+            /** @var IO $io */
+            $io = call_user_func($ioFactory, $this, $args, $input, $output, $errorOutput);
+
             $resolvedCommand = $this->resolveCommand($args);
             $command = $resolvedCommand->getCommand();
             $parsedArgs = $resolvedCommand->getArgs();
