@@ -88,6 +88,9 @@ class ConsoleApplication implements Application
     {
         $this->preliminaryIo = new ConsoleIO();
 
+        // Enable trace output for exceptions thrown during boot
+        $this->preliminaryIo->setVerbosity(IO::VERBOSE);
+
         if (is_callable($config)) {
             try {
                 $config = $config();
