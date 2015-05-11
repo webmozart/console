@@ -13,6 +13,7 @@ namespace Webmozart\Console\Tests;
 
 use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
@@ -67,6 +68,34 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
             new Argument('argument'),
             new Option('option', 'o'),
         )), $application->getGlobalArgsFormat());
+    }
+
+    public function testCreateWithConfigClosure()
+    {
+        $config = $this->config;
+        $config->addArgument('argument');
+        $config->addOption('option', 'o');
+
+        // This feature is useful when the Config constructor might throw an
+        // exception which should be rendered nicely
+        $application = new ConsoleApplication(function () use ($config) {
+            return $config;
+        });
+
+        $this->assertSame($this->config, $application->getConfig());
+
+        $this->assertEquals(new ArgsFormat(array(
+            new Argument('argument'),
+            new Option('option', 'o'),
+        )), $application->getGlobalArgsFormat());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testFailIfConfigNeitherCallableNorConfigClass()
+    {
+        new ConsoleApplication(new stdClass());
     }
 
     public function testGetCommands()

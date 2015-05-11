@@ -14,6 +14,7 @@ namespace Webmozart\Console;
 use Exception;
 use LogicException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\RawArgs;
@@ -79,11 +80,26 @@ class ConsoleApplication implements Application
     /**
      * Creates a new console application.
      *
-     * @param ApplicationConfig $config The application configuration.
+     * @param ApplicationConfig|callable $config The application configuration
+     *                                           or a callable that creates the
+     *                                           configuration.
      */
-    public function __construct(ApplicationConfig $config)
+    public function __construct($config)
     {
         $this->preliminaryIo = new ConsoleIO();
+
+        if (is_callable($config)) {
+            try {
+                $config = $config();
+            } catch (Exception $e) {
+                $trace = new ExceptionTrace($e);
+                $trace->render($this->preliminaryIo);
+
+                exit($this->exceptionToExitCode($e->getCode()));
+            }
+        }
+
+        Assert::isInstanceOf($config, 'Webmozart\Console\Api\Config\ApplicationConfig', 'The $config argument must be an ApplicationConfig or a callable. Got: %s');
 
         try {
             $dispatcher = $config->getEventDispatcher();
