@@ -16,7 +16,8 @@
         "symfony/event-dispatcher": "~2.5"
     },
     "require-dev": {
-        "symfony/filesystem": "~2.3"
+        "symfony/filesystem": "~2.3",
+        "phpunit/phpunit": "^4.6"
     },
     "autoload": {
         "psr-4": {
