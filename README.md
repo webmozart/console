@@ -1,14 +1,14 @@
 Webmozart Console
 =================
 
-[![Build Status](https://travis-ci.org/webmozart/console.svg?branch=master)](https://travis-ci.org/webmozart/console)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/webmozart/console/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/webmozart/console/?branch=master)
+[![Build Status](https://travis-ci.org/webmozart/console.svg?branch=1.0.0-beta2)](https://travis-ci.org/webmozart/console)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/webmozart/console/badges/quality-score.png?b=1.0.0-beta2)](https://scrutinizer-ci.com/g/webmozart/console/?branch=1.0.0-beta2)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/4160f60e-541b-4090-a850-3005e84d6a44/mini.png)](https://insight.sensiolabs.com/projects/1ca0803e-6509-45b9-bd5b-b899d9680625)
 [![Latest Stable Version](https://poser.pugx.org/webmozart/console/v/stable.svg)](https://packagist.org/packages/webmozart/console)
 [![Total Downloads](https://poser.pugx.org/webmozart/console/downloads.svg)](https://packagist.org/packages/webmozart/console)
 [![Dependency Status](https://www.versioneye.com/php/webmozart:console/1.0.0/badge.svg)](https://www.versioneye.com/php/webmozart:console/1.0.0)
 
-Latest release: [1.0.0-beta](https://packagist.org/packages/webmozart/console#1.0.0-beta)
+Latest release: [1.0.0-beta2](https://packagist.org/packages/webmozart/console#1.0.0-beta2)
 
 PHP >= 5.3.9
 
