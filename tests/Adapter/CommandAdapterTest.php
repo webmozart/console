@@ -57,7 +57,7 @@ class CommandAdapterTest extends PHPUnit_Framework_TestCase
         $this->assertSame('The help for %command.name%', $adapter->getHelp());
         $this->assertSame('The help for command', $adapter->getProcessedHelp());
         $this->assertSame($helperSet, $adapter->getHelperSet());
-        $this->assertSame('command [-o|--option] cmd1 [argument]', $adapter->getSynopsis());
+        $this->assertSame('command [-o|--option] [--] <cmd1> [<argument>]', $adapter->getSynopsis());
         $this->assertTrue($adapter->isEnabled());
     }
 
