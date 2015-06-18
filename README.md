@@ -111,7 +111,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
             ->beginCommand('log')
                 ->setDescription('Show the latest commits')
                 ->setHandler(new LogCommandHandler())
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -187,7 +187,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 // ...
                 
                 ->addArgument('branch', Argument::OPTIONAL, 'The branch to display', 'master')
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -255,7 +255,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 // ...
                 
                 ->addOption('max', null, Option::REQUIRED_VALUE, 'The maximum number of commits', 25)
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -316,7 +316,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 // ...
                 
                 ->addOption('max', 'm', Option::REQUIRED_VALUE, 'The maximum number of commits', 25)
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -389,7 +389,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 // ...
                 
                 ->setHandler(new LogCommandHandler(new CommitRepository()))
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -414,7 +414,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 ->setHandler(function () {
                     return new LogCommandHandler(new CommitRepository());
                 })
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -465,7 +465,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 ->endSubCommand()
                 
                 // ...
-            ->endCommand()
+            ->end()
         ;
     }
 }
@@ -538,7 +538,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 ->endSubCommand()
                 
                 // ...
-            ->endCommand()
+            ->end()
         ;
     }
 }
