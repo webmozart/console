@@ -17,6 +17,7 @@ use Webmozart\Console\Api\Args\Format\ArgsFormat;
  * Parses raw console arguments and returns the parsed arguments.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface ArgsParser

@@ -20,6 +20,7 @@ use Webmozart\Console\IO\RawIO;
  * Adapts an {@link IO} instance to Symfony's {@link OutputInterface} API.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class IOOutput implements OutputInterface

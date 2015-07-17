@@ -29,7 +29,9 @@ use Webmozart\Assert\Assert;
  * The last part "localhost" is the argument to the "server add" command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
  * @see    CommandOption, ArgsFormat
  */
 class CommandName

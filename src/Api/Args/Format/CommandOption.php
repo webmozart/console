@@ -29,7 +29,9 @@ use Webmozart\Assert\Assert;
  * The last part "localhost" is the argument to the "server --delete" command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
  * @see    CommandName, ArgsFormat
  */
 class CommandOption extends AbstractOption
@@ -47,12 +49,12 @@ class CommandOption extends AbstractOption
     /**
      * Creates the command option.
      *
-     * @param string      $longName     The long option name.
-     * @param string|null $shortName    The short option name.
-     * @param string[]    $aliases      A list of alias names.
-     * @param int         $flags        A bitwise combination of the option flag
-     *                                  constants.
-     * @param string      $description  A human-readable description of the option.
+     * @param string      $longName    The long option name.
+     * @param string|null $shortName   The short option name.
+     * @param string[]    $aliases     A list of alias names.
+     * @param int         $flags       A bitwise combination of the option flag
+     *                                 constants.
+     * @param string      $description A human-readable description of the option.
      *
      * @throws InvalidValueException If the default value is invalid.
      */

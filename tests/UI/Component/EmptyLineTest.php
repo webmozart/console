@@ -17,6 +17,7 @@ use Webmozart\Console\UI\Component\EmptyLine;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class EmptyLineTest extends PHPUnit_Framework_TestCase
@@ -46,5 +47,4 @@ class EmptyLineTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame("\n", $this->io->fetchOutput());
     }
-
 }

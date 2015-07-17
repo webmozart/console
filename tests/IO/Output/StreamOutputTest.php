@@ -16,6 +16,7 @@ use Webmozart\Console\IO\Output\StreamOutput;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StreamOutputTest extends PHPUnit_Framework_TestCase

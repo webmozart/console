@@ -16,6 +16,7 @@ use Webmozart\Console\IO\Input\StandardInput;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StandardInputTest extends PHPUnit_Framework_TestCase

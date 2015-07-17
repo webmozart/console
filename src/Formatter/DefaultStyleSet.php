@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Formatter\StyleSet;
  * A color style which prefers cyan for its good readability.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultStyleSet extends StyleSet

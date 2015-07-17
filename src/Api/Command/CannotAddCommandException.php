@@ -18,6 +18,7 @@ use RuntimeException;
  * Thrown when two commands have the same name.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CannotAddCommandException extends RuntimeException

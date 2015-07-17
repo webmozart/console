@@ -36,6 +36,7 @@ use Webmozart\Console\IO\RawIO;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
@@ -324,7 +325,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
         $this->assertSame("line1\n", $output->fetch());
-        $this->assertSame("line2", $errorOutput->fetch());
+        $this->assertSame('line2', $errorOutput->fetch());
     }
 
     public function getRunConfigurations()
@@ -339,7 +340,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                             ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
-                }
+                },
             ),
             // Default command
             array(
@@ -351,7 +352,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                             ->setHandler(new CallbackHandler($callback))
                         ->end()
                     ;
-                }
+                },
             ),
             // Sub-command
             array(
@@ -364,7 +365,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                             ->end()
                         ->end()
                     ;
-                }
+                },
             ),
             // Option command
             array(
@@ -377,7 +378,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                             ->end()
                         ->end()
                     ;
-                }
+                },
             ),
             // Default sub-command
             array(
@@ -391,7 +392,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                             ->end()
                         ->end()
                     ;
-                }
+                },
             ),
             // Default option command
             array(
@@ -405,7 +406,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
                             ->end()
                         ->end()
                     ;
-                }
+                },
             ),
         );
     }

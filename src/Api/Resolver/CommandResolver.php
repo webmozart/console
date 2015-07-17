@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Args\RawArgs;
  * Returns the command to execute for the given console arguments.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface CommandResolver

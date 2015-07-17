@@ -29,6 +29,7 @@ use Webmozart\Console\Api\Event\PreHandleEvent;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandTest extends PHPUnit_Framework_TestCase

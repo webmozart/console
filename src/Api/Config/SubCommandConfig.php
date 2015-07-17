@@ -19,7 +19,9 @@ namespace Webmozart\Console\Api\Config;
  * "server" command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
  * @see    OptionCommandConfig
  */
 class SubCommandConfig extends CommandConfig

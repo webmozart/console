@@ -23,6 +23,7 @@ use Webmozart\Console\ConsoleApplication;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandAdapterTest extends PHPUnit_Framework_TestCase

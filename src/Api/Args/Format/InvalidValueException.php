@@ -17,6 +17,7 @@ use Exception;
  * Thrown when the value of an option or an argument is invalid.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class InvalidValueException extends Exception

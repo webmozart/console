@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Help\ApplicationHelp;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ApplicationHelpTest extends PHPUnit_Framework_TestCase
@@ -279,5 +280,4 @@ EOF;
 
         $this->assertSame($expected, $this->io->fetchOutput());
     }
-
 }

@@ -17,6 +17,7 @@ use Webmozart\Console\Api\IO\Output;
  * An output that does nothing.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class NullOutput implements Output

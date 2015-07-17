@@ -21,6 +21,7 @@ use LogicException;
  * A collection of named commands.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
@@ -307,7 +308,6 @@ class CommandCollection implements ArrayAccess, IteratorAggregate, Countable
     {
         $this->remove($name);
     }
-
 
     /**
      * {@inheritdoc}

@@ -27,6 +27,7 @@ use Webmozart\Console\Util\StringUtil;
  * If you want to style the grid, pass a {@link GridStyle} to the constructor.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class Grid implements Component
@@ -205,7 +206,7 @@ class Grid implements Component
                 + StringUtil::getLength($borderStyle->getLineVRChar());
 
             $availableWidth = $screenWidth - $indentation - $borderWidth
-                - $nbColumns*$excessColumnWidth;
+                - $nbColumns * $excessColumnWidth;
 
             $wrapper->fit($availableWidth, $nbColumns, $formatter);
 

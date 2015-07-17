@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Component;
  * Contrary to a {@link Line} with no text, an empty line is never indented.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class EmptyLine implements Component

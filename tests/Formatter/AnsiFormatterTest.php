@@ -18,6 +18,7 @@ use Webmozart\Console\Formatter\AnsiFormatter;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class AnsiFormatterTest extends PHPUnit_Framework_TestCase

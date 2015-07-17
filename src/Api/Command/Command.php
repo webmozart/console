@@ -49,6 +49,7 @@ use Webmozart\Console\Util\ProcessTitle;
  * ```
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class Command
@@ -432,7 +433,7 @@ class Command
 
         $this->validateSubCommandName($config);
 
-        $command = new Command($config, $this->application, $this);
+        $command = new self($config, $this->application, $this);
 
         $this->subCommands->add($command);
 

@@ -25,6 +25,7 @@ use Webmozart\Console\UI\Layout\BlockLayout;
  * Base class for rendering help pages.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 abstract class AbstractHelp implements Component

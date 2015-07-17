@@ -20,6 +20,7 @@ use Webmozart\Console\Api\Command\Command;
  * An intermediate result created during resolving.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ResolveResult

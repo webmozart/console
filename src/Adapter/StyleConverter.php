@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Formatter\Style;
  * Converts {@link Style} instances to Symfony's {@link OutputFormatterStyle}.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StyleConverter

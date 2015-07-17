@@ -18,6 +18,7 @@ use OutOfBoundsException;
  * A set of styles used by the formatter.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StyleSet

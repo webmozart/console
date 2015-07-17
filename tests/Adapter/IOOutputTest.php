@@ -21,6 +21,7 @@ use Webmozart\Console\IO\RawIO;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class IOOutputTest extends PHPUnit_Framework_TestCase

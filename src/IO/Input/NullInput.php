@@ -17,6 +17,7 @@ use Webmozart\Console\Api\IO\Input;
  * An input that does nothing.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class NullInput implements Input

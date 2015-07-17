@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Component\LabeledParagraph;
  * Renders renderable objects in indented blocks.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BlockLayout implements Component

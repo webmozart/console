@@ -15,6 +15,7 @@ namespace Webmozart\Console\Util;
  * Sets and resets the PHP process title.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ProcessTitle

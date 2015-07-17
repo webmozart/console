@@ -27,6 +27,7 @@ use Webmozart\Console\Api\Args\RawArgs;
  * This parser delegates most of the work to Symfony's {@link ArgvInput} class.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultArgsParser extends ArgvInput implements ArgsParser

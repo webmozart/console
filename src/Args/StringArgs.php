@@ -17,6 +17,7 @@ use Webmozart\Console\Api\Args\RawArgs;
  * Console arguments passed as a string.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StringArgs implements RawArgs

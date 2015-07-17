@@ -21,6 +21,7 @@ use Webmozart\Console\Api\Formatter\StyleSet;
  * A formatter that removes all format tags.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class PlainFormatter implements Formatter

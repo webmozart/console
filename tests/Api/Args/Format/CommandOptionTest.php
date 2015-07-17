@@ -16,6 +16,7 @@ use Webmozart\Console\Api\Args\Format\CommandOption;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandOptionTest extends PHPUnit_Framework_TestCase

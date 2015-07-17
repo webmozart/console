@@ -15,6 +15,7 @@ namespace Webmozart\Console\Api\Event;
  * Contains all the events supported by this package.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 final class ConsoleEvents

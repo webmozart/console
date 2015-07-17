@@ -12,7 +12,6 @@
 namespace Webmozart\Console\Tests\Resolver;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\Adapter\InputInterfaceAdapter;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\Option;
 use Webmozart\Console\Api\Config\ApplicationConfig;
@@ -23,6 +22,7 @@ use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultResolverTest extends PHPUnit_Framework_TestCase

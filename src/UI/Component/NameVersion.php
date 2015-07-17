@@ -19,6 +19,7 @@ use Webmozart\Console\UI\Component;
  * Renders the name and version of an application.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class NameVersion implements Component
@@ -48,7 +49,7 @@ class NameVersion implements Component
         } elseif ($this->config->getDisplayName()) {
             $paragraph = new Paragraph("{$this->config->getDisplayName()}");
         } else {
-            $paragraph = new Paragraph("Console Tool");
+            $paragraph = new Paragraph('Console Tool');
         }
 
         $paragraph->render($io, $indentation);

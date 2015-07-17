@@ -19,6 +19,7 @@ use Webmozart\Console\Api\Command\Command;
  * A resolved command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ResolvedCommand

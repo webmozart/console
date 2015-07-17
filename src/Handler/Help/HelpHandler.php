@@ -24,6 +24,7 @@ use Webmozart\Console\Process\ProcessLauncher;
  * Handler for the "help" command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class HelpHandler extends DelegatingHandler
@@ -385,6 +386,4 @@ class HelpHandler extends DelegatingHandler
 
         return $application->getConfig()->getName();
     }
-
-
 }

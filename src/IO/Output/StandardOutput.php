@@ -15,6 +15,7 @@ namespace Webmozart\Console\IO\Output;
  * An output that writes to the standard output.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StandardOutput extends StreamOutput

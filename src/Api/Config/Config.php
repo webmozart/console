@@ -25,6 +25,7 @@ use Webmozart\Console\Handler\NullHandler;
  * Implements methods shared by all configurations.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 abstract class Config
@@ -217,8 +218,8 @@ abstract class Config
      * When lenient argument parsing is enabled, the argument parser will not
      * fail if the console arguments contain invalid or missing arguments.
      *
-     * @return boolean Returns `true` if lenient parsing is enabled and `false`
-     *                 otherwise.
+     * @return bool Returns `true` if lenient parsing is enabled and `false`
+     *              otherwise.
      */
     public function isLenientArgsParsingEnabled()
     {

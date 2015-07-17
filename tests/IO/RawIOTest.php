@@ -19,6 +19,7 @@ use Webmozart\Console\IO\RawIO;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class RawIOTest extends PHPUnit_Framework_TestCase
@@ -84,7 +85,7 @@ class RawIOTest extends PHPUnit_Framework_TestCase
         $this->input->set(self::LOREM_IPSUM);
 
         $this->assertSame("Lorem ipsum dolor sit amet,\n", $this->io->readLine());
-        $this->assertSame("consetetu", $this->io->readLine(null, 10));
+        $this->assertSame('consetetu', $this->io->readLine(null, 10));
     }
 
     public function testReadLineReturnsDefaultIfNotInteractive()

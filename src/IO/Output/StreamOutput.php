@@ -19,6 +19,7 @@ use Webmozart\Console\Api\IO\Output;
  * An output that writes to a stream.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StreamOutput implements Output
@@ -73,7 +74,7 @@ class StreamOutput implements Output
      */
     public function supportsAnsi()
     {
-        if (DIRECTORY_SEPARATOR == '\\') {
+        if (DIRECTORY_SEPARATOR === '\\') {
             return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI');
         }
 

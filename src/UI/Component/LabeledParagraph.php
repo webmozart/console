@@ -23,6 +23,7 @@ use Webmozart\Console\UI\Component;
  * passing a {@link LabelAlignment} to {@link setAlignment()}.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class LabeledParagraph implements Component

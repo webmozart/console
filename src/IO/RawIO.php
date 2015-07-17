@@ -22,6 +22,7 @@ use Webmozart\Console\UI\Rectangle;
  * An unformatted I/O.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class RawIO implements IO

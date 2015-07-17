@@ -23,6 +23,7 @@ use Webmozart\Console\Api\IO\IO;
  * the default handler.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class PreHandleEvent extends Event
@@ -99,8 +100,8 @@ class PreHandleEvent extends Event
     /**
      * Returns whether the command was handled by the event listener.
      *
-     * @return boolean Returns `true` if the command was handled and `false`
-     *                 otherwise.
+     * @return bool Returns `true` if the command was handled and `false`
+     *              otherwise.
      *
      * @see setHandled()
      */
@@ -116,8 +117,8 @@ class PreHandleEvent extends Event
      * executed. Instead the status code returned by {@link getStatusCode()}
      * is returned.
      *
-     * @param boolean $handled Whether the command was handled by the event
-     *                         listener.
+     * @param bool $handled Whether the command was handled by the event
+     *                      listener.
      */
     public function setHandled($handled)
     {

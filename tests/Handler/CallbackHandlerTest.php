@@ -23,6 +23,7 @@ use Webmozart\Console\IO\BufferedIO;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CallbackHandlerTest extends PHPUnit_Framework_TestCase
@@ -47,6 +48,6 @@ class CallbackHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(123, $handler->handle($args, $io, $command));
         $this->assertSame("line1\n", $io->fetchOutput());
-        $this->assertSame("line2", $io->fetchErrors());
+        $this->assertSame('line2', $io->fetchErrors());
     }
 }

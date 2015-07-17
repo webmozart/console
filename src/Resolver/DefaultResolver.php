@@ -24,6 +24,7 @@ use Webmozart\Console\Api\Resolver\ResolvedCommand;
  * Parses the raw console arguments for the command to execute.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultResolver implements CommandResolver

@@ -17,47 +17,48 @@ use Webmozart\Assert\Assert;
  * A formatter style.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class Style
 {
     /**
-     * Color: black
+     * Color: black.
      */
     const BLACK = 'black';
 
     /**
-     * Color: red
+     * Color: red.
      */
     const RED = 'red';
 
     /**
-     * Color: green
+     * Color: green.
      */
     const GREEN = 'green';
 
     /**
-     * Color: yellow
+     * Color: yellow.
      */
     const YELLOW = 'yellow';
 
     /**
-     * Color: blue
+     * Color: blue.
      */
     const BLUE = 'blue';
 
     /**
-     * Color: magenta
+     * Color: magenta.
      */
     const MAGENTA = 'magenta';
 
     /**
-     * Color: cyan
+     * Color: cyan.
      */
     const CYAN = 'cyan';
 
     /**
-     * Color: white
+     * Color: white.
      */
     const WHITE = 'white';
 

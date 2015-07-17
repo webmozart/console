@@ -23,6 +23,7 @@ use Webmozart\Console\UI\Rectangle;
  * A formatted I/O.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class FormattedIO extends RawIO

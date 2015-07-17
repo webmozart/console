@@ -26,6 +26,7 @@ use Webmozart\Console\UI\Rectangle;
  * An I/O that reads from/prints to the console.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ConsoleIO extends FormattedIO
@@ -56,7 +57,7 @@ class ConsoleIO extends FormattedIO
     {
         $application = new Application();
 
-        list ($width, $height) = $application->getTerminalDimensions();
+        list($width, $height) = $application->getTerminalDimensions();
 
         return new Rectangle($width ?: 80, $height ?: 20);
     }

@@ -16,6 +16,7 @@ use Webmozart\Console\Adapter\FormatterAdapter;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class FormatterAdapterTest extends PHPUnit_Framework_TestCase

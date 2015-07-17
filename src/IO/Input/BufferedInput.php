@@ -15,6 +15,7 @@ namespace Webmozart\Console\IO\Input;
  * An input that reads from a buffer.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BufferedInput extends StreamInput

@@ -19,6 +19,7 @@ use Webmozart\Console\Util\SimilarCommandName;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class SimilarCommandNameTest extends PHPUnit_Framework_TestCase

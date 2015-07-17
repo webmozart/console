@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Formatter\Style;
  * A formatter that returns all text unchanged.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class NullFormatter implements Formatter

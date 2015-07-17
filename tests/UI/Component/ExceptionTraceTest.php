@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Component\ExceptionTrace;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ExceptionTraceTest extends PHPUnit_Framework_TestCase
@@ -155,5 +156,4 @@ EOF;
         $this->assertContains($expected2, $actual);
         $this->assertStringEndsWith("\n\n", $actual);
     }
-
 }

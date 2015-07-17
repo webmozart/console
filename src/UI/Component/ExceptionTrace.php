@@ -19,6 +19,7 @@ use Webmozart\Console\UI\Component;
  * Renders the trace of an exception.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ExceptionTrace implements Component

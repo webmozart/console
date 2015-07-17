@@ -17,6 +17,7 @@ use Webmozart\Console\Api\Args\RawArgs;
  * Console arguments passed via PHP's "argv" variable.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ArgvArgs implements RawArgs

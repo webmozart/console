@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Component;
  * The paragraph is wrapped into the dimensions of the output.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class Paragraph implements Component

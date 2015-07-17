@@ -15,6 +15,7 @@ namespace Webmozart\Console\Args;
  * Parses tokens from a string passed to {@link StringArgs}.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class TokenParser
@@ -105,7 +106,6 @@ class TokenParser
             if ($this->valid()) {
                 $tokens[] = $this->parseToken();
             }
-
         }
 
         return $tokens;

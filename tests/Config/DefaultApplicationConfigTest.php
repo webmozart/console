@@ -28,6 +28,7 @@ use Webmozart\Console\IO\Output\BufferedOutput;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
@@ -116,7 +117,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\AnsiFormatter', $io->getFormatter());
 
@@ -145,7 +146,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\PlainFormatter', $io->getFormatter());
 
@@ -174,7 +175,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\AnsiFormatter', $io->getFormatter());
 
@@ -203,7 +204,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\PlainFormatter', $io->getFormatter());
 
@@ -232,7 +233,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\Input\StandardInput', $io->getInput());
 
@@ -256,7 +257,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\Output\StandardOutput', $io->getOutput());
 
@@ -280,7 +281,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /** @var FormattedIO $io */
+                    /* @var FormattedIO $io */
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\Output\ErrorOutput', $io->getErrorOutput());
 

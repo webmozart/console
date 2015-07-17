@@ -23,6 +23,7 @@ use Webmozart\Console\Util\StringUtil;
  * You can access the rows with the wrapped cells with {@link getWrappedRows()}.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CellWrapper
@@ -215,8 +216,8 @@ class CellWrapper
      * The method {@link fit()} should be called before accessing this method.
      * Otherwise this method returns `false`.
      *
-     * @return boolean Returns `true` if a cell was wrapped into multiple lines
-     *                 and `false` otherwise.
+     * @return bool Returns `true` if a cell was wrapped into multiple lines
+     *              and `false` otherwise.
      */
     public function hasWordWraps()
     {
@@ -229,8 +230,8 @@ class CellWrapper
      * The method {@link fit()} should be called before accessing this method.
      * Otherwise this method returns `false`.
      *
-     * @return boolean Returns `true` if a cell contains words cut in two and
-     *                 `false` otherwise.
+     * @return bool Returns `true` if a cell contains words cut in two and
+     *              `false` otherwise.
      */
     public function hasWordCuts()
     {

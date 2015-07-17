@@ -20,6 +20,7 @@ use Webmozart\Console\Api\IO\IO;
  * Delegates command handling to a callable.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CallbackHandler

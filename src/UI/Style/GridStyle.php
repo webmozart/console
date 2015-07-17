@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Formatter\Style;
  * Defines the style of a {@link Grid}.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class GridStyle

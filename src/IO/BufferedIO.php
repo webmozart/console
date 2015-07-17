@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Rectangle;
  * An I/O that reads from and writes to a buffer.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BufferedIO extends FormattedIO

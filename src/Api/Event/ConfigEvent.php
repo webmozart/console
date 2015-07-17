@@ -20,6 +20,7 @@ use Webmozart\Console\Api\Config\ApplicationConfig;
  * Use this event to add custom configuration to the application.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ConfigEvent extends Event

@@ -16,6 +16,7 @@ use Webmozart\Console\Args\StringArgs;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StringArgsTest extends PHPUnit_Framework_TestCase
@@ -61,8 +62,8 @@ class StringArgsTest extends PHPUnit_Framework_TestCase
             array('--long-option="foo bar"', array('--long-option=foo bar')),
             array('--long-option="foo bar""another"', array('--long-option=foo baranother')),
             array('--long-option=\'foo bar\'', array('--long-option=foo bar')),
-            array("--long-option='foo bar''another'", array("--long-option=foo baranother")),
-            array("--long-option='foo bar'\"another\"", array("--long-option=foo baranother")),
+            array("--long-option='foo bar''another'", array('--long-option=foo baranother')),
+            array("--long-option='foo bar'\"another\"", array('--long-option=foo baranother')),
             array('foo -a -ffoo --long bar', array('foo', '-a', '-ffoo', '--long', 'bar')),
             array('\\\' \\"', array('\'', '"')),
         );

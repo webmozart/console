@@ -15,6 +15,7 @@ use Webmozart\Console\Api\Config\Config;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ConcreteConfig extends Config

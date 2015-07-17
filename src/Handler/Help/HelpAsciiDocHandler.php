@@ -21,6 +21,7 @@ use Webmozart\Console\Process\ProcessLauncher;
  * Displays the application/command help as AsciiDoc.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class HelpAsciiDocHandler

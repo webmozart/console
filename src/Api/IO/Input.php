@@ -15,6 +15,7 @@ namespace Webmozart\Console\Api\IO;
  * The console input.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface Input

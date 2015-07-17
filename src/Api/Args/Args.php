@@ -51,7 +51,9 @@ use Webmozart\Console\Api\Args\Format\CommandOption;
  * ```
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
  * @see    RawArgs, ArgsFormat, ArgsParser
  */
 class Args
@@ -432,7 +434,6 @@ class Args
     {
         return array_key_exists($name, $this->arguments);
     }
-
 
     /**
      * Returns whether an argument is defined in the format.

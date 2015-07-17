@@ -48,7 +48,9 @@ namespace Webmozart\Console\Api\Args;
  * a command in a convenient way.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
  * @see    Args, ArgsFormat, ArgsParser
  */
 interface RawArgs

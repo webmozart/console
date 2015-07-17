@@ -22,6 +22,7 @@ use Webmozart\Console\IO\BufferedIO;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class HelpXmlHandlerTest extends PHPUnit_Framework_TestCase

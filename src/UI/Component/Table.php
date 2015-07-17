@@ -28,6 +28,7 @@ use Webmozart\Console\Util\StringUtil;
  * constructor.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class Table implements Component
@@ -215,7 +216,7 @@ class Table implements Component
             + ($this->nbColumns - 1) * StringUtil::getLength($borderStyle->getLineVCChar())
             + StringUtil::getLength($borderStyle->getLineVRChar());
         $availableWidth = $screenWidth - $indentation - $borderWidth
-            - $this->nbColumns*$excessColumnWidth;
+            - $this->nbColumns * $excessColumnWidth;
 
         $wrapper = new CellWrapper();
 

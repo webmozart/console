@@ -15,6 +15,7 @@ namespace Webmozart\Console\UI\Style;
  * Constants for text alignment.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 final class Alignment

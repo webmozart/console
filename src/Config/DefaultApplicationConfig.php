@@ -11,11 +11,6 @@
 
 namespace Webmozart\Console\Config;
 
-use Symfony\Component\Console\Helper\DebugFormatterHelper;
-use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Helper\ProcessHelper;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Webmozart\Console\Api\Application\Application;
 use Webmozart\Console\Api\Args\Format\Argument;
 use Webmozart\Console\Api\Args\Format\Option;
@@ -41,6 +36,7 @@ use Webmozart\Console\UI\Component\NameVersion;
  * The default application configuration.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultApplicationConfig extends ApplicationConfig

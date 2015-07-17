@@ -19,6 +19,7 @@ use RuntimeException;
  * This class is used to execute "man" and "less".
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ProcessLauncher

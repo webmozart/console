@@ -22,6 +22,7 @@ use Webmozart\Console\Resolver\DefaultResolver;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ApplicationConfigTest extends PHPUnit_Framework_TestCase

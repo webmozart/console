@@ -53,7 +53,9 @@ use Webmozart\Console\Api\Args\NoSuchOptionException;
  * Read {@link ArgsFormat} for a more detailed description of args formats.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ *
  * @see    ArgsFormat
  */
 class ArgsFormatBuilder

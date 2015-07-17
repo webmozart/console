@@ -23,6 +23,7 @@ use Webmozart\Console\Api\Resolver\ResolvedCommand;
  * console arguments.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class PreResolveEvent extends Event

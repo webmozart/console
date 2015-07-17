@@ -21,6 +21,7 @@ use Webmozart\Console\IO\Output\BufferedOutput;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class FormattedIOTest extends PHPUnit_Framework_TestCase
@@ -164,7 +165,7 @@ class FormattedIOTest extends PHPUnit_Framework_TestCase
             ->with('<tag>text</tag>   ')
             ->willReturn('<formatted>text</formatted>   ');
 
-        $this->io->writeLine("<tag>text</tag>   ");
+        $this->io->writeLine('<tag>text</tag>   ');
 
         $this->assertSame("<formatted>text</formatted>   \n", $this->output->fetch());
     }
@@ -268,7 +269,7 @@ class FormattedIOTest extends PHPUnit_Framework_TestCase
             ->with('<tag>text</tag>   ')
             ->willReturn('<formatted>text</formatted>   ');
 
-        $this->io->errorLine("<tag>text</tag>   ");
+        $this->io->errorLine('<tag>text</tag>   ');
 
         $this->assertSame("<formatted>text</formatted>   \n", $this->errorOutput->fetch());
     }

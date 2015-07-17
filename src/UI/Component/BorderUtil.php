@@ -21,6 +21,7 @@ use Webmozart\Console\Util\StringUtil;
  * Contains utility methods to draw borders and bordered cells.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BorderUtil

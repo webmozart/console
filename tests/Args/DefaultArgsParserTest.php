@@ -22,6 +22,7 @@ use Webmozart\Console\Args\StringArgs;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DefaultArgsParserTest extends PHPUnit_Framework_TestCase

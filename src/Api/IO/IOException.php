@@ -17,6 +17,7 @@ use RuntimeException;
  * Thrown if an error happens during I/O.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class IOException extends RuntimeException

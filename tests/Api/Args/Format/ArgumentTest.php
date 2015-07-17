@@ -16,6 +16,7 @@ use Webmozart\Console\Api\Args\Format\Argument;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ArgumentTest extends PHPUnit_Framework_TestCase

@@ -26,7 +26,6 @@ use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Event\ConfigEvent;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreResolveEvent;
-use Webmozart\Console\Api\Formatter\Style;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
@@ -38,6 +37,7 @@ use Webmozart\Console\UI\Component\ExceptionTrace;
  * A console application.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ConsoleApplication implements Application

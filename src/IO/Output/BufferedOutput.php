@@ -18,6 +18,7 @@ use Webmozart\Console\Api\IO\Output;
  * An output that writes to a buffer.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BufferedOutput implements Output

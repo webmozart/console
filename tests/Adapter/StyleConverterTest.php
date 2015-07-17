@@ -18,6 +18,7 @@ use Webmozart\Console\Api\Formatter\Style;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StyleConverterTest extends PHPUnit_Framework_TestCase

@@ -18,6 +18,7 @@ use RuntimeException;
  * Thrown when an option cannot be added.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CannotAddOptionException extends RuntimeException

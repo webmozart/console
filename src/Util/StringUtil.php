@@ -16,6 +16,7 @@ use Webmozart\Console\Api\Formatter\Formatter;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StringUtil

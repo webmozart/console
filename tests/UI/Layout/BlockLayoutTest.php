@@ -20,6 +20,7 @@ use Webmozart\Console\UI\Layout\BlockLayout;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BlockLayoutTest extends PHPUnit_Framework_TestCase

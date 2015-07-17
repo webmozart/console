@@ -24,6 +24,7 @@ use Webmozart\Console\UI\Component\LabeledParagraph;
  * calculated offset with {@link getTextOffset()}.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class LabelAlignment
@@ -104,4 +105,3 @@ class LabelAlignment
         return $this->textOffset;
     }
 }
-

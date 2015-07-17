@@ -16,6 +16,7 @@ use Webmozart\Console\IO\Output\BufferedOutput;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BufferedOutputTest extends PHPUnit_Framework_TestCase

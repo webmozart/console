@@ -18,6 +18,7 @@ use Webmozart\Console\UI\Component\LabeledParagraph;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class LabeledParagraphTest extends PHPUnit_Framework_TestCase
@@ -28,7 +29,6 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
      * @var BufferedIO
      */
     private $io;
-
 
     protected function setUp()
     {

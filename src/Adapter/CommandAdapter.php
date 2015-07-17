@@ -23,6 +23,7 @@ use Webmozart\Assert\Assert;
  * Adapts a `Command` instance of this package to Symfony's {@link Command} API.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandAdapter extends Command
@@ -238,8 +239,8 @@ class CommandAdapter extends Command
      */
     public function run(InputInterface $input, OutputInterface $output)
     {
-        /** @var ArgsInput $input */
-        /** @var IOOutput $output */
+        /* @var ArgsInput $input */
+        /* @var IOOutput $output */
         Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsInput');
         Assert::isInstanceOf($output, 'Webmozart\Console\Adapter\IOOutput');
 

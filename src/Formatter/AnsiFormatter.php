@@ -15,13 +15,13 @@ use Symfony\Component\Console\Formatter\OutputFormatter;
 use Webmozart\Console\Adapter\StyleConverter;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\Formatter\Style;
-use Webmozart\Console\Api\Formatter\StyleBuilder;
 use Webmozart\Console\Api\Formatter\StyleSet;
 
 /**
  * A formatter that replaces style tags by ANSI format codes.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class AnsiFormatter implements Formatter

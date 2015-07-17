@@ -15,6 +15,7 @@ namespace Webmozart\Console\Api\Formatter;
  * Formats strings.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface Formatter

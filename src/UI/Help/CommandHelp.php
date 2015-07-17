@@ -24,6 +24,7 @@ use Webmozart\Console\UI\Layout\BlockLayout;
  * Renders the help of a console command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandHelp extends AbstractHelp

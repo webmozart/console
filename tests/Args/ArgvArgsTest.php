@@ -16,6 +16,7 @@ use Webmozart\Console\Args\ArgvArgs;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ArgvArgsTest extends PHPUnit_Framework_TestCase
@@ -26,7 +27,7 @@ class ArgvArgsTest extends PHPUnit_Framework_TestCase
 
         $args = new ArgvArgs();
 
-        $this->assertSame('console' , $args->getScriptName());
+        $this->assertSame('console', $args->getScriptName());
         $this->assertSame(array('server', 'add', '--port', '80', 'localhost'), $args->getTokens());
     }
 
@@ -36,7 +37,7 @@ class ArgvArgsTest extends PHPUnit_Framework_TestCase
 
         $args = new ArgvArgs(array('other', 'server', 'add', '--port', '80', 'localhost'));
 
-        $this->assertSame('other' , $args->getScriptName());
+        $this->assertSame('other', $args->getScriptName());
         $this->assertSame(array('server', 'add', '--port', '80', 'localhost'), $args->getTokens());
     }
 

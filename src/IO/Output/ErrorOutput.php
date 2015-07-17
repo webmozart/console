@@ -15,6 +15,7 @@ namespace Webmozart\Console\IO\Output;
  * An output that writes to the error output.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ErrorOutput extends StreamOutput

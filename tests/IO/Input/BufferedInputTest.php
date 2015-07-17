@@ -16,6 +16,7 @@ use Webmozart\Console\IO\Input\BufferedInput;
 
 /**
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BufferedInputTest extends PHPUnit_Framework_TestCase

@@ -20,6 +20,7 @@ use Webmozart\Console\Api\Args\Format\CommandOption;
  * The configuration of an option command.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class OptionCommandConfig extends SubCommandConfig
@@ -239,5 +240,4 @@ class OptionCommandConfig extends SubCommandConfig
 
         return $formatBuilder->getFormat();
     }
-
 }

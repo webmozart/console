@@ -20,6 +20,7 @@ use Webmozart\Console\Util\SimilarCommandName;
  * Thrown when a command cannot be resolved.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CannotResolveCommandException extends RuntimeException

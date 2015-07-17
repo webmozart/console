@@ -18,6 +18,7 @@ use Webmozart\Console\UI\Rectangle;
  * Provides methods to access the console input and output.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface IO extends Formatter

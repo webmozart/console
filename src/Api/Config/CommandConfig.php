@@ -91,6 +91,7 @@ use Webmozart\Console\Api\Command\NoSuchCommandException;
  *    ```
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CommandConfig extends Config

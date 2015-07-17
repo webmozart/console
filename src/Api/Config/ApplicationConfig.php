@@ -26,6 +26,7 @@ use Webmozart\Console\Resolver\DefaultResolver;
  * The configuration of a console application.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ApplicationConfig extends Config
@@ -359,8 +360,8 @@ class ApplicationConfig extends Config
      * Returns whether the application catches and displays exceptions thrown
      * while running a command.
      *
-     * @return boolean Returns `true` if exceptions are caught and `false`
-     *                 otherwise.
+     * @return bool Returns `true` if exceptions are caught and `false`
+     *              otherwise.
      *
      * @see setCatchExceptions()
      */
@@ -373,8 +374,8 @@ class ApplicationConfig extends Config
      * Sets whether the application catches and displays exceptions thrown
      * while running a command.
      *
-     * @param boolean $catch Whether to catch and display exceptions thrown
-     *                       while running a command.
+     * @param bool $catch Whether to catch and display exceptions thrown
+     *                    while running a command.
      *
      * @return static The current instance.
      *
@@ -392,8 +393,8 @@ class ApplicationConfig extends Config
     /**
      * Returns whether the PHP process is terminated after running a command.
      *
-     * @return boolean Returns `true` if the PHP process is terminated after
-     *                 {@link run()} and `false` otherwise.
+     * @return bool Returns `true` if the PHP process is terminated after
+     *              {@link run()} and `false` otherwise.
      *
      * @see setTerminateAfterRun()
      */
@@ -405,8 +406,8 @@ class ApplicationConfig extends Config
     /**
      * Sets whether to terminate the PHP process after running a command.
      *
-     * @param boolean $terminate Whether to terminate the PHP process after
-     *                           running a command.
+     * @param bool $terminate Whether to terminate the PHP process after
+     *                        running a command.
      *
      * @return static The current instance.
      *
@@ -496,7 +497,7 @@ class ApplicationConfig extends Config
      *
      * In debug mode, the verbosity is always {@link IO::DEBUG}.
      *
-     * @return boolean Returns `true` if the application is in debug mode.
+     * @return bool Returns `true` if the application is in debug mode.
      *
      * @see setDebug()
      */
@@ -510,7 +511,7 @@ class ApplicationConfig extends Config
      *
      * In debug mode, the verbosity is always {@link IO::DEBUG}.
      *
-     * @param boolean $debug Set to `true` to activate the debug mode.
+     * @param bool $debug Set to `true` to activate the debug mode.
      *
      * @return static The current instance.
      *

@@ -20,6 +20,7 @@ use Webmozart\Console\Api\Formatter\Style;
  * border styles.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class BorderStyle

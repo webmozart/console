@@ -18,6 +18,7 @@ use RuntimeException;
  * Thrown when a non-existing argument is accessed.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class NoSuchArgumentException extends RuntimeException

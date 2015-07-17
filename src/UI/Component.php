@@ -17,6 +17,7 @@ use Webmozart\Console\Api\IO\IO;
  * A UI component that can be rendered on the I/O.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 interface Component

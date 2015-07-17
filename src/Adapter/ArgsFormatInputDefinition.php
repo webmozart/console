@@ -25,6 +25,7 @@ use Webmozart\Console\Api\Args\Format\Option;
  * API.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ArgsFormatInputDefinition extends InputDefinition
@@ -46,7 +47,9 @@ class ArgsFormatInputDefinition extends InputDefinition
         $i = 1;
 
         foreach ($format->getCommandNames() as $commandName) {
-            do { $argName = 'cmd'.$i++; } while ($format->hasArgument($argName));
+            do {
+                $argName = 'cmd'.$i++;
+            } while ($format->hasArgument($argName));
 
             $this->addArgument($argument = $this->adaptCommandName($commandName, $argName));
 

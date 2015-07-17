@@ -17,6 +17,7 @@ use Webmozart\Console\Api\Command\CommandCollection;
  * Utility to find similar command names.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class SimilarCommandName

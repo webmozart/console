@@ -17,6 +17,7 @@ use RuntimeException;
  * Thrown when console arguments cannot be parsed.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class CannotParseArgsException extends RuntimeException

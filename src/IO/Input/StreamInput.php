@@ -19,6 +19,7 @@ use Webmozart\Console\Api\IO\IOException;
  * An input that reads from a stream.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class StreamInput implements Input

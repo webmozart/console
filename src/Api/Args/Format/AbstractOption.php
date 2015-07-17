@@ -18,6 +18,7 @@ use Webmozart\Assert\Assert;
  * Base class for command line options.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 abstract class AbstractOption
@@ -55,11 +56,11 @@ abstract class AbstractOption
     /**
      * Creates a new option.
      *
-     * @param string      $longName     The long option name.
-     * @param string|null $shortName    The short option name.
-     * @param int         $flags        A bitwise combination of the option flag
-     *                                  constants.
-     * @param string      $description  A human-readable description of the option.
+     * @param string      $longName    The long option name.
+     * @param string|null $shortName   The short option name.
+     * @param int         $flags       A bitwise combination of the option flag
+     *                                 constants.
+     * @param string      $description A human-readable description of the option.
      *
      * @throws InvalidValueException If the default value is invalid.
      */

@@ -26,6 +26,7 @@ use Webmozart\Console\UI\Layout\BlockLayout;
  * Renders the help of a console application.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ApplicationHelp extends AbstractHelp
@@ -101,7 +102,7 @@ class ApplicationHelp extends AbstractHelp
     {
         $appName = $application->getConfig()->getName();
 
-        $layout->add(new Paragraph("<b>USAGE</b>"));
+        $layout->add(new Paragraph('<b>USAGE</b>'));
         $layout->beginBlock();
 
         $this->renderSynopsis($layout, $argsFormat, $appName);

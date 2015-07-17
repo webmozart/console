@@ -22,6 +22,7 @@ use Webmozart\Assert\Assert;
  * {@link Application} API.
  *
  * @since  1.0
+ *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class ApplicationAdapter extends Application
@@ -74,7 +75,7 @@ class ApplicationAdapter extends Application
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
-        /** @var ArgsInput $input */
+        /* @var ArgsInput $input */
         Assert::isInstanceOf($input, 'Webmozart\Console\Adapter\ArgsInput');
 
         $rawArgs = $input->getRawArgs();
