@@ -12,40 +12,40 @@
 namespace Webmozart\Console\Api\IO;
 
 /**
- * The console output.
+ * The console output stream.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface Output
+interface OutputStream
 {
     /**
-     * Writes a string to the output.
+     * Writes a string to the stream.
      *
      * @param string $string The string to write.
      *
-     * @throws IOException If writing fails or if the output is closed.
+     * @throws IOException If writing fails or if the stream is closed.
      */
     public function write($string);
 
     /**
-     * Flushes the output and forces all pending text to be written out.
+     * Flushes the stream and forces all pending text to be written out.
      *
-     * @throws IOException If flushing fails or if the output is closed.
+     * @throws IOException If flushing fails or if the stream is closed.
      */
     public function flush();
 
     /**
-     * Returns whether the output supports ANSI format codes.
+     * Returns whether the stream supports ANSI format codes.
      *
-     * @return bool Returns `true` if the output supports ANSI format codes and
+     * @return bool Returns `true` if the stream supports ANSI format codes and
      *              `false` otherwise.
      */
     public function supportsAnsi();
 
     /**
-     * Closes the output.
+     * Closes the stream.
      */
     public function close();
 }

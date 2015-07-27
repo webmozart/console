@@ -9,19 +9,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\IO\Output;
+namespace Webmozart\Console\IO\OutputStream;
 
 use Webmozart\Console\Api\IO\IOException;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\OutputStream;
 
 /**
- * An output that writes to a buffer.
+ * An output stream that writes to a buffer.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class BufferedOutput implements Output
+class BufferedOutputStream implements OutputStream
 {
     /**
      * @var string

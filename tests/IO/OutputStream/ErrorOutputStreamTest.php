@@ -12,19 +12,19 @@
 namespace Webmozart\Console\Tests\IO\OutputStream;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\IO\InputStream\StandardInputStream;
+use Webmozart\Console\IO\OutputStream\ErrorOutputStream;
 
 /**
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StandardInputTest extends PHPUnit_Framework_TestCase
+class ErrorOutputStreamTest extends PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
-        $input = new StandardInputStream();
+        $stream = new ErrorOutputStream();
 
-        $this->assertInstanceOf('Webmozart\Console\IO\InputStream\StandardInputStream', $input);
+        $this->assertInstanceOf('Webmozart\Console\IO\OutputStream\ErrorOutputStream', $stream);
     }
 }

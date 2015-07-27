@@ -17,8 +17,8 @@ use Webmozart\Console\Api\Command\Command;
 use Webmozart\Console\Api\Command\CommandCollection;
 use Webmozart\Console\Api\Command\NoSuchCommandException;
 use Webmozart\Console\Api\Config\ApplicationConfig;
-use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\InputStream;
+use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Api\Resolver\CannotResolveCommandException;
 use Webmozart\Console\Api\Resolver\ResolvedCommand;
 
@@ -140,17 +140,17 @@ interface Application
      *
      * @param RawArgs $args        The console arguments. If not given, the
      *                             arguments passed to the PHP process are used.
-     * @param Input   $input       The standard input. If not given, the
+     * @param InputStream   $input       The standard input. If not given, the
      *                             application reads from the standard input of
      *                             the PHP process.
-     * @param Output  $output      The standard output. If not given, the
+     * @param OutputStream  $output      The standard output. If not given, the
      *                             application prints to the standard output of
      *                             the PHP process.
-     * @param Output  $errorOutput The error output. If not given, the
+     * @param OutputStream  $errorOutput The error output. If not given, the
      *                             application prints to the error output of the
      *                             PHP process.
      *
      * @return int The exit status.
      */
-    public function run(RawArgs $args = null, Input $input = null, Output $output = null, Output $errorOutput = null);
+    public function run(RawArgs $args = null, InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null);
 }

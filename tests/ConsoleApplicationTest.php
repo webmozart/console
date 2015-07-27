@@ -30,8 +30,8 @@ use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Handler\CallbackHandler;
-use Webmozart\Console\IO\Input\BufferedInput;
-use Webmozart\Console\IO\Output\BufferedOutput;
+use Webmozart\Console\IO\InputStream\StringInputStream;
+use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 use Webmozart\Console\IO\RawIO;
 
 /**
@@ -319,9 +319,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $configCallback($this->config, $callback);
 
         $args = new StringArgs($argString);
-        $input = new BufferedInput("line1\nline2");
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
+        $input = new StringInputStream("line1\nline2");
+        $output = new BufferedOutputStream();
+        $errorOutput = new BufferedOutputStream();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
@@ -437,9 +437,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         ;
 
         $args = new StringArgs('list');
-        $input = new BufferedInput();
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
+        $input = new StringInputStream();
+        $output = new BufferedOutputStream();
+        $errorOutput = new BufferedOutputStream();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
@@ -459,9 +459,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         ;
 
         $args = new StringArgs('list');
-        $input = new BufferedInput();
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
+        $input = new StringInputStream();
+        $output = new BufferedOutputStream();
+        $errorOutput = new BufferedOutputStream();
         $application = new ConsoleApplication($this->config);
 
         $this->assertSame(1, $application->run($args, $input, $output, $errorOutput));
@@ -479,9 +479,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         ;
 
         $args = new StringArgs('list');
-        $input = new BufferedInput();
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
+        $input = new StringInputStream();
+        $output = new BufferedOutputStream();
+        $errorOutput = new BufferedOutputStream();
         $application = new ConsoleApplication($this->config);
 
         // 255 is the highest supported exit status of a process
@@ -503,9 +503,9 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         ;
 
         $args = new StringArgs('list');
-        $input = new BufferedInput();
-        $output = new BufferedOutput();
-        $errorOutput = new BufferedOutput();
+        $input = new StringInputStream();
+        $output = new BufferedOutputStream();
+        $errorOutput = new BufferedOutputStream();
         $application = new ConsoleApplication($this->config);
 
         $application->run($args, $input, $output, $errorOutput);

@@ -12,8 +12,8 @@
 namespace Webmozart\Console\IO;
 
 use Webmozart\Console\Api\Formatter\Formatter;
-use Webmozart\Console\IO\Input\BufferedInput;
-use Webmozart\Console\IO\Output\BufferedOutput;
+use Webmozart\Console\IO\InputStream\StringInputStream;
+use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 use Webmozart\Console\UI\Rectangle;
 
 /**
@@ -26,17 +26,17 @@ use Webmozart\Console\UI\Rectangle;
 class BufferedIO extends FormattedIO
 {
     /**
-     * @var BufferedInput
+     * @var StringInputStream
      */
     private $input;
 
     /**
-     * @var BufferedOutput
+     * @var BufferedOutputStream
      */
     private $output;
 
     /**
-     * @var BufferedOutput
+     * @var BufferedOutputStream
      */
     private $errorOutput;
 
@@ -49,9 +49,9 @@ class BufferedIO extends FormattedIO
      */
     public function __construct($inputData = '', Formatter $formatter = null, Rectangle $dimensions = null)
     {
-        $this->input = new BufferedInput($inputData);
-        $this->output = new BufferedOutput();
-        $this->errorOutput = new BufferedOutput();
+        $this->input = new StringInputStream($inputData);
+        $this->output = new BufferedOutputStream();
+        $this->errorOutput = new BufferedOutputStream();
 
         parent::__construct($this->input, $this->output, $this->errorOutput, $formatter);
     }

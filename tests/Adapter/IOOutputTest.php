@@ -223,9 +223,9 @@ class IOOutputTest extends PHPUnit_Framework_TestCase
 
     public function testGetVerbosityNormal()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $this->io = new RawIO($input, $output, $errorOutput);
         $this->output = new IOOutput($this->io);
 
@@ -237,9 +237,9 @@ class IOOutputTest extends PHPUnit_Framework_TestCase
 
     public function testGetVerbosityVerbose()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $this->io = new RawIO($input, $output, $errorOutput);
         $this->output = new IOOutput($this->io);
 
@@ -251,9 +251,9 @@ class IOOutputTest extends PHPUnit_Framework_TestCase
 
     public function testGetVerbosityVeryVerbose()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $this->io = new RawIO($input, $output, $errorOutput);
         $this->output = new IOOutput($this->io);
 
@@ -265,9 +265,9 @@ class IOOutputTest extends PHPUnit_Framework_TestCase
 
     public function testGetVerbosityDebug()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $this->io = new RawIO($input, $output, $errorOutput);
         $this->output = new IOOutput($this->io);
 
@@ -279,9 +279,9 @@ class IOOutputTest extends PHPUnit_Framework_TestCase
 
     public function testGetVerbosityQuiet()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $this->io = new RawIO($input, $output, $errorOutput);
         $this->output = new IOOutput($this->io);
 

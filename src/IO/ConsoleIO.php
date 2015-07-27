@@ -13,13 +13,13 @@ namespace Webmozart\Console\IO;
 
 use Symfony\Component\Console\Application;
 use Webmozart\Console\Api\Formatter\Formatter;
-use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\InputStream;
+use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
-use Webmozart\Console\IO\Input\StandardInput;
-use Webmozart\Console\IO\Output\ErrorOutput;
-use Webmozart\Console\IO\Output\StandardOutput;
+use Webmozart\Console\IO\InputStream\StandardInputStream;
+use Webmozart\Console\IO\OutputStream\ErrorOutputStream;
+use Webmozart\Console\IO\OutputStream\StandardOutputStream;
 use Webmozart\Console\UI\Rectangle;
 
 /**
@@ -34,17 +34,17 @@ class ConsoleIO extends FormattedIO
     /**
      * Creates the I/O.
      *
-     * @param Input     $input       The input.
-     * @param Output    $output      The output.
-     * @param Output    $errorOutput The error output.
+     * @param InputStream     $input       The input.
+     * @param OutputStream    $output      The output.
+     * @param OutputStream    $errorOutput The error output.
      * @param Formatter $formatter   The formatter.
      * @param Rectangle $dimensions  The terminal dimensions.
      */
-    public function __construct(Input $input = null, Output $output = null, Output $errorOutput = null, Formatter $formatter = null, Rectangle $dimensions = null)
+    public function __construct(InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null, Formatter $formatter = null, Rectangle $dimensions = null)
     {
-        $input = $input ?: new StandardInput();
-        $output = $output ?: new StandardOutput();
-        $errorOutput = $errorOutput ?: new ErrorOutput();
+        $input = $input ?: new StandardInputStream();
+        $output = $output ?: new StandardOutputStream();
+        $errorOutput = $errorOutput ?: new ErrorOutputStream();
         $formatter = $formatter ?: ($output->supportsAnsi() ? new AnsiFormatter() : new PlainFormatter());
 
         parent::__construct($input, $output, $errorOutput, $formatter, $dimensions);

@@ -9,20 +9,20 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\IO\Output;
+namespace Webmozart\Console\IO\InputStream;
 
 use Webmozart\Assert\Assert;
+use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\Api\IO\IOException;
-use Webmozart\Console\Api\IO\Output;
 
 /**
- * An output that writes to a stream.
+ * An input stream that reads from a PHP stream.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StreamOutput implements Output
+class StreamInputStream implements InputStream
 {
     /**
      * @var resource
@@ -30,7 +30,7 @@ class StreamOutput implements Output
     private $stream;
 
     /**
-     * Creates the output.
+     * Creates the input.
      *
      * @param resource $stream A stream resource.
      */
@@ -39,46 +39,57 @@ class StreamOutput implements Output
         Assert::resource($stream, 'stream');
 
         $this->stream = $stream;
+
+        // Not all streams are seekable
+        @rewind($this->stream);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function write($string)
+    public function read($length)
     {
         if (null === $this->stream) {
             throw new IOException('Cannot read from a closed input.');
         }
 
-        if (false === fwrite($this->stream, $string)) {
-            throw new IOException('Could not write stream.');
+        if (feof($this->stream)) {
+            return null;
         }
+
+        $data = fread($this->stream, $length);
+
+        if (false === $data && !feof($this->stream)) {
+            throw new IOException('Could not read stream.');
+        }
+
+        return $data ?: null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function flush()
+    public function readLine($length = null)
     {
         if (null === $this->stream) {
             throw new IOException('Cannot read from a closed input.');
         }
 
-        if (false === fflush($this->stream)) {
-            throw new IOException('Could not flush stream.');
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsAnsi()
-    {
-        if (DIRECTORY_SEPARATOR === '\\') {
-            return false !== getenv('ANSICON') || 'ON' === getenv('ConEmuANSI');
+        if (feof($this->stream)) {
+            return null;
         }
 
-        return function_exists('posix_isatty') && @posix_isatty($this->stream);
+        if (null !== $length) {
+            $data = fgets($this->stream, $length);
+        } else {
+            $data = fgets($this->stream);
+        }
+
+        if (false === $data && !feof($this->stream)) {
+            throw new IOException('Could not read stream.');
+        }
+
+        return $data ?: null;
     }
 
     /**

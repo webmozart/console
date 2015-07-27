@@ -9,16 +9,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\IO\Input;
+namespace Webmozart\Console\IO\InputStream;
 
 /**
- * An input that reads from a buffer.
+ * An input stream that reads from a string.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class BufferedInput extends StreamInput
+class StringInputStream extends StreamInputStream
 {
     /**
      * @var resource
@@ -26,17 +26,17 @@ class BufferedInput extends StreamInput
     private $stream;
 
     /**
-     * Creates the input.
+     * Creates the input stream.
      *
-     * @param string $data The data of the buffer.
+     * @param string $string The string to read from.
      */
-    public function __construct($data = '')
+    public function __construct($string = '')
     {
         $this->stream = fopen('php://memory', 'rw');
 
         parent::__construct($this->stream);
 
-        $this->set($data);
+        $this->set($string);
     }
 
     /**
@@ -49,28 +49,28 @@ class BufferedInput extends StreamInput
     }
 
     /**
-     * Fills the input with data.
+     * Sets the string to read from.
      *
-     * @param string $data The data of the buffer.
+     * @param string $string The string to read from.
      */
-    public function set($data)
+    public function set($string)
     {
         $this->clear();
 
-        fwrite($this->stream, $data);
+        fwrite($this->stream, $string);
         rewind($this->stream);
     }
 
     /**
-     * Appends data to the buffer.
+     * Appends a string to the stream.
      *
-     * @param string $data The data to append.
+     * @param string $string The string to append.
      */
-    public function append($data)
+    public function append($string)
     {
         $pos = ftell($this->stream);
         fseek($this->stream, 0, SEEK_END);
-        fwrite($this->stream, $data);
+        fwrite($this->stream, $string);
         fseek($this->stream, $pos);
     }
 }

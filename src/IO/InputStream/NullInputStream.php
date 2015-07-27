@@ -9,18 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\IO\Input;
+namespace Webmozart\Console\IO\InputStream;
 
-use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\InputStream;
 
 /**
- * An input that does nothing.
+ * An input stream that returns nothing.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class NullInput implements Input
+class NullInputStream implements InputStream
 {
     /**
      * {@inheritdoc}

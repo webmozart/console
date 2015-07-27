@@ -13,8 +13,8 @@ namespace Webmozart\Console\Tests\IO;
 
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\IO\Input\BufferedInput;
-use Webmozart\Console\IO\Output\BufferedOutput;
+use Webmozart\Console\IO\InputStream\StringInputStream;
+use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 use Webmozart\Console\IO\RawIO;
 
 /**
@@ -27,17 +27,17 @@ class RawIOTest extends PHPUnit_Framework_TestCase
     const LOREM_IPSUM = "Lorem ipsum dolor sit amet,\nconsetetur sadipscing elitr,\nsed diam nonumy eirmod tempor invidunt";
 
     /**
-     * @var BufferedInput
+     * @var StringInputStream
      */
     private $input;
 
     /**
-     * @var BufferedOutput
+     * @var BufferedOutputStream
      */
     private $errorOutput;
 
     /**
-     * @var BufferedOutput
+     * @var BufferedOutputStream
      */
     private $output;
 
@@ -48,9 +48,9 @@ class RawIOTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->input = new BufferedInput();
-        $this->output = new BufferedOutput();
-        $this->errorOutput = new BufferedOutput();
+        $this->input = new StringInputStream();
+        $this->output = new BufferedOutputStream();
+        $this->errorOutput = new BufferedOutputStream();
         $this->io = new RawIO($this->input, $this->output, $this->errorOutput);
     }
 
@@ -549,9 +549,9 @@ class RawIOTest extends PHPUnit_Framework_TestCase
 
     public function testFlush()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $io = new RawIO($input, $output, $errorOutput);
 
         $output->expects($this->once())
@@ -564,9 +564,9 @@ class RawIOTest extends PHPUnit_Framework_TestCase
 
     public function testClose()
     {
-        $input = $this->getMock('Webmozart\Console\Api\IO\Input');
-        $output = $this->getMock('Webmozart\Console\Api\IO\Output');
-        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\Output');
+        $input = $this->getMock('Webmozart\Console\Api\IO\InputStream');
+        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorOutput = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
         $io = new RawIO($input, $output, $errorOutput);
 
         $input->expects($this->once())

@@ -16,8 +16,8 @@ use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\IO\FormattedIO;
-use Webmozart\Console\IO\Input\BufferedInput;
-use Webmozart\Console\IO\Output\BufferedOutput;
+use Webmozart\Console\IO\InputStream\StringInputStream;
+use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 
 /**
  * @since  1.0
@@ -37,27 +37,27 @@ class FormattedIOTest extends PHPUnit_Framework_TestCase
     private $ansiFormatter;
 
     /**
-     * @var BufferedInput
+     * @var StringInputStream
      */
     private $input;
 
     /**
-     * @var BufferedOutput
+     * @var BufferedOutputStream
      */
     private $output;
 
     /**
-     * @var BufferedOutput
+     * @var BufferedOutputStream
      */
     private $errorOutput;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|BufferedOutput
+     * @var PHPUnit_Framework_MockObject_MockObject|BufferedOutputStream
      */
     private $ansiOutput;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|BufferedOutput
+     * @var PHPUnit_Framework_MockObject_MockObject|BufferedOutputStream
      */
     private $noAnsiOutput;
 
@@ -72,12 +72,12 @@ class FormattedIOTest extends PHPUnit_Framework_TestCase
         $this->ansiFormatter = $this->getMockBuilder('Webmozart\Console\Formatter\AnsiFormatter')
             ->setMethods(array('format', 'removeFormat'))
             ->getMock();
-        $this->input = new BufferedInput();
-        $this->output = new BufferedOutput();
-        $this->errorOutput = new BufferedOutput();
+        $this->input = new StringInputStream();
+        $this->output = new BufferedOutputStream();
+        $this->errorOutput = new BufferedOutputStream();
         $this->io = new FormattedIO($this->input, $this->output, $this->errorOutput, $this->formatter);
 
-        $this->ansiOutput = $this->getMockBuilder('Webmozart\Console\IO\Output\BufferedOutput')
+        $this->ansiOutput = $this->getMockBuilder('Webmozart\Console\IO\OutputStream\BufferedOutputStream')
             ->setMethods(array('supportsAnsi'))
             ->getMock();
 
@@ -85,7 +85,7 @@ class FormattedIOTest extends PHPUnit_Framework_TestCase
             ->method('supportsAnsi')
             ->willReturn(true);
 
-        $this->noAnsiOutput = $this->getMockBuilder('Webmozart\Console\IO\Output\BufferedOutput')
+        $this->noAnsiOutput = $this->getMockBuilder('Webmozart\Console\IO\OutputStream\BufferedOutputStream')
             ->setMethods(array('supportsAnsi'))
             ->getMock();
 

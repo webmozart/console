@@ -13,9 +13,9 @@ namespace Webmozart\Console\IO;
 
 use Webmozart\Assert\Assert;
 use Webmozart\Console\Api\Formatter\Style;
-use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\UI\Rectangle;
 
 /**
@@ -28,17 +28,17 @@ use Webmozart\Console\UI\Rectangle;
 class RawIO implements IO
 {
     /**
-     * @var Input
+     * @var InputStream
      */
     private $input;
 
     /**
-     * @var Output
+     * @var OutputStream
      */
     private $output;
 
     /**
-     * @var Output
+     * @var OutputStream
      */
     private $errorOutput;
 
@@ -65,12 +65,12 @@ class RawIO implements IO
     /**
      * Creates the I/O.
      *
-     * @param Input     $input       The input.
-     * @param Output    $output      The output.
-     * @param Output    $errorOutput The error output.
+     * @param InputStream     $input       The input.
+     * @param OutputStream    $output      The output.
+     * @param OutputStream    $errorOutput The error output.
      * @param Rectangle $dimensions  The dimensions of the terminal.
      */
-    public function __construct(Input $input, Output $output, Output $errorOutput, Rectangle $dimensions = null)
+    public function __construct(InputStream $input, OutputStream $output, OutputStream $errorOutput, Rectangle $dimensions = null)
     {
         $this->input = $input;
         $this->output = $output;
@@ -212,7 +212,7 @@ class RawIO implements IO
     /**
      * Returns the underlying input.
      *
-     * @return Input The input.
+     * @return InputStream The input.
      */
     public function getInput()
     {
@@ -222,7 +222,7 @@ class RawIO implements IO
     /**
      * Returns the underlying output.
      *
-     * @return Output The output.
+     * @return OutputStream The output.
      */
     public function getOutput()
     {
@@ -232,7 +232,7 @@ class RawIO implements IO
     /**
      * Returns the underlying error output.
      *
-     * @return Output The error output.
+     * @return OutputStream The error output.
      */
     public function getErrorOutput()
     {

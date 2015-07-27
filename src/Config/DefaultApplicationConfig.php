@@ -19,17 +19,17 @@ use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreHandleEvent;
 use Webmozart\Console\Api\Event\PreResolveEvent;
-use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\Handler\Help\HelpHandler;
 use Webmozart\Console\IO\ConsoleIO;
-use Webmozart\Console\IO\Input\StandardInput;
-use Webmozart\Console\IO\Output\ErrorOutput;
-use Webmozart\Console\IO\Output\StandardOutput;
+use Webmozart\Console\IO\InputStream\StandardInputStream;
+use Webmozart\Console\IO\OutputStream\ErrorOutputStream;
+use Webmozart\Console\IO\OutputStream\StandardOutputStream;
 use Webmozart\Console\UI\Component\NameVersion;
 
 /**
@@ -73,11 +73,11 @@ class DefaultApplicationConfig extends ApplicationConfig
         ;
     }
 
-    public function createIO(Application $application, RawArgs $args, Input $input = null, Output $output = null, Output $errorOutput = null)
+    public function createIO(Application $application, RawArgs $args, InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null)
     {
-        $input = $input ?: new StandardInput();
-        $output = $output ?: new StandardOutput();
-        $errorOutput = $errorOutput ?: new ErrorOutput();
+        $input = $input ?: new StandardInputStream();
+        $output = $output ?: new StandardOutputStream();
+        $errorOutput = $errorOutput ?: new ErrorOutputStream();
         $styleSet = $application->getConfig()->getStyleSet();
 
         if ($args->hasToken('--no-ansi')) {

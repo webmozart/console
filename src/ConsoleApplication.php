@@ -26,9 +26,9 @@ use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Event\ConfigEvent;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreResolveEvent;
-use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Args\ArgvArgs;
 use Webmozart\Console\IO\ConsoleIO;
 use Webmozart\Console\UI\Component\ExceptionTrace;
@@ -240,7 +240,7 @@ class ConsoleApplication implements Application
     /**
      * {@inheritdoc}
      */
-    public function run(RawArgs $args = null, Input $input = null, Output $output = null, Output $errorOutput = null)
+    public function run(RawArgs $args = null, InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null)
     {
         // Render errors to the preliminary IO until the final IO is created
         $io = $this->preliminaryIo;

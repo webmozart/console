@@ -9,19 +9,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\IO\Output;
+namespace Webmozart\Console\IO\OutputStream;
 
 /**
- * An output that writes to the standard output.
+ * An output stream that writes to the standard output.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StandardOutput extends StreamOutput
+class StandardOutputStream extends StreamOutputStream
 {
     /**
-     * Creates the output.
+     * Creates the stream.
      */
     public function __construct()
     {

@@ -9,17 +9,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\IO\Output;
+namespace Webmozart\Console\Tests\IO\OutputStream;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\IO\Output\StreamOutput;
+use Webmozart\Console\IO\OutputStream\StreamOutputStream;
 
 /**
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StreamOutputTest extends PHPUnit_Framework_TestCase
+class StreamOutputStreamTest extends PHPUnit_Framework_TestCase
 {
     private $handle;
 
@@ -35,8 +35,8 @@ class StreamOutputTest extends PHPUnit_Framework_TestCase
 
     public function testWrite()
     {
-        $output = new StreamOutput($this->handle);
-        $output->write('Lorem ipsum');
+        $stream = new StreamOutputStream($this->handle);
+        $stream->write('Lorem ipsum');
 
         rewind($this->handle);
 
@@ -48,9 +48,9 @@ class StreamOutputTest extends PHPUnit_Framework_TestCase
      */
     public function testWriteFailsAfterClose()
     {
-        $output = new StreamOutput($this->handle);
-        $output->close();
-        $output->write('Lorem ipsum');
+        $stream = new StreamOutputStream($this->handle);
+        $stream->close();
+        $stream->write('Lorem ipsum');
     }
 
     /**
@@ -58,15 +58,15 @@ class StreamOutputTest extends PHPUnit_Framework_TestCase
      */
     public function testFlushFailsAfterClose()
     {
-        $output = new StreamOutput($this->handle);
-        $output->close();
-        $output->flush();
+        $stream = new StreamOutputStream($this->handle);
+        $stream->close();
+        $stream->flush();
     }
 
     public function testIgnoreDuplicateClose()
     {
-        $output = new StreamOutput($this->handle);
-        $output->close();
-        $output->close();
+        $stream = new StreamOutputStream($this->handle);
+        $stream->close();
+        $stream->close();
     }
 }

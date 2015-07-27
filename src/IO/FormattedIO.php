@@ -13,8 +13,8 @@ namespace Webmozart\Console\IO;
 
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\Formatter\Style;
-use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\InputStream;
+use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\UI\Rectangle;
@@ -46,13 +46,13 @@ class FormattedIO extends RawIO
     /**
      * Creates the I/O.
      *
-     * @param Input     $input       The input.
-     * @param Output    $output      The output.
-     * @param Output    $errorOutput The error output.
+     * @param InputStream     $input       The input.
+     * @param OutputStream    $output      The output.
+     * @param OutputStream    $errorOutput The error output.
      * @param Formatter $formatter   The formatter.
      * @param Rectangle $dimensions  The terminal dimensions.
      */
-    public function __construct(Input $input, Output $output, Output $errorOutput, Formatter $formatter = null, Rectangle $dimensions = null)
+    public function __construct(InputStream $input, OutputStream $output, OutputStream $errorOutput, Formatter $formatter = null, Rectangle $dimensions = null)
     {
         parent::__construct($input, $output, $errorOutput, $dimensions);
 

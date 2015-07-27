@@ -9,18 +9,18 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\IO\Output;
+namespace Webmozart\Console\IO\OutputStream;
 
-use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Api\IO\OutputStream;
 
 /**
- * An output that does nothing.
+ * An output stream that ignores all output.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class NullOutput implements Output
+class NullOutputStream implements OutputStream
 {
     /**
      * {@inheritdoc}

@@ -12,39 +12,39 @@
 namespace Webmozart\Console\Api\IO;
 
 /**
- * The console input.
+ * The console input stream.
  *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-interface Input
+interface InputStream
 {
     /**
-     * Reads the given amount of characters from the input.
+     * Reads the given amount of characters from the stream.
      *
      * @param int $length The number of characters to read.
      *
-     * @return string The characters read from the input.
+     * @return string The characters read from the stream.
      *
-     * @throws IOException If reading fails or if the input is closed.
+     * @throws IOException If reading fails or if the stream is closed.
      */
     public function read($length);
 
     /**
-     * Reads a line from the input.
+     * Reads a line from the stream.
      *
      * @param int $length The maximum number of characters to read. If `null`,
      *                    all characters up to the first newline are returned.
      *
-     * @return string The characters read from the input.
+     * @return string The characters read from the stream.
      *
-     * @throws IOException If reading fails or if the input is closed.
+     * @throws IOException If reading fails or if the stream is closed.
      */
     public function readLine($length = null);
 
     /**
-     * Closes the input.
+     * Closes the stream.
      */
     public function close();
 }

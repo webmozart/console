@@ -9,22 +9,22 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\IO\Output;
+namespace Webmozart\Console\Tests\IO\OutputStream;
 
 use PHPUnit_Framework_TestCase;
-use Webmozart\Console\IO\Output\StandardOutput;
+use Webmozart\Console\IO\OutputStream\StandardOutputStream;
 
 /**
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StandardOutputTest extends PHPUnit_Framework_TestCase
+class StandardOutputStreamTest extends PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
-        $output = new StandardOutput();
+        $stream = new StandardOutputStream();
 
-        $this->assertInstanceOf('Webmozart\Console\IO\Output\StandardOutput', $output);
+        $this->assertInstanceOf('Webmozart\Console\IO\OutputStream\StandardOutputStream', $stream);
     }
 }

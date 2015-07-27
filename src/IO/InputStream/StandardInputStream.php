@@ -9,22 +9,22 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\IO\Output;
-
-use PHPUnit_Framework_TestCase;
-use Webmozart\Console\IO\Output\ErrorOutput;
+namespace Webmozart\Console\IO\InputStream;
 
 /**
+ * An input stream that reads from the standard input.
+ *
  * @since  1.0
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class ErrorOutputTest extends PHPUnit_Framework_TestCase
+class StandardInputStream extends StreamInputStream
 {
-    public function testCreate()
+    /**
+     * Creates the input.
+     */
+    public function __construct()
     {
-        $output = new ErrorOutput();
-
-        $this->assertInstanceOf('Webmozart\Console\IO\Output\ErrorOutput', $output);
+        parent::__construct(fopen('php://stdin', 'r'));
     }
 }

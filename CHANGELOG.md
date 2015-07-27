@@ -1,6 +1,11 @@
 Changelog
 =========
 
+* 1.0.0-next (@release_date@)
+
+ * renamed `Input` and implementations to `InputStream`
+ * renamed `Output` and implementations to `OutputStream`
+ 
 * 1.0.0-beta3 (2015-08-24)
 
  * fixed minimum versions in composer.json
