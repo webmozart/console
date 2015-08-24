@@ -8,7 +8,7 @@ Webmozart Console
 [![Total Downloads](https://poser.pugx.org/webmozart/console/downloads.svg)](https://packagist.org/packages/webmozart/console)
 [![Dependency Status](https://www.versioneye.com/php/webmozart:console/1.0.0/badge.svg)](https://www.versioneye.com/php/webmozart:console/1.0.0)
 
-Latest release: [1.0.0-beta2](https://packagist.org/packages/webmozart/console#1.0.0-beta2)
+Latest release: [1.0.0-beta3](https://packagist.org/packages/webmozart/console#1.0.0-beta3)
 
 PHP >= 5.3.9
 
