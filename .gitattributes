@@ -1,3 +1,1 @@
-# Make sure heredoc with "\n" endings used in the tests is interpreted equally
-# on Windows and Unix
 *.php text eof=lf
