@@ -1,5 +1,5 @@
 The Webmozart Console API Documentation
-===============================================
+=======================================
 
 This repository contains the API documentation of the [Webmozart Console]. 
 The documentation is rendered at https://webmozart.github.io/console/api 
