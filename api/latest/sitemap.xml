@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/index.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Adapter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Application.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Args.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Args.Format.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Command.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Config.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Event.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Formatter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.IO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Api.Resolver.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Args.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Config.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Formatter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Handler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Handler.Help.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.IO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.IO.Input.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.IO.Output.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Process.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Resolver.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.UI.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.UI.Alignment.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.UI.Component.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.UI.Help.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.UI.Layout.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.UI.Style.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/namespace-Webmozart.Console.Util.html</loc>
+</url>
+
+
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.ApplicationAdapter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.ArgsFormatInputDefinition.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.ArgsInput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.CommandAdapter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.FormatterAdapter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.IOOutput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Adapter.StyleConverter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Args.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.AbstractOption.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.ArgsFormat.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.ArgsFormatBuilder.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.Argument.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.CommandName.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.CommandOption.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.Option.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Command.Command.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Command.CommandCollection.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Config.ApplicationConfig.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Config.CommandConfig.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Config.Config.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Config.OptionCommandConfig.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Config.SubCommandConfig.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Event.ConfigEvent.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Event.ConsoleEvents.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Event.PreHandleEvent.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Event.PreResolveEvent.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Formatter.Style.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Formatter.StyleSet.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Resolver.ResolvedCommand.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Args.ArgvArgs.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Args.DefaultArgsParser.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Args.StringArgs.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Args.TokenParser.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Config.DefaultApplicationConfig.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.ConsoleApplication.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Formatter.AnsiFormatter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Formatter.DefaultStyleSet.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Formatter.NullFormatter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Formatter.PlainFormatter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.CallbackHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.DelegatingHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.Help.HelpAsciiDocHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.Help.HelpHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.Help.HelpJsonHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.Help.HelpManHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.Help.HelpTextHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.Help.HelpXmlHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Handler.NullHandler.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.BufferedIO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.ConsoleIO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.FormattedIO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Input.BufferedInput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Input.NullInput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Input.StandardInput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Input.StreamInput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Output.BufferedOutput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Output.ErrorOutput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Output.NullOutput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Output.StandardOutput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.Output.StreamOutput.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.IO.RawIO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Process.ProcessLauncher.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Resolver.DefaultResolver.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Resolver.ResolveResult.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Alignment.LabelAlignment.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.BorderUtil.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.CellWrapper.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.EmptyLine.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.ExceptionTrace.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.Grid.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.LabeledParagraph.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.NameVersion.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.Paragraph.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.Table.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Help.AbstractHelp.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Help.ApplicationHelp.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Help.CommandHelp.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Layout.BlockLayout.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Rectangle.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Style.Alignment.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Style.BorderStyle.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Style.GridStyle.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Style.TableStyle.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Util.ProcessTitle.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Util.SimilarCommandName.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Util.StringUtil.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Application.Application.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.ArgsParser.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.RawArgs.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Formatter.Formatter.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.IO.Input.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.IO.IO.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.IO.Output.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Resolver.CommandResolver.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.UI.Component.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.CannotAddArgumentException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.CannotAddOptionException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.CannotParseArgsException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.Format.InvalidValueException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.NoSuchArgumentException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Args.NoSuchOptionException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Command.CannotAddCommandException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Command.NoSuchCommandException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.IO.IOException.html</loc>
+</url>
+<url>
+	<loc>https://webmozart.github.io/console/api/latest/class-Webmozart.Console.Api.Resolver.CannotResolveCommandException.html</loc>
+</url>
+</urlset>

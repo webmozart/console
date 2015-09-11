@@ -1,0 +1,6 @@
+source:
+    - vendor/webmozart/console/src
+
+title: Webmozart Console API
+
+baseUrl: https://webmozart.github.io/console/api/latest
