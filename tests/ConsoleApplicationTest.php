@@ -245,6 +245,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($application->hasDefaultCommands());
     }
+
     /**
      * @expectedException \Webmozart\Console\Api\Command\CannotAddCommandException
      */

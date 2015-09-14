@@ -66,6 +66,7 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertCount(1, $argsFormat->getOptions());
         $this->assertTrue($argsFormat->hasOption('option'));
     }
+
     /**
      * @expectedException \LogicException
      */
