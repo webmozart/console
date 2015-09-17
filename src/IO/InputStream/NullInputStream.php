@@ -42,4 +42,12 @@ class NullInputStream implements InputStream
     public function close()
     {
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isClosed()
+    {
+        return false;
+    }
 }

@@ -50,4 +50,12 @@ class NullOutputStream implements OutputStream
     public function close()
     {
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isClosed()
+    {
+        return false;
+    }
 }

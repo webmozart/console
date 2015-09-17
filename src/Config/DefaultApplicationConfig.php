@@ -19,8 +19,10 @@ use Webmozart\Console\Api\Config\ApplicationConfig;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreHandleEvent;
 use Webmozart\Console\Api\Event\PreResolveEvent;
+use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Api\Resolver\ResolvedCommand;
 use Webmozart\Console\Formatter\AnsiFormatter;
@@ -73,22 +75,27 @@ class DefaultApplicationConfig extends ApplicationConfig
         ;
     }
 
-    public function createIO(Application $application, RawArgs $args, InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null)
+    public function createIO(Application $application, RawArgs $args, InputStream $inputStream = null, OutputStream $outputStream = null, OutputStream $errorStream = null)
     {
-        $input = $input ?: new StandardInputStream();
-        $output = $output ?: new StandardOutputStream();
-        $errorOutput = $errorOutput ?: new ErrorOutputStream();
+        $inputStream = $inputStream ?: new StandardInputStream();
+        $outputStream = $outputStream ?: new StandardOutputStream();
+        $errorStream = $errorStream ?: new ErrorOutputStream();
         $styleSet = $application->getConfig()->getStyleSet();
 
         if ($args->hasToken('--no-ansi')) {
-            $formatter = new PlainFormatter($styleSet);
+            $outputFormatter = $errorFormatter = new PlainFormatter($styleSet);
         } elseif ($args->hasToken('--ansi')) {
-            $formatter = new AnsiFormatter($styleSet);
+            $outputFormatter = $errorFormatter = new AnsiFormatter($styleSet);
         } else {
-            $formatter = $output->supportsAnsi() ? new AnsiFormatter($styleSet) : new PlainFormatter($styleSet);
+            $outputFormatter = $outputStream->supportsAnsi() ? new AnsiFormatter($styleSet) : new PlainFormatter($styleSet);
+            $errorFormatter = $errorStream->supportsAnsi() ? new AnsiFormatter($styleSet) : new PlainFormatter($styleSet);
         }
 
-        $io = new ConsoleIO($input, $output, $errorOutput, $formatter);
+        $io = new ConsoleIO(
+            new Input($inputStream),
+            new Output($outputStream, $outputFormatter),
+            new Output($errorStream, $errorFormatter)
+        );
 
         if ($args->hasToken('-vvv') || $this->isDebug()) {
             $io->setVerbosity(IO::DEBUG);

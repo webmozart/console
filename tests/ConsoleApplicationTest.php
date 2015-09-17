@@ -26,13 +26,14 @@ use Webmozart\Console\Api\Config\CommandConfig;
 use Webmozart\Console\Api\Event\ConfigEvent;
 use Webmozart\Console\Api\Event\ConsoleEvents;
 use Webmozart\Console\Api\Event\PreResolveEvent;
+use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Handler\CallbackHandler;
 use Webmozart\Console\IO\InputStream\StringInputStream;
 use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
-use Webmozart\Console\IO\RawIO;
 
 /**
  * @since  1.0
@@ -51,8 +52,8 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $this->config = new ApplicationConfig();
         $this->config->setCatchExceptions(false);
         $this->config->setTerminateAfterRun(false);
-        $this->config->setIOFactory(function ($application, $args, $input, $output, $errorOutput) {
-            return new RawIO($input, $output, $errorOutput);
+        $this->config->setIOFactory(function ($application, $args, $inputStream, $outputStream, $errorStream) {
+            return new IO(new Input($inputStream), new Output($outputStream), new Output($errorStream));
         });
     }
 

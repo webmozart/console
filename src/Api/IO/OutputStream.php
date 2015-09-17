@@ -48,4 +48,11 @@ interface OutputStream
      * Closes the stream.
      */
     public function close();
+
+    /**
+     * Returns whether the stream is closed.
+     *
+     * @return bool Returns `true` if the stream is closed.
+     */
+    public function isClosed();
 }

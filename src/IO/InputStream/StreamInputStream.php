@@ -102,4 +102,12 @@ class StreamInputStream implements InputStream
             $this->stream = null;
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isClosed()
+    {
+        return null === $this->stream;
+    }
 }

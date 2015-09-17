@@ -12,6 +12,11 @@
 namespace Webmozart\Console\IO;
 
 use Webmozart\Console\Api\Formatter\Formatter;
+use Webmozart\Console\Api\Formatter\StyleSet;
+use Webmozart\Console\Api\IO\Input;
+use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\IO\InputStream\StringInputStream;
 use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 use Webmozart\Console\UI\Rectangle;
@@ -23,37 +28,22 @@ use Webmozart\Console\UI\Rectangle;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class BufferedIO extends FormattedIO
+class BufferedIO extends IO
 {
-    /**
-     * @var StringInputStream
-     */
-    private $input;
-
-    /**
-     * @var BufferedOutputStream
-     */
-    private $output;
-
-    /**
-     * @var BufferedOutputStream
-     */
-    private $errorOutput;
-
     /**
      * Creates the I/O.
      *
-     * @param string    $inputData  The data to return from the input.
-     * @param Formatter $formatter  The formatter to use.
-     * @param Rectangle $dimensions The terminal dimensions.
+     * @param string   $inputData The data to return from the input.
+     * @param StyleSet $styleSet  The style set to use.
      */
-    public function __construct($inputData = '', Formatter $formatter = null, Rectangle $dimensions = null)
+    public function __construct($inputData = '', StyleSet $styleSet = null)
     {
-        $this->input = new StringInputStream($inputData);
-        $this->output = new BufferedOutputStream();
-        $this->errorOutput = new BufferedOutputStream();
+        $formatter = new PlainFormatter($styleSet);
+        $input = new Input(new StringInputStream($inputData));
+        $output = new Output(new BufferedOutputStream(), $formatter);
+        $errorOutput = new Output(new BufferedOutputStream(), $formatter);
 
-        parent::__construct($this->input, $this->output, $this->errorOutput, $formatter);
+        parent::__construct($input, $output, $errorOutput);
     }
 
     /**
@@ -63,7 +53,7 @@ class BufferedIO extends FormattedIO
      */
     public function setInput($data)
     {
-        $this->input->set($data);
+        $this->getInput()->getStream()->set($data);
     }
 
     /**
@@ -73,7 +63,7 @@ class BufferedIO extends FormattedIO
      */
     public function appendInput($data)
     {
-        $this->input->append($data);
+        $this->getInput()->getStream()->append($data);
     }
 
     /**
@@ -81,7 +71,7 @@ class BufferedIO extends FormattedIO
      */
     public function clearInput()
     {
-        $this->input->clear();
+        $this->getInput()->getStream()->clear();
     }
 
     /**
@@ -91,7 +81,7 @@ class BufferedIO extends FormattedIO
      */
     public function fetchOutput()
     {
-        return $this->output->fetch();
+        return $this->getOutput()->getStream()->fetch();
     }
 
     /**
@@ -99,7 +89,7 @@ class BufferedIO extends FormattedIO
      */
     public function clearOutput()
     {
-        $this->output->clear();
+        $this->getOutput()->getStream()->clear();
     }
 
     /**
@@ -109,7 +99,7 @@ class BufferedIO extends FormattedIO
      */
     public function fetchErrors()
     {
-        return $this->errorOutput->fetch();
+        return $this->getErrorOutput()->getStream()->fetch();
     }
 
     /**
@@ -117,6 +107,6 @@ class BufferedIO extends FormattedIO
      */
     public function clearErrors()
     {
-        $this->errorOutput->clear();
+        $this->getErrorOutput()->getStream()->clear();
     }
 }

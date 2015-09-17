@@ -5,6 +5,13 @@ Changelog
 
  * renamed `Input` and implementations to `InputStream`
  * renamed `Output` and implementations to `OutputStream`
+ * turned `IO` into a class
+ * added `Input`
+ * added `Output`
+ * added `isClosed()` to `InputStream` and `OutputStream`
+ * removed `RawIO` and `FormattedIO`
+ * changed constructor of `BufferedIO`
+ * changed constructor of `ConsoleIO`
  
 * 1.0.0-beta3 (2015-08-24)
 

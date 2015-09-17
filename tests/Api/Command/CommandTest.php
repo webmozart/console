@@ -419,7 +419,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandle()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handle'));
 
         $config = new CommandConfig('command');
@@ -437,7 +439,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandleDispatchesEvent()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handle'));
 
         $this->application->getConfig()->addEventListener(ConsoleEvents::PRE_HANDLE, function (PreHandleEvent $event) {
@@ -458,7 +462,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandleWithCustomHandlerMethod()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handleFoo'));
 
         $config = new CommandConfig('command');
@@ -477,7 +483,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandleConvertsEmptyStatusCodeToZero()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handle'));
 
         $config = new CommandConfig('command');
@@ -495,7 +503,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandleNormalizesNegativeStatusCodeToOne()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handle'));
 
         $config = new CommandConfig('command');
@@ -514,7 +524,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandleNormalizesNonNumericStatusCodeToOne()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handle'));
 
         $config = new CommandConfig('command');
@@ -532,7 +544,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     public function testHandleNormalizesLargeStatusCodeToOne()
     {
         $args = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $handler = $this->getMock('stdClass', array('handle'));
 
         $config = new CommandConfig('command');
@@ -551,7 +565,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     {
         $rawArgs = $this->getMock('Webmozart\Console\Api\Args\RawArgs');
         $parsedArgs = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $parser = $this->getMock('Webmozart\Console\Api\Args\ArgsParser');
         $handler = $this->getMock('stdClass', array('handle'));
 
@@ -578,7 +594,9 @@ class CommandTest extends PHPUnit_Framework_TestCase
     {
         $rawArgs = $this->getMock('Webmozart\Console\Api\Args\RawArgs');
         $parsedArgs = new Args(new ArgsFormat());
-        $io = $this->getMock('Webmozart\Console\Api\IO\IO');
+        $io = $this->getMockBuilder('Webmozart\Console\Api\IO\IO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $parser = $this->getMock('Webmozart\Console\Api\Args\ArgsParser');
         $handler = $this->getMock('stdClass', array('handle'));
 

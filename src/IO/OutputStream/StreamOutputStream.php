@@ -91,4 +91,12 @@ class StreamOutputStream implements OutputStream
             $this->stream = null;
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isClosed()
+    {
+        return null === $this->stream;
+    }
 }

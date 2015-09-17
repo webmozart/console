@@ -79,10 +79,6 @@ class IOOutput implements OutputInterface
      */
     public function setVerbosity($level)
     {
-        if (!$this->io instanceof RawIO) {
-            return;
-        }
-
         switch ($level) {
             case self::VERBOSITY_QUIET:
                 $this->io->setQuiet(true);

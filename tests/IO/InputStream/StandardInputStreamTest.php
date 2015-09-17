@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Webmozart\Console\Tests\IO\OutputStream;
+namespace Webmozart\Console\Tests\IO\InputStream;
 
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\IO\InputStream\StandardInputStream;
@@ -19,7 +19,7 @@ use Webmozart\Console\IO\InputStream\StandardInputStream;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class StandardInputTest extends PHPUnit_Framework_TestCase
+class StandardInputStreamTest extends PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {

@@ -22,7 +22,6 @@ use Webmozart\Console\Args\StringArgs;
 use Webmozart\Console\Config\DefaultApplicationConfig;
 use Webmozart\Console\ConsoleApplication;
 use Webmozart\Console\Handler\CallbackHandler;
-use Webmozart\Console\IO\FormattedIO;
 use Webmozart\Console\IO\InputStream\StringInputStream;
 use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 
@@ -53,15 +52,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config->beginCommand('command')->end();
 
         $application = new ConsoleApplication($this->config);
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(0, $status);
-        $this->assertStringStartsWith('Console Tool', $output->fetch());
-        $this->assertSame('', $errorOutput->fetch());
+        $this->assertStringStartsWith('Console Tool', $outputStream->fetch());
+        $this->assertSame('', $errorStream->fetch());
     }
 
     public function getApplicationHelpArgs()
@@ -89,15 +88,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         ;
 
         $application = new ConsoleApplication($this->config);
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(0, $status);
-        $this->assertStringStartsWith("USAGE\n  console command", $output->fetch());
-        $this->assertSame('', $errorOutput->fetch());
+        $this->assertStringStartsWith("USAGE\n  console command", $outputStream->fetch());
+        $this->assertSame('', $errorStream->fetch());
     }
 
     public function getCommandHelpArgs()
@@ -117,8 +116,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\AnsiFormatter', $io->getFormatter());
 
                     return 123;
@@ -128,15 +126,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command');
-        $input = new StringInputStream();
-        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorStream = new BufferedOutputStream();
 
-        $output->expects($this->any())
+        $outputStream->expects($this->any())
             ->method('supportsAnsi')
             ->willReturn(true);
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -146,8 +144,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\PlainFormatter', $io->getFormatter());
 
                     return 123;
@@ -157,15 +154,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command');
-        $input = new StringInputStream();
-        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorStream = new BufferedOutputStream();
 
-        $output->expects($this->any())
+        $outputStream->expects($this->any())
             ->method('supportsAnsi')
             ->willReturn(false);
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -175,8 +172,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\AnsiFormatter', $io->getFormatter());
 
                     return 123;
@@ -186,15 +182,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command --ansi');
-        $input = new StringInputStream();
-        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorStream = new BufferedOutputStream();
 
-        $output->expects($this->any())
+        $outputStream->expects($this->any())
             ->method('supportsAnsi')
             ->willReturn(false);
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -204,8 +200,7 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
                     PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Formatter\PlainFormatter', $io->getFormatter());
 
                     return 123;
@@ -215,15 +210,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command --no-ansi');
-        $input = new StringInputStream();
-        $output = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = $this->getMock('Webmozart\Console\Api\IO\OutputStream');
+        $errorStream = new BufferedOutputStream();
 
-        $output->expects($this->any())
+        $outputStream->expects($this->any())
             ->method('supportsAnsi')
             ->willReturn(true);
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -233,9 +228,8 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\InputStream\StandardInputStream', $io->getInput());
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\InputStream\StandardInputStream', $io->getInput()->getStream());
 
                     return 123;
                 }))
@@ -244,10 +238,10 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command --no-ansi');
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, null, $output, $errorOutput);
+        $status = $application->run($args, null, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -257,9 +251,8 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\OutputStream\StandardOutputStream', $io->getOutput());
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\OutputStream\StandardOutputStream', $io->getOutput()->getStream());
 
                     return 123;
                 }))
@@ -268,10 +261,10 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command --no-ansi');
-        $input = new StringInputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, null, $errorOutput);
+        $status = $application->run($args, $inputStream, null, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -281,9 +274,8 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         $this->config
             ->beginCommand('command')
                 ->setHandler(new CallbackHandler(function (Args $args, IO $io) {
-                    /* @var FormattedIO $io */
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\FormattedIO', $io);
-                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\OutputStream\ErrorOutputStream', $io->getErrorOutput());
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\Api\IO\IO', $io);
+                    PHPUnit_Framework_Assert::assertInstanceOf('Webmozart\Console\IO\OutputStream\ErrorOutputStream', $io->getErrorOutput()->getStream());
 
                     return 123;
                 }))
@@ -292,10 +284,10 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command --no-ansi');
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output);
+        $status = $application->run($args, $inputStream, $outputStream);
 
         $this->assertSame(123, $status);
     }
@@ -316,11 +308,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command -v');
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -341,11 +333,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command -vv');
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -366,11 +358,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command -vvv');
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -393,11 +385,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command');
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -418,11 +410,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         ;
 
         $application = new ConsoleApplication($this->config);
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -451,11 +443,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         ;
 
         $application = new ConsoleApplication($this->config);
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }
@@ -480,15 +472,15 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
         ;
 
         $application = new ConsoleApplication($this->config);
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(0, $status);
-        $this->assertSame("The Application version 1.2.3\n", $output->fetch());
-        $this->assertSame('', $errorOutput->fetch());
+        $this->assertSame("The Application version 1.2.3\n", $outputStream->fetch());
+        $this->assertSame('', $errorStream->fetch());
     }
 
     public function getVersionArgs()
@@ -520,11 +512,11 @@ class DefaultApplicationConfigTest extends PHPUnit_Framework_TestCase
 
         $application = new ConsoleApplication($this->config);
         $args = new StringArgs('command');
-        $input = new StringInputStream();
-        $output = new BufferedOutputStream();
-        $errorOutput = new BufferedOutputStream();
+        $inputStream = new StringInputStream();
+        $outputStream = new BufferedOutputStream();
+        $errorStream = new BufferedOutputStream();
 
-        $status = $application->run($args, $input, $output, $errorOutput);
+        $status = $application->run($args, $inputStream, $outputStream, $errorStream);
 
         $this->assertSame(123, $status);
     }

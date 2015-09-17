@@ -88,4 +88,12 @@ class BufferedOutputStream implements OutputStream
     {
         $this->closed = true;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isClosed()
+    {
+        return $this->closed;
+    }
 }
