@@ -14,7 +14,6 @@ namespace Webmozart\Console\Adapter;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\IO\IO;
-use Webmozart\Console\IO\RawIO;
 
 /**
  * Adapts an {@link IO} instance to Symfony's {@link OutputInterface} API.

@@ -11,7 +11,6 @@
 
 namespace Webmozart\Console\IO;
 
-use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
@@ -19,7 +18,6 @@ use Webmozart\Console\Api\IO\Output;
 use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\IO\InputStream\StringInputStream;
 use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
-use Webmozart\Console\UI\Rectangle;
 
 /**
  * An I/O that reads from and writes to a buffer.

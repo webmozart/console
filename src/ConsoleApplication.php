@@ -240,7 +240,7 @@ class ConsoleApplication implements Application
     /**
      * {@inheritdoc}
      */
-    public function run(RawArgs $args = null, InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null)
+    public function run(RawArgs $args = null, InputStream $inputStream = null, OutputStream $outputStream = null, OutputStream $errorStream = null)
     {
         // Render errors to the preliminary IO until the final IO is created
         $io = $this->preliminaryIo;
@@ -257,7 +257,7 @@ class ConsoleApplication implements Application
             }
 
             /** @var IO $io */
-            $io = call_user_func($ioFactory, $this, $args, $input, $output, $errorOutput);
+            $io = call_user_func($ioFactory, $this, $args, $inputStream, $outputStream, $errorStream);
 
             $resolvedCommand = $this->resolveCommand($args);
             $command = $resolvedCommand->getCommand();

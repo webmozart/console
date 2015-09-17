@@ -13,7 +13,6 @@ namespace Webmozart\Console\Tests\Api\IO;
 
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\IO\InputStream\StringInputStream;
 
 /**

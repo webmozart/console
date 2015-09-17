@@ -12,13 +12,9 @@
 namespace Webmozart\Console\IO;
 
 use Symfony\Component\Console\Application;
-use Webmozart\Console\Api\Formatter\Formatter;
-use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Api\IO\Input;
-use Webmozart\Console\Api\IO\InputStream;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
-use Webmozart\Console\Api\IO\OutputStream;
 use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\Formatter\PlainFormatter;
 use Webmozart\Console\IO\InputStream\StandardInputStream;

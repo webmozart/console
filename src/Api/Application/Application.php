@@ -138,19 +138,20 @@ interface Application
     /**
      * Executes the command.
      *
-     * @param RawArgs $args        The console arguments. If not given, the
-     *                             arguments passed to the PHP process are used.
-     * @param InputStream   $input       The standard input. If not given, the
-     *                             application reads from the standard input of
-     *                             the PHP process.
-     * @param OutputStream  $output      The standard output. If not given, the
-     *                             application prints to the standard output of
-     *                             the PHP process.
-     * @param OutputStream  $errorOutput The error output. If not given, the
-     *                             application prints to the error output of the
-     *                             PHP process.
+     * @param RawArgs      $args         The console arguments. If not given,
+     *                                   the arguments passed to the PHP process
+     *                                   are used.
+     * @param InputStream  $inputStream  The standard input. If not given, the
+     *                                   application reads from the standard
+     *                                   input of the PHP process.
+     * @param OutputStream $outputStream The standard output. If not given, the
+     *                                   application prints to the standard
+     *                                   output of the PHP process.
+     * @param OutputStream $errorStream  The error output. If not given, the
+     *                                   application prints to the error output
+     *                                   of the PHP process.
      *
      * @return int The exit status.
      */
-    public function run(RawArgs $args = null, InputStream $input = null, OutputStream $output = null, OutputStream $errorOutput = null);
+    public function run(RawArgs $args = null, InputStream $inputStream = null, OutputStream $outputStream = null, OutputStream $errorStream = null);
 }

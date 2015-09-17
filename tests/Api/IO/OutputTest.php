@@ -11,7 +11,6 @@
 
 namespace Webmozart\Console\Tests\Api\IO;
 
-use PHPUnit_Framework_MockObject_MockObject;
 use PHPUnit_Framework_TestCase;
 use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\IO\IO;
