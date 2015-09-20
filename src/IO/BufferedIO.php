@@ -11,6 +11,7 @@
 
 namespace Webmozart\Console\IO;
 
+use Webmozart\Console\Api\Formatter\Formatter;
 use Webmozart\Console\Api\Formatter\StyleSet;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
@@ -31,12 +32,12 @@ class BufferedIO extends IO
     /**
      * Creates the I/O.
      *
-     * @param string   $inputData The data to return from the input.
-     * @param StyleSet $styleSet  The style set to use.
+     * @param string    $inputData The data to return from the input.
+     * @param Formatter $formatter The formatter to use.
      */
-    public function __construct($inputData = '', StyleSet $styleSet = null)
+    public function __construct($inputData = '', Formatter $formatter = null)
     {
-        $formatter = new PlainFormatter($styleSet);
+        $formatter = $formatter ?: new PlainFormatter();
         $input = new Input(new StringInputStream($inputData));
         $output = new Output(new BufferedOutputStream(), $formatter);
         $errorOutput = new Output(new BufferedOutputStream(), $formatter);
