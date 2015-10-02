@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Interface Webmozart\Console\Api\IO\Input | Webmozart Console API</title>
+	<title>Class Webmozart\Console\Api\IO\Input | Webmozart Console API</title>
 
 	<link rel="stylesheet" href="resources/style.css?95ada9fb523b6ab4fd1c47bb375f713f2cc65542">
 
@@ -123,13 +123,13 @@
 
 						<ul>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Input.html">
-						Input					</a>
+					<a href="namespace-Webmozart.Console.IO.InputStream.html">
+						InputStream					</a>
 
 						</li>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Output.html">
-						Output					</a>
+					<a href="namespace-Webmozart.Console.IO.OutputStream.html">
+						OutputStream					</a>
 
 						</li>
 							</ul></li>
@@ -188,12 +188,17 @@
 
 
 		<div id="elements">
-
-			<h3>Interfaces</h3>
+			<h3>Classes</h3>
 			<ul>
 				<li class="active"><a href="class-Webmozart.Console.Api.IO.Input.html">Input</a></li>
 				<li><a href="class-Webmozart.Console.Api.IO.IO.html">IO</a></li>
 				<li><a href="class-Webmozart.Console.Api.IO.Output.html">Output</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-Webmozart.Console.Api.IO.InputStream.html">InputStream</a></li>
+				<li><a href="class-Webmozart.Console.Api.IO.OutputStream.html">OutputStream</a></li>
 			</ul>
 
 
@@ -235,28 +240,21 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Interface Input</h1>
+	<h1>Class Input</h1>
 
 
 	<div class="description">
 	<p>The console input.</p>
+
+<p>This class wraps an input stream and adds convenience functionality for
+reading that stream.</p>
 	</div>
 
 
 
 
 
-	<div>
-		<h4>Direct known implementers</h4>
-			<a href="class-Webmozart.Console.IO.Input.NullInput.html">Webmozart\Console\IO\Input\NullInput</a>, 
-			<a href="class-Webmozart.Console.IO.Input.StreamInput.html">Webmozart\Console\IO\Input\StreamInput</a>
-	</div>
 
-	<div>
-		<h4>Indirect known implementers</h4>
-			<a href="class-Webmozart.Console.IO.Input.BufferedInput.html">Webmozart\Console\IO\Input\BufferedInput</a>, 
-			<a href="class-Webmozart.Console.IO.Input.StandardInput.html">Webmozart\Console\IO\Input\StandardInput</a>
-	</div>
 
 
 
@@ -270,7 +268,7 @@
 				Bernhard Schussek <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;">&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;</a><br>
 				<b>Since:</b>
 				1.0<br>
-			<b>Located at</b> <a href="source-class-Webmozart.Console.Api.IO.Input.html#14-50" title="Go to source code">Api/IO/Input.php</a>
+			<b>Located at</b> <a href="source-class-Webmozart.Console.Api.IO.Input.html#14-148" title="Go to source code">Api/IO/Input.php</a>
 		<br>
 	</div>
 
@@ -278,6 +276,41 @@
 
 	<table class="summary methods" id="methods">
 	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#36-44" title="Go to source code">__construct</a>( <span><code><a href="class-Webmozart.Console.Api.IO.InputStream.html">Webmozart\Console\Api\IO\InputStream</a></code> <var>$stream</var></span> )</code>
+
+		<div class="description short">
+			<p>Creates an input for the given input stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Creates an input for the given input stream.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$stream</var></dt>
+					<dd>The input stream.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="read" id="_read">
 
 		<td class="attributes"><code>
@@ -290,30 +323,32 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_read">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#23-32" title="Go to source code">read</a>( <span>integer <var>$length</var></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#46-63" title="Go to source code">read</a>( <span>integer <var>$length</var></span>, <span>string <var>$default</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
-			<p>Reads the given amount of characters from the input.</p>
+			<p>Reads the given amount of characters from the input stream.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Reads the given amount of characters from the input.</p>
+			<p>Reads the given amount of characters from the input stream.</p>
 
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
 					<dt><var>$length</var></dt>
 					<dd>The number of characters to read.</dd>
+					<dt><var>$default</var></dt>
+					<dd>The default to return if interaction is disabled.</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
 				<div class="list">
-					string<br>The characters read from the input.
+					string<br>The characters read from the input stream.
 				</div>
 
 				<h4>Throws</h4>
 				<div class="list">
-					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the input is closed.
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the input stream is closed.
 				</div>
 
 
@@ -333,31 +368,34 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_readLine">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#34-44" title="Go to source code">readLine</a>( <span>integer <var>$length</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#65-84" title="Go to source code">readLine</a>( <span>string <var>$default</var> = <span class="php-keyword1">null</span></span>, <span>integer <var>$length</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
-			<p>Reads a line from the input.</p>
+			<p>Reads a line from the input stream.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Reads a line from the input.</p>
+			<p>Reads a line from the input stream.</p>
 
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
+					<dt><var>$default</var></dt>
+					<dd>The default to return if interaction is disabled.</dd>
 					<dt><var>$length</var></dt>
-					<dd><p>The maximum number of characters to read. If <code>null</code>,
-                   all characters up to the first newline are returned.</p></dd>
+					<dd><p>The maximum number of characters to read. If
+                       <code>null</code>, all characters up to the first newline are
+                       returned.</p></dd>
 				</dl></div>
 
 				<h4>Returns</h4>
 				<div class="list">
-					string<br>The characters read from the input.
+					string<br>The characters read from the input stream.
 				</div>
 
 				<h4>Throws</h4>
 				<div class="list">
-					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the input is closed.
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the input stream is closed.
 				</div>
 
 
@@ -377,7 +415,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_close">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#46-49" title="Go to source code">close</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#86-92" title="Go to source code">close</a>( )</code>
 
 		<div class="description short">
 			<p>Closes the input.</p>
@@ -388,6 +426,183 @@
 
 
 
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isClosed" id="_isClosed">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isClosed">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#94-103" title="Go to source code">isClosed</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether the input is closed.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether the input is closed.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the input is closed and <code>false</code>
+             otherwise.</p>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setStream" id="_setStream">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setStream">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#105-113" title="Go to source code">setStream</a>( <span><code><a href="class-Webmozart.Console.Api.IO.InputStream.html">Webmozart\Console\Api\IO\InputStream</a></code> <var>$stream</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the underlying stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the underlying stream.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$stream</var></dt>
+					<dd>The input stream.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getStream" id="_getStream">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.IO.InputStream.html">Webmozart\Console\Api\IO\InputStream</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getStream">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#115-123" title="Go to source code">getStream</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the underlying stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the underlying stream.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.InputStream.html">Webmozart\Console\Api\IO\InputStream</a></code><br>The input stream.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setInteractive" id="_setInteractive">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setInteractive">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#125-136" title="Go to source code">setInteractive</a>( <span>boolean <var>$interactive</var></span> )</code>
+
+		<div class="description short">
+			<p>Enables or disables interaction with the user.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Enables or disables interaction with the user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$interactive</var></dt>
+					<dd><p>Whether the inputmay interact with the user. If
+                         set to <code>false</code>, all calls to <code><a href="class-Webmozart.Console.Api.IO.Input.html#_read">Webmozart\Console\Api\IO\Input::read()</a></code> and
+                         <code><a href="class-Webmozart.Console.Api.IO.Input.html#_readLine">Webmozart\Console\Api\IO\Input::readLine()</a></code> will immediately return the
+                         default value.</p></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isInteractive" id="_isInteractive">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isInteractive">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Input.html#138-147" title="Go to source code">isInteractive</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether the user may be asked for input.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether the user may be asked for input.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the user may be asked for input and
+             <code>false</code> otherwise.</p>
+				</div>
 
 
 

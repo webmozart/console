@@ -123,13 +123,13 @@
 
 						<ul>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Input.html">
-						Input					</a>
+					<a href="namespace-Webmozart.Console.IO.InputStream.html">
+						InputStream					</a>
 
 						</li>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Output.html">
-						Output					</a>
+					<a href="namespace-Webmozart.Console.IO.OutputStream.html">
+						OutputStream					</a>
 
 						</li>
 							</ul></li>
@@ -256,7 +256,7 @@
 				Bernhard Schussek <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;">&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;</a><br>
 				<b>Since:</b>
 				1.0<br>
-			<b>Located at</b> <a href="source-class-Webmozart.Console.Process.ProcessLauncher.html#16-137" title="Go to source code">Process/ProcessLauncher.php</a>
+			<b>Located at</b> <a href="source-class-Webmozart.Console.Process.ProcessLauncher.html#16-150" title="Go to source code">Process/ProcessLauncher.php</a>
 		<br>
 	</div>
 
@@ -381,7 +381,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_launchProcess">#</a>
-		<code><a href="source-class-Webmozart.Console.Process.ProcessLauncher.html#69-86" title="Go to source code">launchProcess</a>( <span>string <var>$command</var></span>, <span>boolean <var>$killable</var> = <span class="php-keyword1">true</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Process.ProcessLauncher.html#69-90" title="Go to source code">launchProcess</a>( <span>string <var>$command</var></span>, <span>array <var>$arguments</var> = <span class="php-keyword1">array</span>()</span>, <span>boolean <var>$killable</var> = <span class="php-keyword1">true</span></span> )</code>
 
 		<div class="description short">
 			<p>Launches a process in the foreground.</p>
@@ -395,6 +395,11 @@
 				<div class="list"><dl>
 					<dt><var>$command</var></dt>
 					<dd>The command to execute.</dd>
+					<dt><var>$arguments</var></dt>
+					<dd><p>Arguments to be quoted and inserted into the
+                           command. Each key "key" in the array should
+                           correspond to a placeholder "%key%" in the
+                           command.</p></dd>
 					<dt><var>$killable</var></dt>
 					<dd>Whether the process can be killed by the user.</dd>
 				</dl></div>

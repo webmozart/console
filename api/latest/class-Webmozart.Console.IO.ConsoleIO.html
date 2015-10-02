@@ -123,13 +123,13 @@
 
 						<ul>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Input.html">
-						Input					</a>
+					<a href="namespace-Webmozart.Console.IO.InputStream.html">
+						InputStream					</a>
 
 						</li>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Output.html">
-						Output					</a>
+					<a href="namespace-Webmozart.Console.IO.OutputStream.html">
+						OutputStream					</a>
 
 						</li>
 							</ul></li>
@@ -192,8 +192,6 @@
 			<ul>
 				<li><a href="class-Webmozart.Console.IO.BufferedIO.html">BufferedIO</a></li>
 				<li class="active"><a href="class-Webmozart.Console.IO.ConsoleIO.html">ConsoleIO</a></li>
-				<li><a href="class-Webmozart.Console.IO.FormattedIO.html">FormattedIO</a></li>
-				<li><a href="class-Webmozart.Console.IO.RawIO.html">RawIO</a></li>
 			</ul>
 
 
@@ -241,21 +239,14 @@
 
 	<dl class="tree">
 		<dd style="padding-left:0px">
-			<a href="class-Webmozart.Console.IO.RawIO.html"><span>Webmozart\Console\IO\RawIO</span></a>
+			<a href="class-Webmozart.Console.Api.IO.IO.html"><span>Webmozart\Console\Api\IO\IO</span></a>
 			
 			 implements 
-				<a href="class-Webmozart.Console.Api.IO.IO.html"><span>Webmozart\Console\Api\IO\IO</span></a>
+				<a href="class-Webmozart.Console.Api.Formatter.Formatter.html"><span>Webmozart\Console\Api\Formatter\Formatter</span></a>
 			
 			
 		</dd>
 		<dd style="padding-left:30px">
-			<img src="resources/inherit.png" alt="Extended by">
-			<a href="class-Webmozart.Console.IO.FormattedIO.html"><span>Webmozart\Console\IO\FormattedIO</span></a>
-			
-			
-			
-		</dd>
-		<dd style="padding-left:60px">
 			<img src="resources/inherit.png" alt="Extended by">
 <b><span>Webmozart\Console\IO\ConsoleIO</span></b>			
 			
@@ -280,7 +271,7 @@
 				Bernhard Schussek <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;">&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;</a><br>
 				<b>Since:</b>
 				1.0<br>
-			<b>Located at</b> <a href="source-class-Webmozart.Console.IO.ConsoleIO.html#25-64" title="Go to source code">IO/ConsoleIO.php</a>
+			<b>Located at</b> <a href="source-class-Webmozart.Console.IO.ConsoleIO.html#25-74" title="Go to source code">IO/ConsoleIO.php</a>
 		<br>
 	</div>
 
@@ -300,7 +291,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Webmozart.Console.IO.ConsoleIO.html#34-51" title="Go to source code">__construct</a>( <span><code><a href="class-Webmozart.Console.Api.IO.Input.html">Webmozart\Console\Api\IO\Input</a></code> <var>$input</var> = <span class="php-keyword1">null</span></span>, <span><code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code> <var>$output</var> = <span class="php-keyword1">null</span></span>, <span><code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code> <var>$errorOutput</var> = <span class="php-keyword1">null</span></span>, <span><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code> <var>$formatter</var> = <span class="php-keyword1">null</span></span>, <span><code><a href="class-Webmozart.Console.UI.Rectangle.html">Webmozart\Console\UI\Rectangle</a></code> <var>$dimensions</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.IO.ConsoleIO.html#34-61" title="Go to source code">__construct</a>( <span><code><a href="class-Webmozart.Console.Api.IO.Input.html">Webmozart\Console\Api\IO\Input</a></code> <var>$input</var> = <span class="php-keyword1">null</span></span>, <span><code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code> <var>$output</var> = <span class="php-keyword1">null</span></span>, <span><code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code> <var>$errorOutput</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Creates the I/O.</p>
@@ -313,22 +304,18 @@
 				<h4>Parameters</h4>
 				<div class="list"><dl>
 					<dt><var>$input</var></dt>
-					<dd>The input.</dd>
+					<dd>The standard input.</dd>
 					<dt><var>$output</var></dt>
-					<dd>The output.</dd>
+					<dd>The standard output.</dd>
 					<dt><var>$errorOutput</var></dt>
 					<dd>The error output.</dd>
-					<dt><var>$formatter</var></dt>
-					<dd>The formatter.</dd>
-					<dt><var>$dimensions</var></dt>
-					<dd>The terminal dimensions.</dd>
 				</dl></div>
 
 
 
 
 				<h4>Overrides</h4>
-				<div class="list"><code><a href="class-Webmozart.Console.IO.FormattedIO.html#___construct">Webmozart\Console\IO\FormattedIO::__construct()</a></code></div>
+				<div class="list"><code><a href="class-Webmozart.Console.Api.IO.IO.html#___construct">Webmozart\Console\Api\IO\IO::__construct()</a></code></div>
 
 		</div>
 		</div></td>
@@ -345,7 +332,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getDefaultTerminalDimensions">#</a>
-		<code><a href="source-class-Webmozart.Console.IO.ConsoleIO.html#53-63" title="Go to source code">getDefaultTerminalDimensions</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.IO.ConsoleIO.html#63-73" title="Go to source code">getDefaultTerminalDimensions</a>( )</code>
 
 		<div class="description short">
 			<p>Returns the default terminal dimensions.</p>
@@ -364,7 +351,7 @@
 
 
 				<h4>Overrides</h4>
-				<div class="list"><code><a href="class-Webmozart.Console.IO.RawIO.html#_getDefaultTerminalDimensions">Webmozart\Console\IO\RawIO::getDefaultTerminalDimensions()</a></code></div>
+				<div class="list"><code><a href="class-Webmozart.Console.Api.IO.IO.html#_getDefaultTerminalDimensions">Webmozart\Console\Api\IO\IO::getDefaultTerminalDimensions()</a></code></div>
 
 		</div>
 		</div></td>
@@ -372,46 +359,39 @@
 	</table>
 
 	<table class="summary inherited">
-	<caption>Methods inherited from <a href="class-Webmozart.Console.IO.FormattedIO.html#methods">Webmozart\Console\IO\FormattedIO</a></caption>
+	<caption>Methods inherited from <a href="class-Webmozart.Console.Api.IO.IO.html#methods">Webmozart\Console\Api\IO\IO</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_error">error()</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_errorLine">errorLine()</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_format">format()</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_getFormatter">getFormatter()</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_removeFormat">removeFormat()</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_write">write()</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html#_writeLine">writeLine()</a>
-		</code></td>
-	</tr>
-	</table>
-	<table class="summary inherited">
-	<caption>Methods inherited from <a href="class-Webmozart.Console.IO.RawIO.html#methods">Webmozart\Console\IO\RawIO</a></caption>
-	<tr>
-		<td><code>
-			<a href="class-Webmozart.Console.IO.RawIO.html#_close">close()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_errorLineRaw">errorLineRaw()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_errorRaw">errorRaw()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_flush">flush()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_getErrorOutput">getErrorOutput()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_getInput">getInput()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_getOutput">getOutput()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_getTerminalDimensions">getTerminalDimensions()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_getVerbosity">getVerbosity()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_isDebug">isDebug()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_isInteractive">isInteractive()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_isQuiet">isQuiet()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_isVerbose">isVerbose()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_isVeryVerbose">isVeryVerbose()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_mayWrite">mayWrite()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_read">read()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_readLine">readLine()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_setInteractive">setInteractive()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_setQuiet">setQuiet()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_setTerminalDimensions">setTerminalDimensions()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_setVerbosity">setVerbosity()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_writeLineRaw">writeLineRaw()</a>, 
-			<a href="class-Webmozart.Console.IO.RawIO.html#_writeRaw">writeRaw()</a>
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_close">close()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_error">error()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_errorLine">errorLine()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_errorLineRaw">errorLineRaw()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_errorRaw">errorRaw()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_flush">flush()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_format">format()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_getErrorOutput">getErrorOutput()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_getFormatter">getFormatter()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_getInput">getInput()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_getOutput">getOutput()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_getTerminalDimensions">getTerminalDimensions()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_getVerbosity">getVerbosity()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_isDebug">isDebug()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_isInteractive">isInteractive()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_isQuiet">isQuiet()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_isVerbose">isVerbose()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_isVeryVerbose">isVeryVerbose()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_read">read()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_readLine">readLine()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_removeFormat">removeFormat()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_setFormatter">setFormatter()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_setInteractive">setInteractive()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_setQuiet">setQuiet()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_setTerminalDimensions">setTerminalDimensions()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_setVerbosity">setVerbosity()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_write">write()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_writeLine">writeLine()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_writeLineRaw">writeLineRaw()</a>, 
+			<a href="class-Webmozart.Console.Api.IO.IO.html#_writeRaw">writeRaw()</a>
 		</code></td>
 	</tr>
 	</table>

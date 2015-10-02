@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Interface Webmozart\Console\Api\IO\Output | Webmozart Console API</title>
+	<title>Class Webmozart\Console\Api\IO\Output | Webmozart Console API</title>
 
 	<link rel="stylesheet" href="resources/style.css?95ada9fb523b6ab4fd1c47bb375f713f2cc65542">
 
@@ -123,13 +123,13 @@
 
 						<ul>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Input.html">
-						Input					</a>
+					<a href="namespace-Webmozart.Console.IO.InputStream.html">
+						InputStream					</a>
 
 						</li>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Output.html">
-						Output					</a>
+					<a href="namespace-Webmozart.Console.IO.OutputStream.html">
+						OutputStream					</a>
 
 						</li>
 							</ul></li>
@@ -188,12 +188,17 @@
 
 
 		<div id="elements">
-
-			<h3>Interfaces</h3>
+			<h3>Classes</h3>
 			<ul>
 				<li><a href="class-Webmozart.Console.Api.IO.Input.html">Input</a></li>
 				<li><a href="class-Webmozart.Console.Api.IO.IO.html">IO</a></li>
 				<li class="active"><a href="class-Webmozart.Console.Api.IO.Output.html">Output</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-Webmozart.Console.Api.IO.InputStream.html">InputStream</a></li>
+				<li><a href="class-Webmozart.Console.Api.IO.OutputStream.html">OutputStream</a></li>
 			</ul>
 
 
@@ -235,29 +240,30 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Interface Output</h1>
+	<h1>Class Output</h1>
 
 
 	<div class="description">
 	<p>The console output.</p>
+
+<p>This class wraps an output stream and adds convenience functionality for
+writing that stream.</p>
 	</div>
 
+	<dl class="tree">
+		<dd style="padding-left:0px">
+<b><span>Webmozart\Console\Api\IO\Output</span></b>			
+			 implements 
+				<a href="class-Webmozart.Console.Api.Formatter.Formatter.html"><span>Webmozart\Console\Api\Formatter\Formatter</span></a>
+			
+			
+		</dd>
+	</dl>
 
 
 
 
-	<div>
-		<h4>Direct known implementers</h4>
-			<a href="class-Webmozart.Console.IO.Output.BufferedOutput.html">Webmozart\Console\IO\Output\BufferedOutput</a>, 
-			<a href="class-Webmozart.Console.IO.Output.NullOutput.html">Webmozart\Console\IO\Output\NullOutput</a>, 
-			<a href="class-Webmozart.Console.IO.Output.StreamOutput.html">Webmozart\Console\IO\Output\StreamOutput</a>
-	</div>
 
-	<div>
-		<h4>Indirect known implementers</h4>
-			<a href="class-Webmozart.Console.IO.Output.ErrorOutput.html">Webmozart\Console\IO\Output\ErrorOutput</a>, 
-			<a href="class-Webmozart.Console.IO.Output.StandardOutput.html">Webmozart\Console\IO\Output\StandardOutput</a>
-	</div>
 
 
 
@@ -271,7 +277,7 @@
 				Bernhard Schussek <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;">&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;</a><br>
 				<b>Since:</b>
 				1.0<br>
-			<b>Located at</b> <a href="source-class-Webmozart.Console.Api.IO.Output.html#14-51" title="Go to source code">Api/IO/Output.php</a>
+			<b>Located at</b> <a href="source-class-Webmozart.Console.Api.IO.Output.html#20-345" title="Go to source code">Api/IO/Output.php</a>
 		<br>
 	</div>
 
@@ -279,6 +285,44 @@
 
 	<table class="summary methods" id="methods">
 	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#57-69" title="Go to source code">__construct</a>( <span><code><a href="class-Webmozart.Console.Api.IO.OutputStream.html">Webmozart\Console\Api\IO\OutputStream</a></code> <var>$stream</var></span>, <span><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code> <var>$formatter</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Creates an output for the given output stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Creates an output for the given output stream.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$stream</var></dt>
+					<dd>The output stream.</dd>
+					<dt><var>$formatter</var></dt>
+					<dd><p>The formatter for formatting text
+                                 written to the output stream.</p></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="write" id="_write">
 
 		<td class="attributes"><code>
@@ -291,26 +335,167 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_write">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#23-30" title="Go to source code">write</a>( <span>string <var>$string</var></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#71-90" title="Go to source code">write</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
-			<p>Writes a string to the output.</p>
+			<p>Writes a string to the output stream.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Writes a string to the output.</p>
+			<p>Writes a string to the output stream.</p>
+
+<p>The string is formatted before it is written to the output stream.</p>
 
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
 					<dt><var>$string</var></dt>
 					<dd>The string to write.</dd>
+					<dt><var>$flags</var></dt>
+					<dd><p>The flags. If one of of <a href="IO::VERBOSE">IO::VERBOSE</a>,
+                      <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> and <a href="IO::DEBUG">IO::DEBUG</a> is
+                      passed, the output is only written if the
+                      verbosity level is the given level or higher.</p></dd>
 				</dl></div>
 
 
 				<h4>Throws</h4>
 				<div class="list">
-					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If writing fails or if the output is closed.
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If writing fails or if the output stream is closed.
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="writeLine" id="_writeLine">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_writeLine">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#92-112" title="Go to source code">writeLine</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Writes a line of text to the output stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Writes a line of text to the output stream.</p>
+
+<p>The string is formatted before it is written to the output stream.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to write. A newline is appended.</dd>
+					<dt><var>$flags</var></dt>
+					<dd><p>The flags. If one of of <a href="IO::VERBOSE">IO::VERBOSE</a>,
+                      <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> and <a href="IO::DEBUG">IO::DEBUG</a> is
+                      passed, the output is only written if the
+                      verbosity level is the given level or higher.</p></dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If writing fails or if the output stream is closed.
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="writeRaw" id="_writeRaw">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_writeRaw">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#114-130" title="Go to source code">writeRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Writes a string to the output stream without formatting.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Writes a string to the output stream without formatting.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to write.</dd>
+					<dt><var>$flags</var></dt>
+					<dd><p>The flags. If one of of <a href="IO::VERBOSE">IO::VERBOSE</a>,
+                      <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> and <a href="IO::DEBUG">IO::DEBUG</a> is
+                      passed, the output is only written if the
+                      verbosity level is the given level or higher.</p></dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If writing fails or if the output stream is closed.
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="writeLineRaw" id="_writeLineRaw">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_writeLineRaw">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#132-148" title="Go to source code">writeLineRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Writes a line of text to the output stream without formatting.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Writes a line of text to the output stream without formatting.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to write. A newline is appended.</dd>
+					<dt><var>$flags</var></dt>
+					<dd><p>The flags. If one of of <a href="IO::VERBOSE">IO::VERBOSE</a>,
+                      <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> and <a href="IO::DEBUG">IO::DEBUG</a> is
+                      passed, the output is only written if the
+                      verbosity level is the given level or higher.</p></dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If writing fails or if the standard output is closed.
 				</div>
 
 
@@ -330,57 +515,22 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_flush">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#32-37" title="Go to source code">flush</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#150-158" title="Go to source code">flush</a>( )</code>
 
 		<div class="description short">
-			<p>Flushes the output and forces all pending text to be written out.</p>
+			<p>Forces all pending text to be written out.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Flushes the output and forces all pending text to be written out.</p>
+			<p>Forces all pending text to be written out.</p>
 
 
 
 
 				<h4>Throws</h4>
 				<div class="list">
-					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If flushing fails or if the output is closed.
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If flushing fails or if the output stream is closed.
 				</div>
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="supportsAnsi" id="_supportsAnsi">
-
-		<td class="attributes"><code>
-			 public 
-
-			boolean
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_supportsAnsi">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#39-45" title="Go to source code">supportsAnsi</a>( )</code>
-
-		<div class="description short">
-			<p>Returns whether the output supports ANSI format codes.</p>
-		</div>
-
-		<div class="description detailed hidden">
-			<p>Returns whether the output supports ANSI format codes.</p>
-
-
-
-				<h4>Returns</h4>
-				<div class="list">
-					boolean<br><p>Returns <code>true</code> if the output supports ANSI format codes and
-             <code>false</code> otherwise.</p>
-				</div>
-
 
 
 
@@ -399,7 +549,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_close">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#47-50" title="Go to source code">close</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#160-166" title="Go to source code">close</a>( )</code>
 
 		<div class="description short">
 			<p>Closes the output.</p>
@@ -410,6 +560,551 @@
 
 
 
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isClosed" id="_isClosed">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isClosed">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#168-177" title="Go to source code">isClosed</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether the output is closed.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether the output is closed.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the output is closed and <code>false</code>
+             otherwise.</p>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setStream" id="_setStream">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setStream">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#179-188" title="Go to source code">setStream</a>( <span><code><a href="class-Webmozart.Console.Api.IO.OutputStream.html">Webmozart\Console\Api\IO\OutputStream</a></code> <var>$stream</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the underlying stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the underlying stream.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$stream</var></dt>
+					<dd>The output stream.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getStream" id="_getStream">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.IO.OutputStream.html">Webmozart\Console\Api\IO\OutputStream</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getStream">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#190-198" title="Go to source code">getStream</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the underlying stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the underlying stream.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.OutputStream.html">Webmozart\Console\Api\IO\OutputStream</a></code><br>The output stream.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setFormatter" id="_setFormatter">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setFormatter">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#200-209" title="Go to source code">setFormatter</a>( <span><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code> <var>$formatter</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the output formatter.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the output formatter.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$formatter</var></dt>
+					<dd>The output formatter.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getFormatter" id="_getFormatter">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getFormatter">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#211-219" title="Go to source code">getFormatter</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the output formatter.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the output formatter.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code><br>The output formatter.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setVerbosity" id="_setVerbosity">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setVerbosity">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#221-234" title="Go to source code">setVerbosity</a>( <span>integer <var>$verbosity</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the verbosity level of the output.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the verbosity level of the output.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$verbosity</var></dt>
+					<dd><p>One of the constants NORMAL, VERBOSE,
+                      VERY_VERBOSE or DEBUG. Only output
+                      with the given verbosity level or smaller will be
+                      written out.</p></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getVerbosity" id="_getVerbosity">
+
+		<td class="attributes"><code>
+			 public 
+
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getVerbosity">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#236-244" title="Go to source code">getVerbosity</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the current verbosity level.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the current verbosity level.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					integer<br>One of the verbosity constants.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isVerbose" id="_isVerbose">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isVerbose">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#246-255" title="Go to source code">isVerbose</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether the verbosity level is <a href="IO::VERBOSE">IO::VERBOSE</a> or greater.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether the verbosity level is <a href="IO::VERBOSE">IO::VERBOSE</a> or greater.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the verbosity level is <a href="IO::VERBOSE">IO::VERBOSE</a>
+             or greater and <code>false</code> otherwise.</p>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isVeryVerbose" id="_isVeryVerbose">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isVeryVerbose">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#257-266" title="Go to source code">isVeryVerbose</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether the verbosity level is <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> or greater.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether the verbosity level is <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> or greater.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the verbosity level is
+             <a href="IO::VERY_VERBOSE">IO::VERY_VERBOSE</a> or greater and <code>false</code> otherwise.</p>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isDebug" id="_isDebug">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isDebug">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#268-277" title="Go to source code">isDebug</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether the verbosity level is <a href="IO::DEBUG">IO::DEBUG</a>.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether the verbosity level is <a href="IO::DEBUG">IO::DEBUG</a>.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the verbosity level is <a href="IO::DEBUG">IO::DEBUG</a>
+             and <code>false</code> otherwise.</p>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setQuiet" id="_setQuiet">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setQuiet">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#279-288" title="Go to source code">setQuiet</a>( <span>boolean <var>$quiet</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets whether output should be suppressed completely.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets whether output should be suppressed completely.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$quiet</var></dt>
+					<dd><p>Pass <code>true</code> to suppress all output and <code>false</code>
+                   otherwise.</p></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="isQuiet" id="_isQuiet">
+
+		<td class="attributes"><code>
+			 public 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_isQuiet">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#290-299" title="Go to source code">isQuiet</a>( )</code>
+
+		<div class="description short">
+			<p>Returns whether output is suppressed completely.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether output is suppressed completely.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if all output is suppressed and <code>false</code>
+             otherwise.</p>
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="format" id="_format">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_format">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#301-307" title="Go to source code">format</a>( <span>string <var>$string</var></span>, <span><code><a href="class-Webmozart.Console.Api.Formatter.Style.html">Webmozart\Console\Api\Formatter\Style</a></code> <var>$style</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Formats the given string.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Formats the given string.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to format.</dd>
+					<dt><var>$style</var></dt>
+					<dd>The style to use.</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string<br>The formatted string.
+				</div>
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html#_format">Webmozart\Console\Api\Formatter\Formatter::format()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="removeFormat" id="_removeFormat">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_removeFormat">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#309-315" title="Go to source code">removeFormat</a>( <span>string <var>$string</var></span> )</code>
+
+		<div class="description short">
+			<p>Removes the format tags from the given string.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Removes the format tags from the given string.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to remove the format tags from.</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string<br>The string without format tags.
+				</div>
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html#_removeFormat">Webmozart\Console\Api\Formatter\Formatter::removeFormat()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="mayWrite" id="_mayWrite">
+
+		<td class="attributes"><code>
+			 protected 
+
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_mayWrite">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.Output.html#317-344" title="Go to source code">mayWrite</a>( <span>integer <var>$flags</var></span> )</code>
+
+		<div class="description short">
+			<p>Returns whether an output may be written for the given flags.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns whether an output may be written for the given flags.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$flags</var></dt>
+					<dd>The flags.</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					boolean<br><p>Returns <code>true</code> if the output may be written and <code>false</code>
+             otherwise.</p>
+				</div>
 
 
 

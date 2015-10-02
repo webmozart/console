@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Interface Webmozart\Console\Api\IO\IO | Webmozart Console API</title>
+	<title>Class Webmozart\Console\Api\IO\IO | Webmozart Console API</title>
 
 	<link rel="stylesheet" href="resources/style.css?95ada9fb523b6ab4fd1c47bb375f713f2cc65542">
 
@@ -123,13 +123,13 @@
 
 						<ul>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Input.html">
-						Input					</a>
+					<a href="namespace-Webmozart.Console.IO.InputStream.html">
+						InputStream					</a>
 
 						</li>
 				<li>
-					<a href="namespace-Webmozart.Console.IO.Output.html">
-						Output					</a>
+					<a href="namespace-Webmozart.Console.IO.OutputStream.html">
+						OutputStream					</a>
 
 						</li>
 							</ul></li>
@@ -188,12 +188,17 @@
 
 
 		<div id="elements">
-
-			<h3>Interfaces</h3>
+			<h3>Classes</h3>
 			<ul>
 				<li><a href="class-Webmozart.Console.Api.IO.Input.html">Input</a></li>
 				<li class="active"><a href="class-Webmozart.Console.Api.IO.IO.html">IO</a></li>
 				<li><a href="class-Webmozart.Console.Api.IO.Output.html">Output</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-Webmozart.Console.Api.IO.InputStream.html">InputStream</a></li>
+				<li><a href="class-Webmozart.Console.Api.IO.OutputStream.html">OutputStream</a></li>
 			</ul>
 
 
@@ -235,7 +240,7 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Interface IO</h1>
+	<h1>Class IO</h1>
 
 
 	<div class="description">
@@ -253,19 +258,14 @@
 	</dl>
 
 
-
-
 	<div>
-		<h4>Direct known implementers</h4>
-			<a href="class-Webmozart.Console.IO.RawIO.html">Webmozart\Console\IO\RawIO</a>
-	</div>
-
-	<div>
-		<h4>Indirect known implementers</h4>
+		<h4>Direct known subclasses</h4>
 			<a href="class-Webmozart.Console.IO.BufferedIO.html">Webmozart\Console\IO\BufferedIO</a>, 
-			<a href="class-Webmozart.Console.IO.ConsoleIO.html">Webmozart\Console\IO\ConsoleIO</a>, 
-			<a href="class-Webmozart.Console.IO.FormattedIO.html">Webmozart\Console\IO\FormattedIO</a>
+			<a href="class-Webmozart.Console.IO.ConsoleIO.html">Webmozart\Console\IO\ConsoleIO</a>
 	</div>
+
+
+
 
 
 
@@ -279,7 +279,7 @@
 				Bernhard Schussek <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;">&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;</a><br>
 				<b>Since:</b>
 				1.0<br>
-			<b>Located at</b> <a href="source-class-Webmozart.Console.Api.IO.IO.html#17-233" title="Go to source code">Api/IO/IO.php</a>
+			<b>Located at</b> <a href="source-class-Webmozart.Console.Api.IO.IO.html#18-458" title="Go to source code">Api/IO/IO.php</a>
 		<br>
 	</div>
 
@@ -287,6 +287,147 @@
 
 	<table class="summary methods" id="methods">
 	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#67-79" title="Go to source code">__construct</a>( <span><code><a href="class-Webmozart.Console.Api.IO.Input.html">Webmozart\Console\Api\IO\Input</a></code> <var>$input</var></span>, <span><code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code> <var>$output</var></span>, <span><code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code> <var>$errorOutput</var></span> )</code>
+
+		<div class="description short">
+			<p>Creates an I/O based on the given input and outputs.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Creates an I/O based on the given input and outputs.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$input</var></dt>
+					<dd>The standard input.</dd>
+					<dt><var>$output</var></dt>
+					<dd>The standard output.</dd>
+					<dt><var>$errorOutput</var></dt>
+					<dd>The error output.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getInput" id="_getInput">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.IO.Input.html">Webmozart\Console\Api\IO\Input</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getInput">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#81-89" title="Go to source code">getInput</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the standard input.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the standard input.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.Input.html">Webmozart\Console\Api\IO\Input</a></code><br>The input.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getOutput" id="_getOutput">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getOutput">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#91-99" title="Go to source code">getOutput</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the standard output.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the standard output.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code><br>The output.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getErrorOutput" id="_getErrorOutput">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getErrorOutput">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#101-109" title="Go to source code">getErrorOutput</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the error output.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the error output.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.IO.Output.html">Webmozart\Console\Api\IO\Output</a></code><br>The error output.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="read" id="_read">
 
 		<td class="attributes"><code>
@@ -299,14 +440,14 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_read">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#46-56" title="Go to source code">read</a>( <span>integer <var>$length</var></span>, <span>string <var>$default</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#111-124" title="Go to source code">read</a>( <span>integer <var>$length</var></span>, <span>string <var>$default</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
-			<p>Reads the given amount of characters from the input.</p>
+			<p>Reads the given amount of characters from the standard input.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Reads the given amount of characters from the input.</p>
+			<p>Reads the given amount of characters from the standard input.</p>
 
 
 				<h4>Parameters</h4>
@@ -324,7 +465,7 @@
 
 				<h4>Throws</h4>
 				<div class="list">
-					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the input is closed.
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the standard input is closed.
 				</div>
 
 
@@ -344,14 +485,14 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_readLine">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#58-70" title="Go to source code">readLine</a>( <span>string <var>$default</var> = <span class="php-keyword1">null</span></span>, <span>integer <var>$length</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#126-141" title="Go to source code">readLine</a>( <span>string <var>$default</var> = <span class="php-keyword1">null</span></span>, <span>integer <var>$length</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
-			<p>Reads a line from the input.</p>
+			<p>Reads a line from the standard input.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Reads a line from the input.</p>
+			<p>Reads a line from the standard input.</p>
 
 
 				<h4>Parameters</h4>
@@ -371,7 +512,7 @@
 
 				<h4>Throws</h4>
 				<div class="list">
-					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the input is closed.
+					<code><a href="class-Webmozart.Console.Api.IO.IOException.html">Webmozart\Console\Api\IO\IOException</a></code><br>If reading fails or if the standard input is closed.
 				</div>
 
 
@@ -391,7 +532,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_write">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#72-83" title="Go to source code">write</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#143-157" title="Go to source code">write</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a string to the standard output.</p>
@@ -435,7 +576,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_writeLine">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#85-96" title="Go to source code">writeLine</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#159-173" title="Go to source code">writeLine</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a line of text to the standard output.</p>
@@ -479,7 +620,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_writeRaw">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#98-107" title="Go to source code">writeRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#175-187" title="Go to source code">writeRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a string to the standard output without formatting.</p>
@@ -521,7 +662,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_writeLineRaw">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#109-118" title="Go to source code">writeLineRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#189-201" title="Go to source code">writeLineRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a line of text to the standard output without formatting.</p>
@@ -563,7 +704,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_error">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#120-131" title="Go to source code">error</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#203-217" title="Go to source code">error</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a string to the error output.</p>
@@ -607,7 +748,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorLine">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#133-144" title="Go to source code">errorLine</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#219-233" title="Go to source code">errorLine</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a line of text to the error output.</p>
@@ -651,7 +792,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorRaw">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#146-155" title="Go to source code">errorRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#235-247" title="Go to source code">errorRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a string to the error output without formatting.</p>
@@ -693,7 +834,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorLineRaw">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#157-166" title="Go to source code">errorLineRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#249-261" title="Go to source code">errorLineRaw</a>( <span>string <var>$string</var></span>, <span>integer <var>$flags</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			<p>Writes a line of text to the error output without formatting.</p>
@@ -735,7 +876,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_flush">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#168-173" title="Go to source code">flush</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#263-272" title="Go to source code">flush</a>( )</code>
 
 		<div class="description short">
 			<p>Flushes the outputs and forces all pending text to be written out.</p>
@@ -769,7 +910,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_close">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#175-178" title="Go to source code">close</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#274-282" title="Go to source code">close</a>( )</code>
 
 		<div class="description short">
 			<p>Closes the input and the outputs.</p>
@@ -779,6 +920,44 @@
 			<p>Closes the input and the outputs.</p>
 
 
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setInteractive" id="_setInteractive">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setInteractive">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#284-295" title="Go to source code">setInteractive</a>( <span>boolean <var>$interactive</var></span> )</code>
+
+		<div class="description short">
+			<p>Enables or disables interaction with the user.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Enables or disables interaction with the user.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$interactive</var></dt>
+					<dd><p>Whether the I/O may interact with the user. If
+                         set to <code>false</code>, all calls to <code><a href="class-Webmozart.Console.Api.IO.IO.html#_read">Webmozart\Console\Api\IO\IO::read()</a></code> and
+                         <code><a href="class-Webmozart.Console.Api.IO.IO.html#_readLine">Webmozart\Console\Api\IO\IO::readLine()</a></code> will immediately return the
+                         default value.</p></dd>
+				</dl></div>
 
 
 
@@ -799,7 +978,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isInteractive">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#180-186" title="Go to source code">isInteractive</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#297-306" title="Go to source code">isInteractive</a>( )</code>
 
 		<div class="description short">
 			<p>Returns whether the user may be asked for input.</p>
@@ -822,6 +1001,44 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="setVerbosity" id="_setVerbosity">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setVerbosity">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#308-320" title="Go to source code">setVerbosity</a>( <span>integer <var>$verbosity</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the verbosity of the output.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the verbosity of the output.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$verbosity</var></dt>
+					<dd><p>One of the constants <code><a href="class-Webmozart.Console.Api.IO.IO.html#NORMAL">Webmozart\Console\Api\IO\IO::<b>NORMAL</b></a></code>, <code><a href="class-Webmozart.Console.Api.IO.IO.html#VERBOSE">Webmozart\Console\Api\IO\IO::<b>VERBOSE</b></a></code>,
+                      <code><a href="class-Webmozart.Console.Api.IO.IO.html#VERY_VERBOSE">Webmozart\Console\Api\IO\IO::<b>VERY_VERBOSE</b></a></code> or <code><a href="class-Webmozart.Console.Api.IO.IO.html#DEBUG">Webmozart\Console\Api\IO\IO::<b>DEBUG</b></a></code>. Only output
+                      with the given verbosity level or smaller will be
+                      passed through.</p></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="isVerbose" id="_isVerbose">
 
 		<td class="attributes"><code>
@@ -834,7 +1051,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isVerbose">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#188-194" title="Go to source code">isVerbose</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#322-331" title="Go to source code">isVerbose</a>( )</code>
 
 		<div class="description short">
 			<p>Returns whether the verbosity is <code><a href="class-Webmozart.Console.Api.IO.IO.html#VERBOSE">Webmozart\Console\Api\IO\IO::<b>VERBOSE</b></a></code> or greater.</p>
@@ -869,7 +1086,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isVeryVerbose">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#196-202" title="Go to source code">isVeryVerbose</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#333-342" title="Go to source code">isVeryVerbose</a>( )</code>
 
 		<div class="description short">
 			<p>Returns whether the verbosity is <code><a href="class-Webmozart.Console.Api.IO.IO.html#VERY_VERBOSE">Webmozart\Console\Api\IO\IO::<b>VERY_VERBOSE</b></a></code> or greater.</p>
@@ -904,7 +1121,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isDebug">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#204-210" title="Go to source code">isDebug</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#344-353" title="Go to source code">isDebug</a>( )</code>
 
 		<div class="description short">
 			<p>Returns whether the verbosity is <code><a href="class-Webmozart.Console.Api.IO.IO.html#DEBUG">Webmozart\Console\Api\IO\IO::<b>DEBUG</b></a></code>.</p>
@@ -939,7 +1156,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getVerbosity">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#212-217" title="Go to source code">getVerbosity</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#355-363" title="Go to source code">getVerbosity</a>( )</code>
 
 		<div class="description short">
 			<p>Returns the current verbosity level.</p>
@@ -961,6 +1178,42 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="setQuiet" id="_setQuiet">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setQuiet">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#365-375" title="Go to source code">setQuiet</a>( <span>boolean <var>$quiet</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets whether all output should be suppressed.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets whether all output should be suppressed.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$quiet</var></dt>
+					<dd><p>Pass <code>true</code> to suppress all output and <code>false</code>
+                   otherwise.</p></dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="isQuiet" id="_isQuiet">
 
 		<td class="attributes"><code>
@@ -973,7 +1226,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_isQuiet">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#219-225" title="Go to source code">isQuiet</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#377-386" title="Go to source code">isQuiet</a>( )</code>
 
 		<div class="description short">
 			<p>Returns whether all output is suppressed.</p>
@@ -996,6 +1249,41 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="setTerminalDimensions" id="_setTerminalDimensions">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setTerminalDimensions">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#388-396" title="Go to source code">setTerminalDimensions</a>( <span><code><a href="class-Webmozart.Console.UI.Rectangle.html">Webmozart\Console\UI\Rectangle</a></code> <var>$dimensions</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the dimensions of the terminal.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the dimensions of the terminal.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$dimensions</var></dt>
+					<dd>The terminal dimensions.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="getTerminalDimensions" id="_getTerminalDimensions">
 
 		<td class="attributes"><code>
@@ -1008,7 +1296,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getTerminalDimensions">#</a>
-		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#227-232" title="Go to source code">getTerminalDimensions</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#398-410" title="Go to source code">getTerminalDimensions</a>( )</code>
 
 		<div class="description short">
 			<p>Returns the dimensions of the terminal.</p>
@@ -1030,17 +1318,195 @@
 		</div>
 		</div></td>
 	</tr>
-	</table>
+	<tr data-order="setFormatter" id="_setFormatter">
 
-	<table class="summary inherited">
-	<caption>Methods inherited from <a href="class-Webmozart.Console.Api.Formatter.Formatter.html#methods">Webmozart\Console\Api\Formatter\Formatter</a></caption>
-	<tr>
-		<td><code>
-			<a href="class-Webmozart.Console.Api.Formatter.Formatter.html#_format">format()</a>, 
-			<a href="class-Webmozart.Console.Api.Formatter.Formatter.html#_removeFormat">removeFormat()</a>
-		</code></td>
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setFormatter">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#412-421" title="Go to source code">setFormatter</a>( <span><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code> <var>$formatter</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the output formatter.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the output formatter.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$formatter</var></dt>
+					<dd>The output formatter.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getFormatter" id="_getFormatter">
+
+		<td class="attributes"><code>
+			 public 
+
+			<code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getFormatter">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#423-431" title="Go to source code">getFormatter</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the output formatter.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the output formatter.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html">Webmozart\Console\Api\Formatter\Formatter</a></code><br>The output formatter.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="format" id="_format">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_format">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#433-439" title="Go to source code">format</a>( <span>string <var>$string</var></span>, <span><code><a href="class-Webmozart.Console.Api.Formatter.Style.html">Webmozart\Console\Api\Formatter\Style</a></code> <var>$style</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			<p>Formats the given string.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Formats the given string.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to format.</dd>
+					<dt><var>$style</var></dt>
+					<dd>The style to use.</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string<br>The formatted string.
+				</div>
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html#_format">Webmozart\Console\Api\Formatter\Formatter::format()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="removeFormat" id="_removeFormat">
+
+		<td class="attributes"><code>
+			 public 
+
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_removeFormat">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#441-447" title="Go to source code">removeFormat</a>( <span>string <var>$string</var></span> )</code>
+
+		<div class="description short">
+			<p>Removes the format tags from the given string.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Removes the format tags from the given string.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to remove the format tags from.</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					string<br>The string without format tags.
+				</div>
+
+
+
+
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-Webmozart.Console.Api.Formatter.Formatter.html#_removeFormat">Webmozart\Console\Api\Formatter\Formatter::removeFormat()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getDefaultTerminalDimensions" id="_getDefaultTerminalDimensions">
+
+		<td class="attributes"><code>
+			 protected 
+
+			<code><a href="class-Webmozart.Console.UI.Rectangle.html">Webmozart\Console\UI\Rectangle</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getDefaultTerminalDimensions">#</a>
+		<code><a href="source-class-Webmozart.Console.Api.IO.IO.html#449-457" title="Go to source code">getDefaultTerminalDimensions</a>( )</code>
+
+		<div class="description short">
+			<p>Returns the default terminal dimensions.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Returns the default terminal dimensions.</p>
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><a href="class-Webmozart.Console.UI.Rectangle.html">Webmozart\Console\UI\Rectangle</a></code><br>The terminal dimensions.
+				</div>
+
+
+
+
+		</div>
+		</div></td>
 	</tr>
 	</table>
+
 
 
 
@@ -1055,7 +1521,7 @@
 		<td class="attributes"><code>integer</code></td>
 		<td class="name">
 			<code>
-				<a href="source-class-Webmozart.Console.Api.IO.IO.html#26-29" title="Go to source code"><b>NORMAL</b></a>
+				<a href="source-class-Webmozart.Console.Api.IO.IO.html#27-30" title="Go to source code"><b>NORMAL</b></a>
 			</code>
 
 			<div class="description short">
@@ -1079,7 +1545,7 @@
 		<td class="attributes"><code>integer</code></td>
 		<td class="name">
 			<code>
-				<a href="source-class-Webmozart.Console.Api.IO.IO.html#31-34" title="Go to source code"><b>VERBOSE</b></a>
+				<a href="source-class-Webmozart.Console.Api.IO.IO.html#32-35" title="Go to source code"><b>VERBOSE</b></a>
 			</code>
 
 			<div class="description short">
@@ -1103,7 +1569,7 @@
 		<td class="attributes"><code>integer</code></td>
 		<td class="name">
 			<code>
-				<a href="source-class-Webmozart.Console.Api.IO.IO.html#36-39" title="Go to source code"><b>VERY_VERBOSE</b></a>
+				<a href="source-class-Webmozart.Console.Api.IO.IO.html#37-40" title="Go to source code"><b>VERY_VERBOSE</b></a>
 			</code>
 
 			<div class="description short">
@@ -1127,7 +1593,7 @@
 		<td class="attributes"><code>integer</code></td>
 		<td class="name">
 			<code>
-				<a href="source-class-Webmozart.Console.Api.IO.IO.html#41-44" title="Go to source code"><b>DEBUG</b></a>
+				<a href="source-class-Webmozart.Console.Api.IO.IO.html#42-45" title="Go to source code"><b>DEBUG</b></a>
 			</code>
 
 			<div class="description short">

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>Class Webmozart\Console\IO\Output\ErrorOutput | Webmozart Console API</title>
+	<title>Class Webmozart\Console\IO\InputStream\StringInputStream | Webmozart Console API</title>
 
 	<link rel="stylesheet" href="resources/style.css?95ada9fb523b6ab4fd1c47bb375f713f2cc65542">
 
@@ -122,14 +122,14 @@
 					</a>
 
 						<ul>
-				<li>
-					<a href="namespace-Webmozart.Console.IO.Input.html">
-						Input					</a>
+				<li class="active">
+					<a href="namespace-Webmozart.Console.IO.InputStream.html">
+						InputStream					</a>
 
 						</li>
-				<li class="active">
-					<a href="namespace-Webmozart.Console.IO.Output.html">
-						Output					</a>
+				<li>
+					<a href="namespace-Webmozart.Console.IO.OutputStream.html">
+						OutputStream					</a>
 
 						</li>
 							</ul></li>
@@ -190,11 +190,10 @@
 		<div id="elements">
 			<h3>Classes</h3>
 			<ul>
-				<li><a href="class-Webmozart.Console.IO.Output.BufferedOutput.html">BufferedOutput</a></li>
-				<li class="active"><a href="class-Webmozart.Console.IO.Output.ErrorOutput.html">ErrorOutput</a></li>
-				<li><a href="class-Webmozart.Console.IO.Output.NullOutput.html">NullOutput</a></li>
-				<li><a href="class-Webmozart.Console.IO.Output.StandardOutput.html">StandardOutput</a></li>
-				<li><a href="class-Webmozart.Console.IO.Output.StreamOutput.html">StreamOutput</a></li>
+				<li><a href="class-Webmozart.Console.IO.InputStream.NullInputStream.html">NullInputStream</a></li>
+				<li><a href="class-Webmozart.Console.IO.InputStream.StandardInputStream.html">StandardInputStream</a></li>
+				<li><a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html">StreamInputStream</a></li>
+				<li class="active"><a href="class-Webmozart.Console.IO.InputStream.StringInputStream.html">StringInputStream</a></li>
 			</ul>
 
 
@@ -221,7 +220,7 @@
 				<a href="index.html" title="Overview"><span>Overview</span></a>
 			</li>
 			<li>
-				<a href="namespace-Webmozart.Console.IO.Output.html" title="Summary of Webmozart\Console\IO\Output"><span>Namespace</span></a>
+				<a href="namespace-Webmozart.Console.IO.InputStream.html" title="Summary of Webmozart\Console\IO\InputStream"><span>Namespace</span></a>
 			</li>
 			<li class="active">
 <span>Class</span>			</li>
@@ -233,25 +232,25 @@
 	</div>
 
 <div id="content" class="class">
-	<h1>Class ErrorOutput</h1>
+	<h1>Class StringInputStream</h1>
 
 
 	<div class="description">
-	<p>An output that writes to the error output.</p>
+	<p>An input stream that reads from a string.</p>
 	</div>
 
 	<dl class="tree">
 		<dd style="padding-left:0px">
-			<a href="class-Webmozart.Console.IO.Output.StreamOutput.html"><span>Webmozart\Console\IO\Output\StreamOutput</span></a>
+			<a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html"><span>Webmozart\Console\IO\InputStream\StreamInputStream</span></a>
 			
 			 implements 
-				<a href="class-Webmozart.Console.Api.IO.Output.html"><span>Webmozart\Console\Api\IO\Output</span></a>
+				<a href="class-Webmozart.Console.Api.IO.InputStream.html"><span>Webmozart\Console\Api\IO\InputStream</span></a>
 			
 			
 		</dd>
 		<dd style="padding-left:30px">
 			<img src="resources/inherit.png" alt="Extended by">
-<b><span>Webmozart\Console\IO\Output\ErrorOutput</span></b>			
+<b><span>Webmozart\Console\IO\InputStream\StringInputStream</span></b>			
 			
 			
 		</dd>
@@ -267,14 +266,14 @@
 	<div class="info">
 		
 		
-		<b>Namespace:</b> <a href="namespace-Webmozart.html">Webmozart</a>\<a href="namespace-Webmozart.Console.html">Console</a>\<a href="namespace-Webmozart.Console.IO.html">IO</a>\<a href="namespace-Webmozart.Console.IO.Output.html">Output</a><br>
+		<b>Namespace:</b> <a href="namespace-Webmozart.html">Webmozart</a>\<a href="namespace-Webmozart.Console.html">Console</a>\<a href="namespace-Webmozart.Console.IO.html">IO</a>\<a href="namespace-Webmozart.Console.IO.InputStream.html">InputStream</a><br>
 		
 
 				<b>Author:</b>
 				Bernhard Schussek <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#x3a;&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;">&#x62;&#115;&#99;h&#x75;&#x73;&#115;&#101;&#107;&#x40;&#x67;&#x6d;&#97;&#105;l&#x2e;&#x63;&#111;&#109;</a><br>
 				<b>Since:</b>
 				1.0<br>
-			<b>Located at</b> <a href="source-class-Webmozart.Console.IO.Output.ErrorOutput.html#14-30" title="Go to source code">IO/Output/ErrorOutput.php</a>
+			<b>Located at</b> <a href="source-class-Webmozart.Console.IO.InputStream.StringInputStream.html#14-76" title="Go to source code">IO/InputStream/StringInputStream.php</a>
 		<br>
 	</div>
 
@@ -294,22 +293,127 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Webmozart.Console.IO.Output.ErrorOutput.html#23-29" title="Go to source code">__construct</a>( )</code>
+		<code><a href="source-class-Webmozart.Console.IO.InputStream.StringInputStream.html#28-40" title="Go to source code">__construct</a>( <span>string <var>$string</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
-			<p>Creates the output.</p>
+			<p>Creates the input stream.</p>
 		</div>
 
 		<div class="description detailed hidden">
-			<p>Creates the output.</p>
+			<p>Creates the input stream.</p>
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to read from.</dd>
+				</dl></div>
 
 
 
 
 				<h4>Overrides</h4>
-				<div class="list"><code><a href="class-Webmozart.Console.IO.Output.StreamOutput.html#___construct">Webmozart\Console\IO\Output\StreamOutput::__construct()</a></code></div>
+				<div class="list"><code><a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html#___construct">Webmozart\Console\IO\InputStream\StreamInputStream::__construct()</a></code></div>
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="clear" id="_clear">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_clear">#</a>
+		<code><a href="source-class-Webmozart.Console.IO.InputStream.StringInputStream.html#42-49" title="Go to source code">clear</a>( )</code>
+
+		<div class="description short">
+			<p>Clears the contents of the buffer.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Clears the contents of the buffer.</p>
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="set" id="_set">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_set">#</a>
+		<code><a href="source-class-Webmozart.Console.IO.InputStream.StringInputStream.html#51-62" title="Go to source code">set</a>( <span>string <var>$string</var></span> )</code>
+
+		<div class="description short">
+			<p>Sets the string to read from.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Sets the string to read from.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to read from.</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="append" id="_append">
+
+		<td class="attributes"><code>
+			 public 
+
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_append">#</a>
+		<code><a href="source-class-Webmozart.Console.IO.InputStream.StringInputStream.html#64-75" title="Go to source code">append</a>( <span>string <var>$string</var></span> )</code>
+
+		<div class="description short">
+			<p>Appends a string to the stream.</p>
+		</div>
+
+		<div class="description detailed hidden">
+			<p>Appends a string to the stream.</p>
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$string</var></dt>
+					<dd>The string to append.</dd>
+				</dl></div>
+
+
+
+
 
 		</div>
 		</div></td>
@@ -317,13 +421,13 @@
 	</table>
 
 	<table class="summary inherited">
-	<caption>Methods inherited from <a href="class-Webmozart.Console.IO.Output.StreamOutput.html#methods">Webmozart\Console\IO\Output\StreamOutput</a></caption>
+	<caption>Methods inherited from <a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html#methods">Webmozart\Console\IO\InputStream\StreamInputStream</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-Webmozart.Console.IO.Output.StreamOutput.html#_close">close()</a>, 
-			<a href="class-Webmozart.Console.IO.Output.StreamOutput.html#_flush">flush()</a>, 
-			<a href="class-Webmozart.Console.IO.Output.StreamOutput.html#_supportsAnsi">supportsAnsi()</a>, 
-			<a href="class-Webmozart.Console.IO.Output.StreamOutput.html#_write">write()</a>
+			<a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html#_close">close()</a>, 
+			<a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html#_isClosed">isClosed()</a>, 
+			<a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html#_read">read()</a>, 
+			<a href="class-Webmozart.Console.IO.InputStream.StreamInputStream.html#_readLine">readLine()</a>
 		</code></td>
 	</tr>
 	</table>
