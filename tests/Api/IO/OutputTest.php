@@ -171,7 +171,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLine('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLine('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineWhenVerbose()
@@ -183,7 +183,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLine('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLine('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\ndolor sit amet\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL.'dolor sit amet'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineWhenVeryVerbose()
@@ -195,7 +195,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLine('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLine('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\ndolor sit amet\nconsetetur\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL.'dolor sit amet'.PHP_EOL.'consetetur'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineWhenDebug()
@@ -207,21 +207,21 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLine('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLine('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\ndolor sit amet\nconsetetur\nsadipscing elitr\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL.'dolor sit amet'.PHP_EOL.'consetetur'.PHP_EOL.'sadipscing elitr'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineTrimsTrailingNewlines()
     {
-        $this->output->writeLine("Lorem ipsum\n");
+        $this->output->writeLine('Lorem ipsum'.PHP_EOL);
 
-        $this->assertSame("Lorem ipsum\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineDoesNotTrimTrailingSpaces()
     {
-        $this->output->writeLine("Lorem ipsum   \n");
+        $this->output->writeLine('Lorem ipsum   '.PHP_EOL);
 
-        $this->assertSame("Lorem ipsum   \n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum   '.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineFormatsText()
@@ -236,7 +236,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->setFormatter($formatter);
         $this->output->writeLine('<tag>text</tag>');
 
-        $this->assertSame("<formatted>text</formatted>\n", $this->stream->fetch());
+        $this->assertSame('<formatted>text</formatted>'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineSupportsAnsiFormats()
@@ -262,7 +262,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->setFormatter($ansiFormatter);
         $this->output->writeLine('<tag>text</tag>');
 
-        $this->assertSame("<formatted>text</formatted>\n", $stream->fetch());
+        $this->assertSame('<formatted>text</formatted>'.PHP_EOL, $stream->fetch());
     }
 
     public function testWriteLineRemovesTagsIfAnsiNotSupported()
@@ -288,7 +288,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->setFormatter($ansiFormatter);
         $this->output->writeLine('<tag>text</tag>');
 
-        $this->assertSame("text\n", $stream->fetch());
+        $this->assertSame('text'.PHP_EOL, $stream->fetch());
     }
 
     public function testWriteRawWhenNotVerbose()
@@ -361,7 +361,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLineRaw('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLineRaw('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineRawWhenVerbose()
@@ -373,7 +373,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLineRaw('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLineRaw('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\ndolor sit amet\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL.'dolor sit amet'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineRawWhenVeryVerbose()
@@ -385,7 +385,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLineRaw('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLineRaw('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\ndolor sit amet\nconsetetur\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL.'dolor sit amet'.PHP_EOL.'consetetur'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineRawWhenDebug()
@@ -397,21 +397,21 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->writeLineRaw('consetetur', IO::VERY_VERBOSE);
         $this->output->writeLineRaw('sadipscing elitr', IO::DEBUG);
 
-        $this->assertSame("Lorem ipsum\ndolor sit amet\nconsetetur\nsadipscing elitr\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL.'dolor sit amet'.PHP_EOL.'consetetur'.PHP_EOL.'sadipscing elitr'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineRawTrimsTrailingNewlines()
     {
-        $this->output->writeLineRaw("Lorem ipsum\n");
+        $this->output->writeLineRaw('Lorem ipsum'.PHP_EOL);
 
-        $this->assertSame("Lorem ipsum\n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineRawDoesNotTrimTrailingSpaces()
     {
-        $this->output->writeLineRaw("Lorem ipsum   \n");
+        $this->output->writeLineRaw('Lorem ipsum   '.PHP_EOL);
 
-        $this->assertSame("Lorem ipsum   \n", $this->stream->fetch());
+        $this->assertSame('Lorem ipsum   '.PHP_EOL, $this->stream->fetch());
     }
 
     public function testWriteLineRawDoesNotFormatText()
@@ -424,7 +424,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->output->setFormatter($formatter);
         $this->output->writeLineRaw('<tag>text</tag>');
 
-        $this->assertSame("<tag>text</tag>\n", $this->stream->fetch());
+        $this->assertSame('<tag>text</tag>'.PHP_EOL, $this->stream->fetch());
     }
 
     public function testFlush()

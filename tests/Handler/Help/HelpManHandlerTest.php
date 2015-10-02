@@ -97,8 +97,6 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testHandle()
     {
-        $command = sprintf("man-binary -l '%s'", $this->path);
-
         $this->processLauncher->expects($this->once())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -110,7 +108,9 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('man-binary -l %path%', array(
+                'path' => $this->path,
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($this->args, $this->io, $this->command);
@@ -155,8 +155,6 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testHandleWithCustomManBinary()
     {
-        $command = sprintf("my-man -l '%s'", $this->path);
-
         $this->processLauncher->expects($this->once())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -166,7 +164,9 @@ class HelpManHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('my-man -l %path%', array(
+                'path' => $this->path,
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setManBinary('my-man');

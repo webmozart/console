@@ -107,7 +107,7 @@ class ExceptionTrace implements Component
     private function printTrace(IO $io, Exception $exception)
     {
         $traces = $exception->getTrace();
-        $cwd = getcwd().'/';
+        $cwd = getcwd().DIRECTORY_SEPARATOR;
         $cwdLength = strlen($cwd);
 
         $lastTrace = array(
@@ -153,11 +153,8 @@ class ExceptionTrace implements Component
             $signature = $class.(isset($trace['type']) ? $trace['type'] : '').$trace['function'];
             $location .= ':'.(isset($trace['line']) ? $trace['line'] : 'n/a');
 
-            $io->errorRaw(sprintf("  %s%s()\n    %s\n",
-                $namespace,
-                $io->format('<u>'.$signature.'</u>'),
-                $io->format('<c1>'.$location.'</c1>')
-            ));
+            $io->errorLineRaw(sprintf('  %s%s()', $namespace, $io->format('<u>'.$signature.'</u>')));
+            $io->errorLineRaw(sprintf('    %s', $io->format('<c1>'.$location.'</c1>')));
         }
 
         $io->errorLine('');

@@ -69,16 +69,20 @@ class ProcessLauncher
     /**
      * Launches a process in the foreground.
      *
-     * @param string $command  The command to execute.
-     * @param bool   $killable Whether the process can be killed by the user.
+     * @param string   $command   The command to execute.
+     * @param string[] $arguments Arguments to be quoted and inserted into the
+     *                            command. Each key "key" in the array should
+     *                            correspond to a placeholder "%key%" in the
+     *                            command.
+     * @param bool     $killable  Whether the process can be killed by the user.
      *
      * @return int The exit status of the process.
      */
-    public function launchProcess($command, $killable = true)
+    public function launchProcess($command, array $arguments = array(), $killable = true)
     {
         $this->installSignalHandlers($killable);
 
-        $exitCode = $this->run($command);
+        $exitCode = $this->run($command, $arguments);
 
         $this->restoreSignalHandlers($killable);
 
@@ -101,11 +105,20 @@ class ProcessLauncher
         }
     }
 
-    private function run($command)
+    private function run($command, array $arguments)
     {
         if (!function_exists('proc_open')) {
             throw new RuntimeException('The "proc_open" function is not available.');
         }
+
+        $replacements = array();
+
+        foreach ($arguments as $name => $value) {
+            $replacements['%'.$name.'%'] = escapeshellarg($value);
+        }
+
+        // Insert quoted arguments
+        $command = strtr($command, $replacements);
 
         $dspec = array(
             0 => STDIN,

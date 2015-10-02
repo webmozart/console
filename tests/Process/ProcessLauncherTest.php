@@ -12,7 +12,7 @@
 namespace Webmozart\Console\Tests\Process;
 
 use PHPUnit_Framework_TestCase;
-use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Webmozart\Console\Process\ProcessLauncher;
 
 /**
@@ -30,12 +30,12 @@ class ProcessLauncherTest extends PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    private $bash;
+    private $php;
 
     protected function setUp()
     {
-        $finder = new ExecutableFinder();
-        $this->bash = $finder->find('bash');
+        $finder = new PhpExecutableFinder();
+        $this->php = $finder->find();
         $this->launcher = new ProcessLauncher();
 
         // Speed up the tests
@@ -44,7 +44,7 @@ class ProcessLauncherTest extends PHPUnit_Framework_TestCase
 
     public function testLaunchSuccessfully()
     {
-        if (!$this->bash) {
+        if (!$this->php) {
             $this->markTestSkipped('The "bash" binary is not available.');
 
             return;
@@ -56,9 +56,8 @@ class ProcessLauncherTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        $status = $this->launcher->launchProcess(sprintf(
-            '%s -c "exit 0"',
-            $this->bash
+        $status = $this->launcher->launchProcess($this->php.' -r %command%', array(
+            'command' => 'exit(0);',
         ));
 
         $this->assertSame(0, $status);
@@ -66,7 +65,7 @@ class ProcessLauncherTest extends PHPUnit_Framework_TestCase
 
     public function testLaunchWithError()
     {
-        if (!$this->bash) {
+        if (!$this->php) {
             $this->markTestSkipped('The "bash" binary is not available.');
 
             return;
@@ -78,9 +77,8 @@ class ProcessLauncherTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        $status = $this->launcher->launchProcess(sprintf(
-            '%s -c "exit 123"',
-            $this->bash
+        $status = $this->launcher->launchProcess($this->php.' -r %command%', array(
+            'command' => 'exit(123);',
         ));
 
         $this->assertSame(123, $status);

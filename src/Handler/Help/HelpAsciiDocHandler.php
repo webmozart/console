@@ -75,10 +75,8 @@ class HelpAsciiDocHandler
             }
 
             if ($this->lessBinary) {
-                return $this->processLauncher->launchProcess(sprintf(
-                    '%s %s',
-                    $this->lessBinary,
-                    escapeshellarg($this->path)
+                return $this->processLauncher->launchProcess($this->lessBinary.' %path%', array(
+                    'path' => $this->path,
                 ), false);
             }
         }

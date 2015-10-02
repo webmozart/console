@@ -261,8 +261,6 @@ EOF;
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $command = sprintf("man-binary -l '%s'", $this->manDir.'/the-command.1');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -274,7 +272,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('man-binary -l %path%', array(
+                'path' => $this->manDir.'/the-command.1',
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($args, $this->io, $this->command);
@@ -290,8 +290,6 @@ EOF;
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $command = sprintf("man-binary -l '%s'", $this->manDir.'/prefix-the-command.1');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -303,7 +301,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('man-binary -l %path%', array(
+                'path' => $this->manDir.'/prefix-the-command.1',
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setCommandPagePrefix('prefix-');
@@ -320,8 +320,6 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
 
-        $command = sprintf("man-binary -l '%s'", $this->manDir.'/the-app.1');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -333,7 +331,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('man-binary -l %path%', array(
+                'path' => $this->manDir.'/the-app.1',
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($args, $this->io, $this->command);
@@ -348,8 +348,6 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
 
-        $command = sprintf("man-binary -l '%s'", $this->manDir.'/custom-app.1');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -361,7 +359,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('man-binary -l %path%', array(
+                'path' => $this->manDir.'/custom-app.1',
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setApplicationPage('custom-app');
@@ -379,8 +379,6 @@ EOF;
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $command = sprintf("less-binary '%s'", $this->asciiDocDir.'/the-command.txt');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -392,7 +390,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->asciiDocDir.'/the-command.txt',
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($args, $this->io, $this->command);
@@ -408,8 +408,6 @@ EOF;
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
         $args->setArgument('command', 'the-command');
 
-        $command = sprintf("less-binary '%s'", $this->asciiDocDir.'/prefix-the-command.txt');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -421,7 +419,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->asciiDocDir.'/prefix-the-command.txt',
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setCommandPagePrefix('prefix-');
@@ -451,7 +451,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->asciiDocDir.'/the-app.txt',
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($args, $this->io, $this->command);
@@ -466,8 +468,6 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs($argString));
 
-        $command = sprintf("less-binary '%s'", $this->asciiDocDir.'/custom-app.txt');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -479,7 +479,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->asciiDocDir.'/custom-app.txt',
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setApplicationPage('custom-app');
@@ -493,8 +495,6 @@ EOF;
     {
         $args = $this->helpCommand->parseArgs(new StringArgs('--help'));
 
-        $command = sprintf("man-binary -l '%s'", $this->manDir.'/the-app.1');
-
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -506,7 +506,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('man-binary -l %path%', array(
+                'path' => $this->manDir.'/the-app.1',
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($args, $this->io, $this->command);
@@ -517,8 +519,6 @@ EOF;
     public function testHelpLaunchesLessIfManBinaryNotFound()
     {
         $args = $this->helpCommand->parseArgs(new StringArgs('--help'));
-
-        $command = sprintf("less-binary '%s'", $this->asciiDocDir.'/the-app.txt');
 
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
@@ -536,7 +536,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->asciiDocDir.'/the-app.txt',
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($args, $this->io, $this->command);
@@ -547,8 +549,6 @@ EOF;
     public function testHelpLaunchesLessIfManPageNotFound()
     {
         $args = $this->helpCommand->parseArgs(new StringArgs('--help'));
-
-        $command = sprintf("less-binary '%s'", $this->asciiDocDir.'/man-not-found.txt');
 
         $this->processLauncher->expects($this->any())
             ->method('isSupported')
@@ -561,7 +561,9 @@ EOF;
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->asciiDocDir.'/man-not-found.txt',
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setApplicationPage('man-not-found');
