@@ -1,7 +1,7 @@
 Changelog
 =========
 
-* 1.0.0-next (@release_date@)
+* 1.0.0-beta4 (2015-10-02)
 
  * renamed `Input` and implementations to `InputStream`
  * renamed `Output` and implementations to `OutputStream`
