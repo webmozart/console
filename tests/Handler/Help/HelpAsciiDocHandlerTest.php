@@ -97,8 +97,6 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testHandle()
     {
-        $command = sprintf("less-binary '%s'", $this->path);
-
         $this->processLauncher->expects($this->once())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -110,7 +108,9 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('less-binary %path%', array(
+                'path' => $this->path,
+            ), false)
             ->will($this->returnValue(123));
 
         $status = $this->handler->handle($this->args, $this->io, $this->command);
@@ -155,8 +155,6 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
 
     public function testHandleWithCustomLessBinary()
     {
-        $command = sprintf("my-less '%s'", $this->path);
-
         $this->processLauncher->expects($this->once())
             ->method('isSupported')
             ->will($this->returnValue(true));
@@ -166,7 +164,9 @@ class HelpAsciiDocHandlerTest extends PHPUnit_Framework_TestCase
 
         $this->processLauncher->expects($this->once())
             ->method('launchProcess')
-            ->with($command, false)
+            ->with('my-less %path%', array(
+                'path' => $this->path,
+            ), false)
             ->will($this->returnValue(123));
 
         $this->handler->setLessBinary('my-less');

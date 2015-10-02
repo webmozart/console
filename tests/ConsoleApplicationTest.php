@@ -14,6 +14,7 @@ namespace Webmozart\Console\Tests;
 use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
@@ -445,7 +446,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame(123, $application->run($args, $input, $output, $errorOutput));
         $this->assertSame('', $output->fetch());
-        $this->assertSame("fatal: The command \"foobar\" does not exist.\n", $errorOutput->fetch());
+        $this->assertSame('fatal: The command "foobar" does not exist.'.PHP_EOL, $errorOutput->fetch());
     }
 
     public function testNormalizeNegativeExceptionCodeToOne()
@@ -514,9 +515,15 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
 
     public function testTerminateAfterRun()
     {
-        exec('/usr/bin/env php '.__DIR__.'/Fixtures/terminate-after-run.php', $output, $status);
+        $phpFinder = new PhpExecutableFinder();
+        $php = $phpFinder->find();
 
-        echo implode("\n", $output);
+        $command = $php.' '.escapeshellarg(__DIR__.'/Fixtures/terminate-after-run.php');
+
+        exec($command, $output, $status);
+
+        // for debugging
+        echo implode(PHP_EOL, $output);
 
         $this->assertSame(123, $status);
     }

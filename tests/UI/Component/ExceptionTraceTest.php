@@ -54,10 +54,7 @@ class ExceptionTraceTest extends PHPUnit_Framework_TestCase
         $trace = new ExceptionTrace($exception);
         $trace->render($this->io);
 
-        $expected = <<<EOF
-fatal: The command "foobar" does not exist.
-
-EOF;
+        $expected = 'fatal: The command "foobar" does not exist.'.PHP_EOL;
 
         $this->assertSame($expected, $this->io->fetchErrors());
     }
@@ -72,9 +69,9 @@ EOF;
         $trace->render($this->io);
 
         // Prevent trimming of trailing spaces in the box
-        $box = '                                                          '.PHP_EOL.
-               '  [Webmozart\Console\Api\Command\NoSuchCommandException]  '.PHP_EOL.
-               '  The command "foobar" does not exist.                    '.PHP_EOL.
+        $box = '                                                          '."\n".
+               '  [Webmozart\Console\Api\Command\NoSuchCommandException]  '."\n".
+               '  The command "foobar" does not exist.                    '."\n".
                '                                                          ';
 
         $expected = <<<EOF
@@ -95,9 +92,16 @@ EOF;
         // Normalize line numbers across PHP and HHVM
         $actual = preg_replace('~(NoSuchCommandException.php:)\d+~', '$1??', $actual);
 
-        $this->assertSame($expected, substr($actual, 0, strlen($expected)));
-        $this->assertNotContains('The message of the cause.', $this->io->fetchErrors());
-        $this->assertStringEndsWith("\n\n", $this->io->fetchErrors());
+        // Normalize slashes across OS
+        $expected = str_replace(array("\n", '/'), array(PHP_EOL, DIRECTORY_SEPARATOR), $expected);
+
+        // Use to debug issues invisible to the diff output:
+        //echo PHP_EOL.unpack('H*', substr($actual, 0, strlen($expected)))[1].PHP_EOL;
+        //echo PHP_EOL.unpack('H*', $expected)[1].PHP_EOL;
+
+        $this->assertStringStartsWith($expected, $actual);
+        $this->assertNotContains('The message of the cause.', $actual);
+        $this->assertStringEndsWith(PHP_EOL.PHP_EOL, $actual);
     }
 
     public function testRenderWithCauseIfVeryVerbose()
@@ -110,9 +114,9 @@ EOF;
         $trace->render($this->io);
 
         // Prevent trimming of trailing spaces in the box
-        $box1 = '                                                          '.PHP_EOL.
-                '  [Webmozart\Console\Api\Command\NoSuchCommandException]  '.PHP_EOL.
-                '  The command "foobar" does not exist.                    '.PHP_EOL.
+        $box1 = '                                                          '."\n".
+                '  [Webmozart\Console\Api\Command\NoSuchCommandException]  '."\n".
+                '  The command "foobar" does not exist.                    '."\n".
                 '                                                          ';
 
         $expected1 = <<<EOF
@@ -128,9 +132,9 @@ Exception trace:
     tests/UI/Component/ExceptionTraceTest.php
 EOF;
 
-        $box2 = '                             '.PHP_EOL.
-                '  [RuntimeException]         '.PHP_EOL.
-                '  The message of the cause.  '.PHP_EOL.
+        $box2 = '                             '."\n".
+                '  [RuntimeException]         '."\n".
+                '  The message of the cause.  '."\n".
                 '                             ';
 
         $expected2 = <<<EOF
@@ -152,8 +156,12 @@ EOF;
         // Normalize line numbers across PHP and HHVM
         $actual = preg_replace('~(NoSuchCommandException.php:)\d+~', '$1??', $actual);
 
-        $this->assertSame($expected1, substr($actual, 0, strlen($expected1)));
+        // Normalize slashes across OS
+        $expected1 = str_replace(array("\n", '/'), array(PHP_EOL, DIRECTORY_SEPARATOR), $expected1);
+        $expected2 = str_replace(array("\n", '/'), array(PHP_EOL, DIRECTORY_SEPARATOR), $expected2);
+
+        $this->assertStringStartsWith($expected1, $actual);
         $this->assertContains($expected2, $actual);
-        $this->assertStringEndsWith("\n\n", $actual);
+        $this->assertStringEndsWith(PHP_EOL.PHP_EOL, $actual);
     }
 }
