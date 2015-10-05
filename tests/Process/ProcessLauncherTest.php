@@ -35,7 +35,7 @@ class ProcessLauncherTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $finder = new PhpExecutableFinder();
-        $this->php = $finder->find();
+        $this->php = escapeshellcmd($finder->find());
         $this->launcher = new ProcessLauncher();
 
         // Speed up the tests

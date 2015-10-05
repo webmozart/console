@@ -15,6 +15,7 @@ use PHPUnit_Framework_Assert;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\ProcessUtils;
 use Webmozart\Console\Api\Args\Args;
 use Webmozart\Console\Api\Args\Format\ArgsFormat;
 use Webmozart\Console\Api\Args\Format\Argument;
@@ -518,7 +519,7 @@ class ConsoleApplicationTest extends PHPUnit_Framework_TestCase
         $phpFinder = new PhpExecutableFinder();
         $php = $phpFinder->find();
 
-        $command = $php.' '.escapeshellarg(__DIR__.'/Fixtures/terminate-after-run.php');
+        $command = escapeshellcmd($php).' '.ProcessUtils::escapeArgument(__DIR__.'/Fixtures/terminate-after-run.php');
 
         exec($command, $output, $status);
 

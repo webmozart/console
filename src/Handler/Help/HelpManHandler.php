@@ -77,9 +77,11 @@ class HelpManHandler
             throw new RuntimeException('The "man" binary was not found.');
         }
 
-        return $this->processLauncher->launchProcess($this->manBinary.' -l %path%', array(
-            'path' => $this->path,
-        ), false);
+        return $this->processLauncher->launchProcess(
+            escapeshellcmd($this->manBinary).' -l %path%',
+            array('path' => $this->path),
+            false
+        );
     }
 
     /**
