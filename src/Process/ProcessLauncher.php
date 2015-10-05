@@ -12,6 +12,7 @@
 namespace Webmozart\Console\Process;
 
 use RuntimeException;
+use Symfony\Component\Process\ProcessUtils;
 
 /**
  * Launches an interactive process in the foreground.
@@ -114,7 +115,7 @@ class ProcessLauncher
         $replacements = array();
 
         foreach ($arguments as $name => $value) {
-            $replacements['%'.$name.'%'] = escapeshellarg($value);
+            $replacements['%'.$name.'%'] = ProcessUtils::escapeArgument($value);
         }
 
         // Insert quoted arguments
