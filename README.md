@@ -456,13 +456,13 @@ class GitApplicationConfig extends DefaultApplicationConfig
                 
                 ->beginSubCommand('list')
                     ->setHandlerMethod('handleList')
-                ->endSubCommand()
+                ->end()
                 
                 ->beginSubCommand('add')
                     ->setHandlerMethod('handleAdd')
                     ->addArgument('name', Argument::REQUIRED, 'The remote name')
                     ->addArgument('url', Argument::REQUIRED, 'The remote URL')
-                ->endSubCommand()
+                ->end()
                 
                 // ...
             ->end()
@@ -535,7 +535,7 @@ class GitApplicationConfig extends DefaultApplicationConfig
                     // ...
                     
                     ->markDefault()
-                ->endSubCommand()
+                ->end()
                 
                 // ...
             ->end()
