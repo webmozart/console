@@ -186,13 +186,17 @@ class TokenParser
      */
     private function parseEscapeSequence()
     {
-        $sequence = "'" === $this->next || '"' === $this->next
-            ? $this->next
-            : '\\'.$this->next;
+        $next = $this->next;
+
+        if ("'" === $next || '"' === $next) {
+            $this->next();
+            $this->next();
+
+            return $next;
+        }
 
         $this->next();
-        $this->next();
 
-        return $sequence;
+        return '\\';
     }
 }
