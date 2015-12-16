@@ -192,7 +192,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments
      */
     public function testParseFailsIfMissingRequiredArgument()
     {
@@ -223,7 +223,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments
      */
     public function testParseFailsIfMissingRequiredArgumentWithMissingCommandNames()
     {
@@ -254,7 +254,7 @@ class DefaultArgsParserTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Webmozart\Console\Api\Args\CannotParseArgsException
-     * @expectedExceptionMessage Not enough arguments.
+     * @expectedExceptionMessage Not enough arguments
      */
     public function testParseFailsIfMissingRequiredArgumentWithMissingCommandOptions()
     {

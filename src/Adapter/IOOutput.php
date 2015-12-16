@@ -106,23 +106,55 @@ class IOOutput implements OutputInterface
      */
     public function getVerbosity()
     {
-        if ($this->io->isQuiet()) {
+        if ($this->isQuiet()) {
             return self::VERBOSITY_QUIET;
         }
 
-        if ($this->io->isDebug()) {
+        if ($this->isDebug()) {
             return self::VERBOSITY_DEBUG;
         }
 
-        if ($this->io->isVeryVerbose()) {
+        if ($this->isVeryVerbose()) {
             return self::VERBOSITY_VERY_VERBOSE;
         }
 
-        if ($this->io->isVerbose()) {
+        if ($this->isVerbose()) {
             return self::VERBOSITY_VERBOSE;
         }
 
         return self::VERBOSITY_NORMAL;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isQuiet()
+    {
+        return $this->io->isQuiet();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isVerbose()
+    {
+        return $this->io->isVerbose();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isVeryVerbose()
+    {
+        return $this->io->isVeryVerbose();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isDebug()
+    {
+        return $this->io->isDebug();
     }
 
     /**

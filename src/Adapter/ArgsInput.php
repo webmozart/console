@@ -76,12 +76,17 @@ class ArgsInput implements InputInterface
     /**
      * {@inheritdoc}
      */
-    public function hasParameterOption($values)
+    public function hasParameterOption($values, $onlyParams = false)
     {
         $tokens = $this->rawArgs->getTokens();
 
         foreach ((array) $values as $value) {
             foreach ($tokens as $token) {
+                // end of options (--) signal reached, stop now
+                if ($onlyParams && $token === '--') {
+                    return false;
+                }
+
                 if ($token === $value || 0 === strpos($token, $value.'=')) {
                     return true;
                 }
@@ -96,7 +101,7 @@ class ArgsInput implements InputInterface
     /**
      * {@inheritdoc}
      */
-    public function getParameterOption($values, $default = false)
+    public function getParameterOption($values, $default = false, $onlyParams = false)
     {
         $tokens = $this->rawArgs->getTokens();
 
@@ -104,9 +109,16 @@ class ArgsInput implements InputInterface
             for (reset($tokens); null !== key($tokens); next($tokens)) {
                 $token = current($tokens);
 
+                if ($onlyParams && ($token === '--')) {
+                    // end of options (--) signal reached, stop now
+                    return $default;
+                }
+
                 // Long/short option with value in the next argument
                 if ($token === $value) {
-                    return next($tokens) ?: null;
+                    $next = next($tokens);
+
+                    return ($next && ($next !== '--')) ? $next : null;
                 }
 
                 // Long option with =

@@ -101,7 +101,7 @@ class CommandAdapter extends Command
      *
      * @return static The current instance.
      */
-    public function setCode($code)
+    public function setCode(callable $code)
     {
         return $this;
     }
