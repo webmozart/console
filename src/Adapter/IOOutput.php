@@ -126,7 +126,7 @@ class IOOutput implements OutputInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isQuiet()
     {
@@ -134,7 +134,7 @@ class IOOutput implements OutputInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isVerbose()
     {
@@ -142,7 +142,7 @@ class IOOutput implements OutputInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isVeryVerbose()
     {
@@ -150,7 +150,7 @@ class IOOutput implements OutputInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isDebug()
     {

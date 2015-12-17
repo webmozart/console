@@ -40,7 +40,7 @@ class StringArgsTest extends PHPUnit_Framework_TestCase
             array('"quoted"', array('quoted')),
             array("'quoted'", array('quoted')),
             array("'a\rb\nc\td'", array("a\rb\nc\td")),
-            array("'a'\r'b'\n'c'\t'd'", array('a','b','c','d')),
+            array("'a'\r'b'\n'c'\t'd'", array('a', 'b', 'c', 'd')),
             array('"quoted \'twice\'"', array('quoted \'twice\'')),
             array("'quoted \"twice\"'", array('quoted "twice"')),
             array('"quoted \'three \"times\"\'"', array('quoted \'three "times"\'')),

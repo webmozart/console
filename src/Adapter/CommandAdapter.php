@@ -269,4 +269,3 @@ if (method_exists('Symfony\Component\Console\Command\Command', 'asText')) {
         }
     }
 }
-
