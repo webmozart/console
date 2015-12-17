@@ -11,12 +11,12 @@
     "require": {
         "php": ">=5.3.9",
         "webmozart/assert": "^1.0",
-        "symfony/console": "^2.7",
-        "symfony/process": "^2.5",
-        "symfony/event-dispatcher": "^2.5"
+        "symfony/console": "^2.7|^3.0",
+        "symfony/process": "^2.5|^3.0",
+        "symfony/event-dispatcher": "^2.5|^3.0"
     },
     "require-dev": {
-        "symfony/filesystem": "^2.3",
+        "symfony/filesystem": "^2.3|^3.0",
         "phpunit/phpunit": "^4.6",
         "sebastian/version": "^1.0.1"
     },

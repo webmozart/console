@@ -80,33 +80,40 @@ class ArgsInputTest extends PHPUnit_Framework_TestCase
 
     public function testHasParameterOption()
     {
-        $input = new ArgsInput(new StringArgs('-o --option --value=value'));
+        $input = new ArgsInput(new StringArgs('-o --option --value=value -- --foo=bar'));
 
         $this->assertTrue($input->hasParameterOption('-o'));
         $this->assertTrue($input->hasParameterOption('--option'));
         $this->assertTrue($input->hasParameterOption('--value'));
-        $this->assertFalse($input->hasParameterOption('--foo'));
+        $this->assertTrue($input->hasParameterOption('--foo'));
+        // only check real parameters, skip those following an end of options (--) signal
+        $this->assertFalse($input->hasParameterOption('--foo', true));
     }
 
     public function testHasMultipleParameterOptions()
     {
-        $input = new ArgsInput(new StringArgs('-o --option --value=value'));
+        $input = new ArgsInput(new StringArgs('-o --option --value=value -- --foo=bar'));
 
         $this->assertTrue($input->hasParameterOption(array('-o', '--option')));
         // sufficient if any of the options exists
         $this->assertTrue($input->hasParameterOption(array('-o', '--foo')));
-        $this->assertFalse($input->hasParameterOption(array('--foo', '--bar')));
+        $this->assertFalse($input->hasParameterOption(array('--bar', '--baz')));
+        // only check real parameters, skip those following an end of options (--) signal
+        $this->assertTrue($input->hasParameterOption(array('--foo', '--bar')));
+        $this->assertFalse($input->hasParameterOption(array('--foo', '--bar'), true));
     }
 
     public function testGetParameterOption()
     {
-        $input = new ArgsInput(new StringArgs('-vvalue1  --value=value2 --space value3 --last'));
+        $input = new ArgsInput(new StringArgs('-vvalue1  --value=value2 --space value3 --last -- --foo=bar'));
 
         $this->assertSame('value1', $input->getParameterOption('-v'));
         $this->assertSame('value2', $input->getParameterOption('--value'));
         $this->assertSame('value3', $input->getParameterOption('--space'));
         $this->assertNull($input->getParameterOption('--last'));
-        $this->assertSame('default', $input->getParameterOption('--foo', 'default'));
+        $this->assertSame('bar', $input->getParameterOption('--foo', 'default'));
+        // only check real parameters, skip those following an end of options (--) signal
+        $this->assertSame('default', $input->getParameterOption('--foo', 'default', true));
     }
 
     public function testGetArguments()
