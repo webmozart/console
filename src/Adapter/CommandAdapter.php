@@ -26,7 +26,7 @@ use Webmozart\Assert\Assert;
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
-class CommandAdapter extends Command
+abstract class AbstractCommandAdapter extends Command
 {
     /**
      * @var \Webmozart\Console\Api\Command\Command
@@ -90,18 +90,6 @@ class CommandAdapter extends Command
      * @return static The current instance.
      */
     public function setHelperSet(HelperSet $helperSet)
-    {
-        return $this;
-    }
-
-    /**
-     * Does nothing.
-     *
-     * @param callable $code The code.
-     *
-     * @return static The current instance.
-     */
-    public function setCode(callable $code)
     {
         return $this;
     }
@@ -247,3 +235,38 @@ class CommandAdapter extends Command
         return $this->adaptedCommand->handle($input->getArgs(), $output->getIO());
     }
 }
+
+if (method_exists('Symfony\Component\Console\Command\Command', 'asText')) {
+    // Symfony 2.0 compatible definition
+    class CommandAdapter extends AbstractCommandAdapter
+    {
+        /**
+         * Does nothing.
+         *
+         * @param callable $code The code.
+         *
+         * @return static The current instance.
+         */
+        public function setCode($code)
+        {
+            return $this;
+        }
+    }
+} else {
+    // Symfony 3.0 compatible definition
+    class CommandAdapter extends AbstractCommandAdapter
+    {
+        /**
+         * Does nothing.
+         *
+         * @param callable $code The code.
+         *
+         * @return static The current instance.
+         */
+        public function setCode(callable $code)
+        {
+            return $this;
+        }
+    }
+}
+
