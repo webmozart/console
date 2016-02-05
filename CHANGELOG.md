@@ -1,6 +1,11 @@
 Changelog
 =========
 
+* 1.0.0-beta5 (2016-02-05)
+
+ * added support for Symfony 3
+ * fixed shell argument escaping on Windows
+
 * 1.0.0-beta4 (2015-10-02)
 
  * renamed `Input` and implementations to `InputStream`
