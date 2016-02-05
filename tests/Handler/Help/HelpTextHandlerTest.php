@@ -74,7 +74,7 @@ class HelpTextHandlerTest extends PHPUnit_Framework_TestCase
 
         $status = $this->handler->handle($args, $this->io, $this->command);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
   console the-command
 
@@ -91,7 +91,7 @@ EOF;
 
         $status = $this->handler->handle($args, $this->io, $this->command);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 The Application version 1.2.3
 
 USAGE

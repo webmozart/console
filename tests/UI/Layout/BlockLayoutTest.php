@@ -60,7 +60,7 @@ class BlockLayoutTest extends PHPUnit_Framework_TestCase
 
         $layout->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 HEADING 1
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
 tempor invidunt
@@ -105,7 +105,7 @@ EOF;
 
         $layout->render($this->io, 4);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
     HEADING 1
     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
     eirmod tempor invidunt

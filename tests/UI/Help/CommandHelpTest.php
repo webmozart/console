@@ -59,7 +59,7 @@ class CommandHelpTest extends PHPUnit_Framework_TestCase
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
   test-bin command [--option] [<global-argument>] [<argument>]
 
@@ -96,7 +96,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
   test-bin command <argument>
 
@@ -283,7 +283,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command [--option] [<argument>]
   or: test-bin command add [-o] [--sub-option2] [<argument>] [<sub-argument1>]
@@ -332,7 +332,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command
   or: test-bin command sub3
@@ -371,7 +371,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command [add] [<argument>]
   or: test-bin command delete
@@ -410,7 +410,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command [<argument>]
   or: test-bin command delete
@@ -449,7 +449,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command [--option] [<argument>]
   or: test-bin command -a [-o] [--sub-option2] [<argument>] [<sub-argument1>]
@@ -503,7 +503,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command [-a] [<argument>]
   or: test-bin command --delete
@@ -542,7 +542,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command [<argument>]
   or: test-bin command --delete
@@ -572,7 +572,7 @@ EOF;
         $help = new CommandHelp($application->getCommand('command'));
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 USAGE
       test-bin command
   or: test-bin command --add

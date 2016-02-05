@@ -57,7 +57,7 @@ class ApplicationHelpTest extends PHPUnit_Framework_TestCase
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 The Application
 
 USAGE
@@ -95,7 +95,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 The Application
 
 USAGE
@@ -128,7 +128,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 The Application version 1.2.3
 
 USAGE
@@ -154,7 +154,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Test Bin
 
 USAGE
@@ -178,7 +178,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Console Tool
 
 USAGE
@@ -204,7 +204,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Console Tool
 
 USAGE
@@ -233,7 +233,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Console Tool
 
 USAGE
@@ -262,7 +262,7 @@ EOF;
         $help = new ApplicationHelp($application);
         $help->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Console Tool
 
 USAGE

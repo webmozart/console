@@ -74,7 +74,7 @@ class HelpXmlHandlerTest extends PHPUnit_Framework_TestCase
 
         $status = $this->handler->handle($args, $this->io, $this->command);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <command id="the-command" name="the-command">
 EOF;
@@ -89,7 +89,7 @@ EOF;
 
         $status = $this->handler->handle($args, $this->io, $this->command);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <symfony name="The Application" version="1.2.3">
 EOF;

@@ -104,7 +104,7 @@ class LabeledParagraphTest extends PHPUnit_Framework_TestCase
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM);
         $para->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
        eirmod tempor invidunt
 
@@ -118,7 +118,7 @@ EOF;
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM);
         $para->render($this->io, 4);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
     Label  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
            nonumy eirmod tempor invidunt
 
@@ -132,7 +132,7 @@ EOF;
         $para = new LabeledParagraph('Label', self::LOREM_IPSUM, 6);
         $para->render($this->io);
 
-        $expected = <<<EOF
+        $expected = <<<'EOF'
 Label      Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
            nonumy eirmod tempor invidunt
 
