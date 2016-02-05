@@ -58,7 +58,7 @@ class SimilarCommandNameTest extends PHPUnit_Framework_TestCase
             array('package', array('package')),
             array('package-', array('package')),
             array('package-a', array('package')),
-            array('package-al', defined('HHVM_VERSION') ? array('package') : array('package-alias')),
+            array('package-al', defined('HHVM_VERSION') || PHP_VERSION_ID >= 70000 ? array('package') : array('package-alias')),
             array('package-ali', array('package-alias')),
             array('package-alia', array('package-alias', 'pack-alias')),
             array('package-alias', array('package-alias', 'pack-alias')),
