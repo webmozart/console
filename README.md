@@ -687,11 +687,17 @@ Using Symfony Helpers
 Since this library is a complete refactor of the [Symfony Console component] you can not use the [Symfony Console helpers] out of the box. If you want to use them you need to wrap the input and output accordingly:
 
 ```php
+use Webmozart\Console\Adapter\ArgsInput;
+use Webmozart\Console\Adapter\IOOutput;
+
 $colors = $helper->ask(new ArgsInput($args->getRawArgs(), $args), new IOOutput($io), $question);
 ```
 
 If you find this to cumbersome and you use it many times in your code, consider using traits:
 ```php
+use Webmozart\Console\Adapter\ArgsInput;
+use Webmozart\Console\Adapter\IOOutput;
+
 trait QuestionTrait
 {
     protected function ask(Args $args, IO $io, Question $question)
