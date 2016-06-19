@@ -36,6 +36,11 @@ class ArgsInput implements InputInterface
     private $args;
 
     /**
+     * @var bool
+     */
+    private $interactive = true;
+
+    /**
      * Creates the adapter.
      *
      * @param RawArgs $rawArgs The unparsed console arguments.
@@ -223,7 +228,7 @@ class ArgsInput implements InputInterface
      */
     public function isInteractive()
     {
-        return true;
+        return $this->interactive;
     }
 
     /**
@@ -231,5 +236,6 @@ class ArgsInput implements InputInterface
      */
     public function setInteractive($interactive)
     {
+        $this->interactive = $interactive;
     }
 }
