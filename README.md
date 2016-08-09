@@ -682,6 +682,53 @@ Style                       | Description
 `TableStyle::solidBorder()` | Uses Unicode characters for the border
 `TableStyle::borderless()`  | No border
 
+Using Symfony Helpers
+-------
+Since this library is a complete refactor of the [Symfony Console component] you can not use the [Symfony Console helpers] out of the box. If you want to use them you need to wrap the input and output accordingly:
+
+```php
+use Webmozart\Console\Adapter\ArgsInput;
+use Webmozart\Console\Adapter\IOOutput;
+
+$colors = $helper->ask(new ArgsInput($args->getRawArgs(), $args), new IOOutput($io), $question);
+```
+
+If you find this to cumbersome and you use it many times in your code, consider using traits:
+```php
+use Webmozart\Console\Adapter\ArgsInput;
+use Webmozart\Console\Adapter\IOOutput;
+
+trait QuestionTrait
+{
+    protected function ask(Args $args, IO $io, Question $question)
+    {
+        // You could cache these instances, but you probably won't need it
+        $helper = new QuestionHelper();
+
+        return $helper->ask(new ArgsInput($args->getRawArgs(), $args), new IOOutput($io), $question);
+    }
+}
+
+class MyCommandHandler
+{
+    use QuestionTrait;
+
+    public function handle(Args $args, IO $io)
+    {
+        $question = new ChoiceQuestion(
+            'Please select your favorite colors (defaults to red and blue)',
+            array('red', 'blue', 'yellow'),
+            '0,1'
+        );
+
+        $question->setMultiselect(true);
+
+        $colors = $this->ask($args, $io, $question);
+    }
+}
+```
+
+
 Authors
 -------
 
@@ -709,6 +756,7 @@ All contents of this package are licensed under the [MIT license].
 
 [Composer]: https://getcomposer.org/
 [Symfony Console component]: http://symfony.com/doc/current/components/console/introduction.html
+[Symfony Console helpers]: http://symfony.com/doc/current/components/console/helpers/index.html
 [Bernhard Schussek]: http://webmozarts.com
 [The Community Contributors]: https://github.com/webmozart/console/graphs/contributors
 [issue tracker]: https://github.com/webmozart/console/issues
