@@ -19,6 +19,7 @@ use Webmozart\Console\Adapter\IOOutput;
 use Webmozart\Console\Api\IO\Input;
 use Webmozart\Console\Api\IO\IO;
 use Webmozart\Console\Api\IO\Output;
+use Webmozart\Console\Formatter\AnsiFormatter;
 use Webmozart\Console\IO\InputStream\StringInputStream;
 use Webmozart\Console\IO\OutputStream\BufferedOutputStream;
 
@@ -282,6 +283,34 @@ class IOOutputTest extends PHPUnit_Framework_TestCase
         $this->io->setQuiet(true);
 
         $this->assertSame(OutputInterface::VERBOSITY_QUIET, $this->output->getVerbosity());
+    }
+
+    public function testIsDecorated()
+    {
+        $input = new Input(new StringInputStream());
+        $output = new Output(new BufferedOutputStream(), new AnsiFormatter());
+        $nonDecoratedOutput = new Output(new BufferedOutputStream());
+        $errorOutput = new Output(new BufferedOutputStream());
+
+        // Decorated
+        $this->io = new IO($input, $output, $errorOutput);
+        $this->output = new IOOutput($this->io);
+
+        $this->assertTrue($this->output->isDecorated());
+
+        $this->output->setDecorated(false);
+
+        $this->assertFalse($this->output->isDecorated());
+
+        // Non decorated
+        $this->io = new IO($input, $nonDecoratedOutput, $errorOutput);
+        $this->output = new IOOutput($this->io);
+
+        $this->assertFalse($this->output->isDecorated());
+
+        $this->output->setDecorated(true);
+
+        $this->assertTrue($this->output->isDecorated());
     }
 
     public function testGetFormatter()

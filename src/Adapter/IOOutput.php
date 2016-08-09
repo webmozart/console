@@ -14,6 +14,7 @@ namespace Webmozart\Console\Adapter;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Webmozart\Console\Api\IO\IO;
+use Webmozart\Console\Formatter\AnsiFormatter;
 
 /**
  * Adapts an {@link IO} instance to Symfony's {@link OutputInterface} API.
@@ -30,6 +31,11 @@ class IOOutput implements OutputInterface
     private $io;
 
     /**
+     * @var bool
+     */
+    private $decorated;
+
+    /**
      * Creates a new composite output.
      *
      * @param IO $io The I/O.
@@ -37,6 +43,7 @@ class IOOutput implements OutputInterface
     public function __construct(IO $io)
     {
         $this->io = $io;
+        $this->decorated = $this->io->getFormatter() instanceof AnsiFormatter;
     }
 
     /**
@@ -162,6 +169,7 @@ class IOOutput implements OutputInterface
      */
     public function setDecorated($decorated)
     {
+        $this->decorated = $decorated;
     }
 
     /**
@@ -169,7 +177,7 @@ class IOOutput implements OutputInterface
      */
     public function isDecorated()
     {
-        return false;
+        return $this->decorated;
     }
 
     /**

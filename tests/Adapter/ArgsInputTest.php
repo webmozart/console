@@ -231,4 +231,15 @@ class ArgsInputTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($inputArgs->hasOption('option3'));
         $this->assertFalse($inputNoArgs->hasOption('option1'));
     }
+
+    public function testSetInteractive()
+    {
+        $inputArgs = new ArgsInput($this->rawArgs, $this->args);
+
+        $this->assertTrue($inputArgs->isInteractive());
+
+        $inputArgs->setInteractive(false);
+
+        $this->assertFalse($inputArgs->isInteractive());
+    }
 }
