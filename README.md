@@ -34,7 +34,7 @@ Installation
 Use [Composer] to install the package:
 
 ```
-$ composer require webmozart/console:~1.0@beta
+$ composer require webmozart/console:~1.0@beta2
 ```
 
 Basic Configuration
