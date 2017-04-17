@@ -46,6 +46,7 @@ class StringArgsTest extends PHPUnit_Framework_TestCase
             array('"quoted \'three \"times\"\'"', array('quoted \'three "times"\'')),
             array("'quoted \"three 'times'\"'", array('quoted "three \'times\'"')),
             array("\\'escaped\\'", array('\'escaped\'')),
+            array('escaped\\ bar', array('escaped\\', 'bar')),
             array('\"escaped\"', array('"escaped"')),
             array("\\'escaped more\\'", array('\'escaped', 'more\'')),
             array('\"escaped more\"', array('"escaped', 'more"')),
